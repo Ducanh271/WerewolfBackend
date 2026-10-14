@@ -1,0 +1,37 @@
+package engine
+
+// Command is a player's or the host's intent. Deciding a command never has
+// side effects: it either returns the events it produces or an error.
+type Command interface {
+	isCommand()
+}
+
+// CommandMarker is embedded by every command, including the ones declared in
+// the roles package, which cannot implement the unexported marker method on
+// its own.
+type CommandMarker struct{}
+
+func (CommandMarker) isCommand() {}
+
+// JoinRoom adds a player to the lobby. The room code is handled by the room
+// layer; the engine only cares about the identity and the nickname.
+type JoinRoom struct {
+	CommandMarker
+	Player   PlayerID
+	Nickname string
+}
+
+// SetSeats fixes the seating circle, clockwise. Order must list every player
+// in the lobby exactly once. "Left" is index-1, wrapping.
+type SetSeats struct {
+	CommandMarker
+	Order []PlayerID
+}
+
+// ConfigureRoles picks the role list for the game: how many players get each
+// role. Picking CursedWolf is what selects the "Sói nguyền" option of the
+// rules §2 table.
+type ConfigureRoles struct {
+	CommandMarker
+	Roles map[RoleID]int
+}

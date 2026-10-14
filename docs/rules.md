@@ -2,6 +2,13 @@
 
 Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên Claude (bản 14/10/2026). File này là bản copy cho agent đọc. Khi luật thay đổi, cập nhật cả hai nơi.
 
+> **TODO đồng bộ sang tài liệu gốc trên Claude** — những mục dưới đây được thêm
+> trong repo trước, tài liệu gốc chưa có:
+> - §2 "Số lượng mỗi vai" (thêm 14/10/2026): dân và sói thường ≥ 1, mọi vai còn
+>   lại tối đa 1.
+>
+> Xoá dòng tương ứng sau khi đã copy sang tài liệu gốc.
+
 ## 1. Tổng quan
 
 App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi.
@@ -50,6 +57,18 @@ Tổng số sói, **tính cả người sẽ bị nguyền**, không vượt 30%
 | Thám tử | Ván trên 8 người |
 | Cupid | Ván từ 10 người |
 | Các vai còn lại | Chủ phòng tự chọn, tuỳ số người |
+
+### Số lượng mỗi vai
+
+| Vai | Số lượng một ván |
+| --- | --- |
+| Dân làng | 1 trở lên |
+| Sói (sói thường) | 1 trở lên, trong giới hạn số sói ở trên |
+| Mọi vai còn lại, gồm Sói nguyền và Sói tiên tri | tối đa 1 |
+
+Các vai chức năng là **duy nhất**: không có ván nào hai Tiên tri hay hai Bảo vệ.
+Giới hạn này có thể mở rộng sau (ví dụ cho ván rất nhiều người), nhưng bản đầu
+chốt là tối đa 1.
 
 ### Thời gian mặc định (chủ phòng chỉnh được)
 

@@ -65,15 +65,19 @@ type State struct {
 }
 
 type Player struct {
-    ID      PlayerID
-    Role    RoleID
-    Team    Team            // can change (curse)
-    Alive   bool
-    Flags   map[string]int  // role-owned counters: potions left, curse used, last guarded, poisoned-until...
+    ID       PlayerID
+    Nickname string
+    Role     RoleID
+    Team     Team           // can change (curse)
+    Alive    bool
+    Flags    map[string]int // role-owned counters: potions left, curse used, last guarded, poisoned-until...
 }
 ```
 
 `Flags` lets roles keep their own state without changing `Player`.
+
+`Command` and `Event` are sealed by an unexported marker method, so roles embed
+`engine.CommandMarker` / `engine.EventMarker` in their own commands and events.
 
 ### Roles
 ```go
@@ -86,6 +90,12 @@ type Role interface {
 }
 
 var Registry = map[RoleID]Role{}  // roles call engine.Register(...) in init()
+
+// Optional interfaces, checked by type assertion. They keep the rules §2 setup
+// limits in each role's own file instead of hardcoding role IDs in the engine.
+type MinPlayersRule interface{ MinPlayers() int }           // Detective 9, Cupid 10
+type MultiCopyRole  interface{ AllowsMultipleCopies() bool } // only Villager and Werewolf
+type CurseSource    interface{ CursesVillager() bool }      // reserves one wolf slot
 ```
 
 The night call order (rules §3) comes from each role's `NightCall().Order`. Fake calls for dead/absent roles are produced by the room layer using the same order so the narrator timing never leaks information.

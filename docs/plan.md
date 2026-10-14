@@ -8,7 +8,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 ## Milestone 1 — Engine core
 
 - [x] **T0 Project skeleton.** `go mod init`, folders from architecture.md, Makefile targets working, empty `main`, `.golangci.yml`, one passing placeholder test.
-- [ ] **T1 Core types.** `State`, `Player`, `Team`, `Phase`, `Command`, `Event`, `Decide`/`Evolve`, typed errors, role `Registry`. Lobby commands: `JoinRoom`, `SetSeats`, `ConfigureRoles`. *Rules: §2.* Accept: joining, seating, invalid configs rejected (fewer than 5 or more than 30 players, too many wolves vs the 30% table, Detective ≤ 8 players, Cupid < 10).
+- [x] **T1 Core types.** `State`, `Player`, `Team`, `Phase`, `Command`, `Event`, `Decide`/`Evolve`, typed errors, role `Registry`. Lobby commands: `JoinRoom`, `SetSeats`, `ConfigureRoles`. *Rules: §2.* Accept: joining, seating, invalid configs rejected (fewer than 5 or more than 30 players, too many wolves vs the 30% table, Detective ≤ 8 players, Cupid < 10).
 - [ ] **T2 Dealing roles.** `DealRoles{Seed}` with deterministic shuffle; Cursed-wolf vs plain-wolves option. *Rules: §2.* Accept: same seed → same deal; wolf count matches table for 5, 7, 10, 14, 20, 30.
 - [ ] **T3 Test kit.** `enginetest` scenario builder: `g := NewGame(t, Seats("An","Binh",...), Roles(...))`, `g.Night().Guard("An").Protects("Binh")...`, `g.Dawn().ExpectDead(...)`, `ExpectAnnouncement(...)`. Readable by a non-programmer.
 
