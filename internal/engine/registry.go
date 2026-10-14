@@ -59,6 +59,13 @@ type CurseSource interface {
 	CursesVillager() bool
 }
 
+// AlwaysCalled is implemented by the role of the wolf pack step. Every game has
+// a wolf, and every wolf role bites in that step, so it is called every night
+// even when the role itself is not in the role list (rules §3).
+type AlwaysCalled interface {
+	AlwaysCalled() bool
+}
+
 // Registry holds every known role. Roles add themselves with Register in
 // init(); the engine never names a role itself.
 var Registry = map[RoleID]Role{}

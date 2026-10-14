@@ -28,11 +28,11 @@ func smallTable(t *testing.T) State {
 	return dealtTable(t, 7, map[RoleID]int{roleWerewolf: 2, roleSeer: 1})
 }
 
-// bigTable is 10 players with every role that has a night call, so the call
+// bigTable is 14 players with every role that has a night call, so the call
 // order and the early-night limits can be checked.
 func bigTable(t *testing.T) State {
-	return dealtTable(t, 10, map[RoleID]int{
-		roleWerewolf: 1, roleCursedWolf: 1, roleCupid: 1, roleSeer: 1, roleDetective: 1,
+	return dealtTable(t, 14, map[RoleID]int{
+		roleWerewolf: 1, roleCursedWolf: 1, roleWolfSeer: 1, roleCupid: 1, roleSeer: 1, roleDetective: 1,
 	})
 }
 
@@ -109,7 +109,7 @@ func TestRoleView_TimeoutStartsNightOne(t *testing.T) {
 
 func TestNight_OrderFollowsRulesTable(t *testing.T) {
 	got := calledRoles(playNight(t, bigTable(t), 1))
-	want := []RoleID{roleCupid, roleCursedWolf, roleWerewolf, roleSeer, roleDetective}
+	want := []RoleID{roleCupid, roleCursedWolf, roleWolfSeer, roleWerewolf, roleSeer, roleDetective}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("night 1 calls %v, want %v", got, want)
 	}
@@ -120,9 +120,9 @@ func TestNight_CursedWolfAndCupidOnlyEarlyNights(t *testing.T) {
 		night int
 		want  []RoleID
 	}{
-		{1, []RoleID{roleCupid, roleCursedWolf, roleWerewolf, roleSeer, roleDetective}},
-		{3, []RoleID{roleCursedWolf, roleWerewolf, roleSeer, roleDetective}},
-		{4, []RoleID{roleWerewolf, roleSeer, roleDetective}},
+		{1, []RoleID{roleCupid, roleCursedWolf, roleWolfSeer, roleWerewolf, roleSeer, roleDetective}},
+		{3, []RoleID{roleCursedWolf, roleWolfSeer, roleWerewolf, roleSeer, roleDetective}},
+		{4, []RoleID{roleWolfSeer, roleWerewolf, roleSeer, roleDetective}},
 	}
 	for _, tt := range tests {
 		got := calledRoles(playNight(t, bigTable(t), tt.night))
@@ -138,6 +138,26 @@ func TestNight_OnlyRolesInTheGameAreCalled(t *testing.T) {
 	want := []RoleID{roleWerewolf, roleSeer}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("night 1 calls %v, want %v", got, want)
+	}
+}
+
+func TestNight_WolfPackAlwaysCalledEvenWithoutPlainWerewolf(t *testing.T) {
+	tests := []struct {
+		name  string
+		wolfs map[RoleID]int
+		want  []RoleID
+	}{
+		{"only a cursed wolf", map[RoleID]int{roleCursedWolf: 1}, []RoleID{roleCursedWolf, roleWerewolf}},
+		{"only a wolf seer", map[RoleID]int{roleWolfSeer: 1}, []RoleID{roleWolfSeer, roleWerewolf}},
+		{"all three, in the agreed order", map[RoleID]int{roleWerewolf: 1, roleCursedWolf: 1, roleWolfSeer: 1},
+			[]RoleID{roleCursedWolf, roleWolfSeer, roleWerewolf}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := calledRoles(playNight(t, dealtTable(t, 14, tt.wolfs), 1)); !reflect.DeepEqual(got, tt.want) {
+				t.Fatalf("night 1 calls %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -218,7 +238,7 @@ func TestCurrentNightRole_FollowsTheStep(t *testing.T) {
 		seen = append(seen, role)
 		s, _ = timeout(t, s)
 	}
-	if want := []RoleID{roleCupid, roleCursedWolf, roleWerewolf, roleSeer, roleDetective}; !reflect.DeepEqual(seen, want) {
+	if want := []RoleID{roleCupid, roleCursedWolf, roleWolfSeer, roleWerewolf, roleSeer, roleDetective}; !reflect.DeepEqual(seen, want) {
 		t.Fatalf("steps %v, want %v", seen, want)
 	}
 }

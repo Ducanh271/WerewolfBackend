@@ -95,12 +95,13 @@ Tất cả nhắm mắt. Máy quản trò gọi từng vai bằng giọng nói; 
 | 1 | Nguyệt Nữ | Mỗi đêm |
 | 2 | Bảo vệ | Mỗi đêm |
 | 3 | Sói nguyền | Chỉ 3 đêm đầu |
-| 4 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
-| 5 | Sói tiên tri | Mỗi đêm |
+| 4 | Sói tiên tri | Mỗi đêm |
+| 5 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
 | 6 | Phù thủy | Mỗi đêm |
 | 7 | Tiên tri | Mỗi đêm |
 | 8 | Thám tử | Mỗi đêm cho đến khi đã dùng |
 
+- **Lượt Bầy sói luôn có** ở mọi ván và mọi đêm, vì mọi ván đều có sói. Sói thường, Sói nguyền và Sói tiên tri đều cắn được trong lượt này; bầy gồm mọi người đang thuộc phe sói. Không có sói thường trong danh sách vai thì lượt này vẫn được gọi.
 - **Chỉ gọi các vai có trong ván** (theo danh sách vai đã chọn, vốn công khai). Vai không có trong ván không bao giờ được gọi.
 - **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Máy quản trò chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
@@ -138,7 +139,7 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 
 ## 5. Vai phe Sói
 
-Mọi vai phe sói đều **dậy cắn cùng bầy**, biết mặt đồng bọn, và bị Tiên tri soi ra “sói”.
+Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậy cắn cùng bầy**, biết mặt đồng bọn, và bị Tiên tri soi ra “sói”.
 
 ### Sói
 
@@ -159,8 +160,8 @@ Mọi vai phe sói đều **dậy cắn cùng bầy**, biết mặt đồng bọ
 
 ### Sói tiên tri
 
-- Được gọi riêng **ngay sau bầy sói**, mỗi đêm soi 1 người.
-- Kết quả chỉ có “**là Tiên tri**” hoặc “**không phải Tiên tri**”, và được chia sẻ cho cả bầy.
+- Được gọi riêng **sau Sói nguyền và ngay trước bầy sói**, mỗi đêm soi 1 người. Thứ tự khi có cả ba vai: Sói nguyền → Sói tiên tri → bầy sói.
+- Kết quả chỉ có “**là Tiên tri**” hoặc “**không phải Tiên tri**”, và được chia sẻ cho cả bầy (bầy được gọi ngay sau đó).
 - Bị Nguyệt Nữ ghé: mất cả lượt soi và lượt vote cắn đêm đó.
 
 ## 6. Vai phe Dân

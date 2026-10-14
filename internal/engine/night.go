@@ -28,7 +28,7 @@ type NightEnded struct {
 
 // nightSteps lists the roles called on a night, in call order. The role list
 // of a game is public (rules §2), so only the roles in the configuration are
-// called. Beyond that it depends on the night number only, never on who is
+// called, plus the wolf pack step, which every game has. Beyond that it depends on the night number only, never on who is
 // alive, so a fake call (a dead player's role) cannot be told from a real one.
 func nightSteps(s State, night int) []RoleID {
 	type step struct {
@@ -37,7 +37,7 @@ func nightSteps(s State, night int) []RoleID {
 	}
 	var steps []step
 	for id, role := range Registry {
-		if s.Settings.Roles[id] < 1 {
+		if always, ok := role.(AlwaysCalled); !(ok && always.AlwaysCalled()) && s.Settings.Roles[id] < 1 {
 			continue
 		}
 		if call := role.NightCall(); call != nil && call.CalledOn(night) {

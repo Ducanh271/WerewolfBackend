@@ -100,9 +100,12 @@ var Registry = map[RoleID]Role{}  // roles call engine.Register(...) in init()
 type MinPlayersRule interface{ MinPlayers() int }           // Detective 9, Cupid 10
 type MultiCopyRole  interface{ AllowsMultipleCopies() bool } // only Villager and Werewolf
 type CurseSource    interface{ CursesVillager() bool }      // reserves one wolf slot
+type AlwaysCalled   interface{ AlwaysCalled() bool }        // called every night even if not in the role list: the Werewolf pack step
 ```
 
-The night call order (rules §3) comes from each role's `NightCall().Order`. The role list of a game is public (rules §2), so a night calls exactly the roles in `Settings.Roles` that have a `NightCall` for that night; a role nobody holds is never called. A role in the list whose holder is dead is still called (a fake call). The engine itself produces the calls as `NightStepCalled{Role, Duration}` events, for the narrator only. The step list depends on the role configuration and the night number, never on who is alive, and the event carries no real/fake flag, so a real call and a fake one are identical and last the same time. `engine.CurrentNightRole(s)` tells a role whether it is its turn.
+Game-wide rule limits (player count, wolf percentage, the cursed wolf's reserved slot) live in `internal/engine/limits.go`. Limits that belong to one role (minimum table size, number of copies) live in that role's own file.
+
+The night call order (rules §3) comes from each role's `NightCall().Order`. The role list of a game is public (rules §2), so a night calls exactly the roles in `Settings.Roles` that have a `NightCall` for that night; a role nobody holds is never called. The one exception is the wolf pack step (`Werewolf`, implements `AlwaysCalled`): every game has a wolf, and Werewolf, CursedWolf and WolfSeer all bite in it, so it runs every night even when no plain Werewolf is in the list. With all three wolf roles the order is CursedWolf → WolfSeer → pack. A role in the list whose holder is dead is still called (a fake call). The engine itself produces the calls as `NightStepCalled{Role, Duration}` events, for the narrator only. The step list depends on the role configuration and the night number, never on who is alive, and the event carries no real/fake flag, so a real call and a fake one are identical and last the same time. `engine.CurrentNightRole(s)` tells a role whether it is its turn.
 
 ### Night resolution pipeline (rules §9)
 An ordered slice of steps, each a pure function `func(*Resolution)`:

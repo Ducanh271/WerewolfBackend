@@ -5,19 +5,6 @@ import (
 	"sort"
 )
 
-// MaxWolfPercent is the share of players that may be wolves (rules §2:
-// "không vượt 30% số người chơi, làm tròn xuống").
-const MaxWolfPercent = 30
-
-// MaxWolves returns the highest number of wolves allowed at a table of
-// playerCount, counting the villager a cursed wolf will turn later.
-//
-// The 30% floor reproduces every row of the rules §2 table and also covers the
-// table's gaps: 5-6 -> 1, 7-9 -> 2, 10-13 -> 3, 14-16 -> 4, 20 -> 6, 30 -> 9.
-func MaxWolves(playerCount int) int {
-	return playerCount * MaxWolfPercent / 100
-}
-
 // allowsMultipleCopies reports whether a role may be dealt to more than one
 // player. Only Villager and the plain Werewolf opt in; every other role is
 // unique (rules §2 "Số lượng mỗi vai").
@@ -63,8 +50,8 @@ func validateRoleConfig(playerCount int, roles map[RoleID]int) error {
 		}
 		if curse, ok := role.(CurseSource); ok && curse.CursesVillager() {
 			// However many curse sources are picked, the limit reserves
-			// one extra wolf slot (rules §2 table).
-			cursedReserve = 1
+			// extra wolf slots (rules §2 table).
+			cursedReserve = CurseWolfReserve
 		}
 
 		slots += count

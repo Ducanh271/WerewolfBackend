@@ -7,6 +7,7 @@ package engine
 const (
 	roleWerewolf   RoleID = "Werewolf"
 	roleCursedWolf RoleID = "CursedWolf"
+	roleWolfSeer   RoleID = "WolfSeer"
 	roleVillager   RoleID = "Villager"
 	roleSeer       RoleID = "Seer"
 	roleDetective  RoleID = "Detective"
@@ -49,8 +50,16 @@ type fakeCurseRole struct {
 
 func (fakeCurseRole) CursesVillager() bool { return true }
 
+// fakePackRole is the plain Werewolf: it also stands for the wolf pack step.
+type fakePackRole struct {
+	fakeMultiRole
+}
+
+func (fakePackRole) AlwaysCalled() bool { return true }
+
 func init() {
-	Register(fakeMultiRole{fakeRole{id: roleWerewolf, team: TeamWolves, call: &NightCall{Order: 4}}})
+	Register(fakePackRole{fakeMultiRole{fakeRole{id: roleWerewolf, team: TeamWolves, call: &NightCall{Order: 5}}}})
+	Register(fakeRole{id: roleWolfSeer, team: TeamWolves, call: &NightCall{Order: 4}})
 	Register(fakeCurseRole{fakeRole{id: roleCursedWolf, team: TeamWolves, call: &NightCall{Order: 3, Nights: []int{1, 2, 3}}}})
 	Register(fakeMultiRole{fakeRole{id: roleVillager, team: TeamVillage}})
 	Register(fakeRole{id: roleSeer, team: TeamVillage, call: &NightCall{Order: 7}})

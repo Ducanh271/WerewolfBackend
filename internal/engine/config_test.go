@@ -258,3 +258,11 @@ func TestConfigureRoles_RejectedOutsideLobby(t *testing.T) {
 		t.Fatalf("got %v, want %v", err, ErrWrongPhase)
 	}
 }
+
+func TestConfigureRoles_CursedWolfAndWolfSeerFitWithoutPlainWerewolf(t *testing.T) {
+	// 10-13 players: limit 3 = CursedWolf + its reserve + WolfSeer.
+	roles := map[RoleID]int{roleCursedWolf: 1, roleWolfSeer: 1, roleVillager: 8}
+	if _, err := Decide(lobbyOf(t, 10), ConfigureRoles{Roles: roles}); err != nil {
+		t.Fatalf("err = %v, want the config accepted", err)
+	}
+}

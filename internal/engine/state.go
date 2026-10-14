@@ -2,12 +2,6 @@ package engine
 
 import "time"
 
-// Player count limits (rules §2: "Một ván có 5–30 người").
-const (
-	MinPlayers = 5
-	MaxPlayers = 30
-)
-
 // State is the whole game. It is rebuilt by folding events with Evolve and is
 // never mutated in place: every Evolve returns a new State.
 type State struct {
