@@ -43,3 +43,12 @@ type DealRoles struct {
 	CommandMarker
 	Seed int64
 }
+
+// PhaseTimeout is sent by the room layer when a deadline passes. Phase and Seq
+// are the ones the deadline was set for; a timeout that no longer matches the
+// state is stale and ignored.
+type PhaseTimeout struct {
+	CommandMarker
+	Phase Phase
+	Seq   int
+}

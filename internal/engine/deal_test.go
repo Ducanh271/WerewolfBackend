@@ -126,8 +126,8 @@ func TestDealRoles_EveryRoleDealtAsConfiguredWithTeams(t *testing.T) {
 	if !reflect.DeepEqual(got, s.Settings.Roles) {
 		t.Fatalf("dealt %v, configured %v", got, s.Settings.Roles)
 	}
-	if s.Phase != PhaseLobby {
-		t.Fatalf("phase = %s, want Lobby", s.Phase)
+	if s.Phase != PhaseRoleView {
+		t.Fatalf("phase = %s, want RoleView", s.Phase)
 	}
 }
 
@@ -173,21 +173,21 @@ func TestDealRoles_RolesNoLongerFitPlayerCount(t *testing.T) {
 	}
 }
 
-func TestDealRoles_SecondDealRejectedUnlessPlayerListChanged(t *testing.T) {
+func TestDealRoles_DealIsFinal(t *testing.T) {
 	s := apply(t, tableOf(t, 5, 1, false), DealRoles{Seed: 1})
 
 	if _, err := Decide(s, DealRoles{Seed: 2}); !errors.Is(err, ErrAlreadyDealt) {
 		t.Fatalf("re-deal err = %v, want ErrAlreadyDealt", err)
 	}
-
-	// A sixth player joins: seats and roles are redone, then dealing is open again.
-	s = apply(t, s, JoinRoom{Player: "p6", Nickname: "P6"})
-	s = apply(t, s, SetSeats{Order: seatOrder(6)})
-	s = apply(t, s, ConfigureRoles{Roles: map[RoleID]int{roleWerewolf: 1, roleVillager: 5}})
-	s = apply(t, s, DealRoles{Seed: 2})
-
-	if !s.Dealt || s.Players["p6"].Role == "" {
-		t.Fatalf("second deal not applied: dealt=%v role=%q", s.Dealt, s.Players["p6"].Role)
+	// No lobby command works any more: the host is a normal player now.
+	for _, c := range []Command{
+		JoinRoom{Player: "p6", Nickname: "P6"},
+		SetSeats{Order: seatOrder(5)},
+		ConfigureRoles{Roles: map[RoleID]int{roleWerewolf: 1, roleVillager: 4}},
+	} {
+		if _, err := Decide(s, c); !errors.Is(err, ErrWrongPhase) {
+			t.Errorf("%T after the deal: err = %v, want ErrWrongPhase", c, err)
+		}
 	}
 }
 

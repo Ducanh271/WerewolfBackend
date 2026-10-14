@@ -13,7 +13,6 @@ func Evolve(s State, e Event) State {
 			Alive:    true,
 			Flags:    map[string]int{},
 		}
-		out.Dealt = false // the player list changed: dealing again is allowed
 		return out
 
 	case SeatsSet:
@@ -37,6 +36,12 @@ func Evolve(s State, e Event) State {
 			p.Team = Registry[role].BaseTeam()
 		}
 		out.Dealt = true
+		out.Phase = PhaseRoleView
+		out.Seq++
+		return out
+	}
+
+	if out, ok := evolveNight(s, e); ok {
 		return out
 	}
 

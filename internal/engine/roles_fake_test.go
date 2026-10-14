@@ -16,11 +16,12 @@ const (
 type fakeRole struct {
 	id   RoleID
 	team Team
+	call *NightCall
 }
 
 func (r fakeRole) ID() RoleID                                   { return r.id }
 func (r fakeRole) BaseTeam() Team                               { return r.team }
-func (r fakeRole) NightCall() *NightCall                        { return nil }
+func (r fakeRole) NightCall() *NightCall                        { return r.call }
 func (r fakeRole) Decide(State, Command) ([]Event, bool, error) { return nil, false, nil }
 func (r fakeRole) Evolve(*State, Event) bool                    { return false }
 
@@ -49,10 +50,10 @@ type fakeCurseRole struct {
 func (fakeCurseRole) CursesVillager() bool { return true }
 
 func init() {
-	Register(fakeMultiRole{fakeRole{id: roleWerewolf, team: TeamWolves}})
-	Register(fakeCurseRole{fakeRole{id: roleCursedWolf, team: TeamWolves}})
+	Register(fakeMultiRole{fakeRole{id: roleWerewolf, team: TeamWolves, call: &NightCall{Order: 4}}})
+	Register(fakeCurseRole{fakeRole{id: roleCursedWolf, team: TeamWolves, call: &NightCall{Order: 3, Nights: []int{1, 2, 3}}}})
 	Register(fakeMultiRole{fakeRole{id: roleVillager, team: TeamVillage}})
-	Register(fakeRole{id: roleSeer, team: TeamVillage})
-	Register(fakeMinPlayersRole{fakeRole{id: roleDetective, team: TeamVillage}, 9})
-	Register(fakeMinPlayersRole{fakeRole{id: roleCupid, team: TeamVillage}, 10})
+	Register(fakeRole{id: roleSeer, team: TeamVillage, call: &NightCall{Order: 7}})
+	Register(fakeMinPlayersRole{fakeRole{id: roleDetective, team: TeamVillage, call: &NightCall{Order: 8}}, 9})
+	Register(fakeMinPlayersRole{fakeRole{id: roleCupid, team: TeamVillage, call: &NightCall{Order: 0, Nights: []int{1}}}, 10})
 }

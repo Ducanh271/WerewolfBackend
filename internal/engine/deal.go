@@ -7,11 +7,11 @@ import (
 )
 
 func decideDealRoles(s State, cmd DealRoles) ([]Event, error) {
+	if s.Dealt {
+		return nil, ErrAlreadyDealt // the deal is final: the host's powers end with it
+	}
 	if s.Phase != PhaseLobby {
 		return nil, fmt.Errorf("%w: cannot deal during %s", ErrWrongPhase, s.Phase)
-	}
-	if s.Dealt {
-		return nil, ErrAlreadyDealt
 	}
 	if len(s.Settings.Roles) == 0 {
 		return nil, ErrRolesNotConfigured

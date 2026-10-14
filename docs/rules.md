@@ -29,13 +29,13 @@ Nguyên tắc chung: **không lật vai khi chết** (ngoại lệ duy nhất l�
 
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự:
+Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự (quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào):
 
 1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
 2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
-3. **Chọn vai** theo số người (bảng dưới), chọn phương án Sói nguyền hoặc sói thường.
+3. **Chọn vai** theo số người (bảng dưới), chọn phương án Sói nguyền hoặc sói thường. **Danh sách vai của ván là công khai**: mọi người xem được trước khi chia vai (chỉ biết có vai nào, không biết ai giữ).
 4. **Chỉnh thời gian** các pha nếu muốn.
-5. **Chia vai** ngẫu nhiên; mỗi người xem vai trên điện thoại của mình.
+5. **Chia vai** ngẫu nhiên; mỗi người xem vai trên điện thoại của mình trong pha **xem vai** có đếm ngược. Hết giờ, ván tự sang bước tiếp (bầu Trưởng làng, rồi đêm 1).
 
 ### Giới hạn số sói
 
@@ -74,6 +74,7 @@ chốt là tối đa 1.
 
 | Pha | Thời gian |
 | --- | --- |
+| Xem vai | 30 giây |
 | Mỗi vai ban đêm | 30 giây |
 | Ban ngày (thảo luận và đề cử) | 7 phút, có thể vote bỏ qua |
 | Bào chữa | 1 phút |
@@ -100,7 +101,9 @@ Tất cả nhắm mắt. Máy quản trò gọi từng vai bằng giọng nói; 
 | 7 | Tiên tri | Mỗi đêm |
 | 8 | Thám tử | Mỗi đêm cho đến khi đã dùng |
 
-- **Gọi giả**: vai đã chết hoặc không có trong ván vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
+- **Chỉ gọi các vai có trong ván** (theo danh sách vai đã chọn, vốn công khai). Vai không có trong ván không bao giờ được gọi.
+- **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
+- **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Máy quản trò chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị Nguyệt Nữ ghé thấy thông báo trên màn hình khi đến lượt: “Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng”.

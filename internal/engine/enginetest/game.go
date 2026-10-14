@@ -34,7 +34,7 @@ type Game struct {
 // or Roles, receive their roles. It fails the test if the table breaks rules §2.
 func NewGame(t testing.TB, opts ...Option) *Game {
 	t.Helper()
-	cfg := &setup{driver: unbuiltDriver{}}
+	cfg := &setup{driver: realDriver{}}
 	for _, opt := range opts {
 		opt(cfg)
 	}

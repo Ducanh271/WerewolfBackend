@@ -44,7 +44,9 @@ func Decide(s State, c Command) ([]Event, error)
 func Evolve(s State, e Event) State
 ```
 
-Commands carry `At time.Time` when timing matters. Timers are not inside the engine: `room` sends `PhaseTimeout{Phase, Seq}` commands when a deadline passes; the engine ignores stale timeouts by `Seq`.
+Timers are not inside the engine: `room` sends `PhaseTimeout{Phase, Seq}` when a deadline passes. It is the only command that moves a timed phase or a night step forward, and a night step never ends early, so every call lasts its full time. A timeout whose `Phase` or `Seq` no longer matches the state is stale: the engine ignores it (no events, no error).
+
+Host powers end with `DealRoles`. After the deal the engine has no host-only command; the host is a normal player. Lobby commands then fail with `ErrWrongPhase` and a second deal with `ErrAlreadyDealt`.
 
 Randomness (role dealing) is a command input: `DealRoles{Seed int64}`, dealt by a deterministic shuffle so tests are reproducible.
 
@@ -53,10 +55,10 @@ Randomness (role dealing) is a command input: `DealRoles{Seed int64}`, dealt by 
 ### State (sketch)
 ```go
 type State struct {
-    Phase      Phase          // Lobby, Night, Dawn, Day, Trial, Verdict, HunterShot, Ended
-    Seq        int            // increments on every phase change
+    Phase      Phase          // Lobby, RoleView, Night, Dawn, Day, Trial, Verdict, HunterShot, Ended
+    Seq        int            // increments on every phase or night step change
     Night      int            // 1-based night counter
-    NightStep  int            // index into the night call order
+    NightStep  int            // night steps called so far; current step = steps[NightStep-1]
     Seats      []PlayerID     // seating circle, clockwise; "left" = index-1 (wraps)
     Players    map[PlayerID]*Player
     Pending    NightActions   // choices collected this night, resolved at dawn
@@ -100,7 +102,7 @@ type MultiCopyRole  interface{ AllowsMultipleCopies() bool } // only Villager an
 type CurseSource    interface{ CursesVillager() bool }      // reserves one wolf slot
 ```
 
-The night call order (rules §3) comes from each role's `NightCall().Order`. Fake calls for dead/absent roles are produced by the room layer using the same order so the narrator timing never leaks information.
+The night call order (rules §3) comes from each role's `NightCall().Order`. The role list of a game is public (rules §2), so a night calls exactly the roles in `Settings.Roles` that have a `NightCall` for that night; a role nobody holds is never called. A role in the list whose holder is dead is still called (a fake call). The engine itself produces the calls as `NightStepCalled{Role, Duration}` events, for the narrator only. The step list depends on the role configuration and the night number, never on who is alive, and the event carries no real/fake flag, so a real call and a fake one are identical and last the same time. `engine.CurrentNightRole(s)` tells a role whether it is its turn.
 
 ### Night resolution pipeline (rules §9)
 An ordered slice of steps, each a pure function `func(*Resolution)`:
@@ -120,6 +122,8 @@ Rules for the projection live in one file (`view.go`) with a test per role provi
 
 ## Room layer
 - One goroutine per room owns the state; commands arrive through a channel (no locks on game state).
+- Sets each deadline and sends `PhaseTimeout{Phase, Seq}` with `Settings.RoleView` and `Settings.NightStep`; it never sends one early.
+- Never forwards `NightStepCalled` to players' phones; it is for the narrator view only. Also rejects lobby commands after the deal (the engine already does).
 - Persists every event to `store.EventStore` before broadcasting.
 - On rejoin (room code + nickname), rebuilds the player's view from state.
 - Clock is injected (`room.Clock` interface) so timer tests run instantly.

@@ -40,6 +40,7 @@ type Phase int
 // Phases.
 const (
 	PhaseLobby Phase = iota
+	PhaseRoleView
 	PhaseNight
 	PhaseDawn
 	PhaseDay
@@ -53,6 +54,8 @@ func (p Phase) String() string {
 	switch p {
 	case PhaseLobby:
 		return "Lobby"
+	case PhaseRoleView:
+		return "RoleView"
 	case PhaseNight:
 		return "Night"
 	case PhaseDawn:

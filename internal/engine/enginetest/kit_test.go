@@ -1,6 +1,7 @@
 package enginetest
 
 import (
+	"reflect"
 	"testing"
 
 	"masoi/internal/engine"
@@ -94,7 +95,7 @@ func TestDoExpectErr_RejectsWrongErrorAndAcceptedCommands(t *testing.T) {
 	g := NewGame(t, fiveSeats, fiveCast())
 	g.DoExpectErr(engine.DealRoles{Seed: 1}, engine.ErrAlreadyDealt)
 	failsWith(t, "was accepted", func(tb testing.TB) {
-		NewGame(tb, fiveSeats, fiveCast()).DoExpectErr(engine.JoinRoom{Player: "Zed", Nickname: "Zed"}, engine.ErrAlreadyDealt)
+		NewGame(tb, fiveSeats, fiveCast()).DoExpectErr(engine.PhaseTimeout{}, engine.ErrAlreadyDealt)
 	})
 	failsWith(t, "was rejected with", func(tb testing.TB) {
 		NewGame(tb, fiveSeats, fiveCast()).DoExpectErr(engine.DealRoles{Seed: 1}, engine.ErrWrongPhase)
@@ -168,10 +169,6 @@ func TestDawn_ExpectationsFailWithReadableMessages(t *testing.T) {
 	})
 }
 
-func TestDefaultDriver_SaysPhasesAreNotBuiltYet(t *testing.T) {
-	failsWith(t, "not built yet", func(tb testing.TB) { NewGame(tb, fiveSeats, fiveCast()).Night() })
-}
-
 func TestNightDo_SendsCommandsAndReportsRejections(t *testing.T) {
 	g := NewGame(t, fiveSeats, fiveCast(), WithDriver(fakeDriver{}))
 	g.Night().DoExpectErr(engine.DealRoles{Seed: 1}, engine.ErrAlreadyDealt)
@@ -179,4 +176,65 @@ func TestNightDo_SendsCommandsAndReportsRejections(t *testing.T) {
 		NewGame(tb, fiveSeats, fiveCast(), WithDriver(fakeDriver{})).Night().
 			Do(engine.DealRoles{Seed: 1})
 	})
+}
+
+func TestRealDriver_NightThenDawnPlaysTheWholeNight(t *testing.T) {
+	g := NewGame(t, fiveSeats, fiveCast())
+	g.Night()
+	if g.State().Phase != engine.PhaseNight || g.State().Night != 1 {
+		t.Fatalf("after Night(): phase %s night %d, want Night 1", g.State().Phase, g.State().Night)
+	}
+	g.Dawn().ExpectNobodyDied()
+	if g.State().Phase != engine.PhaseDawn {
+		t.Fatalf("after Dawn(): phase %s, want Dawn", g.State().Phase)
+	}
+}
+
+func TestRealDriver_SecondNightWaitsForTheDayTask(t *testing.T) {
+	failsWith(t, "not built yet", func(tb testing.TB) {
+		g := NewGame(tb, fiveSeats, fiveCast())
+		g.Night()
+		g.Dawn()
+		g.Day().NobodyHanged()
+	})
+}
+
+// narratorEvents plays night 1 and returns what the narrator is told.
+func narratorEvents(g *Game) []engine.Event {
+	g.Night()
+	g.Dawn()
+	var out []engine.Event
+	for _, e := range g.Events() {
+		switch e.(type) {
+		case engine.NightStarted, engine.NightStepCalled, engine.NightEnded:
+			out = append(out, e)
+		}
+	}
+	return out
+}
+
+func TestRealDriver_DeadRoleIsCalledLikeALivingOne(t *testing.T) {
+	cast := Cast("An", Guard, "Binh", Werewolf, "Chi", Seer, "Dung", Villager, "Em", Villager)
+	living := narratorEvents(NewGame(t, fiveSeats, cast))
+
+	g := NewGame(t, fiveSeats, cast)
+	g.Do(kill{who: "An"}) // the Guard is dead before the night
+	dead := narratorEvents(g)
+
+	if !reflect.DeepEqual(living, dead) {
+		t.Fatalf("the narrator can tell a real Guard call from a fake one:\n%v\n%v", living, dead)
+	}
+	if len(living) != 4 { // start, Guard, Seer, end (the kit's Werewolf has no night call)
+		t.Fatalf("expected start, two role calls and end, got %v", living)
+	}
+}
+
+func TestRealDriver_RoleNotInTheGameIsNotCalled(t *testing.T) {
+	g := NewGame(t, fiveSeats,
+		Cast("An", Villager, "Binh", Werewolf, "Chi", Seer, "Dung", Villager, "Em", Villager))
+	for _, e := range narratorEvents(g) {
+		if c, ok := e.(engine.NightStepCalled); ok && c.Role == Guard {
+			t.Fatal("Guard is not in the game's role list but was called")
+		}
+	}
 }

@@ -12,9 +12,9 @@ const (
 // never mutated in place: every Evolve returns a new State.
 type State struct {
 	Phase     Phase
-	Seq       int // increments on every phase change
+	Seq       int // increments on every phase or night step change
 	Night     int // 1-based night counter
-	NightStep int // index into the night call order
+	NightStep int // night steps called so far; the current step is steps[NightStep-1]
 	Seats     []PlayerID
 	Players   map[PlayerID]*Player
 	Pending   NightActions
@@ -57,7 +57,8 @@ type Settings struct {
 	// number of players.
 	Roles map[RoleID]int
 
-	NightStep  time.Duration // each role's turn at night
+	RoleView   time.Duration // everyone looks at their role after the deal
+	NightStep  time.Duration // each role's turn at night, real or fake
 	Day        time.Duration // discussion and nominations
 	Defense    time.Duration // bào chữa
 	Verdict    time.Duration // vote giết hay tha
@@ -67,6 +68,7 @@ type Settings struct {
 // DefaultSettings returns the default timers from rules §2.
 func DefaultSettings() Settings {
 	return Settings{
+		RoleView:   30 * time.Second,
 		NightStep:  30 * time.Second,
 		Day:        7 * time.Minute,
 		Defense:    1 * time.Minute,
