@@ -34,6 +34,11 @@ Run `make fmt test lint` before declaring a task done. All must pass.
 - Use the test helper `enginetest.NewGame(t, roles...)` and builder-style actions; keep scenarios readable by a non-programmer.
 - Small files (< 300 lines). One exported concept per file where reasonable.
 
+## Talking to me
+- Reply to me in Vietnamese. Keep it short: what changed, test results, questions.
+- When you ask me a question, explain it in game terms (players, roles, what happens at the table), not code terms, and give your recommendation.
+- Code, identifiers, commit messages and docs stay in English.
+
 ## Glossary (rules.md term → code name)
 | Vietnamese | Code |
 |---|---|
