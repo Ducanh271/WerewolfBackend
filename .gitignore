@@ -1,0 +1,12 @@
+bin/
+*.exe
+*.test
+*.out
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets/
