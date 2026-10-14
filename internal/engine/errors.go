@@ -21,6 +21,11 @@ var (
 	ErrSeatsMismatch   = errors.New("seating must list every player exactly once")
 	ErrDuplicateSeat   = errors.New("player seated twice")
 
+	// Dealing (rules §2).
+	ErrRolesNotConfigured = errors.New("roles are not configured")
+	ErrSeatsNotSet        = errors.New("seats must be set for every player before dealing")
+	ErrAlreadyDealt       = errors.New("roles were already dealt")
+
 	// Role configuration (rules §2).
 	ErrTooFewPlayers        = errors.New("too few players")
 	ErrTooManyPlayers       = errors.New("too many players")

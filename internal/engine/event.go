@@ -32,3 +32,10 @@ type RolesConfigured struct {
 	EventMarker
 	Roles map[RoleID]int
 }
+
+// RolesDealt records who got which role. Teams are derived from the role's
+// BaseTeam when the event is applied.
+type RolesDealt struct {
+	EventMarker
+	Assignments map[PlayerID]RoleID
+}

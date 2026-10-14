@@ -15,6 +15,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideSetSeats(s, cmd)
 	case ConfigureRoles:
 		return decideConfigureRoles(s, cmd)
+	case DealRoles:
+		return decideDealRoles(s, cmd)
 	}
 
 	// Role commands. A command type belongs to exactly one role, so the

@@ -21,6 +21,7 @@ type State struct {
 	Day       DayState
 	Lovers    *LoversLink
 	Settings  Settings
+	Dealt     bool // roles were dealt to the current player list
 	Winner    *Team
 }
 

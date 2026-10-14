@@ -224,6 +224,13 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 Trong cặp khác phe, con sói **vẫn dậy cắn cùng bầy** như thường.
 
+## 7b. Trưởng làng
+
+- Trưởng làng là **danh hiệu công khai**, không phải thẻ vai. Ai cũng có thể giữ, kể cả sói. Vai gốc của người đó **không đổi**. Danh hiệu **không tính** vào giới hạn 30% số sói.
+- Bầu cử diễn ra sau bước xem vai, **trước đêm 1**. Mỗi người chơi bầu **công khai** cho một người (được tự bầu mình) trong **1 phút**. Nhiều phiếu nhất thắng. Hòa thì server chọn ngẫu nhiên một trong những người hòa; giống chia vai, lệnh nhận `Seed` và tầng room sinh seed bằng `crypto/rand`.
+- Phiếu của Trưởng làng tính **x2** ở cả đề cử ban ngày lẫn vote giết/tha (cả phiếu giết lẫn phiếu tha). Trưởng làng đang bị xử trảm mất quyền vote như mọi người.
+- Khi Trưởng làng chết (vì bất kỳ lý do gì), họ có **15 giây** chọn một người còn sống kế nhiệm, thông báo công khai. Hết giờ thì danh hiệu mất. Nếu Thợ săn chết cùng lúc, Thợ săn bắn trước, rồi Trưởng làng chuyển danh hiệu.
+
 ## 8. Điều kiện thắng
 
 App kiểm tra điều kiện thắng **sau mỗi lần có người chết hoặc có người đổi phe** (kể cả chết theo người yêu, bị Thợ săn bắn, và bị nguyền).

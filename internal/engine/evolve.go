@@ -13,6 +13,7 @@ func Evolve(s State, e Event) State {
 			Alive:    true,
 			Flags:    map[string]int{},
 		}
+		out.Dealt = false // the player list changed: dealing again is allowed
 		return out
 
 	case SeatsSet:
@@ -23,6 +24,19 @@ func Evolve(s State, e Event) State {
 	case RolesConfigured:
 		out := s.clone()
 		out.Settings.Roles = copyRoles(ev.Roles)
+		return out
+
+	case RolesDealt:
+		out := s.clone()
+		for id, role := range ev.Assignments {
+			p, ok := out.Players[id]
+			if !ok {
+				continue
+			}
+			p.Role = role
+			p.Team = Registry[role].BaseTeam()
+		}
+		out.Dealt = true
 		return out
 	}
 

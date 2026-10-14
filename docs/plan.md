@@ -9,21 +9,22 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 
 - [x] **T0 Project skeleton.** `go mod init`, folders from architecture.md, Makefile targets working, empty `main`, `.golangci.yml`, one passing placeholder test.
 - [x] **T1 Core types.** `State`, `Player`, `Team`, `Phase`, `Command`, `Event`, `Decide`/`Evolve`, typed errors, role `Registry`. Lobby commands: `JoinRoom`, `SetSeats`, `ConfigureRoles`. *Rules: §2.* Accept: joining, seating, invalid configs rejected (fewer than 5 or more than 30 players, too many wolves vs the 30% table, Detective ≤ 8 players, Cupid < 10).
-- [ ] **T2 Dealing roles.** `DealRoles{Seed}` with deterministic shuffle; Cursed-wolf vs plain-wolves option. *Rules: §2.* Accept: same seed → same deal; wolf count matches table for 5, 7, 10, 14, 20, 30.
+- [x] **T2 Dealing roles.** `DealRoles{Seed}` with deterministic shuffle; Cursed-wolf vs plain-wolves option. *Rules: §2.* Accept: same seed → same deal; wolf count matches table for 5, 7, 10, 14, 20, 30.
 - [ ] **T3 Test kit.** `enginetest` scenario builder: `g := NewGame(t, Seats("An","Binh",...), Roles(...))`, `g.Night().Guard("An").Protects("Binh")...`, `g.Dawn().ExpectDead(...)`, `ExpectAnnouncement(...)`. Readable by a non-programmer.
 
 ## Milestone 2 — Basic loop (Werewolf, Villager, Seer, Guard)
 
-- [ ] **T4 Night phase machine.** Call order, per-step timeout → no action, fake calls for dead/absent roles (exposed as events for the narrator). *Rules: §3.*
+- [ ] **T4 Night phase machine.** Flow after dealing: players view their roles, then the Chief election (T6b), then the host starts night 1. Call order, per-step timeout → no action, fake calls for dead/absent roles (exposed as events for the narrator). *Rules: §3.*
 - [ ] **T5 Wolves + Guard + Seer.** Wolf live voting, majority > half at timeout, guard rules (self ok, not same target twice in a row), seer result. Pipeline steps 3, 8, 9. *Rules: §5 Sói, §6 Tiên tri/Bảo vệ, §9.*
 - [ ] **T6 Dawn announcements.** Three announcement variants. *Rules: §4 Thông báo buổi sáng.*
-- [ ] **T7 Day phase.** Shared 7-min day clock (paused in trial), skip button > 66% (nominating cancels own skip), public nominations, tie → earliest nominated, defense, kill vs spare (kill > spare), re-nominate after spare, max 1 hanging. *Rules: §4.*
+- [ ] **T6b Chief election + succession.** `Chief` title (not a role, original role unchanged, outside the 30% limit). Public 1-minute vote after role viewing, before night 1; self vote allowed; tie → random pick from `Seed` in the command (room generates it with crypto/rand). On Chief death (any cause) 15s to name a living successor, announced publicly; timeout → title lost; Hunter shoots first if both die together. *Rules: §7b.*
+- [ ] **T7 Day phase.** Shared 7-min day clock (paused in trial), skip button > 66% (nominating cancels own skip), public nominations, tie → earliest nominated, defense, kill vs spare (kill > spare), votes are weighted (Chief x2 in nominations and in both kill and spare; a Chief on trial cannot vote), re-nominate after spare, max 1 hanging. *Rules: §4.*
 - [ ] **T8 Win check.** After every death and team change. Lovers excluded from wolf count. *Rules: §8.*
 
 ## Milestone 3 — Secrecy and room
 
 - [ ] **T9 Views.** `ViewFor(player|narrator)`; tests per role proving no leaks; dead players see everything. Write `docs/protocol.md` (message shapes) for review.
-- [ ] **T10 Room + timers.** Room goroutine, injected clock, timeouts → commands, event store in memory, rejoin by room code + nickname.
+- [ ] **T10 Room + timers.** Room goroutine, injected clock, timeouts → commands, event store in memory, rejoin by room code + nickname. The room generates every seed (`DealRoles`, Chief election tie-break) with `crypto/rand`; seeds never come from a client.
 - [ ] **T11 WebSocket transport.** Implements `docs/protocol.md`. One end-to-end test with fake clients playing a 5-player game.
 
 ## Milestone 4 — Remaining roles (one task each)

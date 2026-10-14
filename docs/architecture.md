@@ -48,6 +48,8 @@ Commands carry `At time.Time` when timing matters. Timers are not inside the eng
 
 Randomness (role dealing) is a command input: `DealRoles{Seed int64}`, dealt by a deterministic shuffle so tests are reproducible.
 
+**Seeds never come from a client.** The room layer (T10) generates every seed with `crypto/rand` and puts it in the command. The transport must not accept a seed field from clients, or a player could pick their own role. The same goes for the Chief election tie-break.
+
 ### State (sketch)
 ```go
 type State struct {
