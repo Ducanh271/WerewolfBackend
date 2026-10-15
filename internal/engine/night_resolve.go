@@ -121,6 +121,9 @@ func evolveResolution(s State, e Event) (State, bool) {
 	}
 	if ev, ok := e.(PlayerDied); ok {
 		out := s.clone()
+		if _, _, crossed := crossTeamLovers(out); crossed && PartnerOf(out, ev.Player) != "" {
+			out.Lovers.ThirdTeam = true // the couple breaks as the third team
+		}
 		if p := out.Players[ev.Player]; p != nil {
 			p.Alive = false
 		}

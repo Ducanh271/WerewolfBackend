@@ -97,18 +97,19 @@ func CheckWin(s State) (Outcome, bool) {
 	default:
 		return Outcome{}, false
 	}
-	return Outcome{Winner: winner, Winners: teamWinners(s, winner, crossed, lovA, lovB)}, true
+	return Outcome{Winner: winner, Winners: teamWinners(s, winner, crossed)}, true
 }
 
-// teamWinners is every player of the winning team, dead or alive. While the
-// cross-team couple is alive, both lovers lose with the couple: the wolf lover
-// does not share a wolf win (rules §8). A couple broken by a death is no
-// longer the third team, so its members count with their own team.
-func teamWinners(s State, winner Team, crossed bool, lovA, lovB PlayerID) []PlayerID {
+// teamWinners is every player of the winning team, dead or alive, except the
+// lovers of a cross-team couple: once on the third team, they only win as the
+// couple. That holds while the couple lives and after it broke as the third
+// team (LoversLink.ThirdTeam): the wolf lover never shares a wolf win (rules §8).
+func teamWinners(s State, winner Team, crossed bool) []PlayerID {
+	thirdTeam := s.Lovers != nil && (crossed || s.Lovers.ThirdTeam)
 	var out []PlayerID
 	for _, id := range s.Seats {
 		p := s.Players[id]
-		if p == nil || p.Team != winner || (crossed && (id == lovA || id == lovB)) {
+		if p == nil || p.Team != winner || (thirdTeam && PartnerOf(s, id) != "") {
 			continue
 		}
 		out = append(out, id)

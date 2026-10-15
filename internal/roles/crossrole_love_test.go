@@ -50,7 +50,7 @@ func TestCross_CursedHunterInACrossTeamCouple_IsHanged(t *testing.T) {
 	g.Night().Wolf("An").Bites("Em")
 	g.Dawn().ExpectDead("Chi", "Em").ExpectAnnouncement(i18n.WinWolves)
 	expectWinner(t, g, engine.TeamWolves)
-	expectWinners(t, g, "An", "Binh", "Phuc") // the couple was broken: Phuc wins with his team
+	expectWinners(t, g, "An", "Binh") // Phuc stays on the third team after the couple broke: he loses
 }
 
 // The Chief is a lover and is bitten: the Hunter, her lover, dies the same
@@ -100,7 +100,7 @@ func TestCross_PackBitesItsOwnWolfInACrossTeamCouple_PartnerDiesToo(t *testing.T
 		winners   []string // empty: the game goes on
 	}{
 		{"the game goes on", []string{"An", "Binh", "Chi", "Dung", "Em"}, nil},
-		{"the wolves win", []string{"An", "Binh", "Chi", "Dung"}, []string{"An", "Binh"}},
+		{"the wolves win, the wolf lover loses", []string{"An", "Binh", "Chi", "Dung"}, []string{"An"}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -142,4 +142,16 @@ func TestWin_CrossTeamCoupleWins_OnlyTheTwoLoversAreWinners(t *testing.T) {
 	g.Day().Hanged("Chi")
 	expectWinner(t, g, engine.TeamLovers)
 	expectWinners(t, g, "An", "Em")
+}
+
+// Rules §8: once on the third team, always on it. The wolf lover is hanged and
+// the village wins at once; the surviving villager lover still loses.
+func TestWin_VillageWinsAfterTheCrossTeamCoupleBroke_TheVillagerLoverLoses(t *testing.T) {
+	g := cupidTable(t)
+	g.Night().Cupid("Lan").Pairs("Binh", "Chi")
+	killOff(g, "Binh", "Chi", "Dung", "Em", "Phuc", "Giang", "Hoa", "Khoa", "Lan")
+	g.Dawn()
+	g.Day().Hanged("Binh")
+	expectWinner(t, g, engine.TeamVillage)
+	expectWinners(t, g, "Dung", "Em", "Phuc", "Giang", "Hoa", "Khoa", "Lan")
 }

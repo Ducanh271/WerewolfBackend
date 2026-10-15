@@ -45,7 +45,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
   - Decided: a player dead by the rules but not yet announced (Knight-poisoned wolf, grieving lover) counts as alive for the Detective (neighbours and wolf count). The Knight's poison still skips such a wolf (internal, invisible).
   - Decided: the Visitor is called first every night, after Cupid and the lovers on night 1.
   - Decided: night 1 with Cupid: Cupid → phone check (love) → `LoversMeet` (10 s, the lovers look at each other) → Visitor and the rest. With the Cursed wolf too, its own phone check stays after its step (two checks on night 1). Lovers never look at each other during a phone check.
-  - Decided: when the wolves win while the cross-team couple is still alive, the wolf lover loses with the couple (`Outcome.Winners`). Read as: a couple broken by a death is no longer the third team, so its members win or lose with their own team.
+  - Decided: once a couple is cross-team (third team), both lovers stay on the third team for good, also after one of them died (`LoversLink.ThirdTeam`, frozen at the first lover's death). They win only as the couple: never with the wolves or the village (`Outcome.Winners`).
   - Decided: 0 plain wolves allowed when the Cursed wolf or the Wolf seer is in the game (wording of rules §2).
 
 ## Open questions (ask the user, don't guess)

@@ -53,6 +53,10 @@ type NightActions struct {
 type LoversLink struct {
 	A PlayerID
 	B PlayerID
+	// ThirdTeam is set when the first lover dies while the couple is one wolf
+	// and one villager: both stay on the third team for good, so neither can
+	// win with their own team (rules §8).
+	ThirdTeam bool
 }
 
 // Settings is everything the host configures before the deal: the role list

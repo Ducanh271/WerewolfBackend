@@ -317,7 +317,7 @@ Làm rõ:
 - Nếu **tất cả** người chơi chết cùng một lúc thì ván **hòa**.
 - Nếu nhiều điều kiện thắng cùng đúng, thứ tự ưu tiên là: **Cặp đôi khác phe > Dân > Sói**. Ví dụ: chỉ còn một cặp khác phe sống thì Cặp đôi thắng, không phải Sói thắng (0 sói ≥ 0 dân không được tính là sói thắng).
 - Sói chỉ thắng khi còn **ít nhất một con sói** sống (không tính sói trong cặp khác phe).
-- Sói thắng trong lúc cặp khác phe **vẫn còn sống cả hai**: con sói trong cặp **thua cùng cặp đôi** (màn hình kết thúc ván không tính nó là người thắng).
+- Đã thành cặp khác phe (phe thứ ba) thì **luôn** là phe thứ ba, kể cả sau khi một người trong cặp chết: hai người yêu chỉ thắng khi Cặp đôi thắng. Sói thắng thì con sói trong cặp **thua** (nhiệm vụ của nó là diệt cả sói khác lẫn dân); Dân thắng thì người dân trong cặp cũng thua. Màn hình kết thúc ván không tính họ là người thắng.
 - Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9), luôn vào ban ngày. Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
 
 ## 9. Thứ tự phân giải lúc trời sáng
