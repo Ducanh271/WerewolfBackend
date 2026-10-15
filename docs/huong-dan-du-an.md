@@ -93,6 +93,8 @@ make lint                      # go vet + golangci-lint
 make fmt                       # định dạng code
 make run                       # chạy server (cổng :8080, đổi bằng ADDR=:9000)
 make demo                      # server + 5 bot chơi 1 ván, in lời dẫn tiếng Việt
+make demo PLAYERS=12 ROLES=CursedWolf=1,WolfSeer=1,Seer=1   # số người và vai tuỳ chọn (Dân làng tự điền); make demo-12 là bàn 12 người đủ vai
+SIM_GAMES=50 go test ./internal/roles -run TestSim -v          # 300 ván bot ngẫu nhiên (SIM_SEED=<seed> để chạy lại đúng 1 ván lỗi)
 go test ./internal/roles -run TestNight_SeerChecks -v      # một test (khớp theo tên)
 go test ./internal/transport/ws -run E2E -v                # test cả đường truyền
 go test ./... -race -count=20 -run TestTên                 # chạy lặp để bắt test chập chờn

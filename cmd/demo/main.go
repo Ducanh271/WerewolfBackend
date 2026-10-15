@@ -6,12 +6,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,7 +25,22 @@ import (
 
 var nicknames = []string{"An", "Binh", "Chi", "Dung", "Em"}
 
+// defaultRoles is the five-player game; villagers fill whatever the list leaves.
+const defaultRoles = "Werewolf=1,Guard=1,Seer=1"
+
+var (
+	playersFlag = flag.Int("players", 5, "number of bots at the table")
+	rolesFlag   = flag.String("roles", defaultRoles, "non-villager roles, e.g. CursedWolf=1,WolfSeer=1,Seer=1; Villager fills the rest")
+)
+
 func main() {
+	flag.Parse()
+	count := *playersFlag
+	roleList, err := parseRoles(*rolesFlag, count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	nicknames = makeNicknames(count)
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Minute)
@@ -44,7 +61,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Phòng %s trên %s, 5 bot vào chơi.\n\n", code, base)
+	fmt.Printf("Phòng %s trên %s, %d bot vào chơi.\n\n", code, base, count)
 
 	out := newPrinter()
 	var bots []*bot
@@ -68,7 +85,7 @@ func main() {
 		out.names[b.id] = nick
 	}
 
-	startGame(ctx, bots)
+	startGame(ctx, bots, roleList)
 	for _, b := range bots {
 		b.role = b.c.Snapshot().View.Str("view", "me", "role")
 		fmt.Printf("  (demo) %s là %s\n", b.nick, b.role)
@@ -87,7 +104,7 @@ func main() {
 }
 
 // startGame is the host: seats, roles, short times, deal.
-func startGame(ctx context.Context, bots []*bot) {
+func startGame(ctx context.Context, bots []*bot, roleList map[string]int) {
 	host := bots[0]
 	order := make([]string, len(bots))
 	for i, b := range bots {
@@ -97,7 +114,7 @@ func startGame(ctx context.Context, bots []*bot) {
 		must(host.c.Send(ctx, map[string]any{"type": "command", "name": name, "args": args}))
 	}
 	send("setSeats", map[string]any{"order": order})
-	send("configureRoles", map[string]any{"roles": map[string]int{"Werewolf": 1, "Guard": 1, "Seer": 1, "Villager": 2}})
+	send("configureRoles", map[string]any{"roles": roleList})
 	send("configureTimers", map[string]any{"timers": map[string]any{
 		"roleView": 5000, "chiefElection": 5000, "nightStep": 5000, "announce": 5000, "day": 60000,
 		"nominationLock": 5000, "defense": 5000, "verdict": 5000, "hunterShot": 5000, "chiefSuccession": 5000,
@@ -127,4 +144,44 @@ func must(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// parseRoles reads "Role=n,Role=n" and fills the table up with villagers.
+func parseRoles(spec string, players int) (map[string]int, error) {
+	out := map[string]int{}
+	total := 0
+	for _, part := range strings.Split(spec, ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		name, num, ok := strings.Cut(part, "=")
+		n := 1
+		if ok {
+			var err error
+			if n, err = strconv.Atoi(num); err != nil {
+				return nil, fmt.Errorf("vai %q: số lượng không hợp lệ", part)
+			}
+		}
+		out[name] += n
+		total += n
+	}
+	if total > players {
+		return nil, fmt.Errorf("danh sách vai có %d vai, nhiều hơn %d người", total, players)
+	}
+	out["Villager"] += players - total
+	return out, nil
+}
+
+// makeNicknames gives the first five the classic names, then P6, P7, ...
+func makeNicknames(n int) []string {
+	out := make([]string, n)
+	for i := range out {
+		if i < 5 {
+			out[i] = []string{"An", "Binh", "Chi", "Dung", "Em"}[i]
+		} else {
+			out[i] = "P" + strconv.Itoa(i+1)
+		}
+	}
+	return out
 }
