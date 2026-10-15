@@ -351,7 +351,9 @@ App tính kết quả đêm theo đúng thứ tự sau:
 
 ## 9b. Thẻ vai (mô tả cho người chơi)
 
-Mỗi người thấy thẻ vai của mình khi xem vai. Danh sách vai của ván kèm mô tả là công khai. Thẻ có kích thước cố định, che mặc định, nhấn giữ mới hiện.
+Mỗi người thấy thẻ vai của mình khi xem vai. Danh sách vai của ván kèm phe và mô tả là công khai. Thẻ có kích thước cố định, che mặc định, nhấn giữ mới hiện.
+
+Phe và mục tiêu trên thẻ là **phe hiện tại** của người chơi, không phải phe gốc: Tiên tri bị nguyền vẫn giữ tên và mô tả “Tiên tri” nhưng phe/mục tiêu hiện Sói (từ bước Kiểm tra điện thoại); người trong cặp khác phe hiện “Phe thứ ba” với mục tiêu “Cặp đôi khác phe thắng khi chỉ còn hai người họ sống.” Thợ săn lộ vai khi chết: người sống chỉ thấy thẻ in sẵn của Thợ săn (không lộ phe, §1).
 
 | Vai | Phe | Mô tả ngắn |
 | --- | --- | --- |

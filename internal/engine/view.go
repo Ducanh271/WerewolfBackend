@@ -67,7 +67,7 @@ type PlayerView struct {
 	Alive    bool
 	Role     RoleID
 	Team     Team
-	Card     *RoleCard // the card of Role, set exactly when Role is
+	Card     *RoleCard // the card of Role, set exactly when Role is (see fillCards for its side)
 }
 
 // PublicVotes are the votes everybody sees (rules §4, §7b).

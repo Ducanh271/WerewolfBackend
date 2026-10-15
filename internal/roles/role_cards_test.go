@@ -34,13 +34,14 @@ func TestRoleCards_EveryRoleHasAFullCard_OnItsOwnTeam(t *testing.T) {
 }
 
 // Secrecy: the card on every phone has the same shape, whatever the role: the
-// same fields, all of them set.
+// same fields, all of them set. Before any curse or pair it shows the role's
+// own side.
 func TestRoleCards_SameShapeForEveryRole_EachPlayerSeesOnlyTheirOwn(t *testing.T) {
 	g := cupidTable(t)
 	g.Night()
 	for _, name := range all {
 		me := g.State().Players[g.Player(name)]
-		seen := g.As(name).OwnCard(me.Role).NoRoleExceptOwn().CardOf(name, me.Role)
+		seen := g.As(name).OwnCard(me.Role, me.Team).NoRoleExceptOwn().CardOf(name, me.Role, me.Team)
 		card := reflect.ValueOf(*seen.View().Me.RoleCard)
 		for i := 0; i < card.NumField(); i++ {
 			if card.Field(i).String() == "" {
@@ -50,15 +51,15 @@ func TestRoleCards_SameShapeForEveryRole_EachPlayerSeesOnlyTheirOwn(t *testing.T
 	}
 }
 
-// Rules §9b: the role list of the game, with each role's name and short
+// Rules §9b: the role list of the game, with each role's name, team and short
 // description, is public: the same on every phone, in the order of the table.
 func TestRoleCards_PublicRoleListCarriesNameAndDescription(t *testing.T) {
 	g := cupidTable(t)
 	g.Night()
 	var want []engine.RoleListCard
 	for _, id := range []engine.RoleID{Werewolf, CursedWolf, Villager, Seer, Guard, Witch, Hunter, Cupid} {
-		c := CardText(id)
-		want = append(want, engine.RoleListCard{Role: id, Name: c.Name, Description: c.Description})
+		c := CardText(id, engine.TeamNone)
+		want = append(want, engine.RoleListCard{Role: id, Name: c.Name, Team: c.Team, Description: c.Description})
 	}
 	for _, name := range all {
 		if got := g.As(name).View().RoleCards; !reflect.DeepEqual(got, want) {
@@ -74,27 +75,30 @@ func TestRoleCards_DeadPlayersAndTheEndScreenSeeEveryCard(t *testing.T) {
 	n.Wolf("An").Bites("Khoa").Wolf("Binh").Bites("Khoa")
 	g.Dawn().ExpectDead("Khoa")
 	for _, name := range all {
-		g.As("Khoa").CardOf(name, g.State().Players[g.Player(name)].Role)
+		p := g.State().Players[g.Player(name)]
+		g.As("Khoa").CardOf(name, p.Role, p.Team)
 	}
-	g.As("Em").CardOf("An", "").CardOf("Khoa", "")
+	g.As("Em").CardOf("An", "", engine.TeamNone).CardOf("Khoa", "", engine.TeamNone)
 
 	killOff(g, "An", "Em")
 	g.Day().Hanged("An")
 	g.ExpectPhase(engine.PhaseEnded)
 	for _, viewer := range []string{"Em", "Binh"} {
 		for _, name := range all {
-			g.As(viewer).CardOf(name, g.State().Players[g.Player(name)].Role)
+			p := g.State().Players[g.Player(name)]
+			g.As(viewer).CardOf(name, p.Role, p.Team)
 		}
 	}
 }
 
-// Extra cards: the curse shows from the phone check on, never before.
+// The curse shows from the phone check on, never before: the extra card, and
+// the role card turns to the wolves while keeping the Seer's name and ability.
 func TestStatusCards_CursedFromThePhoneCheckOn(t *testing.T) {
 	g := cupidTableWith(t, map[string]engine.RoleID{"Lan": Villager})
 	n := g.Night().CursedWolf("An").Curses("Em")
-	g.As("Em").StatusCards()
+	g.As("Em").StatusCards().OwnCard(Seer, engine.TeamVillage)
 	n.PhoneCheck()
-	g.As("Em").StatusCards(i18n.StatusCursed).OwnCard(Seer) // the role card stays the Seer's
+	g.As("Em").StatusCards(i18n.StatusCursed).OwnCard(Seer, engine.TeamWolves)
 	g.As("Chi").StatusCards()
 	g.As("Hoa").StatusCards(i18n.StatusChief)
 }
@@ -130,7 +134,7 @@ func TestStatusCards_Lovers(t *testing.T) {
 	n := g.Night().Cupid("Lan").Pairs("Em", "Chi")
 	g.As("Em").StatusCards()
 	n.PhoneCheck()
-	g.As("Em").StatusCards(i18n.StatusLovers)
+	g.As("Em").StatusCards(i18n.StatusLovers).OwnCard(Seer, engine.TeamVillage).CardOf("Chi", Villager, engine.TeamVillage)
 	g.As("Chi").StatusCards(i18n.StatusLovers)
 	g.As("Lan").StatusCards()
 	if text := loverCardText(t, g, "Em"); !strings.HasPrefix(text, "Bạn và Chi yêu nhau.") {
@@ -139,8 +143,8 @@ func TestStatusCards_Lovers(t *testing.T) {
 	n.CursedWolf("An").Curses("Em")
 	g.As("Chi").StatusCards(i18n.StatusLovers) // not before the check
 	n.PhoneCheck()
-	g.As("Em").StatusCards(i18n.StatusCursed, i18n.StatusLoversCross)
-	g.As("Chi").StatusCards(i18n.StatusLoversCross)
+	g.As("Em").StatusCards(i18n.StatusCursed, i18n.StatusLoversCross).OwnCard(Seer, engine.TeamLovers)
+	g.As("Chi").StatusCards(i18n.StatusLoversCross).OwnCard(Villager, engine.TeamLovers).CardOf("Em", Seer, engine.TeamLovers)
 	if text := loverCardText(t, g, "Chi"); !strings.HasPrefix(text, "Bạn và Em thuộc phe thứ ba") {
 		t.Fatalf("Chi's lover card reads %q", text)
 	}
@@ -149,8 +153,31 @@ func TestStatusCards_Lovers(t *testing.T) {
 // Once on the third team, always on it: the card stays after the couple broke.
 func TestStatusCards_CrossTeamCardStaysAfterThePartnerDied(t *testing.T) {
 	g := pairedDay1(t, nil, "Binh", "Chi")
-	g.As("Chi").StatusCards(i18n.StatusLoversCross)
+	g.As("Chi").StatusCards(i18n.StatusLoversCross).OwnCard(Villager, engine.TeamLovers)
 	g.Day().Hanged("Binh")
 	g.ExpectAlive("Chi")
-	g.As("Chi").StatusCards(i18n.StatusLoversCross)
+	g.As("Chi").StatusCards(i18n.StatusLoversCross).OwnCard(Villager, engine.TeamLovers)
+	g.As("Binh").CardOf("Chi", Villager, engine.TeamLovers).CardOf("Binh", Werewolf, engine.TeamLovers)
+}
+
+// A cross-team couple shows the third team on both cards from the phone check
+// that told the pair; before it, each card shows the player's own side.
+func TestRoleCards_CrossTeamCouple_ShowsTheThirdTeam(t *testing.T) {
+	g := cupidTable(t)
+	n := g.Night().Cupid("Lan").Pairs("An", "Em")
+	g.As("Em").OwnCard(Seer, engine.TeamVillage)
+	g.As("An").OwnCard(CursedWolf, engine.TeamWolves)
+	n.PhoneCheck()
+	g.As("Em").OwnCard(Seer, engine.TeamLovers).CardOf("An", CursedWolf, engine.TeamLovers)
+	g.As("An").OwnCard(CursedWolf, engine.TeamLovers)
+}
+
+// Only a Hunter's role is public when he dies, never his side: the living see
+// his card as printed, the dead see the side he was on.
+func TestRoleCards_RevealedCursedHunter_TheLivingSeeThePrintedCard(t *testing.T) {
+	g := cursedTable(t)
+	g.Night().CursedWolf("An").Curses("Phuc").PhoneCheck().Witch("Giang").Poisons("Phuc")
+	g.Dawn().ExpectDead("Phuc")
+	g.As("Hoa").CardOf("Phuc", Hunter, engine.TeamNone)
+	g.As("Phuc").OwnCard(Hunter, engine.TeamWolves)
 }

@@ -18,8 +18,8 @@ func TestEncode_CardsHaveTheSameKeysForEveryone(t *testing.T) {
 	}{
 		{"role card", []any{engine.RoleCard{}, engine.RoleCard{Name: "Sói", Team: "Sói", Goal: "g", Description: "d"}},
 			[]string{"description", "goal", "name", "team"}},
-		{"role list entry", []any{engine.RoleListCard{}, engine.RoleListCard{Role: "Seer", Name: "Tiên tri", Description: "d"}},
-			[]string{"description", "name", "role"}},
+		{"role list entry", []any{engine.RoleListCard{}, engine.RoleListCard{Role: "Seer", Name: "Tiên tri", Team: "Dân", Description: "d"}},
+			[]string{"description", "name", "role", "team"}},
 		{"extra card", []any{engine.StatusCard{}, engine.StatusCard{Kind: "cursed", Name: "Bị nguyền", Text: "t"}},
 			[]string{"kind", "name", "text"}},
 	}

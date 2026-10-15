@@ -48,8 +48,9 @@ func Vi(key string, names ...string) string {
 	return strings.Replace(text, "%s", strings.Join(names, ", "), 1)
 }
 
-// RoleCard is the text of one role's card (rules §9b). Every card has all four
-// fields set, so cards cannot be told apart by their shape.
+// RoleCard is the text of one role's card as printed (rules §9b): Team and
+// Goal are the role's own side. A phone shows the player's current side
+// instead (see Side). Every card has all four fields set.
 type RoleCard struct {
 	Name        string
 	Team        string
@@ -57,13 +58,36 @@ type RoleCard struct {
 	Description string
 }
 
-// Team labels and goals of the cards (rules §9b "Mục tiêu theo phe").
+// Team labels and goals of the cards (rules §9b "Mục tiêu theo phe", §8).
 const (
 	teamVillage = "Dân"
 	teamWolves  = "Sói"
+	teamThird   = "Phe thứ ba"
 	goalVillage = "Dân thắng khi không còn con Sói nào."
 	goalWolves  = "Sói thắng khi số Sói ≥ số Dân."
+	goalThird   = "Cặp đôi khác phe thắng khi chỉ còn hai người họ sống."
 )
+
+// The sides a card can show.
+const (
+	SideVillage = "village"
+	SideWolves  = "wolves"
+	SideThird   = "third" // a cross-team couple
+)
+
+// Side returns the team label and the goal of a side; an unknown side returns
+// the side itself twice.
+func Side(side string) (team, goal string) {
+	switch side {
+	case SideVillage:
+		return teamVillage, goalVillage
+	case SideWolves:
+		return teamWolves, goalWolves
+	case SideThird:
+		return teamThird, goalThird
+	}
+	return side, side
+}
 
 // roleCardOrder is the order of the rules §9b table; the public role list of a
 // game follows it. Keys are the role IDs.

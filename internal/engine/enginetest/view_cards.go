@@ -7,24 +7,36 @@ import (
 	"masoi/internal/i18n"
 )
 
-// CardText is the card of a role as rules §9b writes it (from i18n).
-func CardText(role engine.RoleID) engine.RoleCard {
+// CardText is the card of a role as rules §9b writes it (from i18n), shown on
+// a side: TeamVillage, TeamWolves, or TeamLovers for the third team (a
+// cross-team couple). TeamNone keeps the role's own side, as printed.
+func CardText(role engine.RoleID, side engine.Team) engine.RoleCard {
 	c, _ := i18n.Card(string(role))
-	return engine.RoleCard{Name: c.Name, Team: c.Team, Goal: c.Goal, Description: c.Description}
+	out := engine.RoleCard{Name: c.Name, Team: c.Team, Goal: c.Goal, Description: c.Description}
+	switch side {
+	case engine.TeamVillage:
+		out.Team, out.Goal = i18n.Side(i18n.SideVillage)
+	case engine.TeamWolves:
+		out.Team, out.Goal = i18n.Side(i18n.SideWolves)
+	case engine.TeamLovers:
+		out.Team, out.Goal = i18n.Side(i18n.SideThird)
+	}
+	return out
 }
 
-// OwnCard checks the viewer's own role card.
-func (s *Seen) OwnCard(role engine.RoleID) *Seen {
+// OwnCard checks the viewer's own role card, on the side it must show.
+func (s *Seen) OwnCard(role engine.RoleID, side engine.Team) *Seen {
 	s.g.t.Helper()
-	want := CardText(role)
+	want := CardText(role, side)
 	if s.view.Me == nil || s.view.Me.RoleCard == nil || *s.view.Me.RoleCard != want {
 		s.g.t.Fatalf("%s should see the card of %s %+v, sees %+v", s.who, role, want, s.view.Me)
 	}
 	return s
 }
 
-// CardOf checks the card the viewer sees on name's seat; "" means no card.
-func (s *Seen) CardOf(name string, role engine.RoleID) *Seen {
+// CardOf checks the card the viewer sees on name's seat, on the given side
+// (see CardText); role "" means no card.
+func (s *Seen) CardOf(name string, role engine.RoleID, side engine.Team) *Seen {
 	s.g.t.Helper()
 	got := s.seat(name).Card
 	if role == "" {
@@ -33,7 +45,7 @@ func (s *Seen) CardOf(name string, role engine.RoleID) *Seen {
 		}
 		return s
 	}
-	if want := CardText(role); got == nil || *got != want {
+	if want := CardText(role, side); got == nil || *got != want {
 		s.g.t.Fatalf("%s should see %s's card %+v, sees %+v", s.who, name, want, got)
 	}
 	return s

@@ -48,10 +48,11 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
   - Decided: once a couple is cross-team (third team), both lovers stay on the third team for good, also after one of them died (`LoversLink.ThirdTeam`, frozen at the first lover's death). They win only as the couple: never with the wolves or the village (`Outcome.Winners`).
   - Decided: 0 plain wolves allowed when the Cursed wolf or the Wolf seer is in the game (wording of rules §2).
 - [x] **T20b Role cards.** Card texts of rules §9b in `i18n/vi.go`; `me.roleCard`, `me.statusCards`, public `roleCards`, every seat's card for dead players and at the end; same shape for every role.
+  - Decided: a card's team and goal are the player's current side (cursed → Sói; cross-team couple → "Phe thứ ba"); the public role list carries each role's own team.
 
 ## Milestone 5 — Frontend
 
-- [ ] **T21 Frontend secrecy checklist.**
+- [ ] **T21 Frontend guide (docs/frontend) — do LAST, after the backend backlog is done.**
   - Role cards have a fixed size, are hidden by default, and are revealed only by press-and-hold.
 
 ## Open questions (ask the user, don't guess)
