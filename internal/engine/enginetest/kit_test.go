@@ -190,13 +190,16 @@ func TestRealDriver_NightThenDawnPlaysTheWholeNight(t *testing.T) {
 	}
 }
 
-func TestRealDriver_SecondNightWaitsForTheDayTask(t *testing.T) {
-	failsWith(t, "not built yet", func(tb testing.TB) {
-		g := NewGame(tb, fiveSeats, fiveCast())
-		g.Night()
-		g.Dawn()
-		g.Day().NobodyHanged()
-	})
+func TestRealDriver_DayThenSecondNight(t *testing.T) {
+	g := NewGame(t, fiveSeats, fiveCast())
+	g.Night()
+	g.Dawn()
+	g.Day().NobodyHanged()
+	g.ExpectPhase(engine.PhaseDusk)
+	g.Night()
+	if g.State().Phase != engine.PhaseNight || g.State().Night != 2 {
+		t.Fatalf("after the day: phase %s night %d, want Night 2", g.State().Phase, g.State().Night)
+	}
 }
 
 // narratorEvents plays night 1 and returns what the narrator is told.

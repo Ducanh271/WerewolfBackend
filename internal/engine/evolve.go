@@ -44,6 +44,9 @@ func Evolve(s State, e Event) State {
 	if out, ok := evolveChief(s, e); ok {
 		return out
 	}
+	if out, ok := evolveDay(s, e); ok {
+		return out
+	}
 	if out, ok := evolveNight(s, e); ok {
 		return out
 	}

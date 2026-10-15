@@ -10,6 +10,9 @@ var vi = map[string]string{
 	DawnNobodyDied:  "Không có ai chết.",
 	ChiefElected:    "%s đã được bầu làm Trưởng làng.",
 	ChiefSucceeded:  "Trưởng làng mới là %s.",
+	DayHanged:       "%s đã bị treo.",
+	DaySpared:       "Làng tha cho %s.",
+	DayNobodyHanged: "Không ai bị treo.",
 	ChiefLost:       "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
 }
 

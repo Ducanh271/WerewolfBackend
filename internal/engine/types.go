@@ -50,6 +50,8 @@ const (
 	PhaseEnded
 	PhaseChiefElection   // public vote for the Chief, between role view and night 1
 	PhaseChiefSuccession // the dead Chief names a successor
+	PhaseDusk            // the day is decided; the narrator moves on to the night
+	PhaseNominationLock  // everybody chose; a short countdown before the top nominee is put on trial
 )
 
 func (p Phase) String() string {
@@ -76,6 +78,10 @@ func (p Phase) String() string {
 		return "ChiefElection"
 	case PhaseChiefSuccession:
 		return "ChiefSuccession"
+	case PhaseDusk:
+		return "Dusk"
+	case PhaseNominationLock:
+		return "NominationLock"
 	default:
 		return "Unknown"
 	}

@@ -2,12 +2,13 @@ package enginetest
 
 import (
 	"errors"
+	"fmt"
 
 	"masoi/internal/engine"
 )
 
 // Driver turns the steps of a scenario into engine commands. The default
-// driver plays the real night machine (T4); the day half arrives with T7.
+// driver plays the real night machine (T4) and the real day machine (T7).
 type Driver interface {
 	// StartNight returns the commands that bring the game into the next night
 	// (for the first night: the role-view countdown runs out).
@@ -21,9 +22,9 @@ type Driver interface {
 	Hang(s engine.State, who engine.PlayerID) ([]engine.Command, error)
 }
 
-// ErrDayNotBuilt is returned by the default driver for the day and for nights
-// after the first.
-var ErrDayNotBuilt = errors.New("the day phase machine is not built yet (task T7)")
+// ErrWrongStage is returned by the default driver when a step is asked for in
+// a game phase it cannot start from.
+var ErrWrongStage = errors.New("the game is not in a phase this step can start from")
 
 // realDriver drives the engine's own night machine.
 type realDriver struct {
@@ -36,8 +37,11 @@ const electionSeed = 1
 // StartNight runs the role view and the Chief election out, then night 1.
 // Like EndNight it works on a private copy because each step changes Seq.
 func (d realDriver) StartNight(s engine.State) ([]engine.Command, error) {
+	if s.Phase == engine.PhaseDusk { // night 2 and later follow a day
+		return []engine.Command{engine.PhaseTimeout{Phase: s.Phase, Seq: s.Seq}}, nil
+	}
 	if s.Phase != engine.PhaseRoleView && s.Phase != engine.PhaseChiefElection {
-		return nil, ErrDayNotBuilt // night 2 and later follow a day
+		return nil, fmt.Errorf("%w: cannot start a night from %s", ErrWrongStage, s.Phase)
 	}
 	var cmds []engine.Command
 	play := func(c engine.Command) error {
@@ -79,12 +83,4 @@ func (realDriver) EndNight(s engine.State) ([]engine.Command, error) {
 		s = engine.Fold(s, evs...)
 	}
 	return cmds, nil
-}
-
-func (realDriver) NobodyHanged(engine.State) ([]engine.Command, error) {
-	return nil, ErrDayNotBuilt
-}
-
-func (realDriver) Hang(engine.State, engine.PlayerID) ([]engine.Command, error) {
-	return nil, ErrDayNotBuilt
 }

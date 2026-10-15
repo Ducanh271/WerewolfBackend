@@ -98,6 +98,8 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 		return append([]Event{ChiefElected{Chief: tallyChief(s, cmd.Seed)}}, startNight(s, 1)...), nil
 	case PhaseChiefSuccession:
 		return []Event{ChiefLost{Former: s.Succession.Former}}, nil
+	case PhaseDawn, PhaseDay, PhaseNominationLock, PhaseTrial, PhaseVerdict, PhaseDusk:
+		return decideDayTimeout(s)
 	case PhaseNight:
 		next := nextNightEvent(s, s.Night, s.NightStep)
 		if _, over := next.(NightEnded); over {

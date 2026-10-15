@@ -20,3 +20,13 @@ const (
 	// ChiefLost: the dead Chief named nobody in time.
 	ChiefLost = "chief.lost"
 )
+
+// Day announcements (rules §4), read to everybody. No role is ever named.
+const (
+	// DayHanged: the village killed the player on trial.
+	DayHanged = "day.hanged"
+	// DaySpared: the village spared the player on trial.
+	DaySpared = "day.spared"
+	// DayNobodyHanged: the day ended without an execution.
+	DayNobodyHanged = "day.nobody_hanged"
+)

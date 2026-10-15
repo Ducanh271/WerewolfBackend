@@ -55,7 +55,7 @@ Randomness (role dealing) is a command input: `DealRoles{Seed int64}`, dealt by 
 ### State (sketch)
 ```go
 type State struct {
-    Phase      Phase          // Lobby, RoleView, Night, Dawn, Day, Trial, Verdict, HunterShot, Ended
+    Phase      Phase          // Lobby, RoleView, Night, Dawn, Day, NominationLock, Trial, Verdict, Dusk, HunterShot, Ended
     Seq        int            // increments on every phase or night step change
     Night      int            // 1-based night counter
     NightStep  int            // night steps called so far; current step = steps[NightStep-1]

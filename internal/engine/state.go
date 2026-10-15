@@ -43,10 +43,6 @@ type NightActions struct {
 	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
 }
 
-// DayState holds nominations, skip votes, the trial and the day clock.
-// Filled in by the day phase task.
-type DayState struct{}
-
 // LoversLink is the pair created by Cupid.
 type LoversLink struct {
 	A PlayerID
@@ -60,12 +56,13 @@ type Settings struct {
 	// number of players.
 	Roles map[RoleID]int
 
-	RoleView   time.Duration // everyone looks at their role after the deal
-	NightStep  time.Duration // each role's turn at night, real or fake
-	Day        time.Duration // discussion and nominations
-	Defense    time.Duration // bào chữa
-	Verdict    time.Duration // vote giết hay tha
-	HunterShot time.Duration // thợ săn chọn người
+	RoleView       time.Duration // everyone looks at their role after the deal
+	NightStep      time.Duration // each role's turn at night, real or fake
+	Day            time.Duration // discussion and nominations
+	Defense        time.Duration // bào chữa
+	Verdict        time.Duration // vote giết hay tha
+	NominationLock time.Duration // đếm ngược chốt sau khi mọi người đã chọn đề cử
+	HunterShot     time.Duration // thợ săn chọn người
 
 	ChiefElection   time.Duration // public vote for the Chief
 	ChiefSuccession time.Duration // the dead Chief names a successor
@@ -74,12 +71,13 @@ type Settings struct {
 // DefaultSettings returns the default timers from rules §2.
 func DefaultSettings() Settings {
 	return Settings{
-		RoleView:   30 * time.Second,
-		NightStep:  30 * time.Second,
-		Day:        7 * time.Minute,
-		Defense:    1 * time.Minute,
-		Verdict:    30 * time.Second,
-		HunterShot: 15 * time.Second,
+		RoleView:       30 * time.Second,
+		NightStep:      30 * time.Second,
+		Day:            7 * time.Minute,
+		Defense:        1 * time.Minute,
+		Verdict:        30 * time.Second,
+		NominationLock: 10 * time.Second,
+		HunterShot:     15 * time.Second,
 
 		ChiefElection:   1 * time.Minute,
 		ChiefSuccession: 15 * time.Second,
@@ -124,6 +122,7 @@ func (s State) clone() State {
 			out.ChiefVotes[voter] = cand
 		}
 	}
+	out.Day = s.Day.clone()
 	if s.Lovers != nil {
 		lovers := *s.Lovers
 		out.Lovers = &lovers

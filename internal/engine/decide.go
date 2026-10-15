@@ -21,6 +21,12 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideVoteChief(s, cmd)
 	case NameSuccessor:
 		return decideNameSuccessor(s, cmd)
+	case Nominate:
+		return decideNominate(s, cmd)
+	case SkipDay:
+		return decideSkipDay(s, cmd)
+	case CastVerdict:
+		return decideCastVerdict(s, cmd)
 	case PhaseTimeout:
 		return decidePhaseTimeout(s, cmd)
 	}

@@ -20,7 +20,9 @@ func (g *Game) Night() *Night {
 	case stageDawn:
 		g.t.Fatalf("two nights in a row: between nights there is a day; call g.Day().NobodyHanged() or g.Day().Hanged(...)")
 	case stageDay:
-		g.t.Fatalf("Night() called before the day ended: finish it with NobodyHanged() or Hanged(...)")
+		if g.state.Phase != engine.PhaseDusk { // a day played by hand may already be over
+			g.t.Fatalf("Night() called before the day ended: finish it with NobodyHanged() or Hanged(...)")
+		}
 	}
 	if g.stage != stageElected { // the election already started night 1
 		cmds, err := g.driver.StartNight(g.state)

@@ -1,5 +1,7 @@
 package enginetest
 
+import "masoi/internal/engine"
+
 // Day starts the day after a dawn. Finish it with NobodyHanged or Hanged;
 // only then may the next Night begin.
 func (g *Game) Day() *Day {
@@ -12,6 +14,12 @@ func (g *Game) Day() *Day {
 		g.t.Fatalf("Day() called twice: finish the day with NobodyHanged() or Hanged(...)")
 	default:
 		g.t.Fatalf("Day() called but no night has passed: play Night() and Dawn() first")
+	}
+	switch g.state.Phase {
+	case engine.PhaseDawn: // the narrator has read the announcement
+		g.TimeOut()
+	case engine.PhaseChiefSuccession:
+		g.t.Fatalf("Day() called while the dead Chief still names a successor: call NameSuccessor(...) or TimeOut() first")
 	}
 	g.stage = stageDay
 	return &Day{g: g}

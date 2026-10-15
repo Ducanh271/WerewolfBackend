@@ -44,4 +44,9 @@ var (
 	ErrTargetIsWolf    = errors.New("the pack cannot bite a wolf")
 	ErrAlreadyActed    = errors.New("already acted this night")
 	ErrSameGuardTarget = errors.New("the guard cannot protect the same player two nights in a row")
+
+	// Day (rules §4).
+	ErrSelfNomination = errors.New("a player cannot nominate themselves")
+	ErrAlreadySpared  = errors.New("this player was already spared today")
+	ErrOnTrial        = errors.New("the player on trial cannot vote")
 )

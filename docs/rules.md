@@ -132,14 +132,19 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 ### Thảo luận và xử trảm
 
 1. **Thảo luận và đề cử** dùng chung đồng hồ ban ngày **7 phút**. Đồng hồ dừng trong lúc bào chữa và vote giết hay tha.
-    - Nếu **trên 66%** người còn sống bấm nút bỏ qua, phần thời gian còn lại bị bỏ, chuyển sang đêm. Nút bỏ qua dùng khi mọi người không còn gì để bàn; ai vote đề cử thì trạng thái bỏ qua của người đó tự huỷ.
-2. **Đề cử**: mỗi người vote một người để đưa lên giàn, hoặc không vote ai.
-    - Người nhiều phiếu nhất lên giàn, kể cả khi số người không đề cử nhiều hơn.
-    - Hòa đề cử: người **bị vote trước** lên giàn trước.
+    - **Nút bỏ qua**: mỗi người bấm một phiếu (Trưởng làng **không** x2), bật tắt được. Nếu số người bấm **lớn hơn 66%** số người còn sống thì phần thời gian còn lại bị bỏ, chuyển sang đêm. Chỉ khi đề cử **một người** thì bỏ qua của người đó mới tự huỷ; chọn “không ai” thì giữ nguyên.
+2. **Đề cử**: mỗi người còn sống chọn một người khác để đưa lên giàn (không được tự đề cử mình), hoặc chọn “không ai”. Mọi người được đổi lựa chọn cho đến khi đề cử đóng.
+    - Khi **mọi người còn sống** đã chọn một người hoặc “không ai” và có ít nhất một người được đề cử, bắt đầu **đếm ngược chốt 10 giây**. Trong lúc đếm, ai cũng đổi được lựa chọn, và **mỗi lần có người đổi thì đếm lại từ đầu**. Hết 10 giây không ai đổi thì chốt: người nhiều phiếu nhất lên giàn, kể cả khi số người không đề cử nhiều hơn. Đồng hồ ban ngày tạm dừng trong lúc đếm ngược chốt, nút bỏ qua vẫn bấm được.
+    - Nếu mọi người đều chọn “không ai” (hoặc ai đổi khiến không còn ai được đề cử) thì không đếm ngược, thảo luận tiếp. Về sau có người đổi sang đề cử một người thì đếm ngược chốt bắt đầu.
+    - Phiếu của Trưởng làng tính **x2**.
+    - Hòa đề cử: người có phiếu **còn hiệu lực đến sớm nhất** lên giàn. Phiếu đã đổi hoặc rút không tính; đổi phiếu thì phiếu mới tính từ lúc đổi.
+    - Người đã được **tha** trong ngày không thể bị đề cử lại cho đến khi sang đêm.
 3. **Bào chữa** 1 phút. Người trên giàn mất quyền vote.
-4. **Vote giết hay tha**. Chỉ treo khi số phiếu giết **lớn hơn** số phiếu tha; hòa thì tha.
-5. Nếu **tha**: đề cử lại từ đầu (bước 2) nếu đồng hồ ban ngày còn giờ. Nếu **treo**: người đó chết, sang đêm.
-6. Hết đồng hồ ban ngày mà chưa treo ai thì sang đêm.
+4. **Vote giết hay tha**. Người trên giàn không được vote; ai không vote coi như bỏ phiếu trắng. Phiếu của Trưởng làng tính **x2** ở cả giết lẫn tha. Chỉ treo khi số phiếu giết **lớn hơn** số phiếu tha; hòa thì tha. Vote đóng khi mọi người được vote đã vote hoặc hết 30 giây.
+5. Nếu **tha**: phiếu đề cử và phiếu bỏ qua bị xoá sạch, đề cử lại từ đầu (bước 2) nếu đồng hồ ban ngày còn giờ. Danh sách người đã được tha **giữ suốt ngày**. Nếu **treo**: người đó chết, sang đêm. Người bị treo **không lật vai** (§1).
+6. **Hết đồng hồ ban ngày**:
+    - Nếu có người được đề cử thì người nhiều phiếu nhất vẫn bào chữa 1 phút và bị vote giết/tha; xong sang đêm dù kết quả thế nào.
+    - Nếu không ai được đề cử thì sang đêm ngay.
 
 ## 5. Vai phe Sói
 
