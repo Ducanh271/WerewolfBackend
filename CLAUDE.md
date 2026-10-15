@@ -60,6 +60,8 @@ Run `make fmt test lint` before declaring a task done. All must pass.
 | Máy làm loa | `Speaker` |
 | Đề cử / giàn / bào chữa / giết-tha | `Nominate` / `Trial` / `Defense` / `Verdict` |
 
+- When the architecture changes (layers, dependency rules, request flow, config), update `docs/huong-dan-du-an.md` (Vietnamese project guide) in the same change.
+
 ## Don't
 - Don't write frontend code. Don't touch files outside the task's scope.
 - Don't add features from `docs/rules.md` §10 (out of scope).
