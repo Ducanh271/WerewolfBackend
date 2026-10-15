@@ -31,14 +31,13 @@ func TestView_CursedSeer_ResultsStayHers(t *testing.T) {
 	g.As("An").SeerResults(0)
 }
 
-// witchTable is the usual table with the (stand-in) Witch in Lan's seat; she
-// still has her heal potion.
+// witchTable is the usual table with the Witch in Lan's seat; she still has
+// her heal potion.
 func witchTable(t *testing.T) *Game {
-	g := NewGame(t,
+	return NewGame(t,
 		Seats(all...),
 		Cast("An", Werewolf, "Binh", Werewolf, "Chi", Werewolf, "Dung", Guard, "Em", Seer,
 			"Phuc", Villager, "Giang", Villager, "Hoa", Villager, "Khoa", Villager, "Lan", Witch))
-	return g.HandBuild(func(s *engine.State) { s.Players["Lan"].Flags["heal"] = 1 })
 }
 
 func TestView_Witch_SeesTheBittenOnlyOnHerTurnWhileSheCanHeal(t *testing.T) {
@@ -53,7 +52,7 @@ func TestView_Witch_SeesTheBittenOnlyOnHerTurnWhileSheCanHeal(t *testing.T) {
 			bitePhuc(n.Guard("Dung").Protects("Phuc")).TurnOf(Witch)
 		}, "Phuc"},
 		{"heal potion used", func(g *Game, n *Night) {
-			g.HandBuild(func(s *engine.State) { s.Players["Lan"].Flags["heal"] = 0 })
+			g.HandBuild(func(s *engine.State) { s.Players["Lan"].Flags = map[string]int{"witch.heal_used": 1} })
 			bitePhuc(n).TurnOf(Witch)
 		}, ""},
 		{"before her turn", func(_ *Game, n *Night) { bitePhuc(n) }, ""},

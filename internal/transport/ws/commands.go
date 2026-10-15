@@ -131,6 +131,12 @@ var commandTable = map[string]commandSpec{
 	"guardProtect": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.GuardProtect{By: by, Target: a.Target}
 	}),
+	"witchHeal": spec(func(_ noArgs, by engine.PlayerID) engine.Command {
+		return roles.WitchHeal{By: by}
+	}),
+	"witchPoison": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
+		return roles.WitchPoison{By: by, Target: a.Target}
+	}),
 	"seerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.SeerCheck{By: by, Target: a.Target}
 	}),

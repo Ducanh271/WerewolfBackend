@@ -90,8 +90,10 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `wolfVote` | `target` | pack step | `WolfVote` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
+| `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not visited |
+| `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not visited |
 
-Later roles add their own rows (Witch, Visitor, Cursed wolf, Wolf seer,
+Later roles add their own rows (Visitor, Cursed wolf, Wolf seer,
 Detective, Cupid, Hunter). The server **rejects** any `seed` field and never
 accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 
@@ -119,7 +121,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `winner`, `draw` | all, at the end | winning team, or a draw |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
 | `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `turn` |
-| `me.turn` | player being called | `step`; `visited: true` → show "Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng" and no action; `bitten` (Witch with heal potion) |
+| `me.turn` | player being called | `step`; `visited: true` → show "Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng" and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
 | `lover` | the two lovers | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
 | `full`, `secrets` | dead players, everybody after the game | every role and team, tonight's choices, the lovers pair |

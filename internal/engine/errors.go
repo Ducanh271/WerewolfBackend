@@ -46,8 +46,10 @@ var (
 	ErrNotYourTurn     = errors.New("not your turn")
 	ErrNotAlive        = errors.New("player is dead")
 	ErrInvalidTarget   = errors.New("invalid target")
-	ErrTargetIsWolf    = errors.New("the pack cannot bite a wolf")
 	ErrAlreadyActed    = errors.New("already acted this night")
+	ErrVisited         = errors.New("visited by the Visitor tonight: no ability")
+	ErrPotionUsed      = errors.New("this potion is already used up")
+	ErrNothingToHeal   = errors.New("nobody is bitten tonight")
 	ErrSameGuardTarget = errors.New("the guard cannot protect the same player two nights in a row")
 
 	// Day (rules §4).

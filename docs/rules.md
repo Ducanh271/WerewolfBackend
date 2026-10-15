@@ -164,6 +164,7 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 ### Sói
 
 - Mỗi đêm, kể cả đêm đầu, bầy vote chọn 1 người để cắn. App hiện phiếu từng con theo thời gian thực, được đổi phiếu thoải mái.
+- Bầy được cắn **bất kỳ người sống nào**, kể cả đồng đội sói và người vừa bị nguyền (cắn đồng đội để lấy lòng tin là nước đi hợp lệ). Thông báo buổi sáng không nêu vai.
 - Hết giờ, người có **quá nửa số phiếu** của bầy bị cắn. Không ai quá nửa thì đêm đó không ai bị cắn.
 - Con sói bị Nguyệt Nữ ghé không được vote; số phiếu của bầy tính trên những con còn được vote. Nếu đó là con sói duy nhất thì đêm đó không ai bị cắn.
 
@@ -172,7 +173,7 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 - Được gọi riêng **trước bầy sói**, chỉ trong **3 đêm đầu**. Nguyền **1 lần duy nhất** trong game.
 - Việc nguyền có hiệu lực **ngay lập tức**: người bị nguyền nhận thông báo trên điện thoại, và ngay đêm đó họ được gọi dậy cắn cùng bầy. Bầy sói thấy đồng bọn mới trên điện thoại. Khi chơi trực tiếp, mỗi đêm đến lượt Sói nguyền, **tất cả điện thoại đều rung nhẹ**, để không ai biết Sói nguyền có nguyền hay không. Khi chơi online thì chỉ cần thông báo.
 - Người bị nguyền chuyển sang phe sói và **giữ nguyên năng lực** của vai cũ (Tiên tri, Bảo vệ, Thợ săn…).
-- Vì người bị nguyền đã là sói, bầy **không thể cắn** người đó; app chặn lựa chọn này. Đêm nguyền bầy vẫn cắn người khác bình thường.
+- Bầy vẫn cắn được người vừa bị nguyền như mọi người sống khác (xem “Sói”).
 - Bảo vệ **không chặn được** việc nguyền. Tiên tri và Thám tử soi người bị nguyền ra sói.
 - Bị Nguyệt Nữ ghé ở đêm 1 hoặc 2: lượt nguyền chưa mất, đêm sau dùng được. Bị ghé ở **đêm 3**: mất nguyền luôn (không gọi sang đêm 4, vì như vậy sẽ lộ là bị ghé).
 - Hết 3 đêm chưa nguyền thì mất chức năng, trở thành sói thường.
@@ -205,7 +206,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 - Có **1 bình cứu** và **1 bình độc** cho cả game. Được dùng cả hai trong cùng một đêm.
 - **Bình cứu**: khi còn bình cứu, phù thủy được biết người bị sói cắn đêm đó và chọn cứu hay không. Được tự cứu mình. Phù thủy **không biết** người đó có được Bảo vệ che hay không, nên có thể phí bình.
 - Khi đã hết bình cứu, phù thủy không còn được biết ai bị cắn.
-- **Bình độc**: giết 1 người bất kỳ. Bảo vệ không chặn được.
+- **Bình độc**: giết 1 người sống bất kỳ, kể cả chính mình. Bảo vệ không chặn được.
 
 ### Thợ săn
 
@@ -297,7 +298,7 @@ App tính kết quả đêm theo đúng thứ tự sau:
 | Thuốc độc vào người được Bảo vệ che | Vẫn chết |
 | Nguyệt Nữ ghé con sói duy nhất còn sống | Không ai bị cắn, loa báo “Không có ai chết” |
 | Nguyền trúng Tiên tri, Bảo vệ, Thợ săn | Sang phe sói, giữ nguyên năng lực |
-| Bầy sói muốn cắn người vừa bị nguyền | Không được, người đó đã là sói |
+| Bầy sói cắn người vừa bị nguyền | Cắn được, người đó chết như bình thường |
 | Người trong cặp đôi bị nguyền | Tính lại phe cặp đôi, đổi màu liên kết |
 | Thợ săn chết theo người yêu hoặc vì thuốc độc | Vẫn được bắn |
 

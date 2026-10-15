@@ -123,6 +123,17 @@ func (s *Seen) Bitten(name string) *Seen {
 	return s
 }
 
+// BiteShown checks whether the viewer is shown the bite information on their
+// turn; with Bitten("") it means "nobody was bitten".
+func (s *Seen) BiteShown(want bool) *Seen {
+	s.g.t.Helper()
+	got := s.view.Me != nil && s.view.Me.Turn != nil && s.view.Me.Turn.BiteShown
+	if got != want {
+		s.g.t.Fatalf("%s: bite information shown=%v, want %v", s.who, got, want)
+	}
+	return s
+}
+
 // Cursed checks the viewer's curse notice.
 func (s *Seen) Cursed(want bool) *Seen {
 	s.g.t.Helper()

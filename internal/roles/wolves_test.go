@@ -6,6 +6,8 @@ import (
 	"masoi/internal/engine"
 	"masoi/internal/i18n"
 	"masoi/internal/roles"
+
+	. "masoi/internal/engine/enginetest"
 )
 
 func TestNight_TwoOfThreeWolvesBite_TargetDiesAndNamesAreAnnounced(t *testing.T) {
@@ -56,19 +58,37 @@ func TestNight_WolfChangesVote_LastVoteCounts(t *testing.T) {
 	g.Dawn().ExpectDead("Giang")
 }
 
-func TestNight_WolvesCannotBiteAWolf(t *testing.T) {
+// Biting a fellow wolf to gain the village's trust is a legal move (rules §5).
+// The morning announcement reads the name only, never the role.
+func TestNight_PackBitesOneOfItsOwn_WolfDiesAndRoleStaysHidden(t *testing.T) {
 	g := newTable(t)
-	g.Night().
-		Wolf("An").CannotBite("Binh", engine.ErrTargetIsWolf).
-		Wolf("An").CannotBite("An", engine.ErrTargetIsWolf)
+	g.Night().Wolf("An").Bites("Chi").Wolf("Binh").Bites("Chi")
+	g.Dawn().ExpectDead("Chi").ExpectAnnouncement(i18n.DawnSomeoneDied)
+	for _, e := range g.Events() {
+		if d, ok := e.(engine.DawnAnnounced); ok && (d.Kind != engine.DawnDeaths || len(d.Dead) != 1) {
+			t.Fatalf("announcement %+v, want only the dead player's name", d)
+		}
+	}
 }
 
-// A villager cursed into the pack is a wolf the pack cannot bite (rules §5). The
+// The win check runs normally after a wolf bites a wolf: the last wolf bites
+// itself, nobody is left on the wolf team and the village wins at dawn.
+func TestNight_LastWolfBitesItself_VillageWinsAtDawn(t *testing.T) {
+	g := NewGame(t,
+		Seats("An", "Phuc", "Giang", "Hoa", "Khoa"),
+		Cast("An", Werewolf, "Phuc", Villager, "Giang", Villager, "Hoa", Villager, "Khoa", Villager))
+	g.Night().Wolf("An").Bites("An")
+	g.Dawn().ExpectDead("An").ExpectAnnouncement(i18n.WinVillage)
+	g.ExpectPhase(engine.PhaseEnded)
+}
+
+// A villager cursed into the pack is bitten like anybody else (rules §5). The
 // curse event arrives with T15, so the scenario flips the team directly.
-func TestNight_WolvesCannotBiteTheNewlyCursed(t *testing.T) {
+func TestNight_PackBitesTheNewlyCursed_TheyDie(t *testing.T) {
 	g := newTable(t)
 	g.State().Players[g.Player("Phuc")].Team = engine.TeamWolves
-	g.Night().Wolf("An").CannotBite("Phuc", engine.ErrTargetIsWolf)
+	g.Night().Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Phuc").Wolf("Chi").Bites("Phuc")
+	g.Dawn().ExpectDead("Phuc")
 }
 
 func TestNight_WolfVoteIsRejectedWhenNotAllowed(t *testing.T) {

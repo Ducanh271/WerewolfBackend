@@ -50,12 +50,8 @@ func (werewolf) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, 
 	if !isVoter(s, cmd.By) {
 		return nil, true, fmt.Errorf("%w: %s cannot vote tonight", engine.ErrNotYourTurn, cmd.By)
 	}
-	target, err := engine.LivingTarget(s, cmd.Target)
-	if err != nil {
+	if _, err := engine.LivingTarget(s, cmd.Target); err != nil {
 		return nil, true, err
-	}
-	if target.Team == engine.TeamWolves {
-		return nil, true, fmt.Errorf("%w: %s", engine.ErrTargetIsWolf, cmd.Target)
 	}
 	return []engine.Event{WolfVoted{Wolf: cmd.By, Target: cmd.Target}}, true, nil
 }

@@ -96,6 +96,9 @@ type TurnView struct {
 	Step    RoleID   // the step being called (the pack step for a wolf)
 	Visited bool     // the Visitor blocked the viewer tonight: no action
 	Bitten  PlayerID // BiteWitness only: the pack's current target
+	// BiteShown is set when the viewer is shown the bite information at all, so
+	// an empty Bitten then means "nobody is bitten".
+	BiteShown bool
 }
 
 // PackView is the wolf pack as its members see it.

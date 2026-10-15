@@ -143,6 +143,7 @@ func turnView(s State, p *Player) *TurnView {
 		return out
 	}
 	if w, ok := Registry[step].(BiteWitness); ok && w.SeesBite(p) {
+		out.BiteShown = true
 		if target, bitten := BiteTarget(s, WolfVoters(s)); bitten {
 			out.Bitten = target
 		}

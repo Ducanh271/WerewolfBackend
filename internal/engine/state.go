@@ -42,6 +42,8 @@ type NightActions struct {
 	Protected  PlayerID              // the Guard's choice, empty if none
 	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
 	Visited    PlayerID              // the Visitor's target (T14), empty if nobody
+	Healed     bool                  // the Witch used the heal potion on the bitten player
+	Poisoned   PlayerID              // the Witch's poison target, empty if none
 }
 
 // LoversLink is the pair created by Cupid.

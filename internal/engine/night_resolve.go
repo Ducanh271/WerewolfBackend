@@ -18,7 +18,8 @@ type Resolution struct {
 // 7 lover deaths. Step 8 (announce) is resolveNight below, step 9 (win check)
 // is afterDeaths.
 var nightPipeline = []func(*Resolution){
-	stepBite, // 3
+	stepBite,   // 3
+	stepPoison, // 5
 }
 
 // stepBite: the pack's bite kills unless the Guard shields the bitten player.
@@ -31,6 +32,24 @@ func stepBite(r *Resolution) {
 	if r.State.Pending.Protected == target {
 		r.Protected = true
 		return
+	}
+	if r.State.Pending.Healed {
+		return // the Witch's heal potion is used up either way
+	}
+	r.Deaths = append(r.Deaths, target)
+}
+
+// stepPoison: the Witch's poison kills its target; the Guard cannot stop it. A
+// player who also dies of the bite is counted once.
+func stepPoison(r *Resolution) {
+	target := r.State.Pending.Poisoned
+	if target == "" {
+		return
+	}
+	for _, id := range r.Deaths {
+		if id == target {
+			return
+		}
 	}
 	r.Deaths = append(r.Deaths, target)
 }

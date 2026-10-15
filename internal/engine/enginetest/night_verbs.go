@@ -108,3 +108,40 @@ func (n *Night) ExpectSeerSaw(seer, target string, wolf bool) *Night {
 	n.g.t.Fatalf("expected %s to have checked %s, but no such check happened", seer, target)
 	return n
 }
+
+// Witch is the witch: Witch("Lan").Heals() or Witch("Lan").Poisons("An").
+func (n *Night) Witch(name string) *WitchActor { return &WitchActor{n: n, id: n.Player(name)} }
+
+// WitchActor is the witch acting.
+type WitchActor struct {
+	n  *Night
+	id engine.PlayerID
+}
+
+// Heals saves the player the pack is biting tonight.
+func (a *WitchActor) Heals() *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Witch)
+	return a.n.Do(roles.WitchHeal{By: a.id})
+}
+
+// CannotHeal heals and expects the engine to refuse with want.
+func (a *WitchActor) CannotHeal(want error) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Witch)
+	return a.n.DoExpectErr(roles.WitchHeal{By: a.id}, want)
+}
+
+// Poisons kills the player at dawn.
+func (a *WitchActor) Poisons(target string) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Witch)
+	return a.n.Do(roles.WitchPoison{By: a.id, Target: a.n.Player(target)})
+}
+
+// CannotPoison poisons and expects the engine to refuse with want.
+func (a *WitchActor) CannotPoison(target string, want error) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Witch)
+	return a.n.DoExpectErr(roles.WitchPoison{By: a.id, Target: a.n.Player(target)}, want)
+}
