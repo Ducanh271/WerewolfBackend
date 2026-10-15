@@ -33,6 +33,7 @@ Run `make fmt test lint` before declaring a task done. All must pass.
 - Tests: table-driven. Rule tests are scenario tests named after the rule, e.g. `TestNight_GuardAndWitchSaveSameTarget_AnnouncesProtected`. Every row of the table in `docs/rules.md` §9 must have a test.
 - Use the test helper `enginetest.NewGame(t, roles...)` and builder-style actions; keep scenarios readable by a non-programmer.
 - Small files (< 300 lines). One exported concept per file where reasonable.
+- Git: work on main only. Commit and push directly to main after make fmt test lint pass. Do not create branches.
 
 ## Talking to me
 - Reply to me in Vietnamese. Keep it short: what changed, test results, questions.
