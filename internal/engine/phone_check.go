@@ -6,10 +6,10 @@ import (
 	"masoi/internal/i18n"
 )
 
-// StepPhoneCheck is the night step after the curse step (rules §3 "Kiểm tra
-// điện thoại"): everybody looks at their phone. It belongs to no role, and it
-// is called on every early night of a game whose role list has a CurseSource,
-// whether or not the curse is still to come, so it tells nothing.
+// StepPhoneCheck is the night step in which everybody looks at their phone
+// (rules §3 "Kiểm tra điện thoại"). It belongs to no role: it follows Cupid's
+// step on night 1 and the curse step on nights 1-3, on a fixed schedule (see
+// engineSlots), so it tells nothing. A night may have it twice.
 const StepPhoneCheck RoleID = "PhoneCheck"
 
 // FlagTeamHidden is set on a player whose team changed during the night, until
@@ -95,36 +95,38 @@ func phoneCheckNotices(s State) []Event {
 	return evs
 }
 
-// phoneCheckOrder is where the phone check sits when no curse step places it:
-// the order of the Cursed wolf's step (rules §3, "3b").
-const phoneCheckOrder = 3
-
-// phoneCheckAfter returns the order of the step the phone check follows, when
-// the game has one on this night: the Cursed wolf is in the game (nights 1-3)
-// or Cupid is called (night 1).
-func phoneCheckAfter(s State, night int) (order int, ok bool) {
+// engineSlots are the steps of this night that belong to no role, each placed
+// right after the role step it follows (rules §3):
+//   - after a CurseSource's step (the Cursed wolf, nights 1-3): the phone check;
+//   - after a LoveSource's step (Cupid, night 1): the phone check, then the
+//     lovers' step (StepLoversMeet).
+//
+// They depend on the role list and the night only, so they run whether or not
+// the curse was used, the Cursed wolf is dead or blocked: nothing leaks.
+func engineSlots(s State, night int) []nightSlot {
+	var out []nightSlot
 	for id, role := range Registry {
 		call := role.NightCall()
 		if call == nil || s.Settings.Roles[id] < 1 || !call.CalledOn(night) {
 			continue
 		}
-		if curse, isCurse := role.(CurseSource); isCurse && curse.CursesVillager() {
-			return call.Order, true
+		if curse, ok := role.(CurseSource); ok && curse.CursesVillager() {
+			out = append(out, nightSlot{StepPhoneCheck, call.Order, 1})
+		}
+		if love, ok := role.(LoveSource); ok && love.CreatesLovers() {
+			out = append(out, nightSlot{StepPhoneCheck, call.Order, 1}, nightSlot{StepLoversMeet, call.Order, 2})
 		}
 	}
-	for id, role := range Registry {
-		call := role.NightCall()
-		if love, isLove := role.(LoveSource); isLove && love.CreatesLovers() && call != nil && s.Settings.Roles[id] >= 1 && call.CalledOn(night) {
-			return phoneCheckOrder, true
-		}
-	}
-	return 0, false
+	return out
 }
 
 // NightStepDuration is how long the step being called lasts.
 func NightStepDuration(s State, step RoleID) time.Duration {
-	if step == StepPhoneCheck {
+	switch step {
+	case StepPhoneCheck:
 		return s.Settings.PhoneCheck
+	case StepLoversMeet:
+		return s.Settings.LoversMeet
 	}
 	return s.Settings.NightStep
 }

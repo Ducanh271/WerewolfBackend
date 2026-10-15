@@ -17,6 +17,7 @@ type State struct {
 	Settings  Settings
 	Dealt     bool // roles were dealt to the current player list
 	Winner    *Team
+	Winners   []PlayerID // set when the game ended: who wins, in seating order
 
 	Chief      PlayerID              // holder of the title, empty if nobody
 	ChiefVotes map[PlayerID]PlayerID // voter -> candidate, during the election
@@ -67,7 +68,8 @@ type Settings struct {
 	RoleView       time.Duration // everyone looks at their role after the deal
 	Announce       time.Duration // pause after the dawn announcement and at dusk
 	NightStep      time.Duration // each role's turn at night, real or fake
-	PhoneCheck     time.Duration // the phone check step after the curse (rules §3)
+	PhoneCheck     time.Duration // each phone check step (rules §3)
+	LoversMeet     time.Duration // the lovers look at each other, night 1 (rules §3)
 	Day            time.Duration // discussion and nominations
 	Defense        time.Duration // bào chữa
 	Verdict        time.Duration // vote giết hay tha
@@ -102,6 +104,7 @@ func DefaultSettings() Settings {
 		Announce:       10 * time.Second,
 		NightStep:      30 * time.Second,
 		PhoneCheck:     5 * time.Second,
+		LoversMeet:     10 * time.Second,
 		Day:            7 * time.Minute,
 		Defense:        1 * time.Minute,
 		Verdict:        30 * time.Second,
@@ -167,6 +170,7 @@ func (s State) clone() State {
 		winner := *s.Winner
 		out.Winner = &winner
 	}
+	out.Winners = append([]PlayerID(nil), s.Winners...)
 	return out
 }
 

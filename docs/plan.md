@@ -41,7 +41,12 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [x] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*
   - Decided: a wolf in a cross-team couple keeps `Player.Team = Wolves`. The couple's third-team status is computed at the couple level (from `State.Lovers`), never by changing `Player.Team`. Seer and Detective rely on this.
   - Decided: lovers learn of the pair at the phone check (one notice combining curse and love; the step runs night 1 with Cupid or the Cursed wolf). A lover who dies by day does not take the partner at once: the partner dies in the next night, at their first night call, or at §9 step 7 if nothing calls them. Shared with the Rusty knight's poison (`delayed_death.go`). A lover who dies in the night takes the partner the same night.
-- [ ] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.
+- [x] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.
+  - Decided: a player dead by the rules but not yet announced (Knight-poisoned wolf, grieving lover) counts as alive for the Detective (neighbours and wolf count). The Knight's poison still skips such a wolf (internal, invisible).
+  - Decided: the Visitor is called first every night, after Cupid and the lovers on night 1.
+  - Decided: night 1 with Cupid: Cupid → phone check (love) → `LoversMeet` (10 s, the lovers look at each other) → Visitor and the rest. With the Cursed wolf too, its own phone check stays after its step (two checks on night 1). Lovers never look at each other during a phone check.
+  - Decided: when the wolves win while the cross-team couple is still alive, the wolf lover loses with the couple (`Outcome.Winners`). Read as: a couple broken by a death is no longer the third team, so its members win or lose with their own team.
+  - Decided: 0 plain wolves allowed when the Cursed wolf or the Wolf seer is in the game (wording of rules §2).
 
 ## Open questions (ask the user, don't guess)
 - None open.

@@ -62,6 +62,7 @@ type timerMillis struct {
 	ChiefElection   int64 `json:"chiefElection"`
 	NightStep       int64 `json:"nightStep"`
 	PhoneCheck      int64 `json:"phoneCheck"`
+	LoversMeet      int64 `json:"loversMeet"`
 	Announce        int64 `json:"announce"`
 	Day             int64 `json:"day"`
 	NominationLock  int64 `json:"nominationLock"`
@@ -88,7 +89,7 @@ func (t timerMillis) timers() (engine.Timers, error) {
 		dst *time.Duration
 	}{
 		{t.RoleView, &out.RoleView}, {t.ChiefElection, &out.ChiefElection},
-		{t.NightStep, &out.NightStep}, {t.PhoneCheck, &out.PhoneCheck}, {t.Announce, &out.Announce}, {t.Day, &out.Day},
+		{t.NightStep, &out.NightStep}, {t.PhoneCheck, &out.PhoneCheck}, {t.LoversMeet, &out.LoversMeet}, {t.Announce, &out.Announce}, {t.Day, &out.Day},
 		{t.NominationLock, &out.NominationLock}, {t.Defense, &out.Defense},
 		{t.Verdict, &out.Verdict}, {t.HunterShot, &out.HunterShot},
 		{t.ChiefSuccession, &out.ChiefSuccession},

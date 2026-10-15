@@ -17,6 +17,7 @@ func ViewFor(s State, v Viewer) View {
 	}
 	if s.Phase == PhaseEnded {
 		out.Winner, out.Draw = copyWinner(s.Winner), s.Winner == nil
+		out.Winners = append([]PlayerID(nil), s.Winners...)
 	}
 	for i, id := range s.Seats {
 		p := s.Players[id]
@@ -150,6 +151,9 @@ func turnView(s State, p *Player) *TurnView {
 	step, ok := CurrentNightRole(s)
 	if !ok || !p.Alive {
 		return nil
+	}
+	if step == StepLoversMeet {
+		return loversMeetTurn(s, p)
 	}
 	if step != p.Role && !(isPackStep(step) && p.Team == TeamWolves) {
 		return nil

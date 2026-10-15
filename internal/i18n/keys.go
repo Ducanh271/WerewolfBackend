@@ -71,6 +71,8 @@ const (
 	NightPackDoomed = "night.pack_doomed"
 	// NightPhoneCheck is read aloud at the phone check step (rules §3).
 	NightPhoneCheck = "night.phone_check"
+	// NightLoversMeet is read aloud at the lovers' step of night 1 (rules §3).
+	NightLoversMeet = "night.lovers_meet"
 	// NoticeNotCursed and NoticeCursed are the two phone check notices. The
 	// view carries one boolean; the client picks the text with it.
 	NoticeNotCursed = "notice.not_cursed"

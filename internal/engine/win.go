@@ -4,8 +4,9 @@ import "masoi/internal/i18n"
 
 // Outcome is how a finished game ended (rules §8).
 type Outcome struct {
-	Winner Team // TeamNone when Draw
-	Draw   bool
+	Winner  Team // TeamNone when Draw
+	Draw    bool
+	Winners []PlayerID // the players who win, dead or alive, in seating order; empty on a draw
 }
 
 // GameEnded closes the game. A draw has no winner.
@@ -38,6 +39,7 @@ func evolveWin(s State, e Event) (State, bool) {
 		winner := ev.Outcome.Winner
 		out.Winner = &winner
 	}
+	out.Winners = append([]PlayerID(nil), ev.Outcome.Winners...)
 	out.Phase = PhaseEnded
 	out.Seq++
 	return out, true
@@ -82,15 +84,34 @@ func CheckWin(s State) (Outcome, bool) {
 			villagers++
 		}
 	}
+	var winner Team
 	switch {
 	case alive == 0:
 		return Outcome{Draw: true}, true
 	case crossed && alive == 2:
-		return Outcome{Winner: TeamLovers}, true
+		return Outcome{Winner: TeamLovers, Winners: inSeatOrder(s.Seats, []PlayerID{lovA, lovB})}, true
 	case wolvesAll == 0:
-		return Outcome{Winner: TeamVillage}, true
+		winner = TeamVillage
 	case wolves >= 1 && wolves >= villagers:
-		return Outcome{Winner: TeamWolves}, true
+		winner = TeamWolves
+	default:
+		return Outcome{}, false
 	}
-	return Outcome{}, false
+	return Outcome{Winner: winner, Winners: teamWinners(s, winner, crossed, lovA, lovB)}, true
+}
+
+// teamWinners is every player of the winning team, dead or alive. While the
+// cross-team couple is alive, both lovers lose with the couple: the wolf lover
+// does not share a wolf win (rules §8). A couple broken by a death is no
+// longer the third team, so its members count with their own team.
+func teamWinners(s State, winner Team, crossed bool, lovA, lovB PlayerID) []PlayerID {
+	var out []PlayerID
+	for _, id := range s.Seats {
+		p := s.Players[id]
+		if p == nil || p.Team != winner || (crossed && (id == lovA || id == lovB)) {
+			continue
+		}
+		out = append(out, id)
+	}
+	return out
 }

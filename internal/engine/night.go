@@ -31,23 +31,16 @@ type NightEnded struct {
 // called, plus the wolf pack step, which every game has. Beyond that it depends on the night number only, never on who is
 // alive, so a fake call (a dead player's role) cannot be told from a real one.
 func nightSteps(s State, night int) []RoleID {
-	type step struct {
-		id    RoleID
-		order int
-		sub   int // 1 for the phone check, which follows the step of the same order
-	}
-	var steps []step
+	var steps []nightSlot
 	for id, role := range Registry {
 		if always, ok := role.(AlwaysCalled); !(ok && always.AlwaysCalled()) && s.Settings.Roles[id] < 1 {
 			continue
 		}
 		if call := role.NightCall(); call != nil && call.CalledOn(night) {
-			steps = append(steps, step{id: id, order: call.Order})
+			steps = append(steps, nightSlot{id: id, order: call.Order})
 		}
 	}
-	if order, ok := phoneCheckAfter(s, night); ok {
-		steps = append(steps, step{StepPhoneCheck, order, 1})
-	}
+	steps = append(steps, engineSlots(s, night)...)
 	sort.Slice(steps, func(i, j int) bool {
 		if steps[i].order != steps[j].order {
 			return steps[i].order < steps[j].order
@@ -62,6 +55,15 @@ func nightSteps(s State, night int) []RoleID {
 		ids[i] = st.id
 	}
 	return ids
+}
+
+// nightSlot is one step of a night with its place: the order of the role step
+// it is or follows, and sub, which ranks the engine's own steps after that
+// role step (0 for the role itself).
+type nightSlot struct {
+	id    RoleID
+	order int
+	sub   int
 }
 
 // CurrentNightRole returns the role being called right now. Roles use it to
@@ -86,9 +88,12 @@ func nextNightEvents(s State, night, called int) []Event {
 	}
 	step := steps[called]
 	evs := []Event{NightStepCalled{Role: step, Duration: NightStepDuration(s, step)}}
-	if step == StepPhoneCheck {
+	switch step {
+	case StepPhoneCheck:
 		evs = append(evs, PhoneCheckAnnounced{})
 		evs = append(evs, phoneCheckNotices(s)...)
+	case StepLoversMeet:
+		evs = append(evs, LoversMeetAnnounced{})
 	}
 	return evs
 }

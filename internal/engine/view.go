@@ -41,8 +41,9 @@ type View struct {
 	Succession PlayerID // the dead Chief naming a successor, if any
 	Shooter    PlayerID // the dead Hunter choosing whom to shoot, if any
 	Votes      PublicVotes
-	Winner     *Team // set when the game ended with a winner
-	Draw       bool  // the game ended and nobody won
+	Winner     *Team      // set when the game ended with a winner
+	Winners    []PlayerID // the players who win, in seating order (rules §8)
+	Draw       bool       // the game ended and nobody won
 
 	// Full is true when the viewer sees everything: a dead player, or anybody
 	// once the game is over. Then every PlayerView carries Role and Team and

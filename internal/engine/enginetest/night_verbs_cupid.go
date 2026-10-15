@@ -37,6 +37,14 @@ func (a *CupidActor) RunsOutOfTime(seed int64) *Night {
 	return a.n.Do(engine.PhaseTimeout{Phase: a.n.g.state.Phase, Seq: a.n.g.state.Seq, Seed: seed})
 }
 
+// LoversMeet lets night 1 run to the step in which the lovers open their eyes
+// and look at each other (after Cupid and the phone check, rules §3).
+func (n *Night) LoversMeet() *Night {
+	n.g.t.Helper()
+	n.advanceTo(engine.StepLoversMeet)
+	return n
+}
+
 // Lovers returns the couple of the game, in no particular order, as names.
 func (g *Game) Lovers() (a, b string, ok bool) {
 	if g.state.Lovers == nil {

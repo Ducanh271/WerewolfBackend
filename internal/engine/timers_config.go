@@ -12,6 +12,7 @@ type Timers struct {
 	ChiefElection   time.Duration
 	NightStep       time.Duration
 	PhoneCheck      time.Duration
+	LoversMeet      time.Duration
 	Announce        time.Duration
 	Day             time.Duration
 	NominationLock  time.Duration
@@ -51,6 +52,7 @@ func (t *Timers) fields(set *Settings) []timerField {
 		{"ChiefElection", shortTimer, &t.ChiefElection, &set.ChiefElection},
 		{"NightStep", shortTimer, &t.NightStep, &set.NightStep},
 		{"PhoneCheck", shortTimer, &t.PhoneCheck, &set.PhoneCheck},
+		{"LoversMeet", shortTimer, &t.LoversMeet, &set.LoversMeet},
 		{"Announce", pauseTimer, &t.Announce, &set.Announce},
 		{"Day", dayTimer, &t.Day, &set.Day},
 		{"NominationLock", pauseTimer, &t.NominationLock, &set.NominationLock},

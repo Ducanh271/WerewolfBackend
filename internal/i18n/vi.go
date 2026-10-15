@@ -23,6 +23,7 @@ var vi = map[string]string{
 	NoticeNoLove:    "Bạn không ở trong cặp đôi.",
 	NoticeInLove:    "Bạn yêu %s, vai %s.",
 	NightPhoneCheck: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.",
+	NightLoversMeet: "Cặp đôi hãy mở mắt nhìn nhau.",
 	NoticeNotCursed: "Bạn không bị nguyền.",
 	NoticeCursed:    "Bạn đã bị nguyền.",
 	WinVillage:      "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt.",

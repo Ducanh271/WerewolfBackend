@@ -33,6 +33,8 @@ func TestTimers_ConfigureRejectsOutOfRange(t *testing.T) {
 		{"night step too short", Timers{NightStep: 4 * time.Second}},
 		{"phone check too short", Timers{PhoneCheck: 4 * time.Second}},
 		{"phone check too long", Timers{PhoneCheck: 11 * time.Minute}},
+		{"lovers step too short", Timers{LoversMeet: 4 * time.Second}},
+		{"lovers step too long", Timers{LoversMeet: 11 * time.Minute}},
 		{"defense too long", Timers{Defense: 11 * time.Minute}},
 		{"day too short", Timers{Day: 30 * time.Second}},
 		{"day too long", Timers{Day: time.Hour}},
@@ -67,5 +69,15 @@ func TestTimers_PhoneCheckDefaultsToFiveSeconds_AndCanBeChanged(t *testing.T) {
 	s := apply(t, lobbyOf(t, 5), ConfigureTimers{Timers: Timers{PhoneCheck: 8 * time.Second}})
 	if s.Settings.PhoneCheck != 8*time.Second {
 		t.Fatalf("phone check = %s, want 8s", s.Settings.PhoneCheck)
+	}
+}
+
+func TestTimers_LoversMeetDefaultsToTenSeconds_AndCanBeChanged(t *testing.T) {
+	if got := DefaultSettings().LoversMeet; got != 10*time.Second {
+		t.Fatalf("default = %s, want 10s", got)
+	}
+	s := apply(t, lobbyOf(t, 5), ConfigureTimers{Timers: Timers{LoversMeet: 20 * time.Second}})
+	if s.Settings.LoversMeet != 20*time.Second {
+		t.Fatalf("lovers step = %s, want 20s", s.Settings.LoversMeet)
 	}
 }

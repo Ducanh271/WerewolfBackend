@@ -56,7 +56,7 @@ Tổng số sói, **tính cả người sẽ bị nguyền**, không vượt 30%
 | Vai | Số lượng một ván |
 | --- | --- |
 | Dân làng | 1 trở lên |
-| Sói (sói thường) | 1 trở lên, trong giới hạn số sói ở trên |
+| Sói (sói thường) | 1 trở lên; **0 sói thường trở lên khi có Sói nguyền hoặc Sói tiên tri**; luôn trong giới hạn số sói ở trên |
 | Mọi vai còn lại, gồm Sói nguyền và Sói tiên tri | tối đa 1 |
 
 Các vai chức năng là **duy nhất**: không có ván nào hai Tiên tri hay hai Bảo vệ.
@@ -71,6 +71,7 @@ chốt là tối đa 1.
 | Bầu Trưởng làng | 1 phút |
 | Mỗi vai ban đêm | 30 giây |
 | Kiểm tra điện thoại (đêm 1–3 khi có Sói nguyền; đêm 1 khi có Cupid) | 5 giây |
+| Cặp đôi mở mắt nhìn nhau (đêm 1 khi có Cupid) | 10 giây |
 | Thông báo sáng / hoàng hôn | 10 giây |
 | Ban ngày (thảo luận và đề cử) | 7 phút, có thể vote bỏ qua |
 | Đếm ngược chốt đề cử | 10 giây |
@@ -103,11 +104,13 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 
 | Thứ tự | Vai | Khi nào gọi |
 | --- | --- | --- |
-| 0 | Cupid, rồi cặp đôi | Chỉ đêm đầu |
+| 0 | Cupid | Chỉ đêm đầu |
+| 0b | Kiểm tra điện thoại (tình yêu) | Đêm 1 khi danh sách vai có Cupid |
+| 0c | Cặp đôi mở mắt nhìn nhau | Đêm 1 khi danh sách vai có Cupid |
 | 1 | Nguyệt Nữ | Mỗi đêm |
 | 2 | Bảo vệ | Mỗi đêm |
 | 3 | Sói nguyền | Chỉ 3 đêm đầu |
-| 3b | Kiểm tra điện thoại | Đêm 1–3 khi danh sách vai có Sói nguyền; đêm 1 khi có Cupid (xem dưới) |
+| 3b | Kiểm tra điện thoại (nguyền) | Đêm 1–3 khi danh sách vai có Sói nguyền (xem dưới) |
 | 4 | Sói tiên tri | Mỗi đêm |
 | 5 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
 | 6 | Phù thủy | Mỗi đêm |
@@ -119,7 +122,13 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 - **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
-- **Kiểm tra điện thoại** (5 giây) chạy ngay sau lượt Sói nguyền, **luôn luôn** trong 3 đêm đầu khi danh sách vai có Sói nguyền (kể cả khi đã nguyền xong, Sói nguyền đã chết hoặc bị Nguyệt Nữ chặn), và **đêm 1** khi danh sách vai có Cupid (đêm 2–3 chỉ chạy nếu có Sói nguyền). Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” **Mọi người còn sống** nhận **một** thông báo trên điện thoại, gộp hai phần: tình trạng nguyền (nếu có Sói nguyền): “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”; và tình trạng tình yêu (nếu có Cupid): “Bạn không ở trong cặp đôi” hoặc “Bạn yêu X, vai Y” kèm màu liên kết (§7). Mọi thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền hay ai đang yêu từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu; phần tình yêu được nhắc lại ở các lần kiểm tra đó, nên cặp đôi thấy màu liên kết mới ngay sau khi một người bị nguyền.
+- **Kiểm tra điện thoại** (5 giây) có thể chạy ở hai chỗ, mỗi chỗ theo lịch cố định khi vai tương ứng có trong danh sách vai (dù vai đó đã dùng chức năng, đã chết hay bị Nguyệt Nữ chặn), nên không lộ gì:
+  - **Sau lượt Cupid (0b)**, chỉ **đêm 1**, khi danh sách vai có Cupid.
+  - **Sau lượt Sói nguyền (3b)**, **luôn luôn** trong 3 đêm đầu khi danh sách vai có Sói nguyền.
+  - Có cả Cupid lẫn Sói nguyền thì đêm 1 có **hai** lần kiểm tra: một sau Cupid, một sau Sói nguyền.
+
+  Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” Ở mỗi lần kiểm tra, **mọi người còn sống** nhận **một** thông báo trên điện thoại, gộp hai phần: tình trạng nguyền (nếu có Sói nguyền): “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”; và tình trạng tình yêu (nếu có Cupid): “Bạn không ở trong cặp đôi” hoặc “Bạn yêu X, vai Y” kèm màu liên kết (§7). Mọi thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền hay ai đang yêu từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu; phần tình yêu được nhắc lại ở các lần kiểm tra sau Sói nguyền, nên cặp đôi thấy màu liên kết mới ngay sau khi một người bị nguyền. Lúc kiểm tra điện thoại mọi người đều mở mắt, nên cặp đôi **không** được nhìn nhau lúc này.
+- **Cặp đôi mở mắt nhìn nhau** (10 giây, đêm 1 khi danh sách vai có Cupid) chạy ngay sau lần kiểm tra điện thoại sau Cupid. Loa đọc: “Cặp đôi hãy mở mắt nhìn nhau.” Chỉ hai người yêu mở mắt; mọi người khác nhắm mắt.
 - **Thám tử được gọi mỗi đêm, kể cả sau khi đã dùng năng lực**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật. Ngừng gọi sẽ báo cho cả bàn biết ông ta đã dùng.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị chặn chức năng ban đêm (hiện chỉ do Nguyệt Nữ, sau này có thể có vai chặn khác) thấy thông báo chung trên màn hình khi đến lượt: “Bạn không thể sử dụng chức năng đêm nay”. Thông báo **không nêu ai hay vai nào chặn**; người bị chặn không được biết nguồn chặn.
@@ -223,7 +232,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 ### Nguyệt Nữ
 
-- Được gọi đầu tiên mỗi đêm, **bắt buộc** chọn “ngủ” với 1 người sống **không phải chính cô**. Không được chọn cùng một người hai đêm liên tiếp.
+- Được gọi đầu tiên mỗi đêm (đêm 1 thì sau Cupid và cặp đôi), **bắt buộc** chọn “ngủ” với 1 người sống **không phải chính cô**. Không được chọn cùng một người hai đêm liên tiếp.
 - Hết giờ mà chưa chọn: server chọn **ngẫu nhiên** một người sống hợp lệ (không phải cô, không trùng người đêm trước). Không còn ai hợp lệ thì đêm đó không ghé ai. Nguyệt Nữ đã chết thì vẫn được gọi giả, không chọn ngẫu nhiên.
 - Người được ghé **mất chức năng ban đêm** đêm đó và thấy thông báo chung “Bạn không thể sử dụng chức năng đêm nay” (không nhắc Nguyệt Nữ, xem mục 3). Chỉ ảnh hưởng người đó, không ảnh hưởng cả bầy.
 - Không chặn được chức năng ban ngày (Thợ săn).
@@ -235,6 +244,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 - Chọn 1 người còn sống (được chọn chính mình). Vùng gồm người đó và **người còn sống gần nhất ở mỗi bên** theo thứ tự chỗ ngồi (người chết bị bỏ qua). App chỉ cho biết “có sói” hoặc “không có sói” trong vùng, **không** cho biết số lượng hay tên.
 - Tính theo phe hiện tại: người bị nguyền và sói trong cặp đôi đều tính là sói.
 - Bàn còn dưới 3 người sống thì vùng là tất cả người còn sống (không tính trùng).
+- Người **đã chết theo luật nhưng chưa được công bố** (sói trúng độc Hiệp sĩ, người đau buồn vì người yêu, xem §7 và §9 bước 6) vẫn tính là **còn sống** với Thám tử: cả khi tìm người ngồi cạnh lẫn khi đếm sói. Kết quả phải khớp với bàn mà Thám tử đang thấy; bỏ qua người đó sẽ lộ là có người sắp chết.
 - Kết quả chỉ Thám tử thấy.
 - Được gọi mỗi đêm, kể cả sau khi đã dùng (lượt gọi giả, xem §3).
 - Bị Nguyệt Nữ ghé thì không dùng được đêm đó, nhưng **không mất lượt**.
@@ -242,7 +252,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 ### Hiệp sĩ kiếm gỉ
 
 - Năng lực bị động: Nguyệt Nữ không chặn được. Hiệp sĩ bị nguyền vẫn giữ năng lực (bị chính bầy mình cắn vẫn kích hoạt).
-- Bị bầy sói cắn (và Bảo vệ không che) thì **chết ngay**, và **con sói còn sống gần nhất về phía bên trái** hiệp sĩ trúng độc. "Bên trái" là ghế kế tiếp theo chiều kim đồng hồ (ghế đánh số tăng dần). Tính cả mọi người phe sói (sói thường, Sói nguyền, Sói tiên tri, sói trong cặp đôi), bỏ qua người chết và người không phải sói, không bao giờ là chính hiệp sĩ.
+- Bị bầy sói cắn (và Bảo vệ không che) thì **chết ngay**, và **con sói còn sống gần nhất về phía bên trái** hiệp sĩ trúng độc. "Bên trái" là ghế kế tiếp theo chiều kim đồng hồ (ghế đánh số tăng dần). Tính cả mọi người phe sói (sói thường, Sói nguyền, Sói tiên tri, sói trong cặp đôi), bỏ qua người chết (kể cả con sói đã chết theo luật nhưng chưa được công bố; việc này chỉ tính bên trong, không ai thấy) và người không phải sói, không bao giờ là chính hiệp sĩ.
 - Sói trúng độc sống đúng 24 giờ: đêm hôm sau, ngay khi bước bầy sói bắt đầu, nó **chết ngay**. Điện thoại nó báo cho nó biết và nó không được vote. Cả bầy thấy nó không còn vote được. Nếu nó là sói duy nhất thì đêm đó không ai bị cắn.
 - Cái chết đó được loa công bố **sáng hôm sau cùng các cái chết khác** (theo thứ tự chỗ ngồi, không nêu nguyên nhân hay vai). Người ngoài bầy không biết gì cho đến lúc đó, nên về mặt hiển thị nó vẫn "còn sống" cho đến khi loa đọc. Nếu nó là Thợ săn (bị nguyền) hay Trưởng làng thì Thợ săn bắn và Trưởng làng chọn người kế nhiệm sau thông báo, như mọi cái chết khác.
 - Bảo vệ che hiệp sĩ: không ai chết, sói không trúng độc.
@@ -255,7 +265,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 - Chỉ có trong ván **từ 10 người**. Cupid thuộc phe Dân nếu không tự ghép mình.
 - Chỉ gọi **đêm đầu** (thứ tự 0, đầu tiên trong đêm). Cupid chọn 2 người sống **khác nhau** (được chọn cả chính mình) thành cặp đôi. Hết giờ mà chưa chọn: server ghép **2 người sống ngẫu nhiên** (seed do tầng room sinh bằng `crypto/rand`).
-- Hai người yêu biết mặt và vai của nhau ở bước **Kiểm tra điện thoại** của đêm 1 (§3), không phải lúc Cupid chọn. Bầy sói **không** biết một con của mình đang yêu.
+- Hai người yêu biết người kia và vai của họ ở bước **Kiểm tra điện thoại** ngay sau lượt Cupid ở đêm 1 (§3), không phải lúc Cupid chọn. Ngay sau đó là bước **Cặp đôi mở mắt nhìn nhau** (10 giây): chỉ hai người yêu mở mắt nhìn nhau. Bầy sói **không** biết một con của mình đang yêu.
 - **Phe cá nhân không đổi**: sói trong cặp khác phe vẫn là Phe Sói, vẫn cắn cùng bầy. Phe của cặp đôi được tính ở cấp cặp và **tính lại mỗi khi có người trong cặp đổi phe** (bị nguyền): hai người yêu thấy màu mới ở lần Kiểm tra điện thoại kế tiếp.
 - Điện thoại cặp đôi hiện **liên kết** giữa hai người (người kia, vai của họ, màu theo phe hiện tại của cặp, bảng dưới). Cupid không thấy liên kết và không biết phe của cặp.
 - Một người trong cặp chết thì người kia **chết theo**, vì bất kỳ lý do gì, nhưng thời điểm phụ thuộc lúc người đầu tiên chết:
@@ -307,6 +317,7 @@ Làm rõ:
 - Nếu **tất cả** người chơi chết cùng một lúc thì ván **hòa**.
 - Nếu nhiều điều kiện thắng cùng đúng, thứ tự ưu tiên là: **Cặp đôi khác phe > Dân > Sói**. Ví dụ: chỉ còn một cặp khác phe sống thì Cặp đôi thắng, không phải Sói thắng (0 sói ≥ 0 dân không được tính là sói thắng).
 - Sói chỉ thắng khi còn **ít nhất một con sói** sống (không tính sói trong cặp khác phe).
+- Sói thắng trong lúc cặp khác phe **vẫn còn sống cả hai**: con sói trong cặp **thua cùng cặp đôi** (màn hình kết thúc ván không tính nó là người thắng).
 - Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9), luôn vào ban ngày. Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
 
 ## 9. Thứ tự phân giải lúc trời sáng

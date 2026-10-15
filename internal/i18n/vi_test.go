@@ -42,6 +42,7 @@ func TestVi_DawnNeverStatesCauseOrRole(t *testing.T) {
 func TestVi_PhoneCheck_VoiceLineAndBothNotices(t *testing.T) {
 	tests := []struct{ key, want string }{
 		{NightPhoneCheck, "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."},
+		{NightLoversMeet, "Cặp đôi hãy mở mắt nhìn nhau."},
 		{NoticeNotCursed, "Bạn không bị nguyền."},
 		{NoticeCursed, "Bạn đã bị nguyền."},
 	}
