@@ -115,7 +115,7 @@ An ordered slice of steps, each a pure function `func(*Resolution)`:
 → 5 WitchPoison → 6 DelayedDeaths → 7 LoverDeaths → 8 Announce → 9 WinCheck
 ```
 
-Roles hook into named steps via `Resolution` fields instead of editing the pipeline. The hunter shot is a separate phase after the announcement (it needs player input), and re-enters steps 7 and 9.
+Roles hook into named steps via `Resolution` fields instead of editing the pipeline. The hunter shot is a separate phase after the announcement (it needs player input). `afterDeaths` (`after_death.go`) is the one place for what follows any death: each dead Hunter (role implements `DeathShooter`) is revealed (`HunterRevealed`, public, sets `FlagRevealed`) and gets `PhaseHunterShot`; `HunterShoot` or the timeout (`hunter_shot.go`) kills the target and re-enters `settle`, which repeats for a shot Hunter, then runs the win check (step 9) and the Chief succession. `State.Shot` remembers the queue and the phase to return to. Step 7 (lovers, T19) goes in `settle` before the win check.
 
 ### Views (secrecy boundary)
 ```go

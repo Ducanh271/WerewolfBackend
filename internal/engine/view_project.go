@@ -11,6 +11,7 @@ func ViewFor(s State, v Viewer) View {
 		Roles:      copyRoles(s.Settings.Roles),
 		Chief:      s.Chief,
 		Succession: successionFormer(s),
+		Shooter:    shooter(s),
 		Votes:      publicVotes(s),
 		Full:       full,
 	}
@@ -25,6 +26,8 @@ func ViewFor(s State, v Viewer) View {
 		pv := PlayerView{ID: id, Nickname: p.Nickname, Seat: i + 1, Alive: p.Alive}
 		if full || id == v.Player {
 			pv.Role, pv.Team = p.Role, p.Team
+		} else if p.Flags[FlagRevealed] != 0 {
+			pv.Role = p.Role // a revealed Hunter: the role, not the team
 		}
 		out.Players = append(out.Players, pv)
 	}
@@ -67,6 +70,13 @@ func successionFormer(s State) PlayerID {
 		return ""
 	}
 	return s.Succession.Former
+}
+
+func shooter(s State) PlayerID {
+	if s.Phase != PhaseHunterShot {
+		return ""
+	}
+	return s.Shot.Hunter
 }
 
 func copyWinner(w *Team) *Team {
@@ -120,7 +130,7 @@ func nightCall(s State) *NightCallView {
 }
 
 func myView(s State, p *Player) *MyView {
-	out := &MyView{ID: p.ID, Role: p.Role, Team: p.Team, Alive: p.Alive}
+	out := &MyView{ID: p.ID, Role: p.Role, Team: p.Team, Alive: p.Alive, CanShoot: shooter(s) == p.ID}
 	if role := Registry[p.Role]; role != nil {
 		out.Cursed = p.Team == TeamWolves && role.BaseTeam() != TeamWolves
 	}

@@ -31,6 +31,14 @@ const (
 	DayNobodyHanged = "day.nobody_hanged"
 )
 
+// Hunter announcements (rules §6), read to everybody.
+const (
+	// HunterRevealed: the dead Hunter's name; the role is public from now on.
+	HunterRevealed = "hunter.revealed"
+	// HunterShot: "<Hunter> bắn <target>".
+	HunterShot = "hunter.shot"
+)
+
 // Game over announcements (rules §8), read to everybody.
 const (
 	// WinVillage: no wolf is left.

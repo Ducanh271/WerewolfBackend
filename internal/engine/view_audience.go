@@ -66,6 +66,7 @@ func audienceOf(s State, e Event) Audience {
 		DayStarted, DayEnded, NominationCast, SkipSet,
 		NominationsLocking, NominationsReopened, DayClockExpired,
 		TrialStarted, VerdictStarted, VerdictCast, Spared, Hanged,
+		HunterRevealed, HunterShotStarted, HunterShot, HunterTimedOut,
 		GameEnded, NightStepCalled:
 		return Audience{Everyone: true}
 	case TeamChanged:

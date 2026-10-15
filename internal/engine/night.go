@@ -96,6 +96,8 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 		return []Event{ChiefElectionStarted{Duration: s.Settings.ChiefElection}}, nil
 	case PhaseChiefElection:
 		return append([]Event{ChiefElected{Chief: tallyChief(s, cmd.Seed)}}, startNight(s, 1)...), nil
+	case PhaseHunterShot:
+		return shotResolved(s, HunterTimedOut{Hunter: s.Shot.Hunter}, ""), nil
 	case PhaseChiefSuccession:
 		return []Event{ChiefLost{Former: s.Succession.Former}}, nil
 	case PhaseDawn, PhaseDay, PhaseNominationLock, PhaseTrial, PhaseVerdict, PhaseDusk:

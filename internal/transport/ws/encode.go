@@ -81,6 +81,10 @@ func announcedPlayers(ev engine.Event) []engine.PlayerID {
 		return []engine.PlayerID{e.Chief}
 	case engine.ChiefSucceeded:
 		return []engine.PlayerID{e.To}
+	case engine.HunterRevealed:
+		return []engine.PlayerID{e.Hunter}
+	case engine.HunterShot:
+		return []engine.PlayerID{e.Hunter, e.Target}
 	case engine.Hanged:
 		return []engine.PlayerID{e.Player}
 	case engine.Spared:

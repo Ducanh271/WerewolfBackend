@@ -30,7 +30,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 ## Milestone 4 — Remaining roles (one task each)
 
 - [x] **T12 Witch.** *§6 Phù thủy, §9.*
-- [ ] **T13 Hunter** (shot phase, any cause of death, reveals role). *§6 Thợ săn.*
+- [x] **T13 Hunter** (shot phase, any cause of death, reveals role). *§6 Thợ săn.*
 - [ ] **T14 Visitor (Nguyệt Nữ).** Blocks target; per-role effect of being blocked. *§6, §5.*
 - [ ] **T15 Cursed wolf.** Immediate effect, nights 1–3, blocked on night 3 = lost, all phones vibrate event (in-person). *§5 Sói nguyền.*
 - [ ] **T16 Wolf seer.** *§5 Sói tiên tri.*

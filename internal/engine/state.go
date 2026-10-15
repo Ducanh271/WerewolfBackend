@@ -21,6 +21,7 @@ type State struct {
 	Chief      PlayerID              // holder of the title, empty if nobody
 	ChiefVotes map[PlayerID]PlayerID // voter -> candidate, during the election
 	Succession Succession            // set while PhaseChiefSuccession runs
+	Shot       Shot                  // set while PhaseHunterShot runs
 }
 
 // Player is one participant. Role-specific bookkeeping lives in Flags so that
@@ -141,6 +142,7 @@ func (s State) clone() State {
 		}
 	}
 
+	out.Shot = s.Shot.clone()
 	if s.ChiefVotes != nil {
 		out.ChiefVotes = make(map[PlayerID]PlayerID, len(s.ChiefVotes))
 		for voter, cand := range s.ChiefVotes {

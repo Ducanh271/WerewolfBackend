@@ -23,6 +23,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideDealRoles(s, cmd)
 	case VoteChief:
 		return decideVoteChief(s, cmd)
+	case HunterShoot:
+		return decideHunterShoot(s, cmd)
 	case NameSuccessor:
 		return decideNameSuccessor(s, cmd)
 	case Nominate:

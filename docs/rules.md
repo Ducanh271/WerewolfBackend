@@ -18,7 +18,7 @@ Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
 | Dân (đa số) | Số đông và các vai đặc biệt | Tiêu diệt hết sói |
 | Cặp đôi khác phe (nếu có) | Biết vai của nhau | Chỉ còn hai người họ sống |
 
-Nguyên tắc chung: **không lật vai khi chết** (ngoại lệ duy nhất là Thợ săn lộ vai khi bắn).
+Nguyên tắc chung: **không lật vai khi chết**. Ngoại lệ duy nhất là Thợ săn: vai của Thợ săn được công khai ngay khi anh ta chết, vì **bất kỳ nguyên nhân nào** (mục 6).
 
 ## 2. Chuẩn bị ván
 
@@ -210,9 +210,12 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 ### Thợ săn
 
-- Không dậy ban đêm. Khi chết **vì bất kỳ lý do gì** (bị cắn, bị treo, thuốc độc, chết theo người yêu…), được kéo theo 1 người.
-- Lúc đó cả bàn im lặng, Thợ săn tự quyết định trong 15 giây. Thợ săn lộ vai khi bắn.
-- Nguyệt Nữ không chặn được chức năng này.
+- Không dậy ban đêm. Khi chết **vì bất kỳ lý do gì** (bị cắn, bị treo, thuốc độc, chết theo người yêu, bị Thợ săn khác bắn…), **vai được công khai ngay** (Thợ săn là vai duy nhất lộ khi chết; chỉ lộ vai, không lộ phe) và anh ta **phải bắn** một người còn sống bất kỳ.
+- Thứ tự: loa đọc người chết trước (thông báo buổi sáng, hoặc sau khi treo), rồi đọc “X là Thợ săn”, rồi cả bàn im lặng chờ **15 giây** trong lúc Thợ săn chọn. Chỉ điện thoại của Thợ săn có nút bắn. Bắn xong loa đọc “X bắn Y”.
+- Không có lựa chọn “không bắn”. Hết 15 giây mà chưa chọn thì **không ai bị bắn**.
+- Người bị bắn chết ngay. Cái chết đó kéo theo cùng chuỗi hậu quả (nếu là Thợ săn khác thì lộ vai và bắn tiếp), rồi mới kiểm tra thắng (mục 9). Vì cú bắn nằm trước bước kiểm tra thắng nên nó có thể đổi kết quả ván.
+- Thợ săn kiêm Trưởng làng: bắn trước, rồi mới chuyển danh hiệu (mục 7b).
+- Thợ săn bị nguyền vẫn bắn như một con sói. Nguyệt Nữ không chặn được chức năng này.
 
 ### Nguyệt Nữ
 
@@ -287,7 +290,7 @@ App tính kết quả đêm theo đúng thứ tự sau:
 5. **Thuốc độc** của Phù thủy.
 6. **Sói trúng độc từ đêm trước** chết.
 7. **Chết theo người yêu**.
-8. **Công bố** (mục 4), rồi Thợ săn bắn nếu chết, lặp lại bước 7 cho người bị bắn.
+8. **Công bố** (mục 4), rồi Thợ săn chết thì lộ vai và bắn, lặp lại bước 7 cho người bị bắn (và cho Thợ săn bị bắn).
 9. **Kiểm tra điều kiện thắng**.
 
 ### Tình huống đã chốt

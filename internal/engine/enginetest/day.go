@@ -18,6 +18,8 @@ func (g *Game) Day() *Day {
 	switch g.state.Phase {
 	case engine.PhaseDawn: // the narrator has read the announcement
 		g.TimeOut()
+	case engine.PhaseHunterShot:
+		g.t.Fatalf("Day() called while the dead Hunter still chooses: call g.Hunter(...).Shoots(...) or TimeOut() first")
 	case engine.PhaseChiefSuccession:
 		g.t.Fatalf("Day() called while the dead Chief still names a successor: call NameSuccessor(...) or TimeOut() first")
 	}

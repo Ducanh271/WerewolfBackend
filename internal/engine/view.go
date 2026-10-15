@@ -38,6 +38,7 @@ type View struct {
 	Players    []PlayerView   // in seating order
 	Chief      PlayerID
 	Succession PlayerID // the dead Chief naming a successor, if any
+	Shooter    PlayerID // the dead Hunter choosing whom to shoot, if any
 	Votes      PublicVotes
 	Winner     *Team // set when the game ended with a winner
 	Draw       bool  // the game ended and nobody won
@@ -87,8 +88,10 @@ type MyView struct {
 	Role   RoleID
 	Team   Team
 	Alive  bool
-	Cursed bool      // on the wolf team though the role is not a wolf role
-	Turn   *TurnView // set while the viewer is being called at night
+	Cursed bool // on the wolf team though the role is not a wolf role
+	// CanShoot is set only for the dead Hunter while he chooses his target.
+	CanShoot bool
+	Turn     *TurnView // set while the viewer is being called at night
 }
 
 // TurnView is what the phone shows during the viewer's own night step.

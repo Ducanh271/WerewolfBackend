@@ -90,11 +90,12 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `wolfVote` | `target` | pack step | `WolfVote` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
+| `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not visited |
 | `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not visited |
 
 Later roles add their own rows (Visitor, Cursed wolf, Wolf seer,
-Detective, Cupid, Hunter). The server **rejects** any `seed` field and never
+Detective, Cupid). The server **rejects** any `seed` field and never
 accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 
 ## Server → client
@@ -115,12 +116,12 @@ The `view` object (`engine.View`); absent parts are omitted:
 |---|---|---|
 | `phase`, `seq`, `night` | all | phase name, change counter, night number |
 | `roles` | all | public role list `{role: count}` |
-| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`; `role`/`team` only when allowed (own seat, lover partner's role, full view) |
-| `chief`, `succession` | all | Chief id; the dead Chief naming a successor |
+| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`; `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public |
+| `chief`, `succession`, `shooter` | all | Chief id; the dead Chief naming a successor; the dead Hunter choosing a target |
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]` |
 | `winner`, `draw` | all, at the end | winning team, or a draw |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
-| `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `turn` |
+| `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `canShoot` (only the dead Hunter while he chooses), `turn` |
 | `me.turn` | player being called | `step`; `visited: true` → show "Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng" and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
 | `lover` | the two lovers | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
@@ -140,7 +141,8 @@ The `view` object (`engine.View`); absent parts are omitted:
   phone reads it aloud; every phone shows it as text.
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
-  `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `GameEnded`); own
+  `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
+  `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
   `TeamChanged` for a cursed player); `WolfVoted` for the pack, from the moment
   the player is in it.
