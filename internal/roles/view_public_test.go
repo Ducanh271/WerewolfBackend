@@ -14,39 +14,45 @@ var cast = map[string]engine.RoleID{
 	"Phuc": Villager, "Giang": Villager, "Hoa": Villager, "Khoa": Villager, "Lan": Villager,
 }
 
-func TestView_Narrator_SeesPublicInfoAndNightCallsOnly(t *testing.T) {
+func TestView_PublicPart_IsTheSameOnEveryPhone(t *testing.T) {
 	step := engine.DefaultSettings().NightStep
 	tests := []struct {
 		name string
 		run  func(t *testing.T)
 	}{
-		{"the public table and nobody's role", func(t *testing.T) {
-			g := chiefTable(t, "Dung")
-			g.Night().Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Phuc")
-			g.AsNarrator().PublicTable().NoRoleExceptOwn().NoPack().NoLover().NoSecretsOfOthers()
-			if g.AsNarrator().View().Me != nil {
-				t.Fatal("the narrator has no player card")
-			}
-		}},
-		{"a night call is a role and a duration", func(t *testing.T) {
+		{"a night call is a role and a duration, on every phone", func(t *testing.T) {
 			g := newTable(t)
 			g.Night().TurnOf(Guard)
-			g.AsNarrator().NightCall(Guard, step)
+			for name := range cast {
+				g.As(name).NightCall(Guard, step)
+			}
 		}},
 		{"a fake call looks exactly like a real one", func(t *testing.T) {
 			g := newTable(t)
 			g.Night().TurnOf(Guard)
-			real := g.AsNarrator().View().NightCall
+			real := g.As("Hoa").View().NightCall
 			g.Dawn()
 			g.Day().Hanged("Dung") // the Guard is dead: her call is fake now
 			g.Night().TurnOf(Guard)
-			g.AsNarrator().NightCall(real.Role, real.Duration)
+			for _, name := range []string{"An", "Em", "Hoa", "Phuc"} {
+				g.As(name).NightCall(real.Role, real.Duration)
+			}
+		}},
+		{"the called role differs from the others only in its own turn card", func(t *testing.T) {
+			g := newTable(t)
+			g.Night().TurnOf(Guard)
+			if g.As("Dung").View().Me.Turn == nil || g.As("Hoa").View().Me.Turn != nil {
+				t.Fatal("only the Guard has a turn card")
+			}
+			if *g.As("Dung").View().NightCall != *g.As("Hoa").View().NightCall {
+				t.Fatal("the public night call must be the same on every phone")
+			}
 		}},
 		{"what is read aloud, never the order of deaths", func(t *testing.T) {
 			g := newTable(t)
 			g.Night().Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Phuc")
 			g.Dawn()
-			g.AsNarrator().
+			g.As("Hoa").
 				Event(engine.DawnAnnounced{Kind: engine.DawnDeaths, Dead: []engine.PlayerID{"Phuc"}}).
 				NoEvent(engine.PlayerDied{Player: "Phuc"}).
 				Dead("Phuc")
@@ -114,14 +120,12 @@ func TestView_EveryPlayer_SeesOwnRoleAndThePublicTable(t *testing.T) {
 	}
 }
 
-// A full night and day; at every moment, no living player and not the
-// narrator learns a role, a cause of death, or who was bitten, protected or
+// A full night and day; at every moment, no living player learns a role, a cause of death, or who was bitten, protected or
 // checked, unless it is their own.
 func TestView_NobodyAlive_SeesRolesCausesOrNightTargets(t *testing.T) {
 	g := chiefTable(t, "Dung")
 	check := func(moment string) {
 		t.Run(moment, func(t *testing.T) {
-			g.AsNarrator().NoSecretsOfOthers()
 			for _, p := range g.State().Players {
 				if p.Alive {
 					g.As(string(p.ID)).NoSecretsOfOthers()
@@ -155,5 +159,4 @@ func TestView_GameOver_EverybodySeesEverything(t *testing.T) {
 	for _, name := range []string{"Binh", "Chi", "Dung", "Em"} {
 		g.As(name).Full()
 	}
-	g.AsNarrator().Full()
 }

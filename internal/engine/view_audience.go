@@ -3,8 +3,7 @@ package engine
 // Audience says who may know about an event. An event nobody is named for is
 // seen only by full views (dead players, and everybody after the game).
 type Audience struct {
-	Everyone bool       // every player and the narrator
-	Narrator bool       // the narrator device
+	Everyone bool       // every player
 	Wolves   bool       // the living wolf team at the moment of the event
 	Players  []PlayerID // these players
 }
@@ -40,9 +39,6 @@ func (a Audience) includes(s State, v Viewer) bool {
 	if a.Everyone {
 		return true
 	}
-	if v.Narrator {
-		return a.Narrator
-	}
 	if a.Wolves {
 		if p := s.Players[v.Player]; p != nil && p.Alive && p.Team == TeamWolves {
 			return true
@@ -63,17 +59,15 @@ func (a Audience) includes(s State, v Viewer) bool {
 // each player reads their own role from the view.
 func audienceOf(s State, e Event) Audience {
 	switch ev := e.(type) {
-	case PlayerJoined, SeatsSet, RolesConfigured,
+	case PlayerJoined, PlayerLeft, SeatsSet, TimersConfigured, RolesConfigured,
 		ChiefElectionStarted, ChiefVoteCast, ChiefElected,
 		ChiefSuccessionStarted, ChiefSucceeded, ChiefLost,
 		NightStarted, NightEnded, DawnAnnounced,
 		DayStarted, DayEnded, NominationCast, SkipSet,
 		NominationsLocking, NominationsReopened, DayClockExpired,
 		TrialStarted, VerdictStarted, VerdictCast, Spared, Hanged,
-		GameEnded:
+		GameEnded, NightStepCalled:
 		return Audience{Everyone: true}
-	case NightStepCalled:
-		return Audience{Narrator: true}
 	case TeamChanged:
 		return Audience{Players: []PlayerID{ev.Player}}
 	case Audienced:

@@ -15,11 +15,6 @@ func (g *Game) As(name string) *Seen {
 	return g.seen(name, engine.PlayerViewer(g.Player(name)))
 }
 
-// AsNarrator looks at the game through the narrator device.
-func (g *Game) AsNarrator() *Seen {
-	return g.seen("the narrator", engine.NarratorViewer())
-}
-
 func (g *Game) seen(who string, v engine.Viewer) *Seen {
 	return &Seen{
 		g:    g,

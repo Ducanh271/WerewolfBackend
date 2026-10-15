@@ -105,7 +105,7 @@ type AlwaysCalled   interface{ AlwaysCalled() bool }        // called every nigh
 
 Game-wide rule limits (player count, wolf percentage, the cursed wolf's reserved slot) live in `internal/engine/limits.go`. Limits that belong to one role (minimum table size, number of copies) live in that role's own file.
 
-The night call order (rules §3) comes from each role's `NightCall().Order`. The role list of a game is public (rules §2), so a night calls exactly the roles in `Settings.Roles` that have a `NightCall` for that night; a role nobody holds is never called. The one exception is the wolf pack step (`Werewolf`, implements `AlwaysCalled`): every game has a wolf, and Werewolf, CursedWolf and WolfSeer all bite in it, so it runs every night even when no plain Werewolf is in the list. With all three wolf roles the order is CursedWolf → WolfSeer → pack. A role in the list whose holder is dead is still called (a fake call). The engine itself produces the calls as `NightStepCalled{Role, Duration}` events, for the narrator only. The step list depends on the role configuration and the night number, never on who is alive, and the event carries no real/fake flag, so a real call and a fake one are identical and last the same time. `engine.CurrentNightRole(s)` tells a role whether it is its turn.
+The night call order (rules §3) comes from each role's `NightCall().Order`. The role list of a game is public (rules §2), so a night calls exactly the roles in `Settings.Roles` that have a `NightCall` for that night; a role nobody holds is never called. The one exception is the wolf pack step (`Werewolf`, implements `AlwaysCalled`): every game has a wolf, and Werewolf, CursedWolf and WolfSeer all bite in it, so it runs every night even when no plain Werewolf is in the list. With all three wolf roles the order is CursedWolf → WolfSeer → pack. A role in the list whose holder is dead is still called (a fake call). The engine itself produces the calls as `NightStepCalled{Role, Duration}` events, public to every phone (role and duration only). The step list depends on the role configuration and the night number, never on who is alive, and the event carries no real/fake flag, so a real call and a fake one are identical and last the same time. `engine.CurrentNightRole(s)` tells a role whether it is its turn.
 
 ### Night resolution pipeline (rules §9)
 An ordered slice of steps, each a pure function `func(*Resolution)`:
@@ -119,28 +119,34 @@ Roles hook into named steps via `Resolution` fields instead of editing the pipel
 
 ### Views (secrecy boundary)
 ```go
-func ViewFor(s State, viewer Viewer) View              // the screen now; Viewer = PlayerViewer(id) | NarratorViewer()
+func ViewFor(s State, viewer Viewer) View              // the screen now; Viewer = PlayerViewer(id) (there is no narrator device; every phone is a player)
 func Visible(s State, log []Event, viewer Viewer) []Event // the events this screen may know, judged at the time of each event
 ```
-The rules are summed up in `view.go`; the projection is in `view_project.go`, the event audiences in `view_audience.go`. Tests per role (`internal/roles/view_*_test.go`) prove what each screen can and cannot see. Dead players, and everybody once the game is over, get the full view. The narrator view contains only public info plus what must be read aloud.
+The rules are summed up in `view.go`; the projection is in `view_project.go`, the event audiences in `view_audience.go`. Tests per role (`internal/roles/view_*_test.go`) prove what each screen can and cannot see. Dead players, and everybody once the game is over, get the full view. Every view carries the public part (table, votes, announcements, the current night call); the speaker phone reads it aloud, the others only show text.
 
-- Engine events get their audience in `view_audience.go`. A role event declares its own by implementing `Audienced` (`Audience(s) Audience`: everyone, narrator, the living wolves, or listed players). An event without an audience is seen only by full views, so a forgotten audience hides information instead of leaking it.
+- Engine events get their audience in `view_audience.go`. A role event declares its own by implementing `Audienced` (`Audience(s) Audience`: everyone, the living wolves, or listed players). An event without an audience is seen only by full views, so a forgotten audience hides information instead of leaking it.
 - `PlayerDied` is never shown to the living: the order of a night's deaths would tell who was bitten and who was poisoned.
 - Role-specific secrets derived from state go through optional role interfaces, e.g. `BiteWitness` (the Witch sees the bite on her turn while she can heal, not when visited). `Pending.Visited` drives the "visited" notice; `TeamChanged` (the curse) tells only the player concerned.
 - Message shapes: `docs/protocol.md`.
 
 ## Room layer
 - One goroutine per room owns the state; commands arrive through a channel (no locks on game state).
-- Sets each deadline and sends `PhaseTimeout{Phase, Seq}` with `Settings.RoleView` and `Settings.NightStep`; it never sends one early.
-- Never forwards `NightStepCalled` to players' phones; it is for the narrator view only. Also rejects lobby commands after the deal (the engine already does).
+- **Host** = the player who created the room (and plays). Only the host may send `SetSeats`, `ConfigureRoles`, `DealRoles`; the room checks this, the engine does not know hosts. If the host leaves before the deal, the next joined player becomes host. After the deal there is no host power.
+- **Speaker policy**: who speaks sits behind `room.SpeakerPolicy`; v1 has only `InPersonSpeaker`. The host's phone reads announcements aloud; other phones stay silent. If the speaker disconnects, the next connected player in seat order (join order before seats are set) takes over. The room stores who the speaker is and sets `speaker: true` in that player's `view` message (an envelope field, not part of `engine.View`).
+- **Identity**: the room issues each player a secret token and a 4-digit PIN (both from `crypto/rand`) behind an `Identity` interface. The token (or the PIN) decides who a connection is; commands never carry a player id from the client, the room fills `By`/`Voter`. Rejoin by token (same phone), or nickname + PIN (other phone, which gets a **new token**; the old one stops working). 5 wrong PINs lock PIN rejoin for that nickname for 1 minute (injected clock); token rejoin is never locked. A nickname alone never rejoins.
+- **Seeds** (`DealRoles`, Chief election tie-break) come from `crypto/rand` inside the room, never from a client.
+- Sets each deadline and sends `PhaseTimeout{Phase, Seq}`; never early. The 7-minute day clock keeps running through the nomination countdown and pauses only during defense and verdict; its timeout is sent with `DayClock: true`.
 - Persists every event to `store.EventStore` before broadcasting.
-- On rejoin (room code + nickname), rebuilds the player's view from state.
+- Every outgoing message for a phone is `ViewFor`/`Visible` for that player. `NightStepCalled` is public and identical for real and fake calls.
+- **Leaving**: `LeaveRoom` (lobby only) removes the player and clears seats and role list; a lost connection keeps the player's place, and before the deal passes the host's powers on. After the deal there is no leaving.
+- Dawn and dusk wait `Settings.Announce` (10 s, rules §2) so the speaker can read before the game moves on.
+- `ConfigureTimers` (host only, lobby only) changes the phase times; a zero field is left alone and every other value must be within its limits (`internal/engine/timers_config.go`).
 - Clock is injected (`room.Clock` interface) so timer tests run instantly.
 
 ## Transport
 JSON over WebSocket. Message shapes in `docs/protocol.md` (written in task T9). Transport only decodes → `room.Submit(cmd)` and encodes views; no game logic.
 
 ## Extending later
-- Online play: add chat/voice in transport, reuse engine untouched.
+- Online play: `Settings.Mode` already has `InPerson | Online`, and a room created as `Online` fails with `ErrModeUnsupported` in v1. Adding the mode means a new `SpeakerPolicy` (every phone speaks, instead of one) in `room`, and chat/video in `transport`. The engine does not change.
 - Database: implement `store.EventStore` for Postgres.
 - New role: new file in `internal/roles/` + tests + row in rules.md.

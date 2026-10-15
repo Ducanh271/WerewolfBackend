@@ -28,12 +28,16 @@ sees what.
 {"type": "join",     "room": "K7QP", "nickname": "An"}
 {"type": "rejoin",   "room": "K7QP", "token": "…"}
 {"type": "rejoin",   "room": "K7QP", "nickname": "An", "pin": "4821"}
-{"type": "narrator", "room": "K7QP"}
+{"type": "leave"}
 ```
-Reply: `{"type": "welcome", "player": "p3", "token": "…", "pin": "4821"}` (no
-token or PIN for the narrator; on rejoin only `player`), then a full `view` and
+Reply: `{"type": "welcome", "player": "p3", "token": "…", "pin": "4821"}` (on
+rejoin by token only `player`; rejoin by nickname + PIN returns a **new** `token`
+and the old one stops working), then a full `view` and
 a full `events` message. A refused rejoin is an `error` with code
 `bad_credentials` or `pin_locked` (with `retryAfter` in ms).
+
+`leave` (lobby only) removes the player for good; a closed connection keeps their
+place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 
 ### Commands
 ```json
@@ -42,8 +46,9 @@ a full `events` message. A refused rejoin is an `error` with code
 
 | name | args | when | engine command |
 |---|---|---|---|
-| `setSeats` | `order: [id]` | lobby, host | `SetSeats` |
-| `configureRoles` | `roles: {role: n}`, `timers: {…}` | lobby, host | `ConfigureRoles` |
+| `setSeats` | `order: [id]` | lobby, host (the room checks) | `SetSeats` |
+| `configureRoles` | `roles: {role: n}` | lobby, host | `ConfigureRoles` |
+| `configureTimers` | `timers: {roleView, chiefElection, nightStep, announce, day, nominationLock, defense, verdict, hunterShot, chiefSuccession}` in ms, only the ones to change | lobby, host | `ConfigureTimers`; out of range → `timer_out_of_range` |
 | `dealRoles` | – | lobby, host | `DealRoles` (seed from the room) |
 | `voteChief` | `candidate` | Chief election | `VoteChief` |
 | `nameSuccessor` | `successor` | dead Chief, 15 s | `NameSuccessor` |
@@ -63,8 +68,10 @@ accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 ### `view`: the screen now
 Sent after every change, and on (re)join. It replaces the previous one.
 ```json
-{"type": "view", "deadline": 1760500000000, "view": { … }}
+{"type": "view", "deadline": 1760500000000, "speaker": true, "view": { … }}
 ```
+`speaker` is added by the room, only `true` and only for the phone that reads aloud
+(the host, or the next connected player in seat order if the host is gone).
 `deadline` is added by the room: when the running phase or night step ends.
 Every night step lasts the same time, so it tells nothing about who is alive.
 
@@ -78,7 +85,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `chief`, `succession` | all | Chief id; the dead Chief naming a successor |
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]` |
 | `winner`, `draw` | all, at the end | winning team, or a draw |
-| `nightCall` | narrator, full views | `{role, duration}`, nothing else: a fake call looks the same |
+| `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
 | `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `turn` |
 | `me.turn` | player being called | `step`; `visited: true` → show "Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng" and no action; `bitten` (Witch with heal potion) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
@@ -95,8 +102,8 @@ The `view` object (`engine.View`); absent parts are omitted:
 - On (re)join, and whenever the visible list is rebuilt (the player dies or the
   game ends: they now see the whole history), `reset: true` and `events` is
   the full list. Otherwise only the new ones, `from` = index of the first.
-- `say` is present on announcements (events with an i18n key): the narrator
-  reads it aloud; phones may show it.
+- `say` is present on announcements (events with an i18n key): the speaker
+  phone reads it aloud; every phone shows it as text.
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `GameEnded`); own
@@ -105,7 +112,7 @@ The `view` object (`engine.View`); absent parts are omitted:
   the player is in it.
 - Never sent to the living: `PlayerDied` (its order would tell bitten from
   poisoned; deaths are known through `DawnAnnounced`, `Hanged` and the alive
-  flags), `RolesDealt`, `NightStepCalled` (narrator only).
+  flags), `RolesDealt`, (`NightStepCalled` is public: role and duration, no real/fake flag).
 
 ### `error`
 ```json
@@ -116,9 +123,10 @@ The `view` object (`engine.View`); absent parts are omitted:
 
 ## What each screen gets (summary)
 
-- **Narrator**: public table, public votes, the current night call (role +
-  duration), announcements with their Vietnamese text.
-- **Living player**: the public table and votes, own role and team, whether it
+- **Every phone**: the public table and votes, the current night call (role +
+  duration), announcements with their Vietnamese text. The speaker phone reads
+  them aloud.
+- **Living player**: plus own role and team, whether it
   is their turn, own night results.
 - **Wolves**: plus the pack and its live votes, the Wolf seer's results.
 - **Witch**: plus the bitten player on her turn while she can heal, unless visited.

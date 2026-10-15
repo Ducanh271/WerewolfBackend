@@ -57,7 +57,11 @@ type Settings struct {
 	// number of players.
 	Roles map[RoleID]int
 
+	// Mode is how the table plays. Only InPerson exists in v1.
+	Mode Mode
+
 	RoleView       time.Duration // everyone looks at their role after the deal
+	Announce       time.Duration // pause after the dawn announcement and at dusk
 	NightStep      time.Duration // each role's turn at night, real or fake
 	Day            time.Duration // discussion and nominations
 	Defense        time.Duration // bào chữa
@@ -69,10 +73,28 @@ type Settings struct {
 	ChiefSuccession time.Duration // the dead Chief names a successor
 }
 
+// Mode is how a game is played. Only InPerson is supported in v1; Online is
+// reserved so the rest of the design does not have to change later.
+type Mode int
+
+// Modes.
+const (
+	InPerson Mode = iota
+	Online
+)
+
+func (m Mode) String() string {
+	if m == Online {
+		return "Online"
+	}
+	return "InPerson"
+}
+
 // DefaultSettings returns the default timers from rules §2.
 func DefaultSettings() Settings {
 	return Settings{
 		RoleView:       30 * time.Second,
+		Announce:       10 * time.Second,
 		NightStep:      30 * time.Second,
 		Day:            7 * time.Minute,
 		Defense:        1 * time.Minute,

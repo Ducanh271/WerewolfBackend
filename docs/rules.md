@@ -1,13 +1,13 @@
-# Ma Sói — Đặc tả luật chơi (App quản trò offline)
+# Ma Sói — Đặc tả luật chơi (App quản trò offline, chỉ dùng điện thoại)
 
 Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên Claude (bản 14/10/2026). File này là bản copy cho agent đọc. Khi luật thay đổi, cập nhật cả hai nơi.
 
 ## 1. Tổng quan
 
-App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi.
+App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi. **Không có thiết bị quản trò riêng**: mỗi người chỉ dùng điện thoại của mình.
 
-- **Máy quản trò**: một thiết bị đặt giữa bàn, đọc lời dẫn bằng giọng nói, đếm giờ, công bố kết quả.
-- **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày.
+- **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày. Mọi điện thoại đều hiện phần công khai (lượt gọi đêm, đếm giờ, lời công bố, phiếu ban ngày) bằng chữ.
+- **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa.
 - **Ban ngày** mọi người nói chuyện trực tiếp; app chỉ lo đếm giờ, đếm phiếu và công bố.
 
 Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
@@ -22,7 +22,7 @@ Nguyên tắc chung: **không lật vai khi chết** (ngoại lệ duy nhất l�
 
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự (quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào):
+Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự. **Chủ phòng là người tạo phòng, và cũng là người chơi.** Quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào (nhưng điện thoại vẫn làm loa như đã nói ở §1). Chủ phòng rời phòng trước khi chia vai thì quyền chuyển cho người vào phòng kế tiếp (còn trong phòng). Các bước:
 
 1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
 2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
@@ -68,13 +68,17 @@ chốt là tối đa 1.
 | Pha | Thời gian |
 | --- | --- |
 | Xem vai | 30 giây |
+| Bầu Trưởng làng | 1 phút |
 | Mỗi vai ban đêm | 30 giây |
+| Thông báo sáng / hoàng hôn | 10 giây |
 | Ban ngày (thảo luận và đề cử) | 7 phút, có thể vote bỏ qua |
+| Đếm ngược chốt đề cử | 10 giây |
 | Bào chữa | 1 phút |
 | Vote giết hay tha | 30 giây |
 | Thợ săn chọn người | 15 giây |
-| Bầu Trưởng làng | 1 phút |
 | Trưởng làng chọn người kế nhiệm | 15 giây |
+
+Chủ phòng chỉnh giờ trước khi chia vai. Mỗi pha có giới hạn: từ 5 giây đến 10 phút; ban ngày từ 1 đến 30 phút; thông báo sáng/hoàng hôn và đếm ngược chốt đề cử từ 5 giây đến 1 phút. Giá trị ngoài giới hạn bị từ chối.
 
 ### Vào lại phòng
 
@@ -88,13 +92,13 @@ Lúc vào phòng, mỗi người được cấp:
 Có hai cách vào lại:
 
 1. **Cùng máy**: app dùng mã bí mật đã lưu, vào lại ngay.
-2. **Máy khác**: nhập mã phòng, nickname và PIN.
+2. **Máy khác**: nhập mã phòng, nickname và PIN. Vào lại bằng PIN thành công thì người đó được cấp **mã bí mật mới** cho máy mới, mã cũ hết hiệu lực (máy cũ không vào lại được bằng mã cũ).
 
 Nhập sai PIN **5 lần** thì việc vào lại bằng PIN cho nickname đó bị **khoá 1 phút**. Cách vào lại cùng máy bằng mã bí mật không bị khoá. Chỉ gõ nickname mà không có mã bí mật hay PIN thì không vào lại được.
 
 ## 3. Ban đêm
 
-Tất cả nhắm mắt. Máy quản trò gọi từng vai bằng giọng nói; vai được gọi mở mắt, thao tác trên điện thoại của mình rồi nhắm lại. App gom mọi lựa chọn và **chỉ tính kết quả lúc trời sáng**.
+Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện thoại cũng hiện chữ); vai được gọi mở mắt, thao tác trên điện thoại của mình rồi nhắm lại. App gom mọi lựa chọn và **chỉ tính kết quả lúc trời sáng**.
 
 | Thứ tự | Vai | Khi nào gọi |
 | --- | --- | --- |
@@ -111,14 +115,14 @@ Tất cả nhắm mắt. Máy quản trò gọi từng vai bằng giọng nói; 
 - **Lượt Bầy sói luôn có** ở mọi ván và mọi đêm, vì mọi ván đều có sói. Sói thường, Sói nguyền và Sói tiên tri đều cắn được trong lượt này; bầy gồm mọi người đang thuộc phe sói. Không có sói thường trong danh sách vai thì lượt này vẫn được gọi.
 - **Chỉ gọi các vai có trong ván** (theo danh sách vai đã chọn, vốn công khai). Vai không có trong ván không bao giờ được gọi.
 - **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
-- **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Máy quản trò chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
+- **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị Nguyệt Nữ ghé thấy thông báo trên màn hình khi đến lượt: “Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng”.
 
 ## 4. Ban ngày
 
-Mỗi ngày treo **tối đa 1 người**. Mọi phiếu ban ngày đều **công khai**: điện thoại và máy quản trò hiện rõ ai vote ai.
+Mỗi ngày treo **tối đa 1 người**. Mọi phiếu ban ngày đều **công khai**: mọi điện thoại hiện rõ ai vote ai.
 
 Người đã chết không được nói, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết. Khi chơi online sau này, người chết bị cấm chat và video call.
 
@@ -132,7 +136,7 @@ Khi **ván kết thúc**, mọi người (cả người còn sống) được xe
 | Không ai chết vì Bảo vệ che đúng người bị cắn | “Không có ai chết, được bảo vệ” |
 | Không ai chết vì lý do khác (phù thủy cứu, sói không thống nhất, sói bị chặn) | “Không có ai chết” |
 
-Khi **nhiều người chết cùng một đêm**, quản trò đọc tên theo **thứ tự chỗ ngồi** (từ ghế đầu tiên), không bao giờ theo thứ tự phân giải, và **không nêu nguyên nhân chết hay vai**. Nhờ vậy người chơi không đoán được ai bị cắn, ai bị độc.
+Khi **nhiều người chết cùng một đêm**, loa đọc tên theo **thứ tự chỗ ngồi** (từ ghế đầu tiên), không bao giờ theo thứ tự phân giải, và **không nêu nguyên nhân chết hay vai**. Nhờ vậy người chơi không đoán được ai bị cắn, ai bị độc.
 
 Người chết ban đêm **không được trăng trối**. Nếu người chết là Thợ săn, Thợ săn bắn ngay sau thông báo (mục 6).
 

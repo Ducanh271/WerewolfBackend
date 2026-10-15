@@ -11,10 +11,10 @@ type NightStarted struct {
 	Night int
 }
 
-// NightStepCalled is the narrator's cue: call this role now and wait Duration.
+// NightStepCalled is the public cue: call this role now and wait Duration.
 // It is the same for a living role and for a dead or absent one (rules §3,
 // "gọi giả"); nothing in it says which, and the step always lasts the full
-// Duration. It is only ever shown to the narrator, never to players.
+// Duration. Every phone gets it.
 type NightStepCalled struct {
 	EventMarker
 	Role     RoleID

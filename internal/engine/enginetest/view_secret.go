@@ -151,7 +151,7 @@ func (s *Seen) NoLover() *Seen {
 	return s
 }
 
-// NightCall checks the narrator's cue: only a role and a duration.
+// NightCall checks the night cue: only a role and a duration.
 func (s *Seen) NightCall(role engine.RoleID, d time.Duration) *Seen {
 	s.g.t.Helper()
 	want := engine.NightCallView{Role: role, Duration: d}
@@ -161,7 +161,7 @@ func (s *Seen) NightCall(role engine.RoleID, d time.Duration) *Seen {
 	return s
 }
 
-// NoSecretsOfOthers is the leak check for a living viewer or the narrator: no
+// NoSecretsOfOthers is the leak check for a living viewer: no
 // other player's role, no hidden state, no cause of death, nobody's bite,
 // protection or check unless it is the viewer's own.
 func (s *Seen) NoSecretsOfOthers() *Seen {
@@ -172,9 +172,6 @@ func (s *Seen) NoSecretsOfOthers() *Seen {
 	var me engine.PlayerID
 	if s.view.Me != nil {
 		me = s.view.Me.ID
-		if s.view.NightCall != nil {
-			s.g.t.Fatalf("%s must not see the narrator's night calls", s.who)
-		}
 	}
 	wolf := me != "" && s.view.Me.Alive && s.view.Me.Team == engine.TeamWolves
 	if s.view.Pack != nil && !wolf {
@@ -200,10 +197,6 @@ func leakedBy(e engine.Event, me engine.PlayerID, wolf bool) string {
 		return "the order of the deaths (who was bitten, who was poisoned)"
 	case engine.RolesDealt:
 		return "the deal"
-	case engine.NightStepCalled:
-		if me != "" {
-			return "the night calls"
-		}
 	case roles.WolfVoted:
 		if !wolf {
 			return "the pack's votes"

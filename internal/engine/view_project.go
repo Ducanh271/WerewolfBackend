@@ -31,12 +31,10 @@ func ViewFor(s State, v Viewer) View {
 	if full {
 		out.Secrets = secrets(s)
 	}
-	if v.Narrator || full {
-		out.NightCall = nightCall(s)
-	}
+	out.NightCall = nightCall(s)
 
 	me := s.Players[v.Player]
-	if v.Narrator || me == nil {
+	if me == nil {
 		return out
 	}
 	out.Me = myView(s, me)
@@ -61,7 +59,7 @@ func seesAll(s State, v Viewer) bool {
 		return true
 	}
 	p := s.Players[v.Player]
-	return !v.Narrator && p != nil && s.Dealt && !p.Alive
+	return p != nil && s.Dealt && !p.Alive
 }
 
 func successionFormer(s State) PlayerID {

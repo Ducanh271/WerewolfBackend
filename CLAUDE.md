@@ -1,6 +1,6 @@
 # CLAUDE.md — Ma Sói backend
 
-Backend for a Werewolf (Ma Sói) game-master app for in-person play. A narrator device reads instructions aloud; each player uses their phone for secret roles, night actions and day votes. The server is the single source of truth.
+Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player uses their own phone for secret roles, night actions and day votes; the host's phone is the speaker and reads the announcements aloud, the other phones only show text. The server is the single source of truth.
 
 ## Read before working
 - `docs/plan.md` — task list. Work on ONE task per session. Tick it when done.
@@ -55,7 +55,9 @@ Run `make fmt test lint` before declaring a task done. All must pass.
 | Hiệp sĩ kiếm gỉ | `RustyKnight` |
 | Cupid / cặp đôi | `Cupid` / `Lovers` |
 | Phe Dân / Sói / thứ ba | `TeamVillage` / `TeamWolves` / `TeamLovers` |
-| Quản trò | `Narrator` |
+| Lời dẫn của quản trò | voice lines (announcements) played by the speaker phone |
+| Chủ phòng | `Host` |
+| Máy làm loa | `Speaker` |
 | Đề cử / giàn / bào chữa / giết-tha | `Nominate` / `Trial` / `Defense` / `Verdict` |
 
 ## Don't

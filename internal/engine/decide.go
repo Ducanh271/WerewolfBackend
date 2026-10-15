@@ -11,6 +11,10 @@ func Decide(s State, c Command) ([]Event, error) {
 	switch cmd := c.(type) {
 	case JoinRoom:
 		return decideJoinRoom(s, cmd)
+	case LeaveRoom:
+		return decideLeaveRoom(s, cmd)
+	case ConfigureTimers:
+		return decideConfigureTimers(s, cmd)
 	case SetSeats:
 		return decideSetSeats(s, cmd)
 	case ConfigureRoles:
@@ -65,6 +69,16 @@ func decideJoinRoom(s State, cmd JoinRoom) ([]Event, error) {
 		}
 	}
 	return []Event{PlayerJoined{Player: cmd.Player, Nickname: nickname}}, nil
+}
+
+func decideLeaveRoom(s State, cmd LeaveRoom) ([]Event, error) {
+	if s.Phase != PhaseLobby || s.Dealt {
+		return nil, fmt.Errorf("%w: cannot leave during %s", ErrWrongPhase, s.Phase)
+	}
+	if _, joined := s.Players[cmd.Player]; !joined {
+		return nil, fmt.Errorf("%w: %s", ErrUnknownPlayer, cmd.Player)
+	}
+	return []Event{PlayerLeft{Player: cmd.Player}}, nil
 }
 
 func decideSetSeats(s State, cmd SetSeats) ([]Event, error) {

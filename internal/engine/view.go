@@ -6,9 +6,9 @@ import "time"
 // it receives ViewFor (what its screen shows now) and Visible (the events it
 // may know about). What each viewer may see:
 //
-//   - Narrator: public info plus what is read aloud; at night only the role
-//     being called and the duration, never whether the call is real.
-//   - Every player: own role and team, the public role list, seating, who is
+//   - Every player: the public part (read aloud by the speaker phone, shown as
+//     text on the others; at night only the role being called and the
+//     duration, never whether the call is real), own role and team, the public role list, seating, who is
 //     alive, the Chief, every day vote, and whether it is their turn.
 //   - Living wolves (a cursed player too): the pack and its live bite votes.
 //   - A role implementing BiteWitness (the Witch): the bitten player, only on
@@ -20,17 +20,13 @@ import "time"
 // Nobody alive ever sees another player's role (lovers excepted), a cause of
 // death, or who was bitten, protected or poisoned.
 
-// Viewer is who a view is built for: one player or the narrator device.
+// Viewer is who a view is built for: one player's phone.
 type Viewer struct {
-	Player   PlayerID
-	Narrator bool
+	Player PlayerID
 }
 
 // PlayerViewer is the phone of the given player.
 func PlayerViewer(id PlayerID) Viewer { return Viewer{Player: id} }
-
-// NarratorViewer is the device in the middle of the table.
-func NarratorViewer() Viewer { return Viewer{Narrator: true} }
 
 // View is one screen's projection of the game.
 type View struct {
@@ -52,7 +48,7 @@ type View struct {
 	Full    bool
 	Secrets *Secrets
 
-	NightCall *NightCallView // narrator (and full views): the call running now
+	NightCall *NightCallView // every phone: the call running now
 	Me        *MyView        // player viewers only
 	Pack      *PackView      // living wolves, and full views
 	Lover     *LoverView     // lovers only
@@ -79,7 +75,7 @@ type PublicVotes struct {
 	Spared      []PlayerID        // spared today, in seating order
 }
 
-// NightCallView is the narrator's cue. It has no real/fake flag on purpose.
+// NightCallView is the cue shown on every phone. It has no real/fake flag on purpose.
 type NightCallView struct {
 	Role     RoleID
 	Duration time.Duration

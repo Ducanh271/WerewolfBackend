@@ -21,6 +21,14 @@ type JoinRoom struct {
 	Nickname string
 }
 
+// LeaveRoom removes a player from the lobby. It is only allowed before the
+// deal; after it a player who is gone just stays disconnected and keeps the
+// seat.
+type LeaveRoom struct {
+	CommandMarker
+	Player PlayerID
+}
+
 // SetSeats fixes the seating circle, clockwise. Order must list every player
 // in the lobby exactly once. "Left" is index-1, wrapping.
 type SetSeats struct {

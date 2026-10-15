@@ -20,6 +20,11 @@ var (
 	ErrUnknownPlayer   = errors.New("unknown player")
 	ErrSeatsMismatch   = errors.New("seating must list every player exactly once")
 	ErrDuplicateSeat   = errors.New("player seated twice")
+	// ErrTimerOutOfRange means a phase time is outside its allowed range.
+	ErrTimerOutOfRange = errors.New("timer out of range")
+	// ErrModeUnsupported means the game mode exists in the model but is not
+	// built yet (Online).
+	ErrModeUnsupported = errors.New("game mode not supported yet")
 
 	// Dealing (rules §2).
 	ErrRolesNotConfigured = errors.New("roles are not configured")

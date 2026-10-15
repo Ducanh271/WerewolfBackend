@@ -15,6 +15,18 @@ func Evolve(s State, e Event) State {
 		}
 		return out
 
+	case PlayerLeft:
+		out := s.clone()
+		delete(out.Players, ev.Player)
+		out.Seats = nil
+		out.Settings.Roles = nil
+		return out
+
+	case TimersConfigured:
+		out := s.clone()
+		out.Settings = applyTimers(out.Settings, ev.Timers)
+		return out
+
 	case SeatsSet:
 		out := s.clone()
 		out.Seats = append([]PlayerID(nil), ev.Order...)

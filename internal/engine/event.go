@@ -21,6 +21,13 @@ type PlayerJoined struct {
 	Nickname string
 }
 
+// PlayerLeft records a player leaving the lobby. The seating and the role
+// list were made for the old table, so both are cleared.
+type PlayerLeft struct {
+	EventMarker
+	Player PlayerID
+}
+
 // SeatsSet records the seating circle.
 type SeatsSet struct {
 	EventMarker
