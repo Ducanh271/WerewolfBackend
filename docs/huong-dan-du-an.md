@@ -93,7 +93,7 @@ make lint                      # go vet + golangci-lint
 make fmt                       # định dạng code
 make run                       # chạy server (cổng :8080, đổi bằng ADDR=:9000)
 make demo                      # server + 5 bot chơi 1 ván, in lời dẫn tiếng Việt
-make demo PLAYERS=12 ROLES=CursedWolf=1,WolfSeer=1,Seer=1   # số người và vai tuỳ chọn (Dân làng tự điền); make demo-12 là bàn 12 người đủ vai
+make demo PLAYERS=12 ROLES=CursedWolf=1,WolfSeer=1,Seer=1 SPEED=20   # SPEED: đồng hồ phòng chạy nhanh gấp N lần (chỉ demo; server thật luôn dùng đồng hồ thật). Số người và vai tuỳ chọn (Dân làng tự điền); make demo-12 là bàn 12 người đủ vai, mặc định SPEED=20 (một ván dưới 1 phút)
 SIM_GAMES=50 go test ./internal/roles -run TestSim -v          # 300 ván bot ngẫu nhiên (SIM_SEED=<seed> để chạy lại đúng 1 ván lỗi)
 go test ./internal/roles -run TestNight_SeerChecks -v      # một test (khớp theo tên)
 go test ./internal/transport/ws -run E2E -v                # test cả đường truyền
@@ -101,6 +101,7 @@ go test ./... -race -count=20 -run TestTên                 # chạy lặp để
 ```
 
 - **Xem log**: server in log ra màn hình (`slog`), chỉ ghi phòng, người chơi, loại sự kiện; **không bao giờ** ghi token/PIN. Chỉnh bằng biến môi trường: `ALLOWED_ORIGINS=https://app.example` (danh sách origin được phép), `ALLOW_ANY_ORIGIN=1` (chỉ khi thử nghiệm).
+- **Tin `events` có `reset: true` thay cả danh sách sự kiện, không được nối thêm** (ví dụ người chơi vừa chết nên thấy hết lịch sử; các sự kiện từng bị giấu được chèn lại đúng chỗ nên chỉ số dịch đi). Client nối thêm sẽ hiện trùng dòng, đó là nguyên nhân dòng lặp trong demo trước đây. Điện thoại thật sau này phải xử lý đúng: thay danh sách, rồi chỉ hiện phần mới (xem `afterSubsequence` trong `cmd/demo/printer.go`). Chi tiết ở `docs/protocol.md`.
 - **Xem một ván bằng mắt**: `make demo`. Để xem tin JSON thật, mở `internal/transport/ws/wsclient` hoặc chạy test E2E với `-v`.
 
 ### Viết test kịch bản để tái hiện lỗi

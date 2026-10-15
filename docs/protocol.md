@@ -140,6 +140,15 @@ The `view` object (`engine.View`); absent parts are omitted:
 - On (re)join, and whenever the visible list is rebuilt (the player dies or the
   game ends: they now see the whole history), `reset: true` and `events` is
   the full list. Otherwise only the new ones, `from` = index of the first.
+- **`reset: true` replaces the whole event list; a client must never append it.**
+  The new list is longer than the old one: it has the events that were hidden
+  from the player until now put back in their places, so indexes shift. A client
+  that appends a reset message, or keeps counting "events already shown" by
+  index, shows old events again (the repeated lines seen in `make demo-12`
+  came from exactly this). Replace the list, then show only what is new: find
+  the events already shown inside the new list, in order, and continue after
+  them (`cmd/demo/printer.go`, `afterSubsequence`). A message without reset
+  always has `from` equal to the length of the list the client holds.
 - `say` is present on announcements (events with an i18n key): the speaker
   phone reads it aloud; every phone shows it as text.
 - Event types a living player can get: public ones (joins, seating, role

@@ -30,6 +30,7 @@ const defaultRoles = "Werewolf=1,Guard=1,Seer=1"
 
 var (
 	playersFlag = flag.Int("players", 5, "number of bots at the table")
+	speedFlag   = flag.Float64("speed", 1, "the room clock runs this many times faster than real time")
 	rolesFlag   = flag.String("roles", defaultRoles, "non-villager roles, e.g. CursedWolf=1,WolfSeer=1,Seer=1; Villager fills the rest")
 )
 
@@ -46,7 +47,14 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Minute)
 	defer cancel()
 
-	rooms := room.NewManager(room.ManagerConfig{})
+	if *speedFlag <= 0 {
+		log.Fatal("-speed must be positive")
+	}
+	var clock room.Clock = room.RealClock{}
+	if *speedFlag != 1 {
+		clock = newScaledClock(*speedFlag)
+	}
+	rooms := room.NewManager(room.ManagerConfig{Clock: clock})
 	defer rooms.Close()
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
