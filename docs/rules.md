@@ -131,10 +131,10 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 
 ### Thảo luận và xử trảm
 
-1. **Thảo luận và đề cử** dùng chung đồng hồ ban ngày **7 phút**. Đồng hồ dừng trong lúc bào chữa và vote giết hay tha.
+1. **Thảo luận và đề cử** dùng chung đồng hồ ban ngày **7 phút**. Đồng hồ chỉ dừng trong lúc bào chữa và vote giết hay tha.
     - **Nút bỏ qua**: mỗi người bấm một phiếu (Trưởng làng **không** x2), bật tắt được. Nếu số người bấm **lớn hơn 66%** số người còn sống thì phần thời gian còn lại bị bỏ, chuyển sang đêm. Chỉ khi đề cử **một người** thì bỏ qua của người đó mới tự huỷ; chọn “không ai” thì giữ nguyên.
 2. **Đề cử**: mỗi người còn sống chọn một người khác để đưa lên giàn (không được tự đề cử mình), hoặc chọn “không ai”. Mọi người được đổi lựa chọn cho đến khi đề cử đóng.
-    - Khi **mọi người còn sống** đã chọn một người hoặc “không ai” và có ít nhất một người được đề cử, bắt đầu **đếm ngược chốt 10 giây**. Trong lúc đếm, ai cũng đổi được lựa chọn, và **mỗi lần có người đổi thì đếm lại từ đầu**. Hết 10 giây không ai đổi thì chốt: người nhiều phiếu nhất lên giàn, kể cả khi số người không đề cử nhiều hơn. Đồng hồ ban ngày tạm dừng trong lúc đếm ngược chốt, nút bỏ qua vẫn bấm được.
+    - Khi **mọi người còn sống** đã chọn một người hoặc “không ai” và có ít nhất một người được đề cử, bắt đầu **đếm ngược chốt 10 giây**. Trong lúc đếm, ai cũng đổi được lựa chọn, và **mỗi lần có người đổi thì đếm lại từ đầu**. Hết 10 giây không ai đổi thì chốt: người nhiều phiếu nhất lên giàn, kể cả khi số người không đề cử nhiều hơn. Đồng hồ ban ngày **không dừng** trong lúc đếm ngược (nếu không, đổi phiếu liên tục sẽ kéo dài ban ngày mãi); nếu nó hết giữa chừng thì người dẫn đầu lên giàn ngay theo luật hết giờ (bước 6). Nút bỏ qua vẫn bấm được.
     - Nếu mọi người đều chọn “không ai” (hoặc ai đổi khiến không còn ai được đề cử) thì không đếm ngược, thảo luận tiếp. Về sau có người đổi sang đề cử một người thì đếm ngược chốt bắt đầu.
     - Phiếu của Trưởng làng tính **x2**.
     - Hòa đề cử: người có phiếu **còn hiệu lực đến sớm nhất** lên giàn. Phiếu đã đổi hoặc rút không tính; đổi phiếu thì phiếu mới tính từ lúc đổi.

@@ -42,6 +42,11 @@ type ConfigureRoles struct {
 type DealRoles struct {
 	CommandMarker
 	Seed int64
+	// DayClock marks the timeout of the 7-minute day clock rather than of the
+	// phase's own timer. The day clock runs through the nomination countdown,
+	// so in that phase the two need telling apart. The room layer sets it, with
+	// the Seq the game has when the clock runs out.
+	DayClock bool
 }
 
 // PhaseTimeout is sent by the room layer when a deadline passes. Phase and Seq
@@ -55,4 +60,9 @@ type PhaseTimeout struct {
 	// voted). Like DealRoles, the room layer generates it with crypto/rand on
 	// every timeout; it is never taken from a client. Other phases ignore it.
 	Seed int64
+	// DayClock marks the timeout of the 7-minute day clock rather than of the
+	// phase's own timer. The day clock runs through the nomination countdown,
+	// so in that phase the two need telling apart. The room layer sets it, with
+	// the Seq the game has when the clock runs out.
+	DayClock bool
 }

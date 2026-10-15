@@ -99,7 +99,7 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 	case PhaseChiefSuccession:
 		return []Event{ChiefLost{Former: s.Succession.Former}}, nil
 	case PhaseDawn, PhaseDay, PhaseNominationLock, PhaseTrial, PhaseVerdict, PhaseDusk:
-		return decideDayTimeout(s)
+		return decideDayTimeout(s, cmd)
 	case PhaseNight:
 		next := nextNightEvent(s, s.Night, s.NightStep)
 		if _, over := next.(NightEnded); over {

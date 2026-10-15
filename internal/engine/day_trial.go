@@ -154,13 +154,17 @@ func resolveVerdict(s State) []Event {
 	return evs
 }
 
-func decideDayTimeout(s State) ([]Event, error) {
+func decideDayTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 	switch s.Phase {
 	case PhaseDawn:
 		return []Event{DayStarted{Duration: s.Settings.Day}}, nil
 	case PhaseNominationLock:
-		// Nobody changed their mind: the top nominee goes on trial.
+		// Nobody changed their mind, or the day clock ran out meanwhile: either
+		// way the top nominee goes on trial, the clock case being the last one.
 		if top, ok := topNominee(s); ok {
+			if cmd.DayClock {
+				return append([]Event{DayClockExpired{}}, startTrial(s, top)...), nil
+			}
 			return startTrial(s, top), nil
 		}
 		return []Event{NominationsReopened{}}, nil
