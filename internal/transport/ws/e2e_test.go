@@ -162,6 +162,10 @@ func TestE2E_FivePhonesPlayANightAndADayToAHanging(t *testing.T) {
 	}
 	for _, p := range tb.p {
 		checkOnlyItsOwnView(t, p)
+		resets := checkEventStream(t, p)
+		if p == victim && resets == 0 {
+			t.Errorf("%s died and now sees everything, but never got the full history", p.nick)
+		}
 	}
 	if host.c.Snapshot().View["speaker"] != true {
 		t.Error("the host phone is not the speaker")

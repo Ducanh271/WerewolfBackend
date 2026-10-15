@@ -152,3 +152,36 @@ func asList(v any) []map[string]any {
 	}
 	return out
 }
+
+// checkEventStream replays the `events` messages one phone received and checks
+// that no event is sent twice: a batch always starts where the phone's list
+// ends, and a reset (the phone may see more now: it died, or the game ended)
+// carries the whole history, so it is never shorter than what the phone had.
+// A phone that applies the stream in order must end with the list the server
+// has for it, each event once.
+func checkEventStream(t *testing.T, p *phone) (resets int) {
+	t.Helper()
+	known := 0
+	for i, f := range p.c.Snapshot().Frames {
+		if f.Type() != "events" {
+			continue
+		}
+		list, _ := f["events"].([]any)
+		if reset, _ := f["reset"].(bool); reset {
+			resets++
+			if len(list) < known {
+				t.Errorf("%s: frame %d resets to %d events after %d were known", p.nick, i, len(list), known)
+			}
+			known = len(list)
+			continue
+		}
+		if from := int(f["from"].(float64)); from != known {
+			t.Errorf("%s: frame %d sends events from %d, but the phone knows %d: events repeated or skipped", p.nick, i, from, known)
+		}
+		known += len(list)
+	}
+	if known != len(p.c.Snapshot().Events) {
+		t.Errorf("%s: replayed %d events, the client holds %d", p.nick, known, len(p.c.Snapshot().Events))
+	}
+	return resets
+}

@@ -101,6 +101,9 @@ func main() {
 	}
 	time.Sleep(500 * time.Millisecond) // let the last announcements print
 	fmt.Println("\nVán đấu kết thúc.")
+	if path := os.Getenv("DEMO_DUMP"); path != "" {
+		dump(path, bots)
+	}
 }
 
 // startGame is the host: seats, roles, short times, deal.
@@ -184,4 +187,20 @@ func makeNicknames(n int) []string {
 		}
 	}
 	return out
+}
+
+// dump writes what every phone received (raw frames), what each bot sent and
+// the errors the server answered, as JSON lines, so a game can be inspected.
+func dump(path string, bots []*bot) {
+	f, err := os.Create(path)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	defer f.Close()
+	enc := json.NewEncoder(f)
+	for _, b := range bots {
+		snap := b.c.Snapshot()
+		_ = enc.Encode(map[string]any{"bot": b.nick, "role": b.role, "sent": b.sent, "errors": snap.Errors, "frames": snap.Frames})
+	}
 }

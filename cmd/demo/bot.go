@@ -10,14 +10,16 @@ import (
 
 // bot is a scripted player. It decides only from its own view, like a phone.
 type bot struct {
-	nick   string
-	c      *wsclient.Client
-	id     string
-	role   string
-	acted  map[string]bool // phase/seq already answered
-	guard  string          // whom the Guard protected last night
-	visit  string          // whom the Visitor visited last night
-	cursed bool            // the Cursed wolf already used his curse
+	nick             string
+	c                *wsclient.Client
+	id               string
+	role             string
+	acted            map[string]bool // phase/seq already answered
+	guard            string          // whom the Guard protected last night
+	visit            string          // whom the Visitor visited last night
+	cursed           bool            // the Cursed wolf already used his curse
+	healed, poisoned bool            // the Witch's potions already used
+	sent             []sentCommand   // what this bot sent, for DEMO_DUMP
 }
 
 func newBot(nick string, c *wsclient.Client) *bot {
@@ -55,6 +57,7 @@ func (b *bot) think(ctx context.Context, f wsclient.Frame) {
 		return
 	}
 	b.acted[key] = true
+	b.sent = append(b.sent, sentCommand{Phase: key, Name: name, Args: args})
 	_ = b.c.Send(ctx, map[string]any{"type": "command", "name": name, "args": args})
 }
 
@@ -70,6 +73,11 @@ func (b *bot) decide(f wsclient.Frame, phase string) (string, map[string]any) {
 			return "", nil
 		}
 		return "nameSuccessor", map[string]any{"successor": pick(living)}
+	case "HunterShot":
+		if me["canShoot"] != true || len(living) == 0 {
+			return "", nil
+		}
+		return "hunterShoot", map[string]any{"target": pick(living)}
 	case "Night":
 		return b.night(f, me, living)
 	case "Day":
@@ -114,6 +122,8 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 	case "WolfSeer":
 		// His own step comes before the pack's; the pack step is handled above.
 		return "wolfSeerCheck", map[string]any{"target": pick(living)}
+	case "Witch":
+		return b.witch(turn, others)
 	case "Seer":
 		return "seerCheck", map[string]any{"target": pick(others)}
 	}
@@ -163,4 +173,25 @@ func pick(list []string) string {
 		return ""
 	}
 	return list[rand.IntN(len(list))]
+}
+
+// sentCommand is one command a bot sent, noted for DEMO_DUMP.
+type sentCommand struct {
+	Phase string // phase/seq of the view it answered
+	Name  string
+	Args  map[string]any
+}
+
+// witch sometimes heals the bitten player and sometimes poisons somebody; each
+// potion is used once.
+func (b *bot) witch(turn map[string]any, others []string) (string, map[string]any) {
+	if bitten, _ := turn["bitten"].(string); bitten != "" && !b.healed && rand.IntN(2) == 0 {
+		b.healed = true
+		return "witchHeal", nil
+	}
+	if !b.poisoned && rand.IntN(2) == 0 {
+		b.poisoned = true
+		return "witchPoison", map[string]any{"target": pick(others)}
+	}
+	return "", nil
 }
