@@ -35,7 +35,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [x] **T15 Cursed wolf.** Immediate effect, nights 1–3, blocked on night 3 = lost, "phone check" step (rules §3) with the same notice for everybody; win check only by day (rules §8). *§5 Sói nguyền.*
 - [x] **T16 Wolf seer.** *§5 Sói tiên tri.*
 - [x] **T16b Demo and simulation.** `make demo PLAYERS=.. ROLES=..`, `make demo-12`; 10–13 player tables; 300-game bot simulation (`SIM_GAMES`, `SIM_SEED` to replay).
-- [ ] **T17 Detective.** Uses seating; one use; not lost when blocked. *§6 Thám tử.*
+- [x] **T17 Detective.** Uses seating; one use; not lost when blocked; called every night (fake after use). *§6 Thám tử.*
 - [ ] **T18 Rusty knight.** Nearest living wolf to the left dies next night. *§6, §9 step 4.*
 - [ ] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*
 - [ ] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.

@@ -92,6 +92,7 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
 | `wolfSeerCheck` | `target` (any living player, wolves and himself too) | Wolf seer step, every night; not blocked | `WolfSeerCheck`; a dead player → `invalid_target`; second check → `already_acted`; blocked → `blocked`. Answer: `WolfSeerChecked {wolfSeer, target, isSeer}` to the whole pack (a role check: a cursed Seer is still `isSeer: true`) |
+| `detectiveCheck` | `target` (any living player, himself too) | Detective step, every night (after use the call is fake); not blocked | `DetectiveCheck`; a dead player → `invalid_target`; second use → `ability_used`; blocked → `blocked`. Answer: `DetectiveChecked {detective, target, hasWolf}` to the Detective only: whether the target or the nearest living neighbour on either side is a wolf (a cursed player counts); no count, no names |
 | `cursedWolfCurse` | `target` (a living non-wolf, not himself) | Cursed wolf step, nights 1–3, once per game; not blocked | `CursedWolfCurse`; a wolf, himself or a dead player → `invalid_target`; second curse → `already_acted`; blocked → `blocked` |
 | `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |

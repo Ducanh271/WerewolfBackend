@@ -25,17 +25,6 @@ func (r fakeRole) Decide(engine.State, engine.Command) ([]engine.Event, bool, er
 }
 func (r fakeRole) Evolve(*engine.State, engine.Event) bool { return false }
 
-type minRole struct {
-	fakeRole
-	min int
-}
-
-func (r minRole) MinPlayers() int { return r.min }
-
-func init() {
-	engine.Register(minRole{fakeRole{Detective, engine.TeamVillage}, 9})
-}
-
 // failure is what the recording TB panics with, so a test can assert that the
 // kit failed a scenario and with which message.
 type failure struct{ msg string }

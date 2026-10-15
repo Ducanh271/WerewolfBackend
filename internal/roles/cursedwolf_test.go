@@ -240,7 +240,7 @@ func TestCursedWolf_SeerSeesTheCursedPlayerAsAWolf(t *testing.T) {
 			n.ExpectSeerSaw("Em", "Phuc", tc.wolf)
 		})
 	}
-	// The Detective (T17) reads the same team; its test joins with the role.
+	// The Detective reads the same team; see detective_test.go.
 }
 
 func TestCursedWolf_CursedLover_PairTeamIsRecalculatedAtThePhoneCheck(t *testing.T) {

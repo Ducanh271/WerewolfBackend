@@ -17,6 +17,9 @@ var nightBots = map[engine.RoleID]func(g *simGame, by engine.PlayerID) []engine.
 	roles.Seer: func(g *simGame, by engine.PlayerID) []engine.Command {
 		return []engine.Command{roles.SeerCheck{By: by, Target: g.anyLiving()}}
 	},
+	roles.Detective: func(g *simGame, by engine.PlayerID) []engine.Command {
+		return []engine.Command{roles.DetectiveCheck{By: by, Target: g.anyLiving()}}
+	},
 	roles.WolfSeer: func(g *simGame, by engine.PlayerID) []engine.Command {
 		return []engine.Command{roles.WolfSeerCheck{By: by, Target: g.anyLiving()}}
 	},
@@ -164,7 +167,7 @@ var knownErrors = []error{
 	engine.ErrTooManyPlayers, engine.ErrUnknownRole, engine.ErrInvalidRoleCount, engine.ErrRoleMustBeUnique,
 	engine.ErrRoleCountMismatch, engine.ErrNoWolves, engine.ErrTooManyWolves, engine.ErrRoleNeedsMorePlayers,
 	engine.ErrNotYourTurn, engine.ErrNotAlive, engine.ErrInvalidTarget, engine.ErrAlreadyActed, engine.ErrBlocked,
-	engine.ErrPotionUsed, engine.ErrNothingToHeal, engine.ErrSameGuardTarget, engine.ErrSameVisitorTarget,
+	engine.ErrPotionUsed, engine.ErrAbilityUsed, engine.ErrNothingToHeal, engine.ErrSameGuardTarget, engine.ErrSameVisitorTarget,
 	engine.ErrSelfNomination, engine.ErrAlreadySpared, engine.ErrOnTrial,
 }
 

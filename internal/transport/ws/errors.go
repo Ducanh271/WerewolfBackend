@@ -69,6 +69,7 @@ var codeTable = []struct {
 	{engine.ErrSameVisitorTarget, "same_visitor_target"},
 	{engine.ErrBlocked, "blocked"},
 	{engine.ErrPotionUsed, "potion_used"},
+	{engine.ErrAbilityUsed, "ability_used"},
 	{engine.ErrNothingToHeal, "nothing_to_heal"},
 	{engine.ErrSelfNomination, "self_nomination"},
 	{engine.ErrAlreadySpared, "already_spared"},

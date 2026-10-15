@@ -112,7 +112,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 | 5 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
 | 6 | Phù thủy | Mỗi đêm |
 | 7 | Tiên tri | Mỗi đêm |
-| 8 | Thám tử | Mỗi đêm cho đến khi đã dùng |
+| 8 | Thám tử | Mỗi đêm, kể cả sau khi đã dùng (xem dưới) |
 
 - **Lượt Bầy sói luôn có** ở mọi ván và mọi đêm, vì mọi ván đều có sói. Sói thường, Sói nguyền và Sói tiên tri đều cắn được trong lượt này; bầy gồm mọi người đang thuộc phe sói. Không có sói thường trong danh sách vai thì lượt này vẫn được gọi.
 - **Chỉ gọi các vai có trong ván** (theo danh sách vai đã chọn, vốn công khai). Vai không có trong ván không bao giờ được gọi.
@@ -120,6 +120,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
 - **Kiểm tra điện thoại** (5 giây) chạy ngay sau lượt Sói nguyền, **luôn luôn** trong 3 đêm đầu khi danh sách vai có Sói nguyền: kể cả khi đã nguyền xong, Sói nguyền đã chết hoặc bị Nguyệt Nữ chặn. Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” **Mọi người còn sống** nhận một thông báo trên điện thoại: “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”. Hai thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu.
+- **Thám tử được gọi mỗi đêm, kể cả sau khi đã dùng năng lực**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật. Ngừng gọi sẽ báo cho cả bàn biết ông ta đã dùng.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị chặn chức năng ban đêm (hiện chỉ do Nguyệt Nữ, sau này có thể có vai chặn khác) thấy thông báo chung trên màn hình khi đến lượt: “Bạn không thể sử dụng chức năng đêm nay”. Thông báo **không nêu ai hay vai nào chặn**; người bị chặn không được biết nguồn chặn.
 
@@ -231,7 +232,11 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 ### Thám tử
 
 - Chỉ có trong ván **trên 8 người**. Dùng **1 lần** trong game.
-- Chọn 1 người; app cho biết trong vùng gồm người đó và 2 người ngồi hai bên có sói hay không (người bị nguyền tính là sói).
+- Chọn 1 người còn sống (được chọn chính mình). Vùng gồm người đó và **người còn sống gần nhất ở mỗi bên** theo thứ tự chỗ ngồi (người chết bị bỏ qua). App chỉ cho biết “có sói” hoặc “không có sói” trong vùng, **không** cho biết số lượng hay tên.
+- Tính theo phe hiện tại: người bị nguyền và sói trong cặp đôi đều tính là sói.
+- Bàn còn dưới 3 người sống thì vùng là tất cả người còn sống (không tính trùng).
+- Kết quả chỉ Thám tử thấy.
+- Được gọi mỗi đêm, kể cả sau khi đã dùng (lượt gọi giả, xem §3).
 - Bị Nguyệt Nữ ghé thì không dùng được đêm đó, nhưng **không mất lượt**.
 
 ### Hiệp sĩ kiếm gỉ

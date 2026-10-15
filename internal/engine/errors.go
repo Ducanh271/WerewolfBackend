@@ -49,6 +49,7 @@ var (
 	ErrAlreadyActed      = errors.New("already acted this night")
 	ErrBlocked           = errors.New("blocked tonight: no night ability")
 	ErrPotionUsed        = errors.New("this potion is already used up")
+	ErrAbilityUsed       = errors.New("this once-a-game ability is already used")
 	ErrNothingToHeal     = errors.New("nobody is bitten tonight")
 	ErrSameGuardTarget   = errors.New("the guard cannot protect the same player two nights in a row")
 	ErrSameVisitorTarget = errors.New("the Visitor cannot visit the same player two nights in a row")
