@@ -17,6 +17,8 @@ var vi = map[string]string{
 	HunterRevealed:  "%s là Thợ săn.",
 	HunterShot:      "%s bắn %s.",
 	NightBlocked:    "Bạn không thể sử dụng chức năng đêm nay.",
+	NightWolfDoomed: "Bạn đã trúng độc và chết từ lúc này, bạn không được vote.",
+	NightPackDoomed: "%s đã trúng độc và không thể vote đêm nay.",
 	NightPhoneCheck: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.",
 	NoticeNotCursed: "Bạn không bị nguyền.",
 	NoticeCursed:    "Bạn đã bị nguyền.",

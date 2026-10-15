@@ -1,13 +1,14 @@
 package engine
 
 // WolfVoters lists the wolves who may vote on the bite tonight: every living
-// player of the wolf team who is not blocked. The count of rules §5 ("quá nửa
+// player of the wolf team who is not blocked and not doomed by the Rusty
+// knight's poison. The count of rules §5 ("quá nửa
 // số phiếu") is always taken over this list, so a blocked wolf neither votes
 // nor counts.
 func WolfVoters(s State) []PlayerID {
 	var voters []PlayerID
 	for _, id := range s.Seats {
-		if p := s.Players[id]; p != nil && p.Alive && p.Team == TeamWolves && !Blocked(s, id) {
+		if p := s.Players[id]; p != nil && p.Alive && p.Team == TeamWolves && !Blocked(s, id) && !Doomed(s, id) {
 			voters = append(voters, id)
 		}
 	}

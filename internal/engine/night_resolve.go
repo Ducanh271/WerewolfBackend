@@ -6,20 +6,22 @@ import "masoi/internal/i18n"
 // step reads the choices in State and adds to it. Roles of later tasks hook in
 // through new fields and new steps, never by reordering the existing ones.
 type Resolution struct {
-	State     State
-	Bitten    PlayerID // the pack's target, empty if nobody
-	Protected bool     // the Guard shielded the bitten player
-	Deaths    []PlayerID
+	State          State
+	Bitten         PlayerID // the pack's target, empty if nobody
+	Protected      bool     // the Guard shielded the bitten player
+	KnightPoisoned PlayerID // the wolf the bitten Rusty knight poisons, empty if none
+	Deaths         []PlayerID
 }
 
-// nightPipeline is the ordered list of rules §9. Only step 3 exists so far; the
-// rest are added by their tasks in the numbered place:
-// 2 Curse (nothing left to do: it took effect at once), 4 RustyKnight, 5 Witch poison, 6 delayed wolf deaths,
-// 7 lover deaths. Step 8 (announce) is resolveNight below, step 9 (win check)
-// is afterDeaths.
+// nightPipeline is the ordered list of rules §9. The steps still to come are
+// added by their tasks in the numbered place:
+// 2 Curse (nothing left to do: it took effect at once), 7 lover deaths.
+// Step 8 (announce) is resolveNight below, step 9 (win check) is afterDeaths.
 var nightPipeline = []func(*Resolution){
-	stepBite,   // 3
-	stepPoison, // 5
+	stepBite,              // 3
+	stepKnight,            // 4
+	stepPoison,            // 5
+	stepDelayedWolfDeaths, // 6
 }
 
 // stepBite: the pack's bite kills unless the Guard shields the bitten player.
@@ -42,16 +44,9 @@ func stepBite(r *Resolution) {
 // stepPoison: the Witch's poison kills its target; the Guard cannot stop it. A
 // player who also dies of the bite is counted once.
 func stepPoison(r *Resolution) {
-	target := r.State.Pending.Poisoned
-	if target == "" {
-		return
+	if target := r.State.Pending.Poisoned; target != "" {
+		r.addDeath(target)
 	}
-	for _, id := range r.Deaths {
-		if id == target {
-			return
-		}
-	}
-	r.Deaths = append(r.Deaths, target)
 }
 
 // resolveNight turns the night's choices into deaths and the morning
@@ -64,6 +59,9 @@ func resolveNight(s State) []Event {
 	var evs []Event
 	for _, id := range r.Deaths {
 		evs = append(evs, PlayerDied{Player: id})
+	}
+	if r.KnightPoisoned != "" {
+		evs = append(evs, WolfPoisoned{Wolf: r.KnightPoisoned, Night: s.Night})
 	}
 	evs = append(evs, announceDawn(r)) // step 8
 	return append(evs, afterDeaths(s, evs, r.Deaths)...)
@@ -116,6 +114,9 @@ func (e DawnAnnounced) AnnouncementKey() string {
 }
 
 func evolveResolution(s State, e Event) (State, bool) {
+	if out, ok := evolveWolfPoisoned(s, e); ok {
+		return out, true
+	}
 	if ev, ok := e.(PlayerDied); ok {
 		out := s.clone()
 		if p := out.Players[ev.Player]; p != nil {

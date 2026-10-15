@@ -56,6 +56,12 @@ const (
 	// NightBlocked: the player cannot use their night ability. It never names
 	// who blocked them.
 	NightBlocked = "night.blocked"
+	// NightWolfDoomed: the wolf poisoned by the Rusty knight is dead from now
+	// on and cannot vote. Shown on its own phone at the pack step.
+	NightWolfDoomed = "night.wolf_doomed"
+	// NightPackDoomed: the pack is told a wolf can no longer vote. The name is
+	// the wolf's.
+	NightPackDoomed = "night.pack_doomed"
 	// NightPhoneCheck is read aloud at the phone check step (rules §3).
 	NightPhoneCheck = "night.phone_check"
 	// NoticeNotCursed and NoticeCursed are the two phone check notices. The

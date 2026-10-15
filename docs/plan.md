@@ -36,7 +36,8 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [x] **T16 Wolf seer.** *§5 Sói tiên tri.*
 - [x] **T16b Demo and simulation.** `make demo PLAYERS=.. ROLES=..`, `make demo-12`; 10–13 player tables; 300-game bot simulation (`SIM_GAMES`, `SIM_SEED` to replay).
 - [x] **T17 Detective.** Uses seating; one use; not lost when blocked; called every night (fake after use). *§6 Thám tử.*
-- [ ] **T18 Rusty knight.** Nearest living wolf to the left dies next night. *§6, §9 step 4.*
+- [x] **T18 Rusty knight.** Bitten Knight (not Guarded) poisons the nearest living wolf to his left (next seat); the wolf dies when the pack step starts next night, announced at dawn. *§6, §9 steps 4 and 6.*
+  - Decided: "left" = next seat (seats are numbered clockwise). The poisoned wolf stays `Alive` in views until the morning announcement.
 - [ ] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*
   - Decided: a wolf in a cross-team couple keeps `Player.Team = Wolves`. The couple's third-team status is computed at the couple level (from `State.Lovers`), never by changing `Player.Team`. Seer and Detective rely on this.
 - [ ] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.

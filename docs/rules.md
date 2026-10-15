@@ -241,9 +241,15 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 ### Hiệp sĩ kiếm gỉ
 
-- Bị sói cắn thì **chết ngay**, nhưng **con sói còn sống gần nhất về phía bên trái** hiệp sĩ (theo thứ tự chỗ ngồi) trúng độc và chết vào đêm hôm sau.
+- Năng lực bị động: Nguyệt Nữ không chặn được. Hiệp sĩ bị nguyền vẫn giữ năng lực (bị chính bầy mình cắn vẫn kích hoạt).
+- Bị bầy sói cắn (và Bảo vệ không che) thì **chết ngay**, và **con sói còn sống gần nhất về phía bên trái** hiệp sĩ trúng độc. "Bên trái" là ghế kế tiếp theo chiều kim đồng hồ (ghế đánh số tăng dần). Tính cả mọi người phe sói (sói thường, Sói nguyền, Sói tiên tri, sói trong cặp đôi), bỏ qua người chết và người không phải sói, không bao giờ là chính hiệp sĩ.
+- Sói trúng độc sống đúng 24 giờ: đêm hôm sau, ngay khi bước bầy sói bắt đầu, nó **chết ngay**. Điện thoại nó báo cho nó biết và nó không được vote. Cả bầy thấy nó không còn vote được. Nếu nó là sói duy nhất thì đêm đó không ai bị cắn.
+- Cái chết đó được loa công bố **sáng hôm sau cùng các cái chết khác** (theo thứ tự chỗ ngồi, không nêu nguyên nhân hay vai). Người ngoài bầy không biết gì cho đến lúc đó, nên về mặt hiển thị nó vẫn "còn sống" cho đến khi loa đọc. Nếu nó là Thợ săn (bị nguyền) hay Trưởng làng thì Thợ săn bắn và Trưởng làng chọn người kế nhiệm sau thông báo, như mọi cái chết khác.
 - Bảo vệ che hiệp sĩ: không ai chết, sói không trúng độc.
 - Phù thủy cứu hiệp sĩ: hiệp sĩ sống, nhưng sói **vẫn trúng độc**.
+- Chỉ bị **bầy sói cắn** mới kích hoạt. Bị Phù thủy đầu độc, bị treo, bị Thợ săn bắn thì không có gì xảy ra.
+- Sói trúng độc chết sớm hơn (bị treo, bị Phù thủy đầu độc, bị Thợ săn bắn) thì không có gì xảy ra thêm.
+- Chỉ xét thắng thua vào ban ngày (mục 8).
 
 ## 7. Cupid và phe thứ ba
 
@@ -303,9 +309,9 @@ App tính kết quả đêm theo đúng thứ tự sau:
 1. **Nguyệt Nữ**: xác định người bị chặn; hành động của họ đêm đó bị bỏ.
 2. **Nguyền**: đã có hiệu lực ngay lúc Sói nguyền chọn (mục 5); bước này không làm gì thêm. Thắng thua do nguyền (sói ≥ dân) chỉ xét ở bước 9.
 3. **Cắn**: nếu Bảo vệ che đúng người bị cắn thì không ai chết (ghi nhận “được bảo vệ”). Nếu không, Phù thủy cứu thì sống; còn lại thì chết.
-4. **Hiệp sĩ kiếm gỉ**: nếu hiệp sĩ bị cắn và không được Bảo vệ che, con sói còn sống gần nhất bên trái hiệp sĩ trúng độc (kể cả khi Phù thủy cứu hiệp sĩ).
+4. **Hiệp sĩ kiếm gỉ**: nếu hiệp sĩ bị cắn và không được Bảo vệ che, con sói còn sống gần nhất bên trái hiệp sĩ trúng độc (kể cả khi Phù thủy cứu hiệp sĩ). Con sói này chỉ bị đánh dấu; nó chết ở bước 6 của đêm hôm sau.
 5. **Thuốc độc** của Phù thủy.
-6. **Sói trúng độc từ đêm trước** chết.
+6. **Sói trúng độc từ đêm trước** chết. Về luật nó đã chết từ lúc bước bầy sói bắt đầu (không vote, không tính vào bầy), nhưng cái chết chỉ được công bố ở bước 8 cùng các cái chết khác.
 7. **Chết theo người yêu**.
 8. **Công bố** (mục 4), rồi Thợ săn chết thì lộ vai và bắn, lặp lại bước 7 cho người bị bắn (và cho Thợ săn bị bắn).
 9. **Kiểm tra điều kiện thắng** theo tình hình lúc này (mục 8). Kể cả khi đêm đó không ai chết (ví dụ vừa có người bị nguyền).

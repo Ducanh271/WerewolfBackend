@@ -154,7 +154,7 @@ func turnView(s State, p *Player) *TurnView {
 	if step != p.Role && !(isPackStep(step) && p.Team == TeamWolves) {
 		return nil
 	}
-	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID)}
+	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID), Doomed: isPackStep(step) && Doomed(s, p.ID)}
 	if out.Blocked || step != p.Role {
 		return out
 	}
@@ -172,9 +172,27 @@ func isPackStep(step RoleID) bool {
 	return ok && always.AlwaysCalled()
 }
 
+// packStepReached: tonight's pack step has started, so the poisoned wolf is
+// dead by the rules from now on.
+func packStepReached(s State) bool {
+	if s.Phase != PhaseNight {
+		return false
+	}
+	for i, step := range nightSteps(s, s.Night) {
+		if isPackStep(step) {
+			return s.NightStep >= i+1
+		}
+	}
+	return false
+}
+
 func packView(s State) *PackView {
 	out := &PackView{Votes: copyMap(s.Pending.WolfVotes)}
+	reached := packStepReached(s)
 	for _, id := range s.Seats {
+		if reached && Doomed(s, id) {
+			out.Doomed = append(out.Doomed, id)
+		}
 		if p := s.Players[id]; p != nil && VisibleTeam(p) == TeamWolves {
 			out.Members = append(out.Members, id)
 		}
