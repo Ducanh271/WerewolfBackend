@@ -66,6 +66,7 @@ type Settings struct {
 	RoleView       time.Duration // everyone looks at their role after the deal
 	Announce       time.Duration // pause after the dawn announcement and at dusk
 	NightStep      time.Duration // each role's turn at night, real or fake
+	PhoneCheck     time.Duration // the phone check step after the curse (rules §3)
 	Day            time.Duration // discussion and nominations
 	Defense        time.Duration // bào chữa
 	Verdict        time.Duration // vote giết hay tha
@@ -99,6 +100,7 @@ func DefaultSettings() Settings {
 		RoleView:       30 * time.Second,
 		Announce:       10 * time.Second,
 		NightStep:      30 * time.Second,
+		PhoneCheck:     5 * time.Second,
 		Day:            7 * time.Minute,
 		Defense:        1 * time.Minute,
 		Verdict:        30 * time.Second,

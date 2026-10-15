@@ -26,6 +26,9 @@ func ViewFor(s State, v Viewer) View {
 		pv := PlayerView{ID: id, Nickname: p.Nickname, Seat: i + 1, Alive: p.Alive}
 		if full || id == v.Player {
 			pv.Role, pv.Team = p.Role, p.Team
+			if !full {
+				pv.Team = VisibleTeam(p)
+			}
 		} else if p.Flags[FlagRevealed] != 0 {
 			pv.Role = p.Role // a revealed Hunter: the role, not the team
 		}
@@ -41,7 +44,7 @@ func ViewFor(s State, v Viewer) View {
 		return out
 	}
 	out.Me = myView(s, me)
-	if full || (me.Alive && me.Team == TeamWolves) {
+	if full || (me.Alive && VisibleTeam(me) == TeamWolves) {
 		out.Pack = packView(s)
 	}
 	out.Lover = loverView(s, me)
@@ -127,13 +130,15 @@ func nightCall(s State) *NightCallView {
 	if !ok {
 		return nil
 	}
-	return &NightCallView{Role: step, Duration: s.Settings.NightStep}
+	return &NightCallView{Role: step, Duration: NightStepDuration(s, step)}
 }
 
 func myView(s State, p *Player) *MyView {
 	out := &MyView{ID: p.ID, Role: p.Role, Team: p.Team, Alive: p.Alive, CanShoot: shooter(s) == p.ID}
-	if role := Registry[p.Role]; role != nil {
-		out.Cursed = p.Team == TeamWolves && role.BaseTeam() != TeamWolves
+	out.Cursed = IsCursed(p) && p.Flags[FlagTeamHidden] == 0
+	out.Team = VisibleTeam(p)
+	if step, ok := CurrentNightRole(s); ok && step == StepPhoneCheck && p.Alive {
+		out.PhoneCheck = &PhoneCheckView{Cursed: IsCursed(p)}
 	}
 	out.Turn = turnView(s, p)
 	return out
@@ -170,7 +175,7 @@ func isPackStep(step RoleID) bool {
 func packView(s State) *PackView {
 	out := &PackView{Votes: copyMap(s.Pending.WolfVotes)}
 	for _, id := range s.Seats {
-		if p := s.Players[id]; p != nil && p.Team == TeamWolves {
+		if p := s.Players[id]; p != nil && VisibleTeam(p) == TeamWolves {
 			out.Members = append(out.Members, id)
 		}
 	}
@@ -202,9 +207,9 @@ func loverView(s State, me *Player) *LoverView {
 
 func linkColour(a, b *Player) LinkColour {
 	switch {
-	case a.Team == TeamLovers || b.Team == TeamLovers || a.Team != b.Team:
+	case VisibleTeam(a) == TeamLovers || VisibleTeam(b) == TeamLovers || VisibleTeam(a) != VisibleTeam(b):
 		return LinkStriped
-	case a.Team == TeamWolves:
+	case VisibleTeam(a) == TeamWolves:
 		return LinkBlack
 	default:
 		return LinkWhite

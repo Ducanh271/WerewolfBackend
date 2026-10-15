@@ -34,6 +34,7 @@ func nightSteps(s State, night int) []RoleID {
 	type step struct {
 		id    RoleID
 		order int
+		sub   int // 1 for the phone check, which follows the step of the same order
 	}
 	var steps []step
 	for id, role := range Registry {
@@ -41,12 +42,18 @@ func nightSteps(s State, night int) []RoleID {
 			continue
 		}
 		if call := role.NightCall(); call != nil && call.CalledOn(night) {
-			steps = append(steps, step{id, call.Order})
+			steps = append(steps, step{id: id, order: call.Order})
 		}
+	}
+	if order, ok := phoneCheckAfter(s, night); ok {
+		steps = append(steps, step{StepPhoneCheck, order, 1})
 	}
 	sort.Slice(steps, func(i, j int) bool {
 		if steps[i].order != steps[j].order {
 			return steps[i].order < steps[j].order
+		}
+		if steps[i].sub != steps[j].sub {
+			return steps[i].sub < steps[j].sub
 		}
 		return steps[i].id < steps[j].id
 	})
@@ -70,19 +77,25 @@ func CurrentNightRole(s State) (RoleID, bool) {
 	return steps[s.NightStep-1], true
 }
 
-// nextNightEvent is the call for the step after `called` steps, or the end of
-// the night when none is left.
-func nextNightEvent(s State, night, called int) Event {
+// nextNightEvents is the call for the step after `called` steps (with the
+// notices the step hands out), or the end of the night when none is left.
+func nextNightEvents(s State, night, called int) []Event {
 	steps := nightSteps(s, night)
 	if called >= len(steps) {
-		return NightEnded{}
+		return []Event{NightEnded{}}
 	}
-	return NightStepCalled{Role: steps[called], Duration: s.Settings.NightStep}
+	step := steps[called]
+	evs := []Event{NightStepCalled{Role: step, Duration: NightStepDuration(s, step)}}
+	if step == StepPhoneCheck {
+		evs = append(evs, PhoneCheckAnnounced{})
+		evs = append(evs, phoneCheckNotices(s)...)
+	}
+	return evs
 }
 
 // startNight begins a night; night 1 follows the Chief election.
 func startNight(s State, night int) []Event {
-	return []Event{NightStarted{Night: night}, nextNightEvent(s, night, 0)}
+	return append([]Event{NightStarted{Night: night}}, nextNightEvents(s, night, 0)...)
 }
 
 // decidePhaseTimeout moves the game on when a deadline passes. A night step
@@ -119,9 +132,9 @@ func decideNightTimeout(s State, seed int64) []Event {
 			s = Fold(s, evs...)
 		}
 	}
-	next := nextNightEvent(s, s.Night, s.NightStep)
-	evs = append(evs, next)
-	if _, over := next.(NightEnded); over {
+	next := nextNightEvents(s, s.Night, s.NightStep)
+	evs = append(evs, next...)
+	if _, over := next[0].(NightEnded); over {
 		evs = append(evs, resolveNight(s)...)
 	}
 	return evs

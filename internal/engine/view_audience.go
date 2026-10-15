@@ -40,7 +40,7 @@ func (a Audience) includes(s State, v Viewer) bool {
 		return true
 	}
 	if a.Wolves {
-		if p := s.Players[v.Player]; p != nil && p.Alive && p.Team == TeamWolves {
+		if p := s.Players[v.Player]; p != nil && p.Alive && VisibleTeam(p) == TeamWolves {
 			return true
 		}
 	}
@@ -67,10 +67,12 @@ func audienceOf(s State, e Event) Audience {
 		NominationsLocking, NominationsReopened, DayClockExpired,
 		TrialStarted, VerdictStarted, VerdictCast, Spared, Hanged,
 		HunterRevealed, HunterShotStarted, HunterShot, HunterTimedOut,
-		GameEnded, NightStepCalled:
+		GameEnded, NightStepCalled, PhoneCheckAnnounced:
 		return Audience{Everyone: true}
-	case TeamChanged:
+	case PhoneChecked:
 		return Audience{Players: []PlayerID{ev.Player}}
+	case TeamChanged:
+		return Audience{} // the phone check tells the player and the pack
 	case Audienced:
 		return ev.Audience(s)
 	}

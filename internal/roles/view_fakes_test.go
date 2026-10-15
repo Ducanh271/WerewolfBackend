@@ -17,8 +17,3 @@ type wolfSeerSaw struct {
 }
 
 func (wolfSeerSaw) Audience(engine.State) engine.Audience { return engine.Audience{Wolves: true} }
-
-// cursed stands for the curse (T15): the player joins the wolf team.
-func cursed(name string) engine.Event {
-	return engine.TeamChanged{Player: engine.PlayerID(name), Team: engine.TeamWolves}
-}

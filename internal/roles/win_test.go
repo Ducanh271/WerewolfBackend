@@ -74,3 +74,54 @@ func TestWin_AfterTheGameEnded_CommandsAreRejected(t *testing.T) {
 		t.Fatalf("a timeout after the end produced events: %v", g.Events()[before:])
 	}
 }
+
+// Rules §8: the win check runs once the whole chain of a hanging is over, so a
+// hanged Hunter's shot comes first.
+func TestWin_HangedHunterShootsTheLastWolf_VillageWinsAfterTheShot_NotBefore(t *testing.T) {
+	g := NewGame(t,
+		Seats("An", "Phuc", "Giang", "Hoa", "Khoa"),
+		Cast("An", Werewolf, "Phuc", Hunter, "Giang", Villager, "Hoa", Villager, "Khoa", Villager))
+	g.Night()
+	g.Dawn().ExpectNobodyDied()
+	g.Day().Hanged("Phuc")
+	g.ExpectPhase(engine.PhaseHunterShot) // nothing is decided yet
+	g.Hunter("Phuc").Shoots("An")
+	g.ExpectPhase(engine.PhaseEnded)
+	if w := g.State().Winner; w == nil || *w != engine.TeamVillage {
+		t.Fatalf("winner %v, want the village", w)
+	}
+}
+
+// Hanging the Hunter alone makes it 2 wolves against 2 villagers; the verdict
+// is read on the situation after his shot, not on the one before it.
+func TestWin_HangedHunterLevelsTheNumbers_OutcomeFollowsTheShot(t *testing.T) {
+	tests := []struct {
+		name      string
+		target    string
+		wolvesWin bool
+	}{
+		{"he shoots a wolf: the game goes on", "Binh", false},
+		{"he shoots a villager: the wolves win", "Giang", true},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			g := NewGame(t,
+				Seats("An", "Binh", "Phuc", "Giang", "Hoa", "Khoa", "Lan"),
+				Cast("An", Werewolf, "Binh", Werewolf, "Phuc", Hunter, "Giang", Villager, "Hoa", Villager,
+					"Khoa", Villager, "Lan", Villager))
+			g.Night()
+			killOff(g, "An", "Binh", "Phuc", "Giang", "Hoa") // 2 wolves, the Hunter, 2 villagers
+			g.Dawn().ExpectNobodyDied()
+			g.Day().Hanged("Phuc") // 2 wolves against 2 villagers, before the shot
+			g.ExpectPhase(engine.PhaseHunterShot)
+			g.Hunter("Phuc").Shoots(tc.target)
+			ended := g.State().Phase == engine.PhaseEnded
+			if ended != tc.wolvesWin {
+				t.Fatalf("ended=%v, want %v", ended, tc.wolvesWin)
+			}
+			if w := g.State().Winner; tc.wolvesWin && (w == nil || *w != engine.TeamWolves) {
+				t.Fatalf("winner %v, want the wolves", w)
+			}
+		})
+	}
+}

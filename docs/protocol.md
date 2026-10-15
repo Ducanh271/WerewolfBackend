@@ -80,7 +80,7 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 |---|---|---|---|
 | `setSeats` | `order: [id]` | lobby, host (the room checks) | `SetSeats` |
 | `configureRoles` | `roles: {role: n}` | lobby, host | `ConfigureRoles` |
-| `configureTimers` | `timers: {roleView, chiefElection, nightStep, announce, day, nominationLock, defense, verdict, hunterShot, chiefSuccession}` in ms, only the ones to change | lobby, host | `ConfigureTimers`; out of range → `timer_out_of_range` |
+| `configureTimers` | `timers: {roleView, chiefElection, nightStep, phoneCheck, announce, day, nominationLock, defense, verdict, hunterShot, chiefSuccession}` in ms, only the ones to change | lobby, host | `ConfigureTimers`; out of range → `timer_out_of_range` |
 | `dealRoles` | – | lobby, host | `DealRoles` (seed from the room) |
 | `voteChief` | `candidate` | Chief election | `VoteChief` |
 | `nameSuccessor` | `successor` | dead Chief, 15 s | `NameSuccessor` |
@@ -91,12 +91,12 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
+| `cursedWolfCurse` | `target` (a living non-wolf, not himself) | Cursed wolf step, nights 1–3, once per game; not blocked | `CursedWolfCurse`; a wolf, himself or a dead player → `invalid_target`; second curse → `already_acted`; blocked → `blocked` |
 | `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |
 | `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not blocked |
 
-Later roles add their own rows (Visitor, Cursed wolf, Wolf seer,
-Detective, Cupid). The server **rejects** any `seed` field and never
+Later roles add their own rows (Wolf seer, Detective, Cupid). The server **rejects** any `seed` field and never
 accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 
 ## Server → client
@@ -122,7 +122,8 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]` |
 | `winner`, `draw` | all, at the end | winning team, or a draw |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
-| `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `canShoot` (only the dead Hunter while he chooses), `turn` |
+| `me` | players | `id`, `role`, `team`, `alive`, `cursed` (known only from the phone check on), `canShoot` (only the dead Hunter while he chooses), `phoneCheck`, `turn` |
+| `me.phoneCheck` | every living player, only while the `PhoneCheck` step runs | `{cursed: bool}`; text: `cursed` false → "Bạn không bị nguyền", true → "Bạn đã bị nguyền". The two answers have exactly the same shape, so the screen never tells who was cursed. |
 | `me.turn` | player being called | `step`; `blocked: true` → show "Bạn không thể sử dụng chức năng đêm nay" (never says who blocked) and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
 | `lover` | the two lovers | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
@@ -143,9 +144,9 @@ The `view` object (`engine.View`); absent parts are omitted:
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
-  `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`); own
+  `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
-  `TeamChanged` for a cursed player); `WolfVoted` for the pack, from the moment
+  `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice); `WolfVoted` for the pack, from the moment
   the player is in it.
 - Never sent to the living: `PlayerDied` (its order would tell bitten from
   poisoned; deaths are known through `DawnAnnounced`, `Hanged` and the alive

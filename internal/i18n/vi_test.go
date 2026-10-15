@@ -38,3 +38,16 @@ func TestVi_DawnNeverStatesCauseOrRole(t *testing.T) {
 		}
 	}
 }
+
+func TestVi_PhoneCheck_VoiceLineAndBothNotices(t *testing.T) {
+	tests := []struct{ key, want string }{
+		{NightPhoneCheck, "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."},
+		{NoticeNotCursed, "Bạn không bị nguyền."},
+		{NoticeCursed, "Bạn đã bị nguyền."},
+	}
+	for _, tc := range tests {
+		if got := Vi(tc.key); got != tc.want {
+			t.Errorf("%s: got %q, want %q", tc.key, got, tc.want)
+		}
+	}
+}

@@ -53,6 +53,9 @@ func Evolve(s State, e Event) State {
 		return out
 	}
 
+	if out, ok := evolvePhoneCheck(s, e); ok {
+		return out
+	}
 	if out, ok := evolveTeam(s, e); ok {
 		return out
 	}

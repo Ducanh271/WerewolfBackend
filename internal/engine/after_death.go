@@ -8,7 +8,8 @@ package engine
 //     victim who is a Hunter shoots too (settle starts each shot, and
 //     shotResolved, once the Hunter chose or ran out of time, comes back here);
 //  2. T19 adds the lovers' deaths here, before the win check;
-//  3. the win check (rules §8); a finished game skips step 4;
+//  3. the win check (rules §8), also when nobody died; a finished game skips
+//     step 4;
 //  4. a dead Chief names a successor.
 //
 // s is the state the step started from and emitted the events the step already
@@ -39,10 +40,11 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 		}
 		return append(evs, HunterShotStarted{Hunter: hunter, Duration: s.Settings.HunterShot, Queue: shooters, Dead: dead})
 	}
-	if len(dead) > 0 {
-		if out, over := CheckWin(after); over {
-			return append(evs, GameEnded{Outcome: out})
-		}
+	// The win check runs by day only, after the announcement and the shots, on
+	// the situation of this moment (rules §8). A night without deaths still
+	// gets it: a curse may have turned the numbers.
+	if out, over := CheckWin(after); over {
+		return append(evs, GameEnded{Outcome: out})
 	}
 	for _, id := range dead {
 		if id == s.Chief {

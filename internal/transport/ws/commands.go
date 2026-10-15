@@ -57,6 +57,7 @@ type timerMillis struct {
 	RoleView        int64 `json:"roleView"`
 	ChiefElection   int64 `json:"chiefElection"`
 	NightStep       int64 `json:"nightStep"`
+	PhoneCheck      int64 `json:"phoneCheck"`
 	Announce        int64 `json:"announce"`
 	Day             int64 `json:"day"`
 	NominationLock  int64 `json:"nominationLock"`
@@ -83,7 +84,7 @@ func (t timerMillis) timers() (engine.Timers, error) {
 		dst *time.Duration
 	}{
 		{t.RoleView, &out.RoleView}, {t.ChiefElection, &out.ChiefElection},
-		{t.NightStep, &out.NightStep}, {t.Announce, &out.Announce}, {t.Day, &out.Day},
+		{t.NightStep, &out.NightStep}, {t.PhoneCheck, &out.PhoneCheck}, {t.Announce, &out.Announce}, {t.Day, &out.Day},
 		{t.NominationLock, &out.NominationLock}, {t.Defense, &out.Defense},
 		{t.Verdict, &out.Verdict}, {t.HunterShot, &out.HunterShot},
 		{t.ChiefSuccession, &out.ChiefSuccession},
@@ -142,6 +143,9 @@ var commandTable = map[string]commandSpec{
 	}),
 	"witchPoison": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.WitchPoison{By: by, Target: a.Target}
+	}),
+	"cursedWolfCurse": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
+		return roles.CursedWolfCurse{By: by, Target: a.Target}
 	}),
 	"seerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.SeerCheck{By: by, Target: a.Target}

@@ -10,13 +10,14 @@ import (
 
 // bot is a scripted player. It decides only from its own view, like a phone.
 type bot struct {
-	nick  string
-	c     *wsclient.Client
-	id    string
-	role  string
-	acted map[string]bool // phase/seq already answered
-	guard string          // whom the Guard protected last night
-	visit string          // whom the Visitor visited last night
+	nick   string
+	c      *wsclient.Client
+	id     string
+	role   string
+	acted  map[string]bool // phase/seq already answered
+	guard  string          // whom the Guard protected last night
+	visit  string          // whom the Visitor visited last night
+	cursed bool            // the Cursed wolf already used his curse
 }
 
 func newBot(nick string, c *wsclient.Client) *bot {
@@ -91,9 +92,10 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 		return "", nil
 	}
 	others := without(living, b.id)
-	switch b.role {
-	case "Werewolf":
+	if turn["step"] == "Werewolf" { // the pack step: any wolf, a cursed player too
 		return "wolfVote", map[string]any{"target": pick(without(others, packMembers(f)...))}
+	}
+	switch b.role {
 	case "Guard":
 		target := pick(without(living, b.guard))
 		b.guard = target
@@ -102,6 +104,13 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 		target := pick(without(others, b.visit))
 		b.visit = target
 		return "visitorVisit", map[string]any{"target": target}
+	case "CursedWolf":
+		// His own step comes before the pack's: curse once, then bite as a wolf.
+		if b.cursed {
+			return "", nil
+		}
+		b.cursed = true
+		return "cursedWolfCurse", map[string]any{"target": pick(without(others, packMembers(f)...))}
 	case "Seer":
 		return "seerCheck", map[string]any{"target": pick(others)}
 	}

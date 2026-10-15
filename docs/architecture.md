@@ -111,11 +111,15 @@ The night call order (rules §3) comes from each role's `NightCall().Order`. The
 An ordered slice of steps, each a pure function `func(*Resolution)`:
 
 ```
-1 VisitorBlock → 2 CurseRecorded → 3 Bite(guard, witch heal) → 4 RustyKnight
+1 VisitorBlock → 2 Curse (nothing left to do) → 3 Bite(guard, witch heal) → 4 RustyKnight
 → 5 WitchPoison → 6 DelayedDeaths → 7 LoverDeaths → 8 Announce → 9 WinCheck
 ```
 
 Roles hook into named steps via `Resolution` fields instead of editing the pipeline. The hunter shot is a separate phase after the announcement (it needs player input). `afterDeaths` (`after_death.go`) is the one place for what follows any death: each dead Hunter (role implements `DeathShooter`) is revealed (`HunterRevealed`, public, sets `FlagRevealed`) and gets `PhaseHunterShot`; `HunterShoot` or the timeout (`hunter_shot.go`) kills the target and re-enters `settle`, which repeats for a shot Hunter, then runs the win check (step 9) and the Chief succession. `State.Shot` remembers the queue and the phase to return to. Step 7 (lovers, T19) goes in `settle` before the win check.
+
+**Win check only by day** (rules §8): `settle` is the only caller of `CheckWin`, and it runs after the morning announcement (even when nobody died) and after a hanging, always on the situation of that moment. A team change (the curse) never ends the game by itself; the night keeps running all its steps.
+
+**Phone check** (rules §3): `engine.StepPhoneCheck` is an engine step, not a role. `nightSteps` adds it right after the step of any role implementing `CurseSource`, on the nights that role is called, so it runs whether or not the curse was used, the Cursed wolf is dead or blocked. Its start emits `PhoneCheckAnnounced` (voice line) and one `PhoneChecked{Player, Cursed}` per living player; both notices have the same shape. A team changed during the night carries `FlagTeamHidden` until its player's `PhoneChecked`; every view uses `VisibleTeam`, so neither the cursed player nor the pack (`packView`, `Audience.Wolves`, lover link colour) shows the change earlier, while `State` and the Seer/win logic use the real team at once. The duration of a step comes from `NightStepDuration` (the phone check has its own `Settings.PhoneCheck`).
 
 ### Views (secrecy boundary)
 ```go

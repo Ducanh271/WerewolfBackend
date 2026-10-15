@@ -56,4 +56,10 @@ const (
 	// NightBlocked: the player cannot use their night ability. It never names
 	// who blocked them.
 	NightBlocked = "night.blocked"
+	// NightPhoneCheck is read aloud at the phone check step (rules §3).
+	NightPhoneCheck = "night.phone_check"
+	// NoticeNotCursed and NoticeCursed are the two phone check notices. The
+	// view carries one boolean; the client picks the text with it.
+	NoticeNotCursed = "notice.not_cursed"
+	NoticeCursed    = "notice.cursed"
 )

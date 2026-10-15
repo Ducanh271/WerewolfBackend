@@ -31,6 +31,8 @@ func TestTimers_ConfigureRejectsOutOfRange(t *testing.T) {
 		t    Timers
 	}{
 		{"night step too short", Timers{NightStep: 4 * time.Second}},
+		{"phone check too short", Timers{PhoneCheck: 4 * time.Second}},
+		{"phone check too long", Timers{PhoneCheck: 11 * time.Minute}},
 		{"defense too long", Timers{Defense: 11 * time.Minute}},
 		{"day too short", Timers{Day: 30 * time.Second}},
 		{"day too long", Timers{Day: time.Hour}},
@@ -55,5 +57,15 @@ func TestTimers_ConfigureRejectedAfterTheDeal(t *testing.T) {
 	_, err := Decide(dealt, ConfigureTimers{Timers: Timers{Day: 5 * time.Minute}})
 	if !errors.Is(err, ErrWrongPhase) {
 		t.Fatalf("err = %v, want ErrWrongPhase", err)
+	}
+}
+
+func TestTimers_PhoneCheckDefaultsToFiveSeconds_AndCanBeChanged(t *testing.T) {
+	if got := DefaultSettings().PhoneCheck; got != 5*time.Second {
+		t.Fatalf("default = %s, want 5s", got)
+	}
+	s := apply(t, lobbyOf(t, 5), ConfigureTimers{Timers: Timers{PhoneCheck: 8 * time.Second}})
+	if s.Settings.PhoneCheck != 8*time.Second {
+		t.Fatalf("phone check = %s, want 8s", s.Settings.PhoneCheck)
 	}
 }

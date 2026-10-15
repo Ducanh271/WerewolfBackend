@@ -222,8 +222,10 @@ func leakedBy(e engine.Event, me engine.PlayerID, wolf bool) string {
 			return "the Seer's result"
 		}
 	case engine.TeamChanged:
-		if ev.Player != me {
-			return "somebody else's team change"
+		return "a team change: the phone check is the only place it shows"
+	case roles.PlayerCursed:
+		if ev.Wolf != me {
+			return "the curse"
 		}
 	}
 	return ""

@@ -70,6 +70,7 @@ chốt là tối đa 1.
 | Xem vai | 30 giây |
 | Bầu Trưởng làng | 1 phút |
 | Mỗi vai ban đêm | 30 giây |
+| Kiểm tra điện thoại (đêm 1–3, khi có Sói nguyền) | 5 giây |
 | Thông báo sáng / hoàng hôn | 10 giây |
 | Ban ngày (thảo luận và đề cử) | 7 phút, có thể vote bỏ qua |
 | Đếm ngược chốt đề cử | 10 giây |
@@ -78,7 +79,7 @@ chốt là tối đa 1.
 | Thợ săn chọn người | 15 giây |
 | Trưởng làng chọn người kế nhiệm | 15 giây |
 
-Chủ phòng chỉnh giờ trước khi chia vai. Mỗi pha có giới hạn: từ 5 giây đến 10 phút; ban ngày từ 1 đến 30 phút; thông báo sáng/hoàng hôn và đếm ngược chốt đề cử từ 5 giây đến 1 phút. Giá trị ngoài giới hạn bị từ chối.
+Chủ phòng chỉnh giờ trước khi chia vai. Mỗi pha có giới hạn: từ 5 giây đến 10 phút (kể cả Kiểm tra điện thoại); ban ngày từ 1 đến 30 phút; thông báo sáng/hoàng hôn và đếm ngược chốt đề cử từ 5 giây đến 1 phút. Giá trị ngoài giới hạn bị từ chối.
 
 ### Vào lại phòng
 
@@ -106,6 +107,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 | 1 | Nguyệt Nữ | Mỗi đêm |
 | 2 | Bảo vệ | Mỗi đêm |
 | 3 | Sói nguyền | Chỉ 3 đêm đầu |
+| 3b | Kiểm tra điện thoại | 3 đêm đầu, khi danh sách vai có Sói nguyền (xem dưới) |
 | 4 | Sói tiên tri | Mỗi đêm |
 | 5 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
 | 6 | Phù thủy | Mỗi đêm |
@@ -117,6 +119,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 - **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
+- **Kiểm tra điện thoại** (5 giây) chạy ngay sau lượt Sói nguyền, **luôn luôn** trong 3 đêm đầu khi danh sách vai có Sói nguyền: kể cả khi đã nguyền xong, Sói nguyền đã chết hoặc bị Nguyệt Nữ chặn. Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” **Mọi người còn sống** nhận một thông báo trên điện thoại: “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”. Hai thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị chặn chức năng ban đêm (hiện chỉ do Nguyệt Nữ, sau này có thể có vai chặn khác) thấy thông báo chung trên màn hình khi đến lượt: “Bạn không thể sử dụng chức năng đêm nay”. Thông báo **không nêu ai hay vai nào chặn**; người bị chặn không được biết nguồn chặn.
 
@@ -171,11 +174,11 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 ### Sói nguyền
 
 - Được gọi riêng **trước bầy sói**, chỉ trong **3 đêm đầu**. Nguyền **1 lần duy nhất** trong game.
-- Việc nguyền có hiệu lực **ngay lập tức**: người bị nguyền nhận thông báo trên điện thoại, và ngay đêm đó họ được gọi dậy cắn cùng bầy. Bầy sói thấy đồng bọn mới trên điện thoại. Khi chơi trực tiếp, mỗi đêm đến lượt Sói nguyền, **tất cả điện thoại đều rung nhẹ**, để không ai biết Sói nguyền có nguyền hay không. Khi chơi online thì chỉ cần thông báo.
+- Việc nguyền có hiệu lực **ngay lập tức** về phe: người bị nguyền thành sói, ngay đêm đó được gọi dậy cắn cùng bầy và được vote cắn. Điện thoại của người bị nguyền và của bầy sói **chỉ hiện thay đổi ở bước Kiểm tra điện thoại** (§3): người bị nguyền thấy “Bạn đã bị nguyền”, bầy thấy đồng bọn mới. Mọi người khác thấy “Bạn không bị nguyền”, nên không ai biết Sói nguyền có nguyền hay không.
 - Người bị nguyền chuyển sang phe sói và **giữ nguyên năng lực** của vai cũ (Tiên tri, Bảo vệ, Thợ săn…).
 - Bầy vẫn cắn được người vừa bị nguyền như mọi người sống khác (xem “Sói”).
 - Bảo vệ **không chặn được** việc nguyền. Tiên tri và Thám tử soi người bị nguyền ra sói.
-- Bị Nguyệt Nữ ghé ở đêm 1 hoặc 2: lượt nguyền chưa mất, đêm sau dùng được. Bị ghé ở **đêm 3**: mất nguyền luôn (không gọi sang đêm 4, vì như vậy sẽ lộ là bị ghé).
+- Bị Nguyệt Nữ ghé ở đêm 1 hoặc 2 (hay hết giờ mà không chọn): lượt nguyền chưa mất, đêm sau dùng được. Bị ghé ở **đêm 3**: mất nguyền luôn (không gọi sang đêm 4, vì như vậy sẽ lộ là bị ghé).
 - Hết 3 đêm chưa nguyền thì mất chức năng, trở thành sói thường.
 - App không cho nguyền một con sói.
 
@@ -263,7 +266,15 @@ Trong cặp khác phe, con sói **vẫn dậy cắn cùng bầy** như thường
 
 ## 8. Điều kiện thắng
 
-App kiểm tra điều kiện thắng **sau mỗi lần có người chết hoặc có người đổi phe** (kể cả chết theo người yêu, bị Thợ săn bắn, và bị nguyền).
+App **chỉ** kiểm tra và công bố thắng thua **vào ban ngày**, ở đúng ba thời điểm:
+
+- (a) **sau thông báo buổi sáng**, kể cả khi đêm đó không ai chết (ví dụ vừa có người bị nguyền làm sói ≥ dân);
+- (b) **sau khi treo cổ** một người;
+- (c) **sau phát bắn của Thợ săn**.
+
+Luôn xét **sau khi cả chuỗi kết thúc**, không xét giữa chừng: Thợ săn bắn → chết theo người yêu → Thợ săn khác bắn → ... Trưởng làng chỉ truyền chức **sau khi đã xét**, và chỉ khi ván chưa kết thúc. **Không bao giờ kết thúc ván giữa đêm**: dù có người bị nguyền hay chết theo người yêu trong đêm, đêm vẫn chạy đủ mọi bước.
+
+Điều kiện được xét theo tình hình **lúc công bố**, không chốt từ lúc sự việc xảy ra. Ví dụ: nguyền xong mà sói ≥ dân, nhưng Phù thủy đầu độc một con sói cùng đêm, thì sáng ra sói < dân và ván tiếp tục.
 
 | Phe | Thắng khi |
 | --- | --- |
@@ -271,28 +282,28 @@ App kiểm tra điều kiện thắng **sau mỗi lần có người chết ho�
 | Sói | Số sói còn sống ≥ số dân còn sống. **Không tính** cặp đôi khác phe vào cả hai bên |
 | Cặp đôi khác phe | Chỉ còn hai người họ sống |
 
-Người bị nguyền tính là sói từ lúc bị nguyền.
+Người bị nguyền tính là sói trong mọi lần kiểm tra sau khi bị nguyền.
 
 Làm rõ:
 
 - Nếu **tất cả** người chơi chết cùng một lúc thì ván **hòa**.
 - Nếu nhiều điều kiện thắng cùng đúng, thứ tự ưu tiên là: **Cặp đôi khác phe > Dân > Sói**. Ví dụ: chỉ còn một cặp khác phe sống thì Cặp đôi thắng, không phải Sói thắng (0 sói ≥ 0 dân không được tính là sói thắng).
 - Sói chỉ thắng khi còn **ít nhất một con sói** sống (không tính sói trong cặp khác phe).
-- Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9) và sau mỗi lần đổi phe (nguyền). Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
+- Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9), luôn vào ban ngày. Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
 
 ## 9. Thứ tự phân giải lúc trời sáng
 
 App tính kết quả đêm theo đúng thứ tự sau:
 
 1. **Nguyệt Nữ**: xác định người bị chặn; hành động của họ đêm đó bị bỏ.
-2. **Nguyền**: đã có hiệu lực ngay lúc Sói nguyền chọn (mục 5); app chỉ ghi nhận để kiểm tra thắng.
+2. **Nguyền**: đã có hiệu lực ngay lúc Sói nguyền chọn (mục 5); bước này không làm gì thêm. Thắng thua do nguyền (sói ≥ dân) chỉ xét ở bước 9.
 3. **Cắn**: nếu Bảo vệ che đúng người bị cắn thì không ai chết (ghi nhận “được bảo vệ”). Nếu không, Phù thủy cứu thì sống; còn lại thì chết.
 4. **Hiệp sĩ kiếm gỉ**: nếu hiệp sĩ bị cắn và không được Bảo vệ che, con sói còn sống gần nhất bên trái hiệp sĩ trúng độc (kể cả khi Phù thủy cứu hiệp sĩ).
 5. **Thuốc độc** của Phù thủy.
 6. **Sói trúng độc từ đêm trước** chết.
 7. **Chết theo người yêu**.
 8. **Công bố** (mục 4), rồi Thợ săn chết thì lộ vai và bắn, lặp lại bước 7 cho người bị bắn (và cho Thợ săn bị bắn).
-9. **Kiểm tra điều kiện thắng**.
+9. **Kiểm tra điều kiện thắng** theo tình hình lúc này (mục 8). Kể cả khi đêm đó không ai chết (ví dụ vừa có người bị nguyền).
 
 ### Tình huống đã chốt
 

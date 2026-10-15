@@ -190,9 +190,9 @@ func TestHunter_ShotKillsTheChief_TheChiefStillPassesTheTitle(t *testing.T) {
 }
 
 func TestHunter_Cursed_KeepsHisAbilityAndShootsAsAWolf(t *testing.T) {
-	g := hunterTable(t)
-	g.Inject(cursed("Phuc"))
-	g.Night().Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Phuc").Wolf("Chi").Bites("Phuc")
+	g := cursedTable(t)
+	g.Night().CursedWolf("An").Curses("Phuc").
+		Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Phuc").Wolf("Phuc").Bites("Phuc")
 	g.Dawn().ExpectDead("Phuc")
 	g.As("Phuc").CanShoot(true)
 	g.Hunter("Phuc").Shoots("Em")

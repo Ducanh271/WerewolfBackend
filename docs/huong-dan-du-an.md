@@ -59,7 +59,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 **D. Ghi nhận**
 11. `room.go` → `apply`: `store.Append` (ghi nhật ký trước), rồi `engine.Fold` → `Evolve` → `roles/seer.go` → `Evolve` đặt `Pending.SeerTarget`.
-12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.)
+12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.) Khi bàn có Sói nguyền, sau lượt Sói nguyền có thêm bước **Kiểm tra điện thoại** (5 giây, `engine/phone_check.go`): mọi người sống nhận thông báo “bị nguyền / không bị nguyền” cùng một dạng. Người bị nguyền và bầy sói chỉ thấy thay đổi ở bước này.
 
 **E. Gửi kết quả về (chỉ Tiên tri thấy)**
 13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại**:
@@ -72,7 +72,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 | Triệu chứng | Tầng | Xem trước |
 |---|---|---|
-| Luật sai (ai thắng, ai chết, thứ tự đêm) | engine / roles | `engine/night_resolve.go`, `engine/win.go`, file vai trong `roles/`; luật gốc `docs/rules.md` |
+| Luật sai (ai thắng, ai chết, thứ tự đêm) | engine / roles | `engine/night_resolve.go`, `engine/win.go` (thắng thua chỉ xét ban ngày, trong `engine/after_death.go`), file vai trong `roles/`; luật gốc `docs/rules.md` |
 | Lệnh bị báo `wrong_phase` / `not_your_turn` | engine | `engine/decide.go`, `engine/night_actor.go`, `engine/day_nominate.go` |
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
 | Chủ phòng/máy làm loa sai người | room | `room/speaker.go`, `room/join.go` (`passHost`) |
@@ -113,7 +113,7 @@ func TestNight_SeerChecksACursedPlayer_SeesAWolf(t *testing.T) {
 }
 ```
 
-Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `newTable` hoặc `enginetest.NewGame`; (3) viết các bước `Night()`, `Day()`...; (4) viết `Expect...` cho kết quả đúng theo `docs/rules.md`; (5) chạy, thấy đỏ rồi mới sửa code. Các bảng trường hợp (table-driven) cho nhiều đầu vào cùng lúc có ví dụ ở `TestNight_SeerChoiceIsRejectedWhenInvalid`. Với lỗi ở phòng/mạng, xem mẫu `room/*_test.go` (đồng hồ giả `FakeClock`) và `transport/ws/*_test.go`.
+Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `newTable` hoặc `enginetest.NewGame`; (3) viết các bước `Night()`, `Day()`...; (4) viết `Expect...` cho kết quả đúng theo `docs/rules.md`; (5) chạy, thấy đỏ rồi mới sửa code. Các bảng trường hợp (table-driven) cho nhiều đầu vào cùng lúc có ví dụ ở `TestNight_SeerChoiceIsRejectedWhenInvalid`. **Lưu ý khi bàn có Nguyệt Nữ (`Visitor`)**: Nguyệt Nữ bắt buộc ghé, hết giờ mà chưa chọn thì server random một người. Vì vậy test nào có Nguyệt Nữ trong bàn phải cho cô ấy ghé tường minh (`n.Visitor("Khoa").Visits("Hoa")`), nếu không cô ấy sẽ ghé ngẫu nhiên và làm người đó bị chặn, khiến kết quả test sai khó hiểu. Muốn test việc random thì dùng `n.Visitor("Khoa").RunsOutOfTime(seed)` với seed cố định. Với lỗi ở phòng/mạng, xem mẫu `room/*_test.go` (đồng hồ giả `FakeClock`) và `transport/ws/*_test.go`.
 
 ## 6. Chỗ chỉnh nhanh
 

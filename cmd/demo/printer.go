@@ -59,6 +59,12 @@ func (p *printer) show(ev wsclient.Frame) {
 		fmt.Printf("\n=== Đêm %v ===\n", ev.Get("data", "night"))
 	case "NightStepCalled":
 		fmt.Printf("  🌙 gọi %s (%vs)\n", ev.Str("data", "role"), ev.Get("data", "duration").(float64)/1000)
+	case "PhoneChecked":
+		if ev.Get("data", "cursed") == true {
+			fmt.Printf("  📱 Bạn đã bị nguyền\n")
+		} else {
+			fmt.Printf("  📱 Bạn không bị nguyền\n")
+		}
 	case "DayStarted":
 		fmt.Printf("\n=== Ngày ===\n")
 	case "ChiefElectionStarted":

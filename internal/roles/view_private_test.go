@@ -23,9 +23,8 @@ func TestView_Seer_SeesOnlyOwnResults(t *testing.T) {
 // A cursed Seer keeps her power (rules §5); her results stay hers, the pack
 // does not get them.
 func TestView_CursedSeer_ResultsStayHers(t *testing.T) {
-	g := newTable(t)
-	n := g.Night()
-	g.Inject(cursed("Em"))
+	g := cursedTable(t)
+	n := g.Night().CursedWolf("An").Curses("Em")
 	n.Seer("Em").Checks("Giang")
 	g.As("Em").SeerResults(1)
 	g.As("An").SeerResults(0)
@@ -71,14 +70,19 @@ func TestView_Witch_SeesTheBittenOnlyOnHerTurnWhileSheCanHeal(t *testing.T) {
 	}
 }
 
-func TestView_CursedPlayer_IsNotified(t *testing.T) {
-	g := newTable(t)
-	g.Night()
+func TestView_CursedPlayer_IsNotifiedAtThePhoneCheck_AndOthersAreToldTheyAreNot(t *testing.T) {
+	g := cursedTable(t)
+	n := g.Night()
 	g.As("Phuc").Cursed(false)
-	g.Inject(cursed("Phuc"))
-	g.As("Phuc").Cursed(true).Event(cursed("Phuc"))
-	g.As("An").Cursed(false).NoEvent(cursed("Phuc"))
-	g.As("Hoa").NoEvent(cursed("Phuc"))
+	n.CursedWolf("An").Curses("Phuc")
+	g.As("Phuc").Cursed(false).NoPhoneNotice() // not before the phone check
+	n.PhoneCheck()
+	notice := func(who string, cursed bool) engine.PhoneChecked {
+		return engine.PhoneChecked{Player: g.Player(who), Cursed: cursed}
+	}
+	g.As("Phuc").Cursed(true).PhoneNotice(true).Event(notice("Phuc", true)).NoEvent(notice("Phuc", false))
+	g.As("An").Cursed(false).PhoneNotice(false).Event(notice("An", false))
+	g.As("Hoa").PhoneNotice(false).Event(notice("Hoa", false)).NoEvent(notice("Phuc", true))
 }
 
 func TestView_Lovers_SeePartnerRoleAndLinkColour_CupidSeesNothing(t *testing.T) {
@@ -90,22 +94,22 @@ func TestView_Lovers_SeePartnerRoleAndLinkColour_CupidSeesNothing(t *testing.T) 
 		roleA  engine.RoleID
 		roleB  engine.RoleID
 	}{
-		{"two villagers: white", "Em", "Phuc", "", engine.LinkWhite, Seer, Villager},
-		{"two wolves: black", "An", "Binh", "", engine.LinkBlack, Werewolf, Werewolf},
-		{"a wolf and a villager: striped", "Em", "An", "", engine.LinkStriped, Seer, Werewolf},
-		{"one lover cursed: the colour changes", "Em", "Phuc", "Phuc", engine.LinkStriped, Seer, Villager},
-		{"both cursed in turn: black", "Em", "An", "Em", engine.LinkBlack, Seer, Werewolf},
+		{"two villagers: white", "Em", "Chi", "", engine.LinkWhite, Seer, Villager},
+		{"two wolves: black", "An", "Binh", "", engine.LinkBlack, CursedWolf, Werewolf},
+		{"a wolf and a villager: striped", "Em", "An", "", engine.LinkStriped, Seer, CursedWolf},
+		{"one lover cursed: the colour changes", "Em", "Chi", "Chi", engine.LinkStriped, Seer, Villager},
+		{"a lover cursed next to a wolf: black", "Em", "An", "Em", engine.LinkBlack, Seer, CursedWolf},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			g := newTable(t)
-			g.Night()
+			g := cursedTable(t)
+			n := g.Night()
 			g.HandBuild(func(s *engine.State) {
 				s.Lovers = &engine.LoversLink{A: engine.PlayerID(tc.a), B: engine.PlayerID(tc.b)}
 				s.Players["Lan"].Role = Cupid
 			})
 			if tc.curse != "" {
-				g.Inject(cursed(tc.curse))
+				n.CursedWolf("An").Curses(tc.curse).PhoneCheck()
 			}
 			g.As(tc.a).Lover(tc.b, tc.roleB, tc.colour).RoleOf(tc.b, tc.roleB)
 			g.As(tc.b).Lover(tc.a, tc.roleA, tc.colour).RoleOf(tc.a, tc.roleA)

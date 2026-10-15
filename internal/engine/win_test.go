@@ -133,9 +133,16 @@ func TestWin_AfterDeaths_GameGoesOn_ChiefStillNamesSuccessor(t *testing.T) {
 	}
 }
 
-func TestWin_AfterDeaths_NoDeaths_NoWinCheck(t *testing.T) {
-	s := handBuilt(nil, alive("w", W), alive("a", V)) // already "won" on paper
+// Rules §8: the win check runs by day on the situation of that moment, also
+// when nobody died (a curse may have turned the numbers during the night).
+func TestWin_AfterDeaths_NoDeaths_StillChecksTheSituation(t *testing.T) {
+	s := handBuilt(nil, alive("w", W), alive("a", V))
+	evs := afterDeaths(s, nil, nil)
+	if len(evs) != 1 || evs[0].(GameEnded).Outcome.Winner != TeamWolves {
+		t.Fatalf("events %v, want the wolves' win", evs)
+	}
+	s = handBuilt(nil, alive("w", W), alive("a", V), alive("b", V))
 	if evs := afterDeaths(s, nil, nil); len(evs) != 0 {
-		t.Fatalf("events %v, want none", evs)
+		t.Fatalf("events %v, want none while the village is ahead", evs)
 	}
 }

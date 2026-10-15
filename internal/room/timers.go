@@ -33,7 +33,7 @@ func (r *Room) phaseDuration() (time.Duration, bool) {
 	case engine.PhaseChiefSuccession:
 		return set.ChiefSuccession, true
 	case engine.PhaseNight:
-		return set.NightStep, true
+		return engine.NightStepDuration(r.state, currentStep(r.state)), true
 	case engine.PhaseDawn, engine.PhaseDusk:
 		return set.Announce, true
 	case engine.PhaseDay:
@@ -86,4 +86,10 @@ func (r *Room) fire(t engine.PhaseTimeout) {
 		t.Seed = r.rnd.Seed()
 		_ = r.execute(t)
 	})
+}
+
+// currentStep is the night step being called, the zero value when none is.
+func currentStep(s engine.State) engine.RoleID {
+	step, _ := engine.CurrentNightRole(s)
+	return step
 }
