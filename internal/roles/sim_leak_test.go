@@ -52,26 +52,36 @@ func (g *simGame) checkViews() {
 // know of.
 func (g *simGame) checkEvents() {
 	for _, id := range g.living() {
-		me := g.s.Players[id]
-		for _, e := range engine.Visible(g.s, g.log, engine.PlayerViewer(id)) {
-			switch ev := e.(type) {
-			case engine.RolesDealt, engine.PlayerDied:
-				g.leak(id, fmt.Sprintf("receives %T", e))
-			case roles.SeerChecked:
-				g.mustBe(id, ev.Seer == id, e)
-			case roles.PlayerProtected:
-				g.mustBe(id, ev.Guard == id, e)
-			case roles.PlayerCursed:
-				g.mustBe(id, ev.Wolf == id, e)
-			case roles.WitchHealed:
-				g.mustBe(id, ev.Witch == id, e)
-			case roles.WitchPoisoned:
-				g.mustBe(id, ev.Witch == id, e)
-			case roles.WolfSeerChecked:
-				g.mustBe(id, engine.VisibleTeam(me) == engine.TeamWolves, e)
-			case roles.WolfVoted:
-				g.mustBe(id, engine.VisibleTeam(me) == engine.TeamWolves, e)
-			}
+		g.checkEventsOf(id)
+	}
+}
+
+// checkEventsOf checks what one living player may know: no private result of
+// somebody else, and no list of players in an order that tells more than the
+// announcements did (see playerListLeak).
+func (g *simGame) checkEventsOf(id engine.PlayerID) {
+	if leak := playerListLeak(g.s, g.log, id); leak != "" {
+		g.leak(id, leak)
+	}
+	me := g.s.Players[id]
+	for _, e := range engine.Visible(g.s, g.log, engine.PlayerViewer(id)) {
+		switch ev := e.(type) {
+		case engine.RolesDealt, engine.PlayerDied, engine.HunterChainNoted:
+			g.leak(id, fmt.Sprintf("receives %T", e))
+		case roles.SeerChecked:
+			g.mustBe(id, ev.Seer == id, e)
+		case roles.PlayerProtected:
+			g.mustBe(id, ev.Guard == id, e)
+		case roles.PlayerCursed:
+			g.mustBe(id, ev.Wolf == id, e)
+		case roles.WitchHealed:
+			g.mustBe(id, ev.Witch == id, e)
+		case roles.WitchPoisoned:
+			g.mustBe(id, ev.Witch == id, e)
+		case roles.WolfSeerChecked:
+			g.mustBe(id, engine.VisibleTeam(me) == engine.TeamWolves, e)
+		case roles.WolfVoted:
+			g.mustBe(id, engine.VisibleTeam(me) == engine.TeamWolves, e)
 		}
 	}
 }

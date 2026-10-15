@@ -59,12 +59,9 @@ func (cupid) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, err
 	if !ok {
 		return nil, false, nil
 	}
-	me, err := engine.NightActor(s, cmd.By, Cupid)
+	_, err := engine.NightActor(s, cmd.By, Cupid)
 	if err != nil {
 		return nil, true, err
-	}
-	if me.Role != Cupid {
-		return nil, true, fmt.Errorf("%w: %s is not Cupid", engine.ErrNotYourTurn, cmd.By)
 	}
 	if s.Lovers != nil {
 		return nil, true, engine.ErrAlreadyActed

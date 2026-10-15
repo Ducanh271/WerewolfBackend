@@ -1,8 +1,6 @@
 package roles
 
 import (
-	"fmt"
-
 	"masoi/internal/engine"
 )
 
@@ -44,12 +42,9 @@ func (seer) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, erro
 	if !ok {
 		return nil, false, nil
 	}
-	me, err := engine.NightActor(s, cmd.By, Seer)
+	_, err := engine.NightActor(s, cmd.By, Seer)
 	if err != nil {
 		return nil, true, err
-	}
-	if me.Role != Seer {
-		return nil, true, fmt.Errorf("%w: %s is not the Seer", engine.ErrNotYourTurn, cmd.By)
 	}
 	if s.Pending.SeerTarget != "" {
 		return nil, true, engine.ErrAlreadyActed

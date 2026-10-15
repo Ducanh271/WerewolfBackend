@@ -55,14 +55,14 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 **C. Luật (engine + roles)**
 9. `engine/decide.go` → `Decide`: không phải lệnh chung nên hỏi từng vai trong `Registry`.
-10. `roles/seer.go` → `Decide`: `engine/night_actor.go` → `NightActor` (đang là bước gọi Tiên tri? còn sống?), chưa soi đêm nay, `LivingTarget` (An còn sống). Sai thì trả lỗi như `ErrNotYourTurn` (danh sách ở `engine/errors.go`). Đúng thì sinh sự kiện `SeerChecked{Seer, Target, IsWolf}`.
+10. `roles/seer.go` → `Decide`: `engine/night_actor.go` → `NightActor` (đang là bước gọi Tiên tri? còn sống?), chưa soi đêm nay, `LivingTarget` (An còn sống). Sai thì trả lỗi như `ErrNotYourTurn` (danh sách ở `engine/errors.go`). `NightActor` kiểm tra **trước tiên** người gửi có giữ vai không: ai không giữ vai luôn nhận đúng một lỗi `not your turn`, dù bị chặn, đã chết hay sai vai, để lỗi không tiết lộ gì. Đúng thì sinh sự kiện `SeerChecked{Seer, Target, IsWolf}`.
 
 **D. Ghi nhận**
 11. `room.go` → `apply`: `store.Append` (ghi nhật ký trước), rồi `engine.Fold` → `Evolve` → `roles/seer.go` → `Evolve` đặt `Pending.SeerTarget`.
 12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.) Khi bàn có Sói nguyền, sau lượt Sói nguyền (đêm 1–3) có thêm bước **Kiểm tra điện thoại** (5 giây, `engine/phone_check.go`); khi bàn có Cupid, đêm 1 có thêm một lần kiểm tra ngay sau lượt Cupid, rồi bước **Cặp đôi mở mắt nhìn nhau** (10 giây, `engine/lovers_meet.go`, chỉ hai người yêu thấy đến lượt mình). Lịch các bước này cố định theo danh sách vai và số đêm. Ở mỗi lần kiểm tra, mọi người sống nhận **một** thông báo cùng một dạng, gộp “bị nguyền / không bị nguyền” và “yêu ai / không ở trong cặp đôi”. Người bị nguyền, bầy sói và cặp đôi chỉ thấy thay đổi ở bước này. Thẻ vai (rules §9b) đi kèm view: `engine/view_cards.go` lấy chữ từ `i18n/vi.go` (`me.roleCard`, `me.statusCards`, danh sách vai công khai `roleCards`), frontend không giữ chữ nào của thẻ. Người yêu chết ban ngày thì người kia “đau buồn mà chết” ở đêm kế tiếp, dùng chung cơ chế chết muộn với độc của Hiệp sĩ (`engine/delayed_death.go`).
 
 **E. Gửi kết quả về (chỉ Tiên tri thấy)**
-13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại**:
+13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại có màn hình thay đổi** (máy nào màn hình y như cũ và không có sự kiện mới thì không nhận gì, nên khi Tiên tri soi, các máy khác không nhận tin nào, không ai đoán được Tiên tri còn sống):
     - `engine/view_project.go` → `ViewFor` (màn hình của riêng người đó);
     - `engine/view_audience.go` → `Visible`: dùng `SeerChecked.Audience` (`roles/seer.go`) = chỉ Tiên tri. Người khác không nhận sự kiện này.
 14. `transport/ws/session.go` → `Deliver` → `encode.go` → `frames` → `jsonenc.go` → `toTree`: đổi sang JSON (`view` rồi `events`).
@@ -79,6 +79,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
 | Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`), `transport/ws/session.go` (`finish`) |
 | Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`, mã lỗi ở `errors.go` |
+| Lệnh nhận lỗi `internal`, log có "panic in room" | room | `room/room.go` (`safe`): lỗi lập trình trong engine/vai bị bắt lại, phòng chạy tiếp; xem `stack` trong log |
 | Bị ngắt kết nối bất ngờ | transport | `ratelimit.go` (flood), `session.go` (hàng đợi đầy = "too slow"), `server.go` (Origin) |
 | Lộ thông tin (thấy vai người khác, thấy phiếu sói) | engine view | `engine/view_project.go`, `engine/view_audience.go` (`Audience` của sự kiện), `roles/view_*_test.go`; sau đó `transport/ws/jsonenc.go` |
 | Câu đọc tiếng Việt sai/thiếu | i18n + transport | `i18n/vi.go`; ghép tên người ở `transport/ws/encode.go` → `announcedPlayers` |

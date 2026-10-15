@@ -21,7 +21,7 @@ func main() {
 		addr = ":8080"
 	}
 
-	rooms := room.NewManager(room.ManagerConfig{})
+	rooms := room.NewManager(room.ManagerConfig{Logger: logger})
 	defer rooms.Close()
 
 	cfg := ws.ConfigFromEnv(os.Getenv)

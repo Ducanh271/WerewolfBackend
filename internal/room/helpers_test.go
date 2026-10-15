@@ -96,7 +96,7 @@ type game struct {
 	nick  map[engine.PlayerID]string
 }
 
-var nicknames = []string{"An", "Binh", "Chi", "Dung", "Em", "Phuc", "Giang", "Hoa"}
+var nicknames = []string{"An", "Binh", "Chi", "Dung", "Em", "Phuc", "Giang", "Hoa", "Khoa", "Lan", "Minh", "Nga"}
 
 func newGame(t *testing.T, players int) *game {
 	t.Helper()

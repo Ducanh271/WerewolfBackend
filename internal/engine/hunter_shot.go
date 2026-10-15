@@ -34,14 +34,24 @@ type HunterRevealed struct {
 	Hunter PlayerID
 }
 
-// HunterShotStarted opens the pause in which the Hunter chooses. Queue holds
-// the other dead Hunters still to shoot, Dead everybody who died in this chain.
+// HunterShotStarted opens the pause in which the Hunter chooses. It is public,
+// so it carries nothing but the Hunter and the time: the chain of deaths is in
+// HunterChainNoted, which the living never see.
 type HunterShotStarted struct {
 	EventMarker
 	Hunter   PlayerID
 	Duration time.Duration
-	Queue    []PlayerID
-	Dead     []PlayerID
+}
+
+// HunterChainNoted comes right before HunterShotStarted and keeps what the
+// shooting needs to go on: Queue, the other dead Hunters still to shoot, and
+// Dead, everybody who died in this chain. Dead is in the order the pipeline
+// killed them, which would tell bitten from poisoned (rules §4), so the event
+// has no audience: only full views get it.
+type HunterChainNoted struct {
+	EventMarker
+	Queue []PlayerID
+	Dead  []PlayerID
 }
 
 // HunterShot is the Hunter's shot. The target dies right after it.
@@ -86,9 +96,14 @@ func evolveHunter(s State, e Event) (State, bool) {
 			p.Flags[FlagRevealed] = 1
 		}
 		return out, true
+	case HunterChainNoted:
+		out := s.clone()
+		out.Shot.Queue = append([]PlayerID(nil), ev.Queue...)
+		out.Shot.Dead = append([]PlayerID(nil), ev.Dead...)
+		return out, true
 	case HunterShotStarted:
 		out := s.clone()
-		out.Shot = Shot{Hunter: ev.Hunter, Queue: ev.Queue, Dead: ev.Dead, Resume: s.Phase}.clone()
+		out.Shot.Hunter, out.Shot.Resume = ev.Hunter, s.Phase
 		out.Phase = PhaseHunterShot
 		out.Seq++
 		return out, true

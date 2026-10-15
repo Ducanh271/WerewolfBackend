@@ -56,9 +56,6 @@ func (guard) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, err
 	if err != nil {
 		return nil, true, err
 	}
-	if me.Role != Guard {
-		return nil, true, fmt.Errorf("%w: %s is not the Guard", engine.ErrNotYourTurn, cmd.By)
-	}
 	if s.Pending.Protected != "" {
 		return nil, true, engine.ErrAlreadyActed
 	}

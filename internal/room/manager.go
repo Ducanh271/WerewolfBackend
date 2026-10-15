@@ -3,6 +3,7 @@ package room
 import (
 	"crypto/rand"
 	"errors"
+	"log/slog"
 	"math/big"
 	"strings"
 	"sync"
@@ -35,8 +36,9 @@ const (
 // ManagerConfig wires a Manager. The zero value is the real thing.
 type ManagerConfig struct {
 	Clock    Clock
-	Random   Randomness // handed to every room; nil means crypto/rand
-	MaxRooms int        // 0 means 1000
+	Random   Randomness   // handed to every room; nil means crypto/rand
+	Logger   *slog.Logger // handed to every room; nil means discard
+	MaxRooms int          // 0 means 1000
 	// NewCode draws a room code; nil means CodeLength letters of CodeAlphabet
 	// from crypto/rand. Tests use it to force collisions.
 	NewCode func() string
@@ -86,7 +88,7 @@ func (m *Manager) Create(mode engine.Mode) (*Room, error) {
 		}
 		code = m.cfg.NewCode()
 	}
-	r, err := New(Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random})
+	r, err := New(Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random, Logger: m.cfg.Logger})
 	if err != nil {
 		return nil, err
 	}

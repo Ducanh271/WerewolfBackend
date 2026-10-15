@@ -1,6 +1,7 @@
 package room
 
 import (
+	"reflect"
 	"time"
 
 	"masoi/internal/engine"
@@ -36,9 +37,10 @@ type Sink interface {
 type connection struct {
 	player engine.PlayerID
 	sink   Sink
-	sent   int  // visible events already sent
-	full   bool // the last view was a full one
-	fresh  bool // nothing sent yet
+	sent   int      // visible events already sent
+	full   bool     // the last view was a full one
+	fresh  bool     // nothing sent yet
+	last   *ViewMsg // the last view sent
 }
 
 func (r *Room) connected(p engine.PlayerID) bool { return r.conns[p] != nil }
@@ -51,7 +53,10 @@ func (r *Room) table() Table {
 	return Table{Host: r.host, Order: order, Connected: r.connected}
 }
 
-// changed sends every connected phone its own view and any new events.
+// changed sends every connected phone whose screen changed its own view and
+// any new events. A phone whose screen is the same as before gets nothing: a
+// message arriving on every phone when one player acts in secret would tell
+// the table that the role being called is alive (rules §3).
 func (r *Room) changed() {
 	speaking := map[engine.PlayerID]bool{}
 	for _, p := range r.pol.Speakers(r.table()) {
@@ -67,13 +72,17 @@ func (r *Room) send(c *connection, speaker bool) {
 	view := engine.ViewFor(r.state, viewer)
 	visible := engine.Visible(r.state, r.log, viewer)
 
-	msg := Message{View: &ViewMsg{Deadline: r.deadline, Speaker: speaker, View: view}}
+	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, View: view}
+	msg := Message{View: vm}
 	switch {
 	case c.fresh || view.Full != c.full || len(visible) < c.sent:
 		msg.Events = &EventsMsg{Reset: true, Events: visible}
 	case len(visible) > c.sent:
 		msg.Events = &EventsMsg{From: c.sent, Events: visible[c.sent:]}
 	}
-	c.sent, c.full, c.fresh = len(visible), view.Full, false
+	if msg.Events == nil && c.last != nil && reflect.DeepEqual(*c.last, *vm) {
+		return // nothing new for this screen
+	}
+	c.sent, c.full, c.fresh, c.last = len(visible), view.Full, false, vm
 	c.sink.Deliver(msg)
 }

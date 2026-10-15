@@ -1,8 +1,6 @@
 package roles
 
 import (
-	"fmt"
-
 	"masoi/internal/engine"
 )
 
@@ -56,9 +54,6 @@ func (detective) Decide(s engine.State, c engine.Command) ([]engine.Event, bool,
 	me, err := engine.NightActor(s, cmd.By, Detective)
 	if err != nil {
 		return nil, true, err
-	}
-	if me.Role != Detective {
-		return nil, true, fmt.Errorf("%w: %s is not the Detective", engine.ErrNotYourTurn, cmd.By)
 	}
 	if me.Flags[flagDetectiveUsed] != 0 {
 		return nil, true, engine.ErrAbilityUsed

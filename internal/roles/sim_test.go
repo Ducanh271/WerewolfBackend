@@ -107,8 +107,12 @@ func playSimGame(seed uint64, used map[string]int) (outcome string, err error) {
 		if err := g.checkLovers(); err != nil {
 			return "", err
 		}
-		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn && g.s.Night%3 == 1 { // replaying the log per viewer is costly
-			g.checkEvents()
+		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn {
+			if g.s.Night%3 == 1 { // replaying the log per viewer is costly
+				g.checkEvents()
+			} else if living := g.living(); len(living) > 0 { // one viewer each other night, in turn
+				g.checkEventsOf(living[g.s.Night%len(living)])
+			}
 		}
 	}
 	for _, e := range g.log {

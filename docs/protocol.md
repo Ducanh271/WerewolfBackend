@@ -105,7 +105,10 @@ accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 ## Server → client
 
 ### `view`: the screen now
-Sent after every change, and on (re)join. It replaces the previous one.
+Sent on (re)join and whenever this phone's screen changed. It replaces the
+previous one. A phone whose screen did not change gets **nothing**: when one
+player acts in secret at night, no other phone receives a message (a message
+on every phone would tell that the role being called is alive, rules §3).
 ```json
 {"type": "view", "deadline": 1760500000000, "speaker": true, "view": { … }}
 ```
@@ -159,13 +162,14 @@ The `view` object (`engine.View`); absent parts are omitted:
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
-  `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
+  `HunterShotStarted` (`hunter`, `duration` only), `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
   `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice, `LoversPaired` for Cupid); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
   the player is in it.
 - Never sent to the living: `PlayerDied` and `LoverGrieving` (its order would tell bitten from
   poisoned; deaths are known through `DawnAnnounced`, `Hanged` and the alive
-  flags), `RolesDealt`, (`NightStepCalled` is public: role and duration, no real/fake flag).
+  flags), `HunterChainNoted` (the chain of deaths behind a Hunter's shot, in the
+  order the night killed them), `RolesDealt`, (`NightStepCalled` is public: role and duration, no real/fake flag).
 
 ### `error`
 ```json
@@ -177,7 +181,15 @@ scheme (`not_host`, `forbidden`, `disconnected`, `bad_credentials`,
 `pin_locked` with `retryAfter`, `room_not_found`), and so do the transport's own:
 `bad_message`, `unknown_type`, `unknown_command`, `message_too_large`,
 `rate_limited`, `not_joined`, `already_joined`. An error the server does not
-know how to name is `internal` with no detail.
+know how to name is `internal` with no detail; so is a command that hit a bug
+in the server (it changed nothing, the room goes on).
+
+A player who does not hold the role of a night command (the pack's vote: who
+is not on the wolf team) always gets exactly
+`{"code": "not_your_turn", "message": "not your turn"}`, whatever their own
+state (blocked, dead by the rules, dead, any other role), so an error never
+tells them they were visited. The holder gets the detail (`blocked`,
+`not_alive`, `not your turn: Seer is not being called`...).
 
 `DawnAnnounced.kind` is `deaths`, `protected` or `nobodyDied`; phases and
 teams are sent by name (`Night`, `Village`).

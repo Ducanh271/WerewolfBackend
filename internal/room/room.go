@@ -3,6 +3,8 @@ package room
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"runtime/debug"
 	"sync/atomic"
 	"time"
 
@@ -16,6 +18,10 @@ var (
 	ErrForbidden    = errors.New("command not allowed from a player")
 	ErrDisconnected = errors.New("this connection is no longer the player's")
 	ErrClosed       = errors.New("room is closed")
+	// ErrInternal answers a command that hit a bug (a panic) inside the room.
+	// The command changed nothing and the room goes on; the client is told
+	// "internal" and nothing more.
+	ErrInternal = errors.New("internal error")
 )
 
 // Config wires a room. Only Code is required; the rest default to the real
@@ -28,6 +34,7 @@ type Config struct {
 	Identity Identity
 	Store    store.EventStore
 	Speaker  SpeakerPolicy
+	Logger   *slog.Logger // where a recovered panic is reported; default: discard
 }
 
 // Room is one game. A single goroutine owns all of its state; everything else
@@ -39,6 +46,7 @@ type Room struct {
 	ident Identity
 	store store.EventStore
 	pol   SpeakerPolicy
+	logf  *slog.Logger
 
 	inbox chan func()
 	done  chan struct{}
@@ -80,9 +88,12 @@ func New(cfg Config) (*Room, error) {
 	if cfg.Speaker == nil {
 		cfg.Speaker = InPersonSpeaker{}
 	}
+	if cfg.Logger == nil {
+		cfg.Logger = slog.New(slog.DiscardHandler)
+	}
 	r := &Room{
 		code: cfg.Code, clock: cfg.Clock, rnd: cfg.Random, ident: cfg.Identity,
-		store: cfg.Store, pol: cfg.Speaker,
+		store: cfg.Store, pol: cfg.Speaker, logf: cfg.Logger,
 		inbox: make(chan func(), 256),
 		done:  make(chan struct{}),
 		state: engine.NewState(),
@@ -108,19 +119,38 @@ func (r *Room) loop() {
 	for {
 		select {
 		case f := <-r.inbox:
-			f()
+			r.run(f)
 		case <-r.done:
 			return
 		}
 	}
 }
 
-// do runs f on the room goroutine and waits for its result.
+// run does one job of the room goroutine. A job from do reports its own panic
+// to its caller; this catches the others (a timer's).
+func (r *Room) run(f func()) { _ = r.safe(func() error { f(); return nil }) }
+
+// safe runs f and turns a panic in it (a bug in the engine or a role) into
+// ErrInternal, logged with the room code. Only that job is lost: the room, its
+// timers and the other rooms go on.
+func (r *Room) safe(f func() error) (err error) {
+	defer func() {
+		if p := recover(); p != nil {
+			r.logf.Error("panic in room", "room", r.code, "panic", fmt.Sprint(p), "stack", string(debug.Stack()))
+			err = ErrInternal
+		}
+	}()
+	return f()
+}
+
+// do runs f on the room goroutine and waits for its result. If f panics the
+// caller gets ErrInternal.
 func (r *Room) do(f func() error) error {
 	r.active.Store(r.clock.Now().UnixNano())
 	res := make(chan error, 1)
+	job := func() { res <- r.safe(f) }
 	select {
-	case r.inbox <- func() { res <- f() }:
+	case r.inbox <- job:
 	case <-r.done:
 		return ErrClosed
 	}
@@ -153,18 +183,20 @@ func (r *Room) Close() {
 }
 
 // apply decides a command, stores its events, then folds them into the state.
-// It does not tell anybody; see changed.
+// It does not tell anybody; see changed. The new state is worked out before
+// anything is kept, so a panic in Decide or Evolve leaves the room as it was.
 func (r *Room) apply(c engine.Command) error {
 	r.day.tick(r.clock.Now())
 	evs, err := engine.Decide(r.state, c)
 	if err != nil || len(evs) == 0 {
 		return err
 	}
+	next := engine.Fold(r.state, evs...)
 	if err := r.store.Append(r.code, evs...); err != nil {
 		return err
 	}
 	r.log = append(r.log, evs...)
-	r.state = engine.Fold(r.state, evs...)
+	r.state = next
 	for _, e := range evs {
 		if started, ok := e.(engine.DayStarted); ok {
 			r.day.reset(started.Duration, r.clock.Now())

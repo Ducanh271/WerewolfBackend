@@ -60,9 +60,6 @@ func (cursedWolf) Decide(s engine.State, c engine.Command) ([]engine.Event, bool
 	if err != nil {
 		return nil, true, err
 	}
-	if me.Role != CursedWolf {
-		return nil, true, fmt.Errorf("%w: %s is not the Cursed wolf", engine.ErrNotYourTurn, cmd.By)
-	}
 	if me.Flags[flagCurseUsed] != 0 {
 		return nil, true, engine.ErrAlreadyActed
 	}

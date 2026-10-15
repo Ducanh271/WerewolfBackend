@@ -54,6 +54,28 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 
 - [ ] **T21 Frontend guide (docs/frontend) — do LAST, after the backend backlog is done.**
   - Role cards have a fixed size, are hidden by default, and are revealed only by press-and-hold.
+  - A dead player's phone keeps receiving live night updates, so at night it must stay dark/blank until tapped, otherwise neighbours can see the screen change when someone acts.
+
+## Phase 2 — fix the audit, reach "self-use" (play in person with friends)
+Goal: a group of 8–13 friends plays 3 games in a row on their own phones (link/QR, no install, not on the same wifi), first-timers understand their role from the app, nothing leaks, a dead phone can rejoin from another phone, an end-of-game summary is shown.
+IDs in brackets refer to docs/audit.md.
+
+- [x] T22 Audit → docs/audit.md (Opus)
+- [ ] P0 Throwaway prototype: one human + bots, browser speech (Sonnet). Any time.
+- [x] T23 Fix leaks: [S1] [S2] [S3], leak tests [T1], panic recovery [R4] (Opus)
+- [ ] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet) — waits for rule decisions
+- [ ] T25 Voice lines for the speaker phone [L3]; text approved by me first (Sonnet)
+- [ ] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
+- [ ] T27 Room: [K2] lobby kick, [K3] new game same room, [K1] abort by vote, [S8] host = room creator, [S4] nickname rules (Sonnet)
+- [ ] T28 End-of-game summary [K4] + in-app rules guide and per-role how-to (Sonnet)
+- [ ] T29 Deploy: [D1]–[D9], [S5] IP limits, [R7] room expiry (Sonnet)
+- [ ] T30 Code health: [C1] roles self-register commands, [C6] rules single source, [C2]–[C5] cleanup, [R5] [T2] faster broadcast (Opus)
+- [ ] T21 Frontend guide docs/frontend (Opus) — after T23–T30
+- [ ] F1… Phone UI (planned separately), following the secrecy checklist
+- [ ] P1 Playtest with friends, collect feedback, rebalance
+
+Later (Low in audit): [S9] [S10] [R6] [R8].
+Pending rule decisions (do not implement yet): [L1] [R3] [L5] [K1].
 
 ## Open questions (ask the user, don't guess)
-- None open.
+- The pending rule decisions above: [L1] [R3] [L5] [K1], see docs/audit.md §9.

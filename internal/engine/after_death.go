@@ -40,7 +40,9 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 		if !anyoneAlive(after) {
 			continue
 		}
-		return append(evs, HunterShotStarted{Hunter: hunter, Duration: s.Settings.HunterShot, Queue: shooters, Dead: dead})
+		return append(evs,
+			HunterChainNoted{Queue: shooters, Dead: dead},
+			HunterShotStarted{Hunter: hunter, Duration: s.Settings.HunterShot})
 	}
 	evs = append(evs, griefMarks(after, dead)...)
 	// The win check runs by day only, after the announcement and the shots, on
