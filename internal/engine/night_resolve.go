@@ -52,7 +52,7 @@ func resolveNight(s State) []Event {
 func announceDawn(r *Resolution) Event {
 	switch {
 	case len(r.Deaths) > 0:
-		return DawnAnnounced{Kind: DawnDeaths, Dead: r.Deaths}
+		return DawnAnnounced{Kind: DawnDeaths, Dead: inSeatOrder(r.State.Seats, r.Deaths)}
 	case r.Protected:
 		return DawnAnnounced{Kind: DawnProtected}
 	default:
@@ -104,4 +104,20 @@ func evolveResolution(s State, e Event) (State, bool) {
 		return out, true
 	}
 	return s, false
+}
+
+// inSeatOrder returns ids in seating order, so the narrator never reveals the
+// order in which the pipeline killed them (rules §4). The input is untouched.
+func inSeatOrder(seats, ids []PlayerID) []PlayerID {
+	want := make(map[PlayerID]bool, len(ids))
+	for _, id := range ids {
+		want[id] = true
+	}
+	out := make([]PlayerID, 0, len(ids))
+	for _, id := range seats {
+		if want[id] {
+			out = append(out, id)
+		}
+	}
+	return out
 }

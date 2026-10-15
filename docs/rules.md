@@ -123,6 +123,8 @@ Người đã chết không được nói, không được vote, và **được 
 | Không ai chết vì Bảo vệ che đúng người bị cắn | “Không có ai chết, được bảo vệ” |
 | Không ai chết vì lý do khác (phù thủy cứu, sói không thống nhất, sói bị chặn) | “Không có ai chết” |
 
+Khi **nhiều người chết cùng một đêm**, quản trò đọc tên theo **thứ tự chỗ ngồi** (từ ghế đầu tiên), không bao giờ theo thứ tự phân giải, và **không nêu nguyên nhân chết hay vai**. Nhờ vậy người chơi không đoán được ai bị cắn, ai bị độc.
+
 Người chết ban đêm **không được trăng trối**. Nếu người chết là Thợ săn, Thợ săn bắn ngay sau thông báo (mục 6).
 
 ### Thảo luận và xử trảm
