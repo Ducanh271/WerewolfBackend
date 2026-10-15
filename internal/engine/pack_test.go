@@ -33,7 +33,7 @@ func TestBiteTarget_CountsOnlyTheVoters(t *testing.T) {
 		bitten bool
 	}{
 		{"all three wolves, two agree", []PlayerID{"A", "B", "C"}, "D", true},
-		// A blocked wolf (T14) is just left out of the voters.
+		// A blocked wolf is just left out of the voters (see WolfVoters).
 		{"B blocked: A for D, C for A", []PlayerID{"A", "C"}, "", false},
 		{"B and C blocked: A alone decides", []PlayerID{"A"}, "D", true},
 		{"every wolf blocked", nil, "", false},

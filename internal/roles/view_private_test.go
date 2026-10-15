@@ -57,10 +57,6 @@ func TestView_Witch_SeesTheBittenOnlyOnHerTurnWhileSheCanHeal(t *testing.T) {
 		}, ""},
 		{"before her turn", func(_ *Game, n *Night) { bitePhuc(n) }, ""},
 		{"after her turn", func(_ *Game, n *Night) { bitePhuc(n).TurnOf(Seer) }, ""},
-		{"visited tonight", func(g *Game, n *Night) {
-			g.HandBuild(func(s *engine.State) { s.Pending.Visited = "Lan" })
-			bitePhuc(n).TurnOf(Witch)
-		}, ""},
 		{"the pack did not agree", func(_ *Game, n *Night) {
 			n.Wolf("An").Bites("Phuc").Wolf("Binh").Bites("Giang").TurnOf(Witch)
 		}, ""},
@@ -115,37 +111,6 @@ func TestView_Lovers_SeePartnerRoleAndLinkColour_CupidSeesNothing(t *testing.T) 
 			g.As(tc.b).Lover(tc.a, tc.roleA, tc.colour).RoleOf(tc.a, tc.roleA)
 			g.As("Lan").OwnRole(Cupid).NoLover().NoRoleExceptOwn()
 			g.As("Hoa").NoLover().NoRoleExceptOwn()
-		})
-	}
-}
-
-func TestView_VisitedPlayer_SeesTheNoticeOnTheirTurn(t *testing.T) {
-	tests := []struct {
-		name    string
-		visited string
-		step    engine.RoleID
-		viewer  string
-		turn    bool
-		notice  bool
-	}{
-		{"on her turn", "Em", Seer, "Em", true, true},
-		{"before her turn", "Em", Guard, "Em", false, false},
-		{"another player on their turn", "Em", Guard, "Dung", true, false},
-		{"a visited wolf at the pack step", "An", Werewolf, "An", true, true},
-		{"the other wolves are not blocked", "An", Werewolf, "Binh", true, false},
-	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			g := newTable(t)
-			n := g.Night()
-			g.HandBuild(func(s *engine.State) { s.Pending.Visited = engine.PlayerID(tc.visited) })
-			n.TurnOf(tc.step)
-			seen := g.As(tc.viewer).Visited(tc.notice)
-			if tc.turn {
-				seen.Turn(tc.step)
-			} else {
-				seen.NoTurn()
-			}
 		})
 	}
 }

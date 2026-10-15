@@ -78,7 +78,7 @@ func (witch) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, err
 	return nil, false, nil
 }
 
-// witchTurn checks the shared parts: her step, her role, not visited.
+// witchTurn checks the shared parts: her step (NightActor also refuses a blocked player), her role.
 func witchTurn(s engine.State, by engine.PlayerID) (*engine.Player, error) {
 	me, err := engine.NightActor(s, by, Witch)
 	if err != nil {
@@ -86,9 +86,6 @@ func witchTurn(s engine.State, by engine.PlayerID) (*engine.Player, error) {
 	}
 	if me.Role != Witch {
 		return nil, fmt.Errorf("%w: %s is not the Witch", engine.ErrNotYourTurn, by)
-	}
-	if s.Pending.Visited == by {
-		return nil, fmt.Errorf("%w: %s", engine.ErrVisited, by)
 	}
 	return me, nil
 }

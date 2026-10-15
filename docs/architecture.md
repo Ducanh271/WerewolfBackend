@@ -126,7 +126,7 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 
 - Engine events get their audience in `view_audience.go`. A role event declares its own by implementing `Audienced` (`Audience(s) Audience`: everyone, the living wolves, or listed players). An event without an audience is seen only by full views, so a forgotten audience hides information instead of leaking it.
 - `PlayerDied` is never shown to the living: the order of a night's deaths would tell who was bitten and who was poisoned.
-- Role-specific secrets derived from state go through optional role interfaces, e.g. `BiteWitness` (the Witch sees the bite on her turn while she can heal, not when visited). `Pending.Visited` drives the "visited" notice; `TeamChanged` (the curse) tells only the player concerned.
+- Role-specific secrets derived from state go through optional role interfaces, e.g. `BiteWitness` (the Witch sees the bite on her turn while she can heal, not when visited). `Pending.Blocked` (target → blocking role, engine-internal, stripped from every view) drives the generic "cannot use your ability tonight" notice (`TurnView.Blocked`, never names the blocker) and is enforced by `NightActor` (`ErrBlocked`) and `WolfVoters`, so a future blocking role only records into it. A role that must act when its night step runs out (the Visitor's forced random visit) implements `NightTimeoutRole`; the seed comes from the room's `PhaseTimeout.Seed`; `TeamChanged` (the curse) tells only the player concerned.
 - Message shapes: `docs/protocol.md`.
 
 ## Room layer

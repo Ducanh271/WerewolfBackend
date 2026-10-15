@@ -103,13 +103,28 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 	case PhaseDawn, PhaseDay, PhaseNominationLock, PhaseTrial, PhaseVerdict, PhaseDusk:
 		return decideDayTimeout(s, cmd)
 	case PhaseNight:
-		next := nextNightEvent(s, s.Night, s.NightStep)
-		if _, over := next.(NightEnded); over {
-			return append([]Event{next}, resolveNight(s)...), nil
-		}
-		return []Event{next}, nil
+		return decideNightTimeout(s, cmd.Seed), nil
 	}
 	return nil, nil
+}
+
+// decideNightTimeout ends the current step. A role that must act when its time
+// is up (NightTimeoutRole) does so first, and the night resolves with that
+// choice included.
+func decideNightTimeout(s State, seed int64) []Event {
+	var evs []Event
+	if cur, ok := CurrentNightRole(s); ok {
+		if r, ok := Registry[cur].(NightTimeoutRole); ok {
+			evs = r.OnNightTimeout(s, seed)
+			s = Fold(s, evs...)
+		}
+	}
+	next := nextNightEvent(s, s.Night, s.NightStep)
+	evs = append(evs, next)
+	if _, over := next.(NightEnded); over {
+		evs = append(evs, resolveNight(s)...)
+	}
+	return evs
 }
 
 func evolveNight(s State, e Event) (State, bool) {

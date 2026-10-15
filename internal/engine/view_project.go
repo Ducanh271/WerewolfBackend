@@ -113,6 +113,7 @@ func publicVotes(s State) PublicVotes {
 func secrets(s State) *Secrets {
 	pending := s.Pending
 	pending.WolfVotes = copyMap(s.Pending.WolfVotes)
+	pending.Blocked = nil // who blocked whom stays inside the engine
 	out := &Secrets{Pending: pending}
 	if s.Lovers != nil {
 		lovers := *s.Lovers
@@ -148,8 +149,8 @@ func turnView(s State, p *Player) *TurnView {
 	if step != p.Role && !(isPackStep(step) && p.Team == TeamWolves) {
 		return nil
 	}
-	out := &TurnView{Step: step, Visited: s.Pending.Visited == p.ID}
-	if out.Visited || step != p.Role {
+	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID)}
+	if out.Blocked || step != p.Role {
 		return out
 	}
 	if w, ok := Registry[step].(BiteWitness); ok && w.SeesBite(p) {

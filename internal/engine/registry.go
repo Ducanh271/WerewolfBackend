@@ -69,9 +69,18 @@ type AlwaysCalled interface {
 // BiteWitness is implemented by a role whose holder learns, on their own night
 // step, whom the pack is biting: the Witch while she still has the heal potion
 // (rules §6 "Phù thủy"). The view shows it only during that step and not when
-// the holder was visited.
+// the holder was blocked.
 type BiteWitness interface {
 	SeesBite(holder *Player) bool
+}
+
+// NightTimeoutRole is implemented by a role that must still act when its night
+// step runs out without a choice: the Visitor is forced to visit (rules §6
+// "Nguyệt Nữ"). seed comes from the room layer (crypto/rand), never from a
+// client. It returns no events when the holder is dead (a fake call) or has
+// nothing valid to do.
+type NightTimeoutRole interface {
+	OnNightTimeout(s State, seed int64) []Event
 }
 
 // Registry holds every known role. Roles add themselves with Register in

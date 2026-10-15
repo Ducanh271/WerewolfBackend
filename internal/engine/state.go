@@ -42,7 +42,7 @@ type NightActions struct {
 	WolfVotes  map[PlayerID]PlayerID // each wolf's current bite choice
 	Protected  PlayerID              // the Guard's choice, empty if none
 	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
-	Visited    PlayerID              // the Visitor's target (T14), empty if nobody
+	Blocked    map[PlayerID]RoleID   // players who lose their night ability tonight -> the role that blocked them (engine-internal, never in a view)
 	Healed     bool                  // the Witch used the heal potion on the bitten player
 	Poisoned   PlayerID              // the Witch's poison target, empty if none
 }
@@ -135,6 +135,12 @@ func (s State) clone() State {
 		out.Seats = append([]PlayerID(nil), s.Seats...)
 	}
 	out.Settings.Roles = copyRoles(s.Settings.Roles)
+	if s.Pending.Blocked != nil {
+		out.Pending.Blocked = make(map[PlayerID]RoleID, len(s.Pending.Blocked))
+		for target, source := range s.Pending.Blocked {
+			out.Pending.Blocked[target] = source
+		}
+	}
 	if s.Pending.WolfVotes != nil {
 		out.Pending.WolfVotes = make(map[PlayerID]PlayerID, len(s.Pending.WolfVotes))
 		for wolf, target := range s.Pending.WolfVotes {

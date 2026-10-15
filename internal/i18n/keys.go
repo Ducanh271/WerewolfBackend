@@ -50,3 +50,10 @@ const (
 	// WinDraw: everybody died at the same moment.
 	WinDraw = "win.draw"
 )
+
+// Night notices, shown as text on one player's phone (rules §3).
+const (
+	// NightBlocked: the player cannot use their night ability. It never names
+	// who blocked them.
+	NightBlocked = "night.blocked"
+)

@@ -14,7 +14,7 @@ type Resolution struct {
 
 // nightPipeline is the ordered list of rules §9. Only step 3 exists so far; the
 // rest are added by their tasks in the numbered place:
-// 1 Visitor, 2 Curse, 4 RustyKnight, 5 Witch poison, 6 delayed wolf deaths,
+// 2 Curse, 4 RustyKnight, 5 Witch poison, 6 delayed wolf deaths,
 // 7 lover deaths. Step 8 (announce) is resolveNight below, step 9 (win check)
 // is afterDeaths.
 var nightPipeline = []func(*Resolution){

@@ -145,3 +145,34 @@ func (a *WitchActor) CannotPoison(target string, want error) *Night {
 	a.n.advanceTo(roles.Witch)
 	return a.n.DoExpectErr(roles.WitchPoison{By: a.id, Target: a.n.Player(target)}, want)
 }
+
+// Visitor is the Visitor: Visitor("Lan").Visits("An").
+func (n *Night) Visitor(name string) *VisitorActor { return &VisitorActor{n: n, id: n.Player(name)} }
+
+// VisitorActor is the Visitor acting.
+type VisitorActor struct {
+	n  *Night
+	id engine.PlayerID
+}
+
+// Visits chooses the player to sleep over at.
+func (a *VisitorActor) Visits(target string) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Visitor)
+	return a.n.Do(roles.VisitorVisit{By: a.id, Target: a.n.Player(target)})
+}
+
+// CannotVisit chooses and expects the engine to refuse with want.
+func (a *VisitorActor) CannotVisit(target string, want error) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Visitor)
+	return a.n.DoExpectErr(roles.VisitorVisit{By: a.id, Target: a.n.Player(target)}, want)
+}
+
+// RunsOutOfTime lets the Visitor's step end without a choice; the server then
+// picks at random with the given seed (rules §6).
+func (a *VisitorActor) RunsOutOfTime(seed int64) *Night {
+	a.n.g.t.Helper()
+	a.n.advanceTo(roles.Visitor)
+	return a.n.Do(engine.PhaseTimeout{Phase: a.n.g.state.Phase, Seq: a.n.g.state.Seq, Seed: seed})
+}

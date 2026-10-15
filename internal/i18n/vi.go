@@ -16,6 +16,7 @@ var vi = map[string]string{
 	ChiefLost:       "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
 	HunterRevealed:  "%s là Thợ săn.",
 	HunterShot:      "%s bắn %s.",
+	NightBlocked:    "Bạn không thể sử dụng chức năng đêm nay.",
 	WinVillage:      "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt.",
 	WinWolves:       "Phe Sói chiến thắng.",
 	WinLovers:       "Cặp đôi khác phe chiến thắng.",

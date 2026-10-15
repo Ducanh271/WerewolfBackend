@@ -131,6 +131,9 @@ var commandTable = map[string]commandSpec{
 	"guardProtect": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.GuardProtect{By: by, Target: a.Target}
 	}),
+	"visitorVisit": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
+		return roles.VisitorVisit{By: by, Target: a.Target}
+	}),
 	"hunterShoot": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return engine.HunterShoot{By: by, Target: a.Target}
 	}),

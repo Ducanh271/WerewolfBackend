@@ -88,11 +88,12 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `skipDay` | `on: bool` | day | `SkipDay` |
 | `verdict` | `kill: bool` | verdict | `CastVerdict` |
 | `wolfVote` | `target` | pack step | `WolfVote` |
+| `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
 | `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
-| `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not visited |
-| `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not visited |
+| `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |
+| `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not blocked |
 
 Later roles add their own rows (Visitor, Cursed wolf, Wolf seer,
 Detective, Cupid). The server **rejects** any `seed` field and never
@@ -122,7 +123,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `winner`, `draw` | all, at the end | winning team, or a draw |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
 | `me` | players | `id`, `role`, `team`, `alive`, `cursed`, `canShoot` (only the dead Hunter while he chooses), `turn` |
-| `me.turn` | player being called | `step`; `visited: true` → show "Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng" and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
+| `me.turn` | player being called | `step`; `blocked: true` → show "Bạn không thể sử dụng chức năng đêm nay" (never says who blocked) and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
 | `lover` | the two lovers | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
 | `full`, `secrets` | dead players, everybody after the game | every role and team, tonight's choices, the lovers pair |
@@ -173,6 +174,6 @@ teams are sent by name (`Night`, `Village`).
 - **Living player**: plus own role and team, whether it
   is their turn, own night results.
 - **Wolves**: plus the pack and its live votes, the Wolf seer's results.
-- **Witch**: plus the bitten player on her turn while she can heal, unless visited.
+- **Witch**: plus the bitten player on her turn while she can heal, unless blocked.
 - **Lovers**: plus the partner, the partner's role and the link colour.
 - **Dead players, and everybody once the game is over**: everything.

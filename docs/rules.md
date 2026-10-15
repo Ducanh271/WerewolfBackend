@@ -118,7 +118,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
-- Người bị Nguyệt Nữ ghé thấy thông báo trên màn hình khi đến lượt: “Được Nguyệt Nữ ghé chơi, không thể sử dụng chức năng”.
+- Người bị chặn chức năng ban đêm (hiện chỉ do Nguyệt Nữ, sau này có thể có vai chặn khác) thấy thông báo chung trên màn hình khi đến lượt: “Bạn không thể sử dụng chức năng đêm nay”. Thông báo **không nêu ai hay vai nào chặn**; người bị chặn không được biết nguồn chặn.
 
 ## 4. Ban ngày
 
@@ -219,10 +219,11 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 ### Nguyệt Nữ
 
-- Được gọi đầu tiên mỗi đêm, chọn “ngủ” với 1 người. Không được chọn cùng một người hai đêm liên tiếp.
-- Người được ghé **mất chức năng ban đêm** đêm đó và được thông báo trên màn hình. Chỉ ảnh hưởng người đó, không ảnh hưởng cả bầy.
+- Được gọi đầu tiên mỗi đêm, **bắt buộc** chọn “ngủ” với 1 người sống **không phải chính cô**. Không được chọn cùng một người hai đêm liên tiếp.
+- Hết giờ mà chưa chọn: server chọn **ngẫu nhiên** một người sống hợp lệ (không phải cô, không trùng người đêm trước). Không còn ai hợp lệ thì đêm đó không ghé ai. Nguyệt Nữ đã chết thì vẫn được gọi giả, không chọn ngẫu nhiên.
+- Người được ghé **mất chức năng ban đêm** đêm đó và thấy thông báo chung “Bạn không thể sử dụng chức năng đêm nay” (không nhắc Nguyệt Nữ, xem mục 3). Chỉ ảnh hưởng người đó, không ảnh hưởng cả bầy.
 - Không chặn được chức năng ban ngày (Thợ săn).
-- Bị sói cắn thì chết bình thường.
+- Bị sói cắn thì chết bình thường; lần ghé đêm đó vẫn có hiệu lực.
 
 ### Thám tử
 

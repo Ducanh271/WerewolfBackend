@@ -1,13 +1,13 @@
 package engine
 
-// WolfVoters lists the wolves who may vote on the bite tonight: today every
-// living player of the wolf team. The count of rules §5 ("quá nửa số phiếu")
-// is always taken over this list, so a role that stops a wolf from voting (the
-// Visitor, T14) only has to leave that wolf out here.
+// WolfVoters lists the wolves who may vote on the bite tonight: every living
+// player of the wolf team who is not blocked. The count of rules §5 ("quá nửa
+// số phiếu") is always taken over this list, so a blocked wolf neither votes
+// nor counts.
 func WolfVoters(s State) []PlayerID {
 	var voters []PlayerID
 	for _, id := range s.Seats {
-		if p := s.Players[id]; p != nil && p.Alive && p.Team == TeamWolves {
+		if p := s.Players[id]; p != nil && p.Alive && p.Team == TeamWolves && !Blocked(s, id) {
 			voters = append(voters, id)
 		}
 	}

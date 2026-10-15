@@ -43,14 +43,15 @@ var (
 	ErrRoleNeedsMorePlayers = errors.New("role needs more players")
 
 	// Night actions (rules §3, §5, §6).
-	ErrNotYourTurn     = errors.New("not your turn")
-	ErrNotAlive        = errors.New("player is dead")
-	ErrInvalidTarget   = errors.New("invalid target")
-	ErrAlreadyActed    = errors.New("already acted this night")
-	ErrVisited         = errors.New("visited by the Visitor tonight: no ability")
-	ErrPotionUsed      = errors.New("this potion is already used up")
-	ErrNothingToHeal   = errors.New("nobody is bitten tonight")
-	ErrSameGuardTarget = errors.New("the guard cannot protect the same player two nights in a row")
+	ErrNotYourTurn       = errors.New("not your turn")
+	ErrNotAlive          = errors.New("player is dead")
+	ErrInvalidTarget     = errors.New("invalid target")
+	ErrAlreadyActed      = errors.New("already acted this night")
+	ErrBlocked           = errors.New("blocked tonight: no night ability")
+	ErrPotionUsed        = errors.New("this potion is already used up")
+	ErrNothingToHeal     = errors.New("nobody is bitten tonight")
+	ErrSameGuardTarget   = errors.New("the guard cannot protect the same player two nights in a row")
+	ErrSameVisitorTarget = errors.New("the Visitor cannot visit the same player two nights in a row")
 
 	// Day (rules §4).
 	ErrSelfNomination = errors.New("a player cannot nominate themselves")

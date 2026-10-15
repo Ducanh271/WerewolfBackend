@@ -100,12 +100,13 @@ func (s *Seen) NoTurn() *Seen {
 	return s
 }
 
-// Visited checks the "visited, cannot act" notice on the viewer's turn.
-func (s *Seen) Visited(want bool) *Seen {
+// Blocked checks the generic "cannot use your ability tonight" notice on the
+// viewer's turn.
+func (s *Seen) Blocked(want bool) *Seen {
 	s.g.t.Helper()
-	got := s.view.Me != nil && s.view.Me.Turn != nil && s.view.Me.Turn.Visited
+	got := s.view.Me != nil && s.view.Me.Turn != nil && s.view.Me.Turn.Blocked
 	if got != want {
-		s.g.t.Fatalf("%s: visited notice shown=%v, want %v", s.who, got, want)
+		s.g.t.Fatalf("%s: blocked notice shown=%v, want %v", s.who, got, want)
 	}
 	return s
 }

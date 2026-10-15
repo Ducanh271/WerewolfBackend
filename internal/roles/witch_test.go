@@ -108,12 +108,11 @@ func TestWitch_PoisonKillsAnyoneEvenHerselfAndTheGuardCannotBlockIt(t *testing.T
 }
 
 func TestWitch_VisitedByTheVisitor_SeesNothingAndCannotAct(t *testing.T) {
-	g := witchTable(t)
-	n := g.Night()
-	g.HandBuild(func(s *engine.State) { s.Pending.Visited = "Lan" }) // Visitor arrives with T14
+	g := visitorTable(t)
+	n := g.Night().Visitor("Khoa").Visits("Giang")
 	packBites(n, "Phuc").TurnOf(Witch)
-	g.As("Lan").Visited(true).Bitten("").BiteShown(false)
-	n.Witch("Lan").CannotHeal(engine.ErrVisited).Witch("Lan").CannotPoison("Hoa", engine.ErrVisited)
+	g.As("Giang").Blocked(true).Bitten("").BiteShown(false)
+	n.Witch("Giang").CannotHeal(engine.ErrBlocked).Witch("Giang").CannotPoison("Hoa", engine.ErrBlocked)
 	g.Dawn().ExpectDead("Phuc")
 }
 

@@ -12,8 +12,9 @@ import "time"
 //     alive, the Chief, every day vote, and whether it is their turn.
 //   - Living wolves (a cursed player too): the pack and its live bite votes.
 //   - A role implementing BiteWitness (the Witch): the bitten player, only on
-//     her own turn, only while SeesBite holds, and not when visited.
-//   - The Visitor's target: the "visited" notice on their turn.
+//     her own turn, only while SeesBite holds, and not when blocked.
+//   - A blocked player: the generic "cannot use your ability" notice on their
+//     turn. Never the blocker or its role.
 //   - Lovers: the partner, the partner's role and the link colour.
 //   - Dead players, and everybody once the game is over (rules §4): all.
 //
@@ -97,7 +98,7 @@ type MyView struct {
 // TurnView is what the phone shows during the viewer's own night step.
 type TurnView struct {
 	Step    RoleID   // the step being called (the pack step for a wolf)
-	Visited bool     // the Visitor blocked the viewer tonight: no action
+	Blocked bool     // the viewer cannot use their night ability tonight; never says who blocked them
 	Bitten  PlayerID // BiteWitness only: the pack's current target
 	// BiteShown is set when the viewer is shown the bite information at all, so
 	// an empty Bitten then means "nobody is bitten".

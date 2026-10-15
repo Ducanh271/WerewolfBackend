@@ -16,6 +16,7 @@ type bot struct {
 	role  string
 	acted map[string]bool // phase/seq already answered
 	guard string          // whom the Guard protected last night
+	visit string          // whom the Visitor visited last night
 }
 
 func newBot(nick string, c *wsclient.Client) *bot {
@@ -86,7 +87,7 @@ func (b *bot) decide(f wsclient.Frame, phase string) (string, map[string]any) {
 
 func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (string, map[string]any) {
 	turn, _ := me["turn"].(map[string]any)
-	if turn == nil || turn["visited"] == true {
+	if turn == nil || turn["blocked"] == true {
 		return "", nil
 	}
 	others := without(living, b.id)
@@ -97,6 +98,10 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 		target := pick(without(living, b.guard))
 		b.guard = target
 		return "guardProtect", map[string]any{"target": target}
+	case "Visitor":
+		target := pick(without(others, b.visit))
+		b.visit = target
+		return "visitorVisit", map[string]any{"target": target}
 	case "Seer":
 		return "seerCheck", map[string]any{"target": pick(others)}
 	}

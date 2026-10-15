@@ -200,9 +200,8 @@ func TestHunter_Cursed_KeepsHisAbilityAndShootsAsAWolf(t *testing.T) {
 }
 
 func TestHunter_VisitedByTheVisitor_StillShoots(t *testing.T) {
-	g := hunterTable(t)
-	n := g.Night()
-	g.HandBuild(func(s *engine.State) { s.Pending.Visited = g.Player("Phuc") }) // Visitor arrives with T14
+	g := visitorTable(t)
+	n := g.Night().Visitor("Khoa").Visits("Phuc")
 	packBites(n, "Phuc")
 	g.Dawn().ExpectDead("Phuc")
 	g.Hunter("Phuc").Shoots("An")
