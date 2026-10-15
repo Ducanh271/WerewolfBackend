@@ -144,7 +144,7 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 - Clock is injected (`room.Clock` interface) so timer tests run instantly.
 
 ## Transport
-JSON over WebSocket. Message shapes in `docs/protocol.md` (written in task T9). Transport only decodes → `room.Submit(cmd)` and encodes views; no game logic.
+JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The transport imports `roles` only to build the commands of the command table (one row per command); `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.
 
 ## Extending later
 - Online play: `Settings.Mode` already has `InPerson | Online`, and a room created as `Online` fails with `ErrModeUnsupported` in v1. Adding the mode means a new `SpeakerPolicy` (every phone speaks, instead of one) in `room`, and chat/video in `transport`. The engine does not change.

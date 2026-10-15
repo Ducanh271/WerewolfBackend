@@ -3,6 +3,7 @@ package room
 import (
 	"errors"
 	"fmt"
+	"sync/atomic"
 	"time"
 
 	"masoi/internal/engine"
@@ -55,6 +56,8 @@ type Room struct {
 	dayT      Timer
 	deadline  time.Time
 	closeOnce bool
+
+	active atomic.Int64 // unix nanoseconds of the last thing a player did
 }
 
 // New starts a room. Only InPerson is supported in v1.
@@ -85,9 +88,18 @@ func New(cfg Config) (*Room, error) {
 		state: engine.NewState(),
 		conns: map[engine.PlayerID]*connection{},
 	}
+	r.active.Store(cfg.Clock.Now().UnixNano())
 	go r.loop()
 	return r, nil
 }
+
+// LastActive is when a player last did anything in the room (joined, sent a
+// command, dropped). Timers do not count: the manager uses it to drop rooms
+// nobody plays in.
+func (r *Room) LastActive() time.Time { return time.Unix(0, r.active.Load()) }
+
+// Done is closed when the room stops.
+func (r *Room) Done() <-chan struct{} { return r.done }
 
 // Code is the room code players type in.
 func (r *Room) Code() string { return r.code }
@@ -105,6 +117,7 @@ func (r *Room) loop() {
 
 // do runs f on the room goroutine and waits for its result.
 func (r *Room) do(f func() error) error {
+	r.active.Store(r.clock.Now().UnixNano())
 	res := make(chan error, 1)
 	select {
 	case r.inbox <- func() { res <- f() }:

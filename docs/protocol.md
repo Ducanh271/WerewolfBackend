@@ -1,8 +1,40 @@
-# Protocol (draft for review, T9)
+# Protocol (T9 draft, implemented in T11)
 
 JSON over one WebSocket per screen. Implemented by `internal/transport/ws` (T11).
 Every message is an object with a `type` field. Field names are camelCase,
 durations are milliseconds, times are Unix milliseconds.
+
+## Rooms and the socket (HTTP)
+
+| request | reply |
+|---|---|
+| `POST /rooms` (body optional: `{"mode": "inPerson"}`) | `201 {"room": "K7QP"}`; `mode: "online"` → `400` with `mode_unsupported`; `503` `too_many_rooms` |
+| `GET /join/{code}` | `200 {"room": "K7QP"}`, or `404` `room_not_found`. This is the link the QR code will carry (the UI is built later); case is ignored |
+| `GET /ws` | upgrades to the game socket |
+
+- The room code is 4 characters from `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (no O, 0, I,
+  1, L). It is not a secret.
+- A room nobody has joined, left, dropped from or sent a command to for **2 hours**
+  is deleted, and its sockets are closed.
+- `/ws` takes **no query string** (a request with one gets `400` `secret_in_url`):
+  the secret code and the PIN only ever travel inside messages, because URLs end
+  up in logs. The room code goes in the first message, `join` or `rejoin`, which
+  must arrive within 10 s.
+- **Origin.** The `Origin` header must be one of the configured origins
+  (`ALLOWED_ORIGINS`, comma separated, `scheme://host[:port]`). No `Origin` is
+  refused too, unless `ALLOW_ANY_ORIGIN=1` (demo and tests), which allows
+  everything. Refused → `403` `bad_origin`.
+- **Limits per connection.** A message over 4 KB gets `error` `message_too_large`
+  (over 64 KB the connection is closed). More than 10 messages per second
+  (a burst of 20 is allowed) gets `error` `rate_limited` and the message is
+  ignored; staying over the limit without a break for 3 s closes the connection.
+- **Strict decoding.** An unknown `type` is `unknown_type`, an unknown command
+  `unknown_command`. Unknown fields anywhere (a `seed`, a `by`, a `voter`),
+  wrong field types, wrong capitals and trailing data are `bad_message`.
+- A dropped connection never removes the player; reconnect with `rejoin`. A
+  rejoin from another phone closes the old socket (its next command gets
+  `disconnected`).
+- `welcome` always comes first, before the first `view`.
 
 The secrecy rule: the server never sends `engine.State`. Every outgoing game
 message is built from `engine.ViewFor` (the screen now) and `engine.Visible`
@@ -119,7 +151,15 @@ The `view` object (`engine.View`); absent parts are omitted:
 {"type": "error", "code": "not_your_turn", "message": "…"}
 ```
 `code` is the snake_case name of the engine error (`ErrNotYourTurn` →
-`not_your_turn`). A rejected command changes nothing.
+`not_your_turn`). A rejected command changes nothing. Room errors use the same
+scheme (`not_host`, `forbidden`, `disconnected`, `bad_credentials`,
+`pin_locked` with `retryAfter`, `room_not_found`), and so do the transport's own:
+`bad_message`, `unknown_type`, `unknown_command`, `message_too_large`,
+`rate_limited`, `not_joined`, `already_joined`. An error the server does not
+know how to name is `internal` with no detail.
+
+`DawnAnnounced.kind` is `deaths`, `protected` or `nobodyDied`; phases and
+teams are sent by name (`Night`, `Village`).
 
 ## What each screen gets (summary)
 

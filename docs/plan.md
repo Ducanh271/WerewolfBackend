@@ -25,7 +25,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 
 - [x] **T9 Views.** `ViewFor(player|narrator)`; tests per role proving no leaks; dead players see everything. Write `docs/protocol.md` (message shapes) for review.
 - [x] **T10 Room + timers.** Room goroutine, injected clock, timeouts → commands, event store in memory, rejoin per rules §2 "Vào lại phòng": on join the room issues a secret token (kept by the phone) and a 4-digit PIN (shown only on that player's screen); rejoin with the token (same phone) or nickname + PIN (other phone); 5 wrong PINs lock PIN rejoin for that nickname for 1 minute (injected clock; token rejoin unaffected). Token and PIN come from `crypto/rand`; identity checks sit behind an interface so Google login can be added later (rules §10). The room generates every seed (`DealRoles`, Chief election tie-break) with `crypto/rand`; seeds never come from a client.
-- [ ] **T11 WebSocket transport.** Implements `docs/protocol.md`. One end-to-end test with fake clients playing a 5-player game.
+- [x] **T11 WebSocket transport.** Implements `docs/protocol.md`. One end-to-end test with fake clients playing a 5-player game.
 
 ## Milestone 4 — Remaining roles (one task each)
 

@@ -1,4 +1,4 @@
-.PHONY: fmt test lint run
+.PHONY: fmt test lint run demo
 
 fmt:
 	gofmt -w .
@@ -13,3 +13,6 @@ lint:
 
 run:
 	go run ./cmd/server
+
+demo:
+	go run ./cmd/demo
