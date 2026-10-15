@@ -47,3 +47,89 @@ func Vi(key string, names ...string) string {
 	}
 	return strings.Replace(text, "%s", strings.Join(names, ", "), 1)
 }
+
+// RoleCard is the text of one role's card (rules §9b). Every card has all four
+// fields set, so cards cannot be told apart by their shape.
+type RoleCard struct {
+	Name        string
+	Team        string
+	Goal        string
+	Description string
+}
+
+// Team labels and goals of the cards (rules §9b "Mục tiêu theo phe").
+const (
+	teamVillage = "Dân"
+	teamWolves  = "Sói"
+	goalVillage = "Dân thắng khi không còn con Sói nào."
+	goalWolves  = "Sói thắng khi số Sói ≥ số Dân."
+)
+
+// roleCardOrder is the order of the rules §9b table; the public role list of a
+// game follows it. Keys are the role IDs.
+var roleCardOrder = []string{
+	"Werewolf", "CursedWolf", "WolfSeer", "Villager", "Seer", "Guard", "Witch",
+	"Hunter", "Visitor", "Detective", "RustyKnight", "Cupid",
+}
+
+var roleCards = map[string]RoleCard{
+	"Werewolf": {Name: "Sói", Team: teamWolves, Goal: goalWolves,
+		Description: "Mỗi đêm cùng bầy chọn một người để cắn, hoặc chọn không cắn ai. Ban ngày giả làm dân lành."},
+	"CursedWolf": {Name: "Sói nguyền", Team: teamWolves, Goal: goalWolves,
+		Description: "Trong 3 đêm đầu, được nguyền một người biến thành Sói (một lần duy nhất). Vẫn cắn cùng bầy."},
+	"WolfSeer": {Name: "Sói tiên tri", Team: teamWolves, Goal: goalWolves,
+		Description: "Mỗi đêm soi một người xem có phải Tiên tri không; cả bầy biết kết quả. Vẫn cắn cùng bầy."},
+	"Villager": {Name: "Dân làng", Team: teamVillage, Goal: goalVillage,
+		Description: "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày."},
+	"Seer": {Name: "Tiên tri", Team: teamVillage, Goal: goalVillage,
+		Description: "Mỗi đêm soi một người, biết người đó là Sói hay không."},
+	"Guard": {Name: "Bảo vệ", Team: teamVillage, Goal: goalVillage,
+		Description: "Mỗi đêm che một người khỏi bị Sói cắn. Được che chính mình, không che một người hai đêm liền."},
+	"Witch": {Name: "Phù thủy", Team: teamVillage, Goal: goalVillage,
+		Description: "Có 1 bình cứu và 1 bình độc cho cả ván. Khi còn bình cứu, bạn biết ai bị cắn và có thể cứu. Bình độc giết một người bất kỳ."},
+	"Hunter": {Name: "Thợ săn", Team: teamVillage, Goal: goalVillage,
+		Description: "Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống."},
+	"Visitor": {Name: "Nguyệt Nữ", Team: teamVillage, Goal: goalVillage,
+		Description: "Mỗi đêm bắt buộc ghé một người; người đó mất chức năng đêm đó. Không ghé một người hai đêm liền."},
+	"Detective": {Name: "Thám tử", Team: teamVillage, Goal: goalVillage,
+		Description: "Một lần duy nhất: chọn một người, biết trong vùng gồm người đó và hai người sống ngồi cạnh có Sói hay không."},
+	"RustyKnight": {Name: "Hiệp sĩ kiếm gỉ", Team: teamVillage, Goal: goalVillage,
+		Description: "Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau."},
+	"Cupid": {Name: "Cupid", Team: teamVillage, Goal: goalVillage,
+		Description: "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo."},
+}
+
+// Card returns the card of a role by its ID.
+func Card(role string) (RoleCard, bool) {
+	c, ok := roleCards[role]
+	return c, ok
+}
+
+// CardOrder lists the role IDs in the order of the rules §9b table.
+func CardOrder() []string { return append([]string(nil), roleCardOrder...) }
+
+// Kinds of the extra cards (rules §9b "Thẻ phụ").
+const (
+	StatusCursed      = "cursed"
+	StatusLovers      = "lovers"
+	StatusLoversCross = "lovers_cross"
+	StatusChief       = "chief"
+)
+
+// statusCards: the name of each extra card and its text; %s is the partner.
+var statusCards = map[string][2]string{
+	StatusCursed:      {"Bị nguyền", "Từ giờ bạn thuộc phe Sói và dậy cắn cùng bầy, vẫn giữ năng lực cũ."},
+	StatusLovers:      {"Cặp đôi cùng phe", "Bạn và %s yêu nhau. Một người chết thì người kia chết theo. Vẫn chơi cho phe của mình."},
+	StatusLoversCross: {"Cặp đôi khác phe", "Bạn và %s thuộc phe thứ ba: chỉ thắng khi hai bạn là hai người cuối còn sống. Dân hay Sói thắng thì hai bạn đều thua."},
+	StatusChief:       {"Trưởng làng", "Phiếu của bạn tính x2 khi đề cử và vote giết/tha. Khi chết, bạn chọn người kế nhiệm."},
+}
+
+// StatusCard returns the name and text of an extra card; partner fills the
+// lovers' cards. An unknown kind returns the kind itself.
+func StatusCard(kind, partner string) (name, text string) {
+	c, ok := statusCards[kind]
+	if !ok {
+		return kind, kind
+	}
+	return c[0], strings.Replace(c[1], "%s", partner, 1)
+}

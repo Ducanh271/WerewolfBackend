@@ -90,8 +90,8 @@ func (s *Seen) NoRoleExceptOwn() *Seen {
 		if s.view.Me != nil && p.ID == s.view.Me.ID {
 			continue
 		}
-		if p.Role != "" || p.Team != engine.TeamNone {
-			s.g.t.Fatalf("%s must not see the role of %s, sees %s/%s", s.who, p.ID, p.Role, p.Team)
+		if p.Role != "" || p.Team != engine.TeamNone || p.Card != nil {
+			s.g.t.Fatalf("%s must not see the role of %s, sees %s/%s %+v", s.who, p.ID, p.Role, p.Team, p.Card)
 		}
 	}
 	return s

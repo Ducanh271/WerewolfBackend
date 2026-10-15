@@ -36,6 +36,7 @@ type View struct {
 	Night int
 
 	Roles      map[RoleID]int // the public role list of the game
+	RoleCards  []RoleListCard // the same list with each role's name and short description (rules §9b)
 	Players    []PlayerView   // in seating order
 	Chief      PlayerID
 	Succession PlayerID // the dead Chief naming a successor, if any
@@ -66,6 +67,7 @@ type PlayerView struct {
 	Alive    bool
 	Role     RoleID
 	Team     Team
+	Card     *RoleCard // the card of Role, set exactly when Role is
 }
 
 // PublicVotes are the votes everybody sees (rules §4, §7b).
@@ -96,6 +98,10 @@ type MyView struct {
 	// CanShoot is set only for the dead Hunter while he chooses his target.
 	CanShoot bool
 	Turn     *TurnView // set while the viewer is being called at night
+	// RoleCard is the card of the viewer's own role (rules §9b); StatusCards
+	// the extra cards they hold now (cursed, lovers, Chief).
+	RoleCard    *RoleCard
+	StatusCards []StatusCard
 }
 
 // TurnView is what the phone shows during the viewer's own night step.

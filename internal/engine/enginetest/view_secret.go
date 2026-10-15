@@ -196,7 +196,7 @@ func (s *Seen) NoSecretsOfOthers() *Seen {
 	}
 	for _, p := range s.view.Players {
 		lover := s.view.Lover != nil && p.ID == s.view.Lover.Partner
-		if p.ID != me && !lover && (p.Role != "" || p.Team != engine.TeamNone) {
+		if p.ID != me && !lover && (p.Role != "" || p.Team != engine.TeamNone || p.Card != nil) {
 			s.g.t.Fatalf("%s must not see the role of %s", s.who, p.ID)
 		}
 	}

@@ -9,6 +9,7 @@ func ViewFor(s State, v Viewer) View {
 		Seq:        s.Seq,
 		Night:      s.Night,
 		Roles:      copyRoles(s.Settings.Roles),
+		RoleCards:  roleListCards(s),
 		Chief:      s.Chief,
 		Succession: successionFormer(s),
 		Shooter:    shooter(s),
@@ -33,6 +34,7 @@ func ViewFor(s State, v Viewer) View {
 		} else if p.Flags[FlagRevealed] != 0 {
 			pv.Role = p.Role // a revealed Hunter: the role, not the team
 		}
+		pv.Card = roleCard(pv.Role)
 		out.Players = append(out.Players, pv)
 	}
 	if full {
@@ -53,9 +55,11 @@ func ViewFor(s State, v Viewer) View {
 		for i := range out.Players {
 			if out.Players[i].ID == out.Lover.Partner {
 				out.Players[i].Role = out.Lover.PartnerRole
+				out.Players[i].Card = roleCard(out.Lover.PartnerRole)
 			}
 		}
 	}
+	out.Me.StatusCards = statusCards(s, me, out.Me.Cursed, out.Lover)
 	return out
 }
 
@@ -142,6 +146,7 @@ func myView(s State, p *Player) *MyView {
 		out.PhoneCheck = &PhoneCheckView{Cursed: IsCursed(p), Love: loveNotice(s, p, VisibleTeam)}
 	}
 	out.Turn = turnView(s, p)
+	out.RoleCard = roleCard(p.Role)
 	return out
 }
 

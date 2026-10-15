@@ -47,6 +47,12 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
   - Decided: night 1 with Cupid: Cupid → phone check (love) → `LoversMeet` (10 s, the lovers look at each other) → Visitor and the rest. With the Cursed wolf too, its own phone check stays after its step (two checks on night 1). Lovers never look at each other during a phone check.
   - Decided: once a couple is cross-team (third team), both lovers stay on the third team for good, also after one of them died (`LoversLink.ThirdTeam`, frozen at the first lover's death). They win only as the couple: never with the wolves or the village (`Outcome.Winners`).
   - Decided: 0 plain wolves allowed when the Cursed wolf or the Wolf seer is in the game (wording of rules §2).
+- [x] **T20b Role cards.** Card texts of rules §9b in `i18n/vi.go`; `me.roleCard`, `me.statusCards`, public `roleCards`, every seat's card for dead players and at the end; same shape for every role.
+
+## Milestone 5 — Frontend
+
+- [ ] **T21 Frontend secrecy checklist.**
+  - Role cards have a fixed size, are hidden by default, and are revealed only by press-and-hold.
 
 ## Open questions (ask the user, don't guess)
 - None open.

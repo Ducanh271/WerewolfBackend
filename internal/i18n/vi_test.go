@@ -64,3 +64,18 @@ func TestVi_LoveNoticesAndGrief(t *testing.T) {
 		t.Error("grief or pack notice missing")
 	}
 }
+
+func TestCards_TextOfRulesNineB(t *testing.T) {
+	c, ok := Card("RustyKnight")
+	if !ok || c.Name != "Hiệp sĩ kiếm gỉ" || c.Team != "Dân" ||
+		c.Description != "Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau." {
+		t.Fatalf("Rusty knight card = %+v", c)
+	}
+	if len(CardOrder()) != len(roleCards) {
+		t.Fatalf("the order lists %d roles, the cards %d", len(CardOrder()), len(roleCards))
+	}
+	name, text := StatusCard(StatusLovers, "Chi")
+	if name != "Cặp đôi cùng phe" || text != "Bạn và Chi yêu nhau. Một người chết thì người kia chết theo. Vẫn chơi cho phe của mình." {
+		t.Fatalf("lovers card = %q / %q", name, text)
+	}
+}

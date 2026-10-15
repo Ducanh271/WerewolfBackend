@@ -24,6 +24,10 @@ var (
 		reflect.TypeOf(engine.PhoneChecked{}):   true,
 		reflect.TypeOf(engine.PhoneCheckView{}): true,
 		reflect.TypeOf(engine.LoveNotice{}):     true,
+		// Role cards and extra cards: the same keys for every role (rules §9b).
+		reflect.TypeOf(engine.RoleCard{}):     true,
+		reflect.TypeOf(engine.RoleListCard{}): true,
+		reflect.TypeOf(engine.StatusCard{}):   true,
 	}
 )
 

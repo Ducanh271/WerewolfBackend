@@ -349,6 +349,36 @@ App tính kết quả đêm theo đúng thứ tự sau:
 | Một người yêu bị treo hoặc bị Thợ săn bắn ban ngày | Người kia sống qua hết ngày, chết đêm kế tiếp (§7), công bố sáng hôm sau |
 | Cặp khác phe còn sống cùng Dân và sói khác | Cặp không tính vào hai bên; sói trong cặp vẫn chặn Dân thắng; cặp chỉ thắng khi là hai người cuối |
 
+## 9b. Thẻ vai (mô tả cho người chơi)
+
+Mỗi người thấy thẻ vai của mình khi xem vai. Danh sách vai của ván kèm mô tả là công khai. Thẻ có kích thước cố định, che mặc định, nhấn giữ mới hiện.
+
+| Vai | Phe | Mô tả ngắn |
+| --- | --- | --- |
+| Sói | Sói | Mỗi đêm cùng bầy chọn một người để cắn, hoặc chọn không cắn ai. Ban ngày giả làm dân lành. |
+| Sói nguyền | Sói | Trong 3 đêm đầu, được nguyền một người biến thành Sói (một lần duy nhất). Vẫn cắn cùng bầy. |
+| Sói tiên tri | Sói | Mỗi đêm soi một người xem có phải Tiên tri không; cả bầy biết kết quả. Vẫn cắn cùng bầy. |
+| Dân làng | Dân | Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày. |
+| Tiên tri | Dân | Mỗi đêm soi một người, biết người đó là Sói hay không. |
+| Bảo vệ | Dân | Mỗi đêm che một người khỏi bị Sói cắn. Được che chính mình, không che một người hai đêm liền. |
+| Phù thủy | Dân | Có 1 bình cứu và 1 bình độc cho cả ván. Khi còn bình cứu, bạn biết ai bị cắn và có thể cứu. Bình độc giết một người bất kỳ. |
+| Thợ săn | Dân | Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống. |
+| Nguyệt Nữ | Dân | Mỗi đêm bắt buộc ghé một người; người đó mất chức năng đêm đó. Không ghé một người hai đêm liền. |
+| Thám tử | Dân | Một lần duy nhất: chọn một người, biết trong vùng gồm người đó và hai người sống ngồi cạnh có Sói hay không. |
+| Hiệp sĩ kiếm gỉ | Dân | Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau. |
+| Cupid | Dân | Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo. |
+
+Mục tiêu theo phe: Dân thắng khi không còn con Sói nào. Sói thắng khi số Sói ≥ số Dân.
+
+### Thẻ phụ
+
+| Trạng thái | Nội dung |
+| --- | --- |
+| Bị nguyền | Từ giờ bạn thuộc phe Sói và dậy cắn cùng bầy, vẫn giữ năng lực cũ. |
+| Cặp đôi cùng phe | Bạn và X yêu nhau. Một người chết thì người kia chết theo. Vẫn chơi cho phe của mình. |
+| Cặp đôi khác phe | Bạn và X thuộc phe thứ ba: chỉ thắng khi hai bạn là hai người cuối còn sống. Dân hay Sói thắng thì hai bạn đều thua. |
+| Trưởng làng | Phiếu của bạn tính x2 khi đề cử và vote giết/tha. Khi chết, bạn chọn người kế nhiệm. |
+
 ## 10. Ngoài phạm vi bản đầu
 
 - **Chơi online hoàn toàn**: chat, ghép phòng, xử lý rớt mạng, server kiểm soát toàn bộ thông tin bí mật.
