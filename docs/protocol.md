@@ -13,11 +13,11 @@ sees what.
 
 - A `PlayerID` is **public**: it appears in every view (seats, votes). It is
   not a credential.
-- On join the server returns a secret `token`. The phone keeps it and sends it
-  on rejoin. *Open question for T10:* rules §2 says rejoin is by room code +
-  nickname only, which would let another phone take over a player by typing
-  their nickname. Proposal: rejoin needs the token; the nickname alone is not
-  enough. To be decided before T10.
+- On join the server returns a secret `token` (the phone stores it) and a
+  4-digit `pin` (shown only on that player's screen, with a reminder to
+  remember it). Rejoin (rules §2): same phone with the token, other phone with
+  nickname + PIN. 5 wrong PINs lock PIN rejoin for that nickname for 1 minute.
+  A nickname alone never rejoins.
 - The connection decides who acts. Commands never carry `by`/`voter`; the
   server fills it from the connection.
 
@@ -26,11 +26,14 @@ sees what.
 ### Joining
 ```json
 {"type": "join",     "room": "K7QP", "nickname": "An"}
-{"type": "rejoin",   "room": "K7QP", "nickname": "An", "token": "…"}
+{"type": "rejoin",   "room": "K7QP", "token": "…"}
+{"type": "rejoin",   "room": "K7QP", "nickname": "An", "pin": "4821"}
 {"type": "narrator", "room": "K7QP"}
 ```
-Reply: `{"type": "welcome", "player": "p3", "token": "…"}` (no token for the
-narrator), then a full `view` and a full `events` message.
+Reply: `{"type": "welcome", "player": "p3", "token": "…", "pin": "4821"}` (no
+token or PIN for the narrator; on rejoin only `player`), then a full `view` and
+a full `events` message. A refused rejoin is an `error` with code
+`bad_credentials` or `pin_locked` (with `retryAfter` in ms).
 
 ### Commands
 ```json

@@ -2,15 +2,6 @@
 
 Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên Claude (bản 14/10/2026). File này là bản copy cho agent đọc. Khi luật thay đổi, cập nhật cả hai nơi.
 
-> **TODO đồng bộ sang tài liệu gốc trên Claude** — những mục dưới đây được thêm
-> trong repo trước, tài liệu gốc chưa có:
-> - §2 "Số lượng mỗi vai" (thêm 14/10/2026): dân và sói thường ≥ 1, mọi vai còn
->   lại tối đa 1.
-> - §4 "Ván kết thúc" (thêm 15/10/2026): khi ván kết thúc, mọi người được xem
->   toàn bộ vai và diễn biến.
->
-> Xoá dòng tương ứng sau khi đã copy sang tài liệu gốc.
-
 ## 1. Tổng quan
 
 App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi.
@@ -87,7 +78,19 @@ chốt là tối đa 1.
 
 ### Vào lại phòng
 
-Người chơi hết pin hoặc thoát app giữa ván vào lại bằng mã phòng và nickname cũ, **giữ nguyên vai** và trạng thái. Trong lúc vắng mặt, mọi lượt của họ coi như không thực hiện.
+Người chơi hết pin hoặc thoát app giữa ván vào lại phòng, **giữ nguyên vai** và trạng thái. Trong lúc vắng mặt, mọi lượt của họ coi như không thực hiện.
+
+Lúc vào phòng, mỗi người được cấp:
+
+- một **mã bí mật**, điện thoại tự lưu, người chơi không cần biết;
+- một **PIN 4 số**, hiện trên màn hình của riêng người đó, kèm lời nhắc ghi nhớ.
+
+Có hai cách vào lại:
+
+1. **Cùng máy**: app dùng mã bí mật đã lưu, vào lại ngay.
+2. **Máy khác**: nhập mã phòng, nickname và PIN.
+
+Nhập sai PIN **5 lần** thì việc vào lại bằng PIN cho nickname đó bị **khoá 1 phút**. Cách vào lại cùng máy bằng mã bí mật không bị khoá. Chỉ gõ nickname mà không có mã bí mật hay PIN thì không vào lại được.
 
 ## 3. Ban đêm
 
@@ -301,3 +304,4 @@ App tính kết quả đêm theo đúng thứ tự sau:
 - **Luật lật vai khi chết**: sẽ cải tiến sau.
 - **Điểm cân bằng và bộ vai gợi ý** theo số người, cảnh báo khi ván lệch phe.
 - **AI qua camera** phát hiện mở mắt ban đêm; cần sự đồng ý rõ ràng của người chơi.
+- **Đăng ký và đăng nhập bằng tài khoản Google**: tài khoản lâu dài, vào lại từ bất kỳ máy nào. Bản đầu dùng mã bí mật và PIN (§2 "Vào lại phòng").
