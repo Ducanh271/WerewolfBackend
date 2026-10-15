@@ -14,7 +14,7 @@ type werewolf struct{}
 const Werewolf engine.RoleID = "Werewolf"
 
 // WolfVote sets a wolf's bite choice for tonight; sending it again changes the
-// vote.
+// vote. An empty Target (engine.NoBite) is the vote "Không cắn ai".
 type WolfVote struct {
 	engine.CommandMarker
 	By     engine.PlayerID
@@ -50,8 +50,10 @@ func (werewolf) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, 
 	if !isVoter(s, cmd.By) {
 		return nil, true, fmt.Errorf("%w: %s cannot vote tonight", engine.ErrNotYourTurn, cmd.By)
 	}
-	if _, err := engine.LivingTarget(s, cmd.Target); err != nil {
-		return nil, true, err
+	if cmd.Target != engine.NoBite {
+		if _, err := engine.LivingTarget(s, cmd.Target); err != nil {
+			return nil, true, err
+		}
 	}
 	return []engine.Event{WolfVoted{Wolf: cmd.By, Target: cmd.Target}}, true, nil
 }

@@ -87,7 +87,7 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `nominate` | `target` (`""` = no one) | day | `Nominate` |
 | `skipDay` | `on: bool` | day | `SkipDay` |
 | `verdict` | `kill: bool` | verdict | `CastVerdict` |
-| `wolfVote` | `target` | pack step | `WolfVote` |
+| `wolfVote` | `target` (`""` = "Không cắn ai", no bite) | pack step | `WolfVote`; `""` counts like a target: more than half of the voters for it and nobody is bitten, announced as the usual "Không có ai chết". The pack sees it in `view.pack.votes` as `""` for that wolf |
 | `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |

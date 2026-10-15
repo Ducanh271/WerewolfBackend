@@ -40,6 +40,13 @@ func (w *WolfActor) Bites(target string) *Night {
 	return w.n.Do(roles.WolfVote{By: w.id, Target: w.n.Player(target)})
 }
 
+// BitesNobody votes "Không cắn ai".
+func (w *WolfActor) BitesNobody() *Night {
+	w.n.g.t.Helper()
+	w.n.advanceTo(roles.Werewolf)
+	return w.n.Do(roles.WolfVote{By: w.id, Target: engine.NoBite})
+}
+
 // CannotBite votes and expects the engine to refuse with want.
 func (w *WolfActor) CannotBite(target string, want error) *Night {
 	w.n.g.t.Helper()

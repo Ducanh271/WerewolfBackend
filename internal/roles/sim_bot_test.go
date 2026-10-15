@@ -71,11 +71,17 @@ func (g *simGame) playNight() {
 	}
 	if step == roles.Werewolf { // the pack step: every wolf bites, mostly the same player
 		target := g.anyLiving()
+		if g.rng.IntN(6) == 0 {
+			target = engine.NoBite // the whole pack chooses "Không cắn ai"
+		}
 		for _, id := range g.living() {
 			if p := g.s.Players[id]; p.Team == engine.TeamWolves {
 				t := target
 				if g.rng.IntN(4) == 0 {
 					t = g.anyLiving()
+				}
+				if g.rng.IntN(12) == 0 {
+					t = engine.NoBite
 				}
 				_ = g.do(roles.WolfVote{By: id, Target: t})
 			}

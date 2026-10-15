@@ -169,7 +169,7 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 
 - Mỗi đêm, kể cả đêm đầu, bầy vote chọn 1 người để cắn. App hiện phiếu từng con theo thời gian thực, được đổi phiếu thoải mái.
 - Bầy được cắn **bất kỳ người sống nào**, kể cả đồng đội sói và người vừa bị nguyền (cắn đồng đội để lấy lòng tin là nước đi hợp lệ). Thông báo buổi sáng không nêu vai.
-- Hết giờ, người có **quá nửa số phiếu** của bầy bị cắn. Không ai quá nửa thì đêm đó không ai bị cắn.
+- Danh sách vote của bầy có thêm lựa chọn rõ ràng **“Không cắn ai”**, tính như một mục tiêu. Hết giờ, người có **quá nửa số phiếu** của bầy bị cắn. Nếu “Không cắn ai” được quá nửa, hoặc không ai quá nửa, thì đêm đó không ai bị cắn. Sáng hôm sau loa vẫn đọc đúng câu “Không có ai chết” như mọi đêm không ai chết; không có gì cho biết bầy sói chủ động không cắn.
 - Con sói bị Nguyệt Nữ ghé không được vote; số phiếu của bầy tính trên những con còn được vote. Nếu đó là con sói duy nhất thì đêm đó không ai bị cắn.
 
 ### Sói nguyền
@@ -308,7 +308,7 @@ App tính kết quả đêm theo đúng thứ tự sau:
 
 1. **Nguyệt Nữ**: xác định người bị chặn; hành động của họ đêm đó bị bỏ.
 2. **Nguyền**: đã có hiệu lực ngay lúc Sói nguyền chọn (mục 5); bước này không làm gì thêm. Thắng thua do nguyền (sói ≥ dân) chỉ xét ở bước 9.
-3. **Cắn**: nếu Bảo vệ che đúng người bị cắn thì không ai chết (ghi nhận “được bảo vệ”). Nếu không, Phù thủy cứu thì sống; còn lại thì chết.
+3. **Cắn**: nếu bầy chọn “Không cắn ai” (được quá nửa phiếu) hoặc không mục tiêu nào quá nửa thì không ai bị cắn, không có gì để Bảo vệ che hay Phù thủy cứu, và loa đọc “Không có ai chết” (không phải “được bảo vệ”). Ngược lại, nếu Bảo vệ che đúng người bị cắn thì không ai chết (ghi nhận “được bảo vệ”). Nếu không, Phù thủy cứu thì sống; còn lại thì chết.
 4. **Hiệp sĩ kiếm gỉ**: nếu hiệp sĩ bị cắn và không được Bảo vệ che, con sói còn sống gần nhất bên trái hiệp sĩ trúng độc (kể cả khi Phù thủy cứu hiệp sĩ). Con sói này chỉ bị đánh dấu; nó chết ở bước 6 của đêm hôm sau.
 5. **Thuốc độc** của Phù thủy.
 6. **Sói trúng độc từ đêm trước** chết. Về luật nó đã chết từ lúc bước bầy sói bắt đầu (không vote, không tính vào bầy), nhưng cái chết chỉ được công bố ở bước 8 cùng các cái chết khác.
@@ -322,6 +322,7 @@ App tính kết quả đêm theo đúng thứ tự sau:
 | --- | --- |
 | Bảo vệ che và Phù thủy cứu cùng người bị cắn | Không ai chết, loa báo “được bảo vệ”, bình cứu vẫn bị dùng |
 | Thuốc độc vào người được Bảo vệ che | Vẫn chết |
+| Bầy chọn “Không cắn ai” được quá nửa phiếu | Không ai bị cắn, loa báo “Không có ai chết”, giống mọi đêm không ai chết; Bảo vệ đã che ai cũng không báo “được bảo vệ” |
 | Nguyệt Nữ ghé con sói duy nhất còn sống | Không ai bị cắn, loa báo “Không có ai chết” |
 | Nguyền trúng Tiên tri, Bảo vệ, Thợ săn | Sang phe sói, giữ nguyên năng lực |
 | Bầy sói cắn người vừa bị nguyền | Cắn được, người đó chết như bình thường |

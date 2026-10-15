@@ -101,7 +101,11 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 	}
 	others := without(living, b.id)
 	if turn["step"] == "Werewolf" { // the pack step: any wolf, a cursed player too
-		return "wolfVote", map[string]any{"target": pick(without(others, packMembers(f)...))}
+		target := pick(without(others, packMembers(f)...))
+		if rand.IntN(8) == 0 {
+			target = "" // "Không cắn ai"
+		}
+		return "wolfVote", map[string]any{"target": target}
 	}
 	switch b.role {
 	case "Guard":

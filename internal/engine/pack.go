@@ -15,9 +15,14 @@ func WolfVoters(s State) []PlayerID {
 	return voters
 }
 
+// NoBite is the pack's explicit "Không cắn ai" option. It is counted like a
+// target in WolfVotes (rules §5).
+const NoBite PlayerID = ""
+
 // BiteTarget returns the player the pack bites: the one with more than half of
 // the voters' votes. Votes of players who cannot vote tonight do not count.
-// ok is false when nobody has more than half, so nobody is bitten.
+// ok is false when nobody has more than half, or when NoBite has, so nobody is
+// bitten.
 func BiteTarget(s State, voters []PlayerID) (target PlayerID, ok bool) {
 	counts := map[PlayerID]int{}
 	for _, wolf := range voters {
@@ -27,7 +32,7 @@ func BiteTarget(s State, voters []PlayerID) (target PlayerID, ok bool) {
 	}
 	for t, n := range counts {
 		if 2*n > len(voters) {
-			return t, true
+			return t, t != NoBite
 		}
 	}
 	return "", false

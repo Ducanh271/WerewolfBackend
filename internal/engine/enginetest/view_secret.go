@@ -35,7 +35,12 @@ func (s *Seen) NoPack() *Seen {
 // WolfVote checks a live bite vote on the pack screen.
 func (s *Seen) WolfVote(wolf, target string) *Seen {
 	s.g.t.Helper()
-	if s.view.Pack == nil || s.view.Pack.Votes[engine.PlayerID(wolf)] != engine.PlayerID(target) {
+	var got engine.PlayerID
+	var voted bool
+	if s.view.Pack != nil {
+		got, voted = s.view.Pack.Votes[engine.PlayerID(wolf)]
+	}
+	if !voted || got != engine.PlayerID(target) {
 		s.g.t.Fatalf("%s should see %s vote to bite %s, sees %+v", s.who, wolf, target, s.view.Pack)
 	}
 	return s
