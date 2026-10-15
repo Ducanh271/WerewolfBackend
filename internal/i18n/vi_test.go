@@ -51,3 +51,15 @@ func TestVi_PhoneCheck_VoiceLineAndBothNotices(t *testing.T) {
 		}
 	}
 }
+
+func TestVi_LoveNoticesAndGrief(t *testing.T) {
+	if got := Vi(NoticeNoLove); got != "Bạn không ở trong cặp đôi." {
+		t.Errorf("no love notice = %q", got)
+	}
+	if got := Vi(NoticeInLove, "An", "Tiên tri"); got != "Bạn yêu An, vai Tiên tri." {
+		t.Errorf("in love notice = %q", got)
+	}
+	if Vi(NightGrief) == NightGrief || Vi(NightPackDoomed, "An") != "An không thể vote đêm nay." {
+		t.Error("grief or pack notice missing")
+	}
+}

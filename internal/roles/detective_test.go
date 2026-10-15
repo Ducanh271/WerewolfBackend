@@ -75,9 +75,10 @@ func TestDetective_CursedPlayerCountsAsWolf(t *testing.T) {
 }
 
 func TestDetective_WolfInALoverPairCountsAsWolf(t *testing.T) {
-	g := detectiveTable(t)
-	g.HandBuild(func(s *engine.State) { s.Lovers = &engine.LoversLink{A: g.Player("Giang"), B: g.Player("Khoa")} })
-	g.Night().Detective("Em").Checks("Phuc").ExpectDetectiveSaw("Phuc", true)
+	g := NewGame(t, Seats(all...),
+		Cast("An", Werewolf, "Giang", Werewolf, "Em", Detective, "Hoa", Visitor,
+			"Binh", Villager, "Chi", Villager, "Dung", Villager, "Phuc", Villager, "Khoa", Villager, "Lan", Cupid))
+	g.Night().Cupid("Lan").Pairs("Giang", "Khoa").Detective("Em").Checks("Phuc").ExpectDetectiveSaw("Phuc", true)
 }
 
 func TestDetective_NeighboursSkipDeadPlayers(t *testing.T) {

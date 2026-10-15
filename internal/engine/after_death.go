@@ -7,7 +7,9 @@ package engine
 //  1. every dead Hunter is revealed and shoots, one after the other; a shot
 //     victim who is a Hunter shoots too (settle starts each shot, and
 //     shotResolved, once the Hunter chose or ran out of time, comes back here);
-//  2. T19 adds the lovers' deaths here, before the win check;
+//  2. by day, the surviving partner of a dead lover is marked to die in the
+//     next night (LoverGrieving, rules §7); at night they died already (§9
+//     step 7). They stay alive, vote and count for the win check until then;
 //  3. the win check (rules §8), also when nobody died; a finished game skips
 //     step 4;
 //  4. a dead Chief names a successor.
@@ -40,6 +42,7 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 		}
 		return append(evs, HunterShotStarted{Hunter: hunter, Duration: s.Settings.HunterShot, Queue: shooters, Dead: dead})
 	}
+	evs = append(evs, griefMarks(after, dead)...)
 	// The win check runs by day only, after the announcement and the shots, on
 	// the situation of this moment (rules §8). A night without deaths still
 	// gets it: a curse may have turned the numbers.

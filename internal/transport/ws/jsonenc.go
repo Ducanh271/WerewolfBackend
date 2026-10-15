@@ -16,6 +16,15 @@ var (
 	phaseType    = reflect.TypeOf(engine.Phase(0))
 	teamType     = reflect.TypeOf(engine.Team(0))
 	dawnKindType = reflect.TypeOf(engine.DawnKind(0))
+
+	// fixedShape lists the types whose fields are all sent, empty ones too:
+	// the phone check notice must have the same keys for everybody, so the
+	// screen cannot tell who was cursed or who is in love (rules §3).
+	fixedShape = map[reflect.Type]bool{
+		reflect.TypeOf(engine.PhoneChecked{}):   true,
+		reflect.TypeOf(engine.PhoneCheckView{}): true,
+		reflect.TypeOf(engine.LoveNotice{}):     true,
+	}
 )
 
 // toTree turns an engine value (a View or an event, already projected for one
@@ -27,7 +36,8 @@ var (
 // milliseconds, phases and teams their names. Absent parts are omitted: nil
 // pointers, empty maps, lists and strings, empty objects, a zero time, no
 // team. Booleans and numbers always stay, and so do the entries inside a map
-// or list (a nomination of "" means no one).
+// or list (a nomination of "" means no one). The types in fixedShape keep
+// every field.
 func toTree(v any) any {
 	out, _ := encodeValue(reflect.ValueOf(v), false)
 	return out
@@ -90,7 +100,7 @@ func encodeValue(v reflect.Value, keepEmpty bool) (any, bool) {
 			if !f.IsExported() || f.Anonymous {
 				continue // markers (EventMarker...) carry nothing
 			}
-			if item, ok := encodeValue(v.Field(i), false); ok {
+			if item, ok := encodeValue(v.Field(i), fixedShape[v.Type()]); ok {
 				m[camel(f.Name)] = item
 			}
 		}

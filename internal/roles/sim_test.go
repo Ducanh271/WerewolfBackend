@@ -104,6 +104,9 @@ func playSimGame(seed uint64, used map[string]int) (outcome string, err error) {
 			return "", fmt.Errorf("stalled: a timeout changed nothing in phase %v (%s)", phase, g.desc)
 		}
 		g.checkViews()
+		if err := g.checkLovers(); err != nil {
+			return "", err
+		}
 		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn && g.s.Night%3 == 1 { // replaying the log per viewer is costly
 			g.checkEvents()
 		}

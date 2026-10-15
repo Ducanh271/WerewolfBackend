@@ -41,6 +41,10 @@ type (
 	successorAr struct {
 		Successor engine.PlayerID `json:"successor"`
 	}
+	pairArgs struct {
+		A engine.PlayerID `json:"a"`
+		B engine.PlayerID `json:"b"`
+	}
 	targetArgs struct {
 		Target engine.PlayerID `json:"target"`
 	}
@@ -126,14 +130,15 @@ var commandTable = map[string]commandSpec{
 	"verdict": spec(func(a killArgs, by engine.PlayerID) engine.Command {
 		return engine.CastVerdict{Voter: by, Kill: a.Kill}
 	}),
-	"wolfVote": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.WolfVote{By: by, Target: a.Target}
-	}),
+	"wolfVote": wolfVote,
 	"guardProtect": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.GuardProtect{By: by, Target: a.Target}
 	}),
 	"visitorVisit": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.VisitorVisit{By: by, Target: a.Target}
+	}),
+	"cupidPair": spec(func(a pairArgs, by engine.PlayerID) engine.Command {
+		return roles.CupidPair{By: by, A: a.A, B: a.B}
 	}),
 	"hunterShoot": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return engine.HunterShoot{By: by, Target: a.Target}
@@ -156,6 +161,24 @@ var commandTable = map[string]commandSpec{
 	"seerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.SeerCheck{By: by, Target: a.Target}
 	}),
+}
+
+// wolfVoteArgs keeps "no target field" apart from "target": "", the vote
+// "Không cắn ai": only the second is a vote.
+type wolfVoteArgs struct {
+	Target *engine.PlayerID `json:"target"`
+}
+
+func wolfVote(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
+	var a wolfVoteArgs
+	if err := decodeStrict(raw, &a); err != nil {
+		return nil, err
+	}
+	if a.Target == nil {
+		return nil, badMessage(`wolfVote needs "target" (use "" for no bite)`)
+	}
+	target := *a.Target
+	return func(by engine.PlayerID) engine.Command { return roles.WolfVote{By: by, Target: target} }, nil
 }
 
 func configureTimers(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {

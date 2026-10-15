@@ -138,7 +138,7 @@ func myView(s State, p *Player) *MyView {
 	out.Cursed = IsCursed(p) && p.Flags[FlagTeamHidden] == 0
 	out.Team = VisibleTeam(p)
 	if step, ok := CurrentNightRole(s); ok && step == StepPhoneCheck && p.Alive {
-		out.PhoneCheck = &PhoneCheckView{Cursed: IsCursed(p)}
+		out.PhoneCheck = &PhoneCheckView{Cursed: IsCursed(p), Love: loveNotice(s, p, VisibleTeam)}
 	}
 	out.Turn = turnView(s, p)
 	return out
@@ -154,8 +154,9 @@ func turnView(s State, p *Player) *TurnView {
 	if step != p.Role && !(isPackStep(step) && p.Team == TeamWolves) {
 		return nil
 	}
-	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID), Doomed: isPackStep(step) && Doomed(s, p.ID)}
-	if out.Blocked || step != p.Role {
+	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID), Doomed: Doomed(s, p.ID)}
+	out.Grief = out.Doomed && p.Flags[FlagGrieving] != 0
+	if out.Blocked || out.Doomed || step != p.Role {
 		return out
 	}
 	if w, ok := Registry[step].(BiteWitness); ok && w.SeesBite(p) {
@@ -200,36 +201,18 @@ func packView(s State) *PackView {
 	return out
 }
 
-// loverView: from the moment the pair exists, each lover sees the partner, the
-// partner's role and the colour of the pair's current team (rules §7). Cupid
-// gets nothing.
+// loverView: once the phone check has told them of the pair, each lover sees
+// the partner, the partner's role and the colour of the pair's current team
+// (rules §7). Cupid gets nothing.
 func loverView(s State, me *Player) *LoverView {
-	if s.Lovers == nil {
-		return nil
-	}
-	var partnerID PlayerID
-	switch me.ID {
-	case s.Lovers.A:
-		partnerID = s.Lovers.B
-	case s.Lovers.B:
-		partnerID = s.Lovers.A
-	default:
-		return nil
-	}
+	partnerID := PartnerOf(s, me.ID)
 	partner := s.Players[partnerID]
-	if partner == nil {
+	if partner == nil || me.Flags[FlagLoveKnown] == 0 {
 		return nil
 	}
 	return &LoverView{Partner: partnerID, PartnerRole: partner.Role, Colour: linkColour(me, partner)}
 }
 
 func linkColour(a, b *Player) LinkColour {
-	switch {
-	case VisibleTeam(a) == TeamLovers || VisibleTeam(b) == TeamLovers || VisibleTeam(a) != VisibleTeam(b):
-		return LinkStriped
-	case VisibleTeam(a) == TeamWolves:
-		return LinkBlack
-	default:
-		return LinkWhite
-	}
+	return coupleColour(VisibleTeam(a), VisibleTeam(b))
 }

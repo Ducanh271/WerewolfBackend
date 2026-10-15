@@ -87,18 +87,19 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `nominate` | `target` (`""` = no one) | day | `Nominate` |
 | `skipDay` | `on: bool` | day | `SkipDay` |
 | `verdict` | `kill: bool` | verdict | `CastVerdict` |
-| `wolfVote` | `target` (`""` = "Không cắn ai", no bite) | pack step | `WolfVote`; `""` counts like a target: more than half of the voters for it and nobody is bitten, announced as the usual "Không có ai chết". The pack sees it in `view.pack.votes` as `""` for that wolf |
+| `wolfVote` | `target` (required: `""` = "Không cắn ai", no bite; a missing or `null` target → `bad_message`) | pack step | `WolfVote`; `""` counts like a target: more than half of the voters for it and nobody is bitten, announced as the usual "Không có ai chết". The pack sees it in `view.pack.votes` as `""` for that wolf |
 | `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
 | `wolfSeerCheck` | `target` (any living player, wolves and himself too) | Wolf seer step, every night; not blocked | `WolfSeerCheck`; a dead player → `invalid_target`; second check → `already_acted`; blocked → `blocked`. Answer: `WolfSeerChecked {wolfSeer, target, isSeer}` to the whole pack (a role check: a cursed Seer is still `isSeer: true`) |
 | `detectiveCheck` | `target` (any living player, himself too) | Detective step, every night (after use the call is fake); not blocked | `DetectiveCheck`; a dead player → `invalid_target`; second use → `ability_used`; blocked → `blocked`. Answer: `DetectiveChecked {detective, target, hasWolf}` to the Detective only: whether the target or the nearest living neighbour on either side is a wolf (a cursed player counts); no count, no names |
+| `cupidPair` | `a`, `b` (two different living players; Cupid himself allowed) | Cupid step, night 1 only (order 0), once; not blocked | `CupidPair`; the same player twice or a dead one → `invalid_target`; second choice → `already_acted`. Answer: `LoversPaired {cupid, a, b}` to Cupid only. A missing choice is made at random by the server when the step ends (two random living players). Nobody else is told: the lovers learn at the phone check |
 | `cursedWolfCurse` | `target` (a living non-wolf, not himself) | Cursed wolf step, nights 1–3, once per game; not blocked | `CursedWolfCurse`; a wolf, himself or a dead player → `invalid_target`; second curse → `already_acted`; blocked → `blocked` |
 | `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |
 | `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not blocked |
 
-Later roles add their own rows (Detective, Cupid). The server **rejects** any `seed` field and never
+Later roles add their own rows. The server **rejects** any `seed` field and never
 accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 
 ## Server → client
@@ -125,10 +126,10 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `winner`, `draw` | all, at the end | winning team, or a draw |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
 | `me` | players | `id`, `role`, `team`, `alive`, `cursed` (known only from the phone check on), `canShoot` (only the dead Hunter while he chooses), `phoneCheck`, `turn` |
-| `me.phoneCheck` | every living player, only while the `PhoneCheck` step runs | `{cursed: bool}`; text: `cursed` false → "Bạn không bị nguyền", true → "Bạn đã bị nguyền". The two answers have exactly the same shape, so the screen never tells who was cursed. |
-| `me.turn` | player being called | `step`; `blocked: true` → show "Bạn không thể sử dụng chức năng đêm nay" (never says who blocked) and no action; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
+| `me.phoneCheck` | every living player, only while the `PhoneCheck` step runs | `{cursed: bool, love: {inLove: bool, partner, partnerRole, colour}}`; one notice combining both. The step runs on night 1 when the role list has Cupid or the Cursed wolf, and on nights 2–3 when it has the Cursed wolf (the love part is repeated, so a lover sees the new link colour after a curse). Show the curse line only if the (public) role list has a Cursed wolf and the love line only if it has Cupid. Text: `cursed` false → "Bạn không bị nguyền", true → "Bạn đã bị nguyền"; `inLove` false → "Bạn không ở trong cặp đôi", true → "Bạn yêu {partner}, vai {partnerRole}". Every notice has exactly the same JSON keys whatever the answer: this message is the one exception to "empty values are omitted" (`inLove: false` comes with empty `partner`, `partnerRole`, `colour`), so the screen never tells who was cursed or in love. |
+| `me.turn` | player being called | `step`; `blocked: true` → show "Bạn không thể sử dụng chức năng đêm nay" (never says who blocked) and no action; `doomed: true` → this player is dead by the rules from this step (wolf poisoned by the Rusty knight; lover whose partner died by day): no action, no vote, they are shown dead only in the morning; `grief: true` (own phone only) → say it is grief: "Người yêu của bạn đã chết, bạn đau buồn mà chết từ lúc này"; `bitten`, `biteShown` (Witch with heal potion: `biteShown` true and `bitten` empty = nobody bitten; no `biteShown` = she is told nothing) |
 | `pack` | living wolves (cursed too), full views | `members [id]`, `votes {wolf: target}` live |
-| `lover` | the two lovers | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
+| `lover` | the two lovers, from the phone check on (never before; Cupid never) | `partner`, `partnerRole`, `colour`: `white` / `black` / `striped` |
 | `full`, `secrets` | dead players, everybody after the game | every role and team, tonight's choices, the lovers pair |
 
 ### `events`: what this screen may know, in order
@@ -157,9 +158,9 @@ The `view` object (`engine.View`); absent parts are omitted:
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
   `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
-  `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
+  `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice, `LoversPaired` for Cupid); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
   the player is in it.
-- Never sent to the living: `PlayerDied` (its order would tell bitten from
+- Never sent to the living: `PlayerDied` and `LoverGrieving` (its order would tell bitten from
   poisoned; deaths are known through `DawnAnnounced`, `Hanged` and the alive
   flags), `RolesDealt`, (`NightStepCalled` is public: role and duration, no real/fake flag).
 
@@ -187,5 +188,5 @@ teams are sent by name (`Night`, `Village`).
   is their turn, own night results.
 - **Wolves**: plus the pack and its live votes, the Wolf seer's results.
 - **Witch**: plus the bitten player on her turn while she can heal, unless blocked.
-- **Lovers**: plus the partner, the partner's role and the link colour.
+- **Lovers**: plus the partner, the partner's role and the link colour, from the phone check on. The pack is not told that one of its wolves is in love.
 - **Dead players, and everybody once the game is over**: everything.

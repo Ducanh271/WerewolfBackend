@@ -89,7 +89,7 @@ func TestView_Lovers_SeePartnerRoleAndLinkColour_CupidSeesNothing(t *testing.T) 
 	tests := []struct {
 		name   string
 		a, b   string
-		curse  string // cursed after the pairing, if any
+		curse  string // cursed on the same night, before the phone check, if any
 		colour engine.LinkColour
 		roleA  engine.RoleID
 		roleB  engine.RoleID
@@ -102,15 +102,14 @@ func TestView_Lovers_SeePartnerRoleAndLinkColour_CupidSeesNothing(t *testing.T) 
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			g := cursedTable(t)
-			n := g.Night()
-			g.HandBuild(func(s *engine.State) {
-				s.Lovers = &engine.LoversLink{A: engine.PlayerID(tc.a), B: engine.PlayerID(tc.b)}
-				s.Players["Lan"].Role = Cupid
-			})
+			g := cupidTable(t)
+			n := g.Night().Cupid("Lan").Pairs(tc.a, tc.b)
+			g.As(tc.a).NoLover() // nobody is told before the phone check
+			g.As(tc.b).NoLover()
 			if tc.curse != "" {
-				n.CursedWolf("An").Curses(tc.curse).PhoneCheck()
+				n.CursedWolf("An").Curses(tc.curse)
 			}
+			n.PhoneCheck()
 			g.As(tc.a).Lover(tc.b, tc.roleB, tc.colour).RoleOf(tc.b, tc.roleB)
 			g.As(tc.b).Lover(tc.a, tc.roleA, tc.colour).RoleOf(tc.a, tc.roleA)
 			g.As("Lan").OwnRole(Cupid).NoLover().NoRoleExceptOwn()

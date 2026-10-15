@@ -19,3 +19,27 @@ func TestCommandTable_WolfVoteWithEmptyTargetIsTheNoBiteVote(t *testing.T) {
 		t.Fatalf("got %+v, want a WolfVote by p1 with NoBite", build("p1"))
 	}
 }
+
+// A missing target is invalid; only an explicit "" means "Không cắn ai".
+func TestCommandTable_WolfVoteWithoutTargetIsRejected(t *testing.T) {
+	for _, raw := range []string{`{}`, `{"target":null}`} {
+		if _, err := commandTable["wolfVote"](json.RawMessage(raw)); err == nil {
+			t.Errorf("wolfVote %s accepted, want a bad_message error", raw)
+		}
+	}
+}
+
+// docs/protocol.md: cupidPair carries the two players as "a" and "b".
+func TestCommandTable_CupidPairCarriesTwoPlayers(t *testing.T) {
+	build, err := commandTable["cupidPair"](json.RawMessage(`{"a":"p1","b":"p2"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := build("p3").(roles.CupidPair)
+	if !ok || got.By != "p3" || got.A != "p1" || got.B != "p2" {
+		t.Fatalf("got %+v, want a CupidPair by p3 of p1 and p2", build("p3"))
+	}
+	if _, err := commandTable["cupidPair"](json.RawMessage(`{"a":"p1","seed":1}`)); err == nil {
+		t.Fatal("an unknown field was accepted")
+	}
+}

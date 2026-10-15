@@ -51,14 +51,15 @@ func (p *printer) host(f wsclient.Frame) {
 	}
 }
 
-func (p *printer) show(ev wsclient.Frame) {
-	name := func(key string) string {
-		id := ev.Str("data", key)
-		if n, ok := p.names[id]; ok {
-			return n
-		}
-		return id
+func (p *printer) nameOf(id string) string {
+	if n, ok := p.names[id]; ok {
+		return n
 	}
+	return id
+}
+
+func (p *printer) show(ev wsclient.Frame) {
+	name := func(key string) string { return p.nameOf(ev.Str("data", key)) }
 	if say := ev.Str("say"); say != "" {
 		fmt.Printf("  🔊 %s\n", say)
 		return
@@ -73,6 +74,11 @@ func (p *printer) show(ev wsclient.Frame) {
 			fmt.Printf("  📱 Bạn đã bị nguyền\n")
 		} else {
 			fmt.Printf("  📱 Bạn không bị nguyền\n")
+		}
+		if ev.Get("data", "love", "inLove") == true {
+			fmt.Printf("  📱 Bạn yêu %s, vai %s (liên kết %s)\n", p.nameOf(ev.Str("data", "love", "partner")), ev.Str("data", "love", "partnerRole"), ev.Str("data", "love", "colour"))
+		} else {
+			fmt.Printf("  📱 Bạn không ở trong cặp đôi\n")
 		}
 	case "DayStarted":
 		fmt.Printf("\n=== Ngày ===\n")

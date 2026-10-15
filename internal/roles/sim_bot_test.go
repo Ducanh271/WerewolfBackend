@@ -29,6 +29,9 @@ var nightBots = map[engine.RoleID]func(g *simGame, by engine.PlayerID) []engine.
 	roles.Visitor: func(g *simGame, by engine.PlayerID) []engine.Command {
 		return []engine.Command{roles.VisitorVisit{By: by, Target: g.anyLiving()}}
 	},
+	roles.Cupid: func(g *simGame, by engine.PlayerID) []engine.Command {
+		return []engine.Command{roles.CupidPair{By: by, A: g.anyLiving(), B: g.anyLiving()}}
+	},
 	roles.Witch: func(g *simGame, by engine.PlayerID) []engine.Command {
 		return []engine.Command{roles.WitchHeal{By: by}, roles.WitchPoison{By: by, Target: g.anyLiving()}}
 	},
@@ -130,6 +133,7 @@ func (g *simGame) garbage() {
 		roles.WolfSeerCheck{By: by, Target: target},
 		roles.CursedWolfCurse{By: by, Target: target},
 		roles.VisitorVisit{By: by, Target: target},
+		roles.CupidPair{By: by, A: target, B: by},
 		roles.WitchHeal{By: by},
 		roles.WitchPoison{By: by, Target: target},
 		roles.WolfSeerCheck{By: by, Target: "nobody"},

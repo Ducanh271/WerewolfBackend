@@ -59,7 +59,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 **D. Ghi nhận**
 11. `room.go` → `apply`: `store.Append` (ghi nhật ký trước), rồi `engine.Fold` → `Evolve` → `roles/seer.go` → `Evolve` đặt `Pending.SeerTarget`.
-12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.) Khi bàn có Sói nguyền, sau lượt Sói nguyền có thêm bước **Kiểm tra điện thoại** (5 giây, `engine/phone_check.go`): mọi người sống nhận thông báo “bị nguyền / không bị nguyền” cùng một dạng. Người bị nguyền và bầy sói chỉ thấy thay đổi ở bước này.
+12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.) Khi bàn có Sói nguyền (đêm 1–3) hoặc Cupid (đêm 1), sau lượt Sói nguyền có thêm bước **Kiểm tra điện thoại** (5 giây, `engine/phone_check.go`): mọi người sống nhận **một** thông báo cùng một dạng, gộp “bị nguyền / không bị nguyền” và “yêu ai / không ở trong cặp đôi”. Người bị nguyền, bầy sói và cặp đôi chỉ thấy thay đổi ở bước này. Người yêu chết ban ngày thì người kia “đau buồn mà chết” ở đêm kế tiếp, dùng chung cơ chế chết muộn với độc của Hiệp sĩ (`engine/delayed_death.go`).
 
 **E. Gửi kết quả về (chỉ Tiên tri thấy)**
 13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại**:

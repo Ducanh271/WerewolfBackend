@@ -38,8 +38,9 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [x] **T17 Detective.** Uses seating; one use; not lost when blocked; called every night (fake after use). *§6 Thám tử.*
 - [x] **T18 Rusty knight.** Bitten Knight (not Guarded) poisons the nearest living wolf to his left (next seat); the wolf dies when the pack step starts next night, announced at dawn. *§6, §9 steps 4 and 6.*
   - Decided: "left" = next seat (seats are numbered clockwise). The poisoned wolf stays `Alive` in views until the morning announcement.
-- [ ] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*
+- [x] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*
   - Decided: a wolf in a cross-team couple keeps `Player.Team = Wolves`. The couple's third-team status is computed at the couple level (from `State.Lovers`), never by changing `Player.Team`. Seer and Detective rely on this.
+  - Decided: lovers learn of the pair at the phone check (one notice combining curse and love; the step runs night 1 with Cupid or the Cursed wolf). A lover who dies by day does not take the partner at once: the partner dies in the next night, at their first night call, or at §9 step 7 if nothing calls them. Shared with the Rusty knight's poison (`delayed_death.go`). A lover who dies in the night takes the partner the same night.
 - [ ] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.
 
 ## Open questions (ask the user, don't guess)

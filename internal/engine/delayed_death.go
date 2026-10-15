@@ -22,17 +22,47 @@ type WolfPoisoned struct {
 	Night int
 }
 
-// Doomed reports whether the wolf was poisoned on an earlier night and is
-// dead by the rules from the start of tonight's pack step: it cannot vote and
-// the resolution kills it. The view keeps showing it alive until the
-// morning announcement, so nobody learns of it in the night.
+// doomIndex says whether the player carries a death that falls in a night
+// after the one that sentenced them, and where in tonight's steps it falls.
+// Two things sentence a player: the Rusty knight's poison (FlagWolfPoisoned)
+// and the grief of a lover whose partner died by day (FlagGrieving).
+//
+// index is the position, in tonight's steps, of the step where the player dies:
+//   - the poison takes hold when the pack step starts;
+//   - grief takes hold at the first step that calls the player: their own role's
+//     step, or the pack step for anybody on the wolf team;
+//   - a player no step calls (Villager, Hunter, Knight...) has index -1: they
+//     die in the night resolution, at step 7 of rules §9.
+//
+// A player with both takes the earlier one.
+func doomIndex(s State, p *Player) (index int, doomed bool) {
+	poisoned := p.Flags[FlagWolfPoisoned] > 0 && p.Flags[FlagWolfPoisoned] < s.Night
+	grieving := p.Flags[FlagGrieving] > 0 && p.Flags[FlagGrieving] < s.Night
+	if !poisoned && !grieving {
+		return 0, false
+	}
+	index = -1
+	for i, step := range nightSteps(s, s.Night) {
+		own := grieving && (step == p.Role || (p.Team == TeamWolves && isPackStep(step)))
+		if own || (poisoned && isPackStep(step)) {
+			index = i
+			break
+		}
+	}
+	return index, true
+}
+
+// Doomed reports whether the player is dead by the rules from the step now
+// running: they cannot act or vote, and the resolution kills them. The view
+// keeps showing them alive until the morning announcement, so nobody learns of
+// it in the night.
 func Doomed(s State, id PlayerID) bool {
 	p := s.Players[id]
 	if p == nil || !p.Alive || s.Phase != PhaseNight {
 		return false
 	}
-	night := p.Flags[FlagWolfPoisoned]
-	return night > 0 && night < s.Night
+	index, doomed := doomIndex(s, p)
+	return doomed && index >= 0 && s.NightStep >= index+1
 }
 
 // stepKnight (rules §9 step 4): a bitten player whose role is a BiteAvenger
@@ -50,12 +80,26 @@ func stepKnight(r *Resolution) {
 	}
 }
 
-// stepDelayedWolfDeaths (rules §9 step 6): the wolves poisoned on an earlier
-// night die.
-func stepDelayedWolfDeaths(r *Resolution) {
+// stepDelayedDeaths (rules §9 step 6): the players whose death took hold at a
+// step of this night (the poisoned wolf, a grieving lover with a night call)
+// die. Of the law they died when that step started; the death is announced
+// with the others at step 8.
+func stepDelayedDeaths(r *Resolution) {
 	for _, id := range r.State.Seats {
 		if Doomed(r.State, id) {
 			r.addDeath(id)
+		}
+	}
+}
+
+// stepGriefWithoutCall (rules §9 step 7): a grieving lover whom no night step
+// calls dies now.
+func stepGriefWithoutCall(r *Resolution) {
+	for _, id := range r.State.Seats {
+		if p := r.State.Players[id]; p != nil && p.Alive {
+			if index, doomed := doomIndex(r.State, p); doomed && index < 0 {
+				r.addDeath(id)
+			}
 		}
 	}
 }

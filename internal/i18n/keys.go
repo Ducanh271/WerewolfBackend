@@ -59,8 +59,15 @@ const (
 	// NightWolfDoomed: the wolf poisoned by the Rusty knight is dead from now
 	// on and cannot vote. Shown on its own phone at the pack step.
 	NightWolfDoomed = "night.wolf_doomed"
-	// NightPackDoomed: the pack is told a wolf can no longer vote. The name is
-	// the wolf's.
+	// NightGrief: the lover whose partner died by day is dead from their first
+	// call of the night; shown on their own phone (rules §7).
+	NightGrief = "night.grief"
+	// NoticeNoLove and NoticeInLove are the love part of the phone check notice;
+	// the second takes the partner's name and role.
+	NoticeNoLove = "notice.no_love"
+	NoticeInLove = "notice.in_love"
+	// NightPackDoomed: the pack is told a wolf can no longer vote, without
+	// saying why. The name is the wolf's.
 	NightPackDoomed = "night.pack_doomed"
 	// NightPhoneCheck is read aloud at the phone check step (rules §3).
 	NightPhoneCheck = "night.phone_check"

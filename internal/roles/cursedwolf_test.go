@@ -244,12 +244,13 @@ func TestCursedWolf_SeerSeesTheCursedPlayerAsAWolf(t *testing.T) {
 }
 
 func TestCursedWolf_CursedLover_PairTeamIsRecalculatedAtThePhoneCheck(t *testing.T) {
-	g := cursedTable(t)
-	g.HandBuild(func(s *engine.State) { s.Lovers = &engine.LoversLink{A: g.Player("Em"), B: g.Player("Phuc")} })
-	n := g.Night()
-	g.As("Em").Lover("Phuc", Hunter, engine.LinkWhite)
+	g := cupidTable(t)
+	g.Night().Cupid("Lan").Pairs("Em", "Phuc").PhoneCheck()
+	g.As("Em").Lover("Phuc", Hunter, engine.LinkWhite) // told at the first phone check
+	g.Dawn()
+	g.Day().NobodyHanged()
 
-	n.CursedWolf("An").Curses("Phuc")
+	n := g.Night().CursedWolf("An").Curses("Phuc")
 	if team := g.State().Players[g.Player("Phuc")].Team; team != engine.TeamWolves {
 		t.Fatalf("the engine's team of the cursed lover is %v, want the wolves at once", team)
 	}

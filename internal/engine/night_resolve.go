@@ -15,13 +15,15 @@ type Resolution struct {
 
 // nightPipeline is the ordered list of rules §9. The steps still to come are
 // added by their tasks in the numbered place:
-// 2 Curse (nothing left to do: it took effect at once), 7 lover deaths.
+// 2 Curse (nothing left to do: it took effect at once).
 // Step 8 (announce) is resolveNight below, step 9 (win check) is afterDeaths.
 var nightPipeline = []func(*Resolution){
-	stepBite,              // 3
-	stepKnight,            // 4
-	stepPoison,            // 5
-	stepDelayedWolfDeaths, // 6
+	stepBite,             // 3
+	stepKnight,           // 4
+	stepPoison,           // 5
+	stepDelayedDeaths,    // 6
+	stepGriefWithoutCall, // 7
+	stepLoverDeaths,      // 7
 }
 
 // stepBite: the pack's bite kills unless the Guard shields the bitten player.

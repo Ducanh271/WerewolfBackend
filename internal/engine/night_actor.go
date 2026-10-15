@@ -21,6 +21,9 @@ func NightActor(s State, by PlayerID, step RoleID) (*Player, error) {
 	if Blocked(s, by) {
 		return nil, fmt.Errorf("%w: %s", ErrBlocked, by)
 	}
+	if Doomed(s, by) {
+		return nil, fmt.Errorf("%w: %s is dead by the rules from this step", ErrNotYourTurn, by)
+	}
 	return p, nil
 }
 

@@ -128,6 +128,10 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 		return "wolfSeerCheck", map[string]any{"target": pick(living)}
 	case "Witch":
 		return b.witch(turn, others)
+	case "Cupid":
+		// Night 1 only; himself allowed. Two different players of the living.
+		first := pick(living)
+		return "cupidPair", map[string]any{"a": first, "b": pick(without(living, first))}
 	case "Detective":
 		return "detectiveCheck", map[string]any{"target": pick(living)}
 	case "Seer":

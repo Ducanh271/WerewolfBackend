@@ -101,9 +101,13 @@ type MyView struct {
 type TurnView struct {
 	Step    RoleID // the step being called (the pack step for a wolf)
 	Blocked bool   // the viewer cannot use their night ability tonight; never says who blocked them
-	// Doomed is set on the pack step for a wolf poisoned by the Rusty knight:
-	// it is dead from now on and cannot vote (rules §6).
+	// Doomed is set from the step where the viewer's death takes hold: a wolf
+	// poisoned by the Rusty knight (from the pack step on), or a lover whose
+	// partner died by day (from their first call). They are dead from now on,
+	// cannot act or vote (rules §6, §7). Grief says which of the two it is,
+	// for the viewer's own phone only.
 	Doomed bool
+	Grief  bool
 	Bitten PlayerID // BiteWitness only: the pack's current target
 	// BiteShown is set when the viewer is shown the bite information at all, so
 	// an empty Bitten then means "nobody is bitten".

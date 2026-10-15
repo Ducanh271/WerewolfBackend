@@ -26,18 +26,45 @@ type PhoneCheckAnnounced struct {
 // AnnouncementKey is read aloud to everybody.
 func (PhoneCheckAnnounced) AnnouncementKey() string { return i18n.NightPhoneCheck }
 
-// PhoneChecked is the notice one living player gets at the phone check. Both
-// answers have this exact shape; only Cursed differs.
+// PhoneChecked is the notice one living player gets at the phone check. It
+// combines the curse status and the love status, and every notice has this
+// exact shape whatever the answer: only the values differ. A client shows the
+// curse part when the (public) role list has a Cursed wolf and the love part
+// when it has Cupid.
 type PhoneChecked struct {
 	EventMarker
 	Player PlayerID
 	Cursed bool
+	Love   LoveNotice
+}
+
+// LoveNotice is the love part of the notice. Outside the pair InLove is false
+// and the other fields are empty.
+type LoveNotice struct {
+	InLove      bool
+	Partner     PlayerID
+	PartnerRole RoleID
+	Colour      LinkColour
 }
 
 // PhoneCheckView is that notice as the phone shows it, while the step runs.
 type PhoneCheckView struct {
 	Cursed bool
+	Love   LoveNotice
 }
+
+// loveNotice is what the player is told of the pair, with the colour worked
+// out from the teams team returns (the real ones at the phone check, the ones
+// the views show afterwards).
+func loveNotice(s State, p *Player, team func(*Player) Team) LoveNotice {
+	partner := s.Players[PartnerOf(s, p.ID)]
+	if partner == nil {
+		return LoveNotice{}
+	}
+	return LoveNotice{InLove: true, Partner: partner.ID, PartnerRole: partner.Role, Colour: coupleColour(team(p), team(partner))}
+}
+
+func realTeam(p *Player) Team { return p.Team }
 
 // IsCursed reports whether the player is on the wolf team without holding a
 // wolf role.
@@ -62,22 +89,34 @@ func phoneCheckNotices(s State) []Event {
 	var evs []Event
 	for _, id := range s.Seats {
 		if p := s.Players[id]; p != nil && p.Alive {
-			evs = append(evs, PhoneChecked{Player: id, Cursed: IsCursed(p)})
+			evs = append(evs, PhoneChecked{Player: id, Cursed: IsCursed(p), Love: loveNotice(s, p, realTeam)})
 		}
 	}
 	return evs
 }
 
-// phoneCheckAfter returns the order of the curse step the phone check follows,
-// when the game has one on this night.
+// phoneCheckOrder is where the phone check sits when no curse step places it:
+// the order of the Cursed wolf's step (rules §3, "3b").
+const phoneCheckOrder = 3
+
+// phoneCheckAfter returns the order of the step the phone check follows, when
+// the game has one on this night: the Cursed wolf is in the game (nights 1-3)
+// or Cupid is called (night 1).
 func phoneCheckAfter(s State, night int) (order int, ok bool) {
 	for id, role := range Registry {
-		curse, isCurse := role.(CurseSource)
 		call := role.NightCall()
-		if !isCurse || !curse.CursesVillager() || call == nil || s.Settings.Roles[id] < 1 || !call.CalledOn(night) {
+		if call == nil || s.Settings.Roles[id] < 1 || !call.CalledOn(night) {
 			continue
 		}
-		return call.Order, true
+		if curse, isCurse := role.(CurseSource); isCurse && curse.CursesVillager() {
+			return call.Order, true
+		}
+	}
+	for id, role := range Registry {
+		call := role.NightCall()
+		if love, isLove := role.(LoveSource); isLove && love.CreatesLovers() && call != nil && s.Settings.Roles[id] >= 1 && call.CalledOn(night) {
+			return phoneCheckOrder, true
+		}
 	}
 	return 0, false
 }
@@ -98,6 +137,12 @@ func evolvePhoneCheck(s State, e Event) (State, bool) {
 	out := s.clone()
 	if p := out.Players[ev.Player]; p != nil {
 		delete(p.Flags, FlagTeamHidden)
+		if ev.Love.InLove {
+			if p.Flags == nil {
+				p.Flags = map[string]int{}
+			}
+			p.Flags[FlagLoveKnown] = 1
+		}
 	}
 	return out, true
 }

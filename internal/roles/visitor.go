@@ -80,11 +80,12 @@ func (visitor) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, e
 
 // OnNightTimeout makes the compulsory visit when her step ran out: a random
 // choice among the valid players, the seed coming from the room. A dead Visitor
-// (a fake call), a blocked one, or one who already chose does nothing, and so
-// does a table with nobody left to visit.
+// (a fake call), a blocked one, one who is dead by the rules from this step
+// (grief or poison), or one who already chose does nothing, and so does a
+// table with nobody left to visit.
 func (visitor) OnNightTimeout(s engine.State, seed int64) []engine.Event {
 	me := holder(s)
-	if me == nil || !me.Alive || engine.Blocked(s, me.ID) || hasVisited(s) {
+	if me == nil || !me.Alive || engine.Blocked(s, me.ID) || engine.Doomed(s, me.ID) || hasVisited(s) {
 		return nil
 	}
 	var pool []engine.PlayerID
