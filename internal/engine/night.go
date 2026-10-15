@@ -96,7 +96,11 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 	case PhaseRoleView:
 		return startNight(s, 1), nil
 	case PhaseNight:
-		return []Event{nextNightEvent(s, s.Night, s.NightStep)}, nil
+		next := nextNightEvent(s, s.Night, s.NightStep)
+		if _, over := next.(NightEnded); over {
+			return append([]Event{next}, resolveNight(s)...), nil
+		}
+		return []Event{next}, nil
 	}
 	return nil, nil
 }
@@ -108,6 +112,7 @@ func evolveNight(s State, e Event) (State, bool) {
 		out.Phase = PhaseNight
 		out.Night = ev.Night
 		out.NightStep = 0
+		out.Pending = NightActions{}
 		out.Seq++
 		return out, true
 	case NightStepCalled:
@@ -121,5 +126,5 @@ func evolveNight(s State, e Event) (State, bool) {
 		out.Seq++
 		return out, true
 	}
-	return s, false
+	return evolveResolution(s, e)
 }

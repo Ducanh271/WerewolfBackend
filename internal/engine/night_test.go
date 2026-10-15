@@ -194,8 +194,13 @@ func TestNight_DeadRoleIsCalledLikeALivingOne(t *testing.T) {
 func TestNight_TimeoutMeansNoActionAndNightEndsInDawn(t *testing.T) {
 	s := smallTable(t)
 	events := playNight(t, s, 1)
-	if _, ok := events[len(events)-1].(NightEnded); !ok {
-		t.Fatalf("last event = %T, want NightEnded", events[len(events)-1])
+	var ended bool
+	for _, e := range events {
+		_, isEnd := e.(NightEnded)
+		ended = ended || isEnd
+	}
+	if !ended {
+		t.Fatalf("the night produced no NightEnded: %v", events)
 	}
 	for _, p := range Fold(s, events...).Players {
 		if !p.Alive {

@@ -31,8 +31,13 @@ type Player struct {
 }
 
 // NightActions holds the choices collected during one night; they are only
-// resolved at dawn. Filled in by the night tasks.
-type NightActions struct{}
+// resolved at dawn. Each role's own events fill in its part, and the night
+// start clears it. More fields arrive with the later night roles.
+type NightActions struct {
+	WolfVotes  map[PlayerID]PlayerID // each wolf's current bite choice
+	Protected  PlayerID              // the Guard's choice, empty if none
+	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
+}
 
 // DayState holds nominations, skip votes, the trial and the day clock.
 // Filled in by the day phase task.
@@ -96,6 +101,12 @@ func (s State) clone() State {
 		out.Seats = append([]PlayerID(nil), s.Seats...)
 	}
 	out.Settings.Roles = copyRoles(s.Settings.Roles)
+	if s.Pending.WolfVotes != nil {
+		out.Pending.WolfVotes = make(map[PlayerID]PlayerID, len(s.Pending.WolfVotes))
+		for wolf, target := range s.Pending.WolfVotes {
+			out.Pending.WolfVotes[wolf] = target
+		}
+	}
 
 	if s.Lovers != nil {
 		lovers := *s.Lovers

@@ -36,4 +36,12 @@ var (
 	ErrNoWolves             = errors.New("the game needs at least one wolf")
 	ErrTooManyWolves        = errors.New("too many wolves for this number of players")
 	ErrRoleNeedsMorePlayers = errors.New("role needs more players")
+
+	// Night actions (rules §3, §5, §6).
+	ErrNotYourTurn     = errors.New("not your turn")
+	ErrNotAlive        = errors.New("player is dead")
+	ErrInvalidTarget   = errors.New("invalid target")
+	ErrTargetIsWolf    = errors.New("the pack cannot bite a wolf")
+	ErrAlreadyActed    = errors.New("already acted this night")
+	ErrSameGuardTarget = errors.New("the guard cannot protect the same player two nights in a row")
 )

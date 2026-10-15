@@ -224,8 +224,8 @@ func TestRealDriver_DeadRoleIsCalledLikeALivingOne(t *testing.T) {
 	if !reflect.DeepEqual(living, dead) {
 		t.Fatalf("the narrator can tell a real Guard call from a fake one:\n%v\n%v", living, dead)
 	}
-	if len(living) != 4 { // start, Guard, Seer, end (the kit's Werewolf has no night call)
-		t.Fatalf("expected start, two role calls and end, got %v", living)
+	if len(living) != 5 { // start, Guard, wolf pack, Seer, end
+		t.Fatalf("expected start, three role calls and end, got %v", living)
 	}
 }
 

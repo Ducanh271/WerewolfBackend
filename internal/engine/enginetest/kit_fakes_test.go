@@ -8,8 +8,9 @@ import (
 	"masoi/internal/engine"
 )
 
-// The engine cannot import internal/roles, so the kit's own tests register
-// stand-in roles with the same IDs and rules §2 constraints.
+// The kit plays the real Werewolf, Villager, Seer and Guard (it imports
+// internal/roles); the kit's own tests only register stand-ins for roles that
+// are not built yet.
 
 type fakeRole struct {
 	id   engine.RoleID
@@ -24,10 +25,6 @@ func (r fakeRole) Decide(engine.State, engine.Command) ([]engine.Event, bool, er
 }
 func (r fakeRole) Evolve(*engine.State, engine.Event) bool { return false }
 
-type multiRole struct{ fakeRole }
-
-func (multiRole) AllowsMultipleCopies() bool { return true }
-
 type minRole struct {
 	fakeRole
 	min int
@@ -36,10 +33,6 @@ type minRole struct {
 func (r minRole) MinPlayers() int { return r.min }
 
 func init() {
-	engine.Register(multiRole{fakeRole{Werewolf, engine.TeamWolves}})
-	engine.Register(multiRole{fakeRole{Villager, engine.TeamVillage}})
-	engine.Register(nightRole{fakeRole{Seer, engine.TeamVillage}, 7, nil})
-	engine.Register(nightRole{fakeRole{Guard, engine.TeamVillage}, 2, nil})
 	engine.Register(minRole{fakeRole{Detective, engine.TeamVillage}, 9})
 }
 
@@ -125,14 +118,3 @@ func (killRole) Evolve(s *engine.State, e engine.Event) bool {
 }
 
 func init() { engine.Register(killRole{fakeRole{"KillStandIn", engine.TeamVillage}}) }
-
-// nightRole is a stand-in with a night call, for tests of the real driver.
-type nightRole struct {
-	fakeRole
-	order  int
-	nights []int
-}
-
-func (r nightRole) NightCall() *engine.NightCall {
-	return &engine.NightCall{Order: r.order, Nights: r.nights}
-}
