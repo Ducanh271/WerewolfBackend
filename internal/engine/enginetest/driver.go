@@ -26,13 +26,43 @@ type Driver interface {
 var ErrDayNotBuilt = errors.New("the day phase machine is not built yet (task T7)")
 
 // realDriver drives the engine's own night machine.
-type realDriver struct{}
+type realDriver struct {
+	chief engine.PlayerID // everybody votes for them when the scenario did not hold the election
+}
 
-func (realDriver) StartNight(s engine.State) ([]engine.Command, error) {
-	if s.Phase != engine.PhaseRoleView {
+// electionSeed settles the election of scenarios that do not play it.
+const electionSeed = 1
+
+// StartNight runs the role view and the Chief election out, then night 1.
+// Like EndNight it works on a private copy because each step changes Seq.
+func (d realDriver) StartNight(s engine.State) ([]engine.Command, error) {
+	if s.Phase != engine.PhaseRoleView && s.Phase != engine.PhaseChiefElection {
 		return nil, ErrDayNotBuilt // night 2 and later follow a day
 	}
-	return []engine.Command{engine.PhaseTimeout{Phase: s.Phase, Seq: s.Seq}}, nil
+	var cmds []engine.Command
+	play := func(c engine.Command) error {
+		evs, err := engine.Decide(s, c)
+		if err != nil {
+			return err
+		}
+		cmds = append(cmds, c)
+		s = engine.Fold(s, evs...)
+		return nil
+	}
+	if s.Phase == engine.PhaseRoleView {
+		if err := play(engine.PhaseTimeout{Phase: s.Phase, Seq: s.Seq}); err != nil {
+			return nil, err
+		}
+		if d.chief != "" {
+			for _, id := range s.Seats {
+				if err := play(engine.VoteChief{Voter: id, Candidate: d.chief}); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+	err := play(engine.PhaseTimeout{Phase: s.Phase, Seq: s.Seq, Seed: electionSeed})
+	return cmds, err
 }
 
 // EndNight times out every remaining step. The commands are worked out on a

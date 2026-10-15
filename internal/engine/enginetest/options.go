@@ -14,6 +14,7 @@ type setup struct {
 	cast   map[string]engine.RoleID
 	roles  map[engine.RoleID]int
 	seed   int64
+	chief  string
 	driver Driver
 	errs   []string
 }
@@ -60,6 +61,12 @@ func Roles(counts map[engine.RoleID]int) Option {
 // Seed is the DealRoles seed used with Roles.
 func Seed(seed int64) Option {
 	return func(s *setup) { s.seed = seed }
+}
+
+// Chief makes the named player the Chief: in the election that the scenario
+// does not play itself, everybody votes for them.
+func Chief(name string) Option {
+	return func(s *setup) { s.chief = name }
 }
 
 // WithDriver replaces the night/day driver.

@@ -17,6 +17,10 @@ type State struct {
 	Settings  Settings
 	Dealt     bool // roles were dealt to the current player list
 	Winner    *Team
+
+	Chief      PlayerID              // holder of the title, empty if nobody
+	ChiefVotes map[PlayerID]PlayerID // voter -> candidate, during the election
+	Succession Succession            // set while PhaseChiefSuccession runs
 }
 
 // Player is one participant. Role-specific bookkeeping lives in Flags so that
@@ -62,6 +66,9 @@ type Settings struct {
 	Defense    time.Duration // bào chữa
 	Verdict    time.Duration // vote giết hay tha
 	HunterShot time.Duration // thợ săn chọn người
+
+	ChiefElection   time.Duration // public vote for the Chief
+	ChiefSuccession time.Duration // the dead Chief names a successor
 }
 
 // DefaultSettings returns the default timers from rules §2.
@@ -73,6 +80,9 @@ func DefaultSettings() Settings {
 		Defense:    1 * time.Minute,
 		Verdict:    30 * time.Second,
 		HunterShot: 15 * time.Second,
+
+		ChiefElection:   1 * time.Minute,
+		ChiefSuccession: 15 * time.Second,
 	}
 }
 
@@ -108,6 +118,12 @@ func (s State) clone() State {
 		}
 	}
 
+	if s.ChiefVotes != nil {
+		out.ChiefVotes = make(map[PlayerID]PlayerID, len(s.ChiefVotes))
+		for voter, cand := range s.ChiefVotes {
+			out.ChiefVotes[voter] = cand
+		}
+	}
 	if s.Lovers != nil {
 		lovers := *s.Lovers
 		out.Lovers = &lovers

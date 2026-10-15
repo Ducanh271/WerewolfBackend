@@ -22,8 +22,10 @@ func (g *Game) Night() *Night {
 	case stageDay:
 		g.t.Fatalf("Night() called before the day ended: finish it with NobodyHanged() or Hanged(...)")
 	}
-	cmds, err := g.driver.StartNight(g.state)
-	g.doAll(cmds, err)
+	if g.stage != stageElected { // the election already started night 1
+		cmds, err := g.driver.StartNight(g.state)
+		g.doAll(cmds, err)
+	}
 	g.stage = stageNight
 	return &Night{g: g}
 }

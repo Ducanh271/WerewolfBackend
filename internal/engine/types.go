@@ -48,6 +48,8 @@ const (
 	PhaseVerdict
 	PhaseHunterShot
 	PhaseEnded
+	PhaseChiefElection   // public vote for the Chief, between role view and night 1
+	PhaseChiefSuccession // the dead Chief names a successor
 )
 
 func (p Phase) String() string {
@@ -70,6 +72,10 @@ func (p Phase) String() string {
 		return "HunterShot"
 	case PhaseEnded:
 		return "Ended"
+	case PhaseChiefElection:
+		return "ChiefElection"
+	case PhaseChiefSuccession:
+		return "ChiefSuccession"
 	default:
 		return "Unknown"
 	}

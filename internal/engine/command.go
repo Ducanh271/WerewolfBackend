@@ -51,4 +51,8 @@ type PhaseTimeout struct {
 	CommandMarker
 	Phase Phase
 	Seq   int
+	// Seed settles an election that has no winner by votes (a tie, or nobody
+	// voted). Like DealRoles, the room layer generates it with crypto/rand on
+	// every timeout; it is never taken from a client. Other phases ignore it.
+	Seed int64
 }

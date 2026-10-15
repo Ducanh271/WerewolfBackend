@@ -13,12 +13,14 @@ import (
 type stage int
 
 const (
-	stageLobby   stage = iota // no roles yet
-	stageSetup                // table ready, no night played
-	stageNight                // inside Night()
-	stageDawn                 // Dawn() done, day not started
-	stageDay                  // inside Day(), no outcome yet
-	stageDayDone              // day over, next night allowed
+	stageLobby    stage = iota // no roles yet
+	stageSetup                 // table ready, no night played
+	stageNight                 // inside Night()
+	stageDawn                  // Dawn() done, day not started
+	stageDay                   // inside Day(), no outcome yet
+	stageDayDone               // day over, next night allowed
+	stageElection              // Election() is open, night 1 not started
+	stageElected               // election closed; night 1 has started
 )
 
 // Game is one scenario: an engine state plus the events that built it.
@@ -34,9 +36,12 @@ type Game struct {
 // or Roles, receive their roles. It fails the test if the table breaks rules §2.
 func NewGame(t testing.TB, opts ...Option) *Game {
 	t.Helper()
-	cfg := &setup{driver: realDriver{}}
+	cfg := &setup{}
 	for _, opt := range opts {
 		opt(cfg)
+	}
+	if cfg.driver == nil {
+		cfg.driver = realDriver{chief: engine.PlayerID(cfg.chief)}
 	}
 	g := &Game{t: t, state: engine.NewState(), driver: cfg.driver}
 	if len(cfg.errs) > 0 {

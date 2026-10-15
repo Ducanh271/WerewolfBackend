@@ -80,8 +80,7 @@ func nextNightEvent(s State, night, called int) Event {
 	return NightStepCalled{Role: steps[called], Duration: s.Settings.NightStep}
 }
 
-// startNight is where the role-view phase leads. T6b puts the Chief election
-// between the two; until then it goes straight to night 1.
+// startNight begins a night; night 1 follows the Chief election.
 func startNight(s State, night int) []Event {
 	return []Event{NightStarted{Night: night}, nextNightEvent(s, night, 0)}
 }
@@ -94,7 +93,11 @@ func decidePhaseTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 	}
 	switch s.Phase {
 	case PhaseRoleView:
-		return startNight(s, 1), nil
+		return []Event{ChiefElectionStarted{Duration: s.Settings.ChiefElection}}, nil
+	case PhaseChiefElection:
+		return append([]Event{ChiefElected{Chief: tallyChief(s, cmd.Seed)}}, startNight(s, 1)...), nil
+	case PhaseChiefSuccession:
+		return []Event{ChiefLost{Former: s.Succession.Former}}, nil
 	case PhaseNight:
 		next := nextNightEvent(s, s.Night, s.NightStep)
 		if _, over := next.(NightEnded); over {

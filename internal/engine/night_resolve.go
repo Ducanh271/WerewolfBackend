@@ -46,7 +46,8 @@ func resolveNight(s State) []Event {
 	for _, id := range r.Deaths {
 		evs = append(evs, PlayerDied{Player: id})
 	}
-	return append(evs, announceDawn(r)) // step 8
+	evs = append(evs, announceDawn(r)) // step 8
+	return append(evs, afterDeaths(s, r.Deaths)...)
 }
 
 func announceDawn(r *Resolution) Event {

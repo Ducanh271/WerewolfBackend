@@ -52,7 +52,7 @@ func timeout(t *testing.T, s State) (State, []Event) {
 func playNight(t *testing.T, s State, night int) []Event {
 	t.Helper()
 	var all []Event
-	if s.Phase == PhaseRoleView {
+	for s.Phase == PhaseRoleView || s.Phase == PhaseChiefElection {
 		var evs []Event
 		s, evs = timeout(t, s)
 		all = append(all, evs...)
@@ -97,10 +97,18 @@ func TestDealRoles_StartsRoleViewWithCountdown(t *testing.T) {
 	}
 }
 
-func TestRoleView_TimeoutStartsNightOne(t *testing.T) {
+func TestRoleView_TimeoutStartsTheChiefElection(t *testing.T) {
 	s, _ := timeout(t, smallTable(t))
+	if s.Phase != PhaseChiefElection {
+		t.Fatalf("phase = %s, want ChiefElection", s.Phase)
+	}
+}
+
+func TestChiefElection_TimeoutStartsNightOne(t *testing.T) {
+	s, _ := timeout(t, smallTable(t))
+	s, _ = timeout(t, s)
 	if s.Phase != PhaseNight || s.Night != 1 {
-		t.Fatalf("after role view: phase %s night %d, want Night 1", s.Phase, s.Night)
+		t.Fatalf("after the election: phase %s night %d, want Night 1", s.Phase, s.Night)
 	}
 	if role, ok := CurrentNightRole(s); !ok || role != roleWerewolf {
 		t.Fatalf("current step = %q, %v; want Werewolf, the first role in the game", role, ok)
@@ -237,6 +245,7 @@ func TestCurrentNightRole_FollowsTheStep(t *testing.T) {
 	if _, ok := CurrentNightRole(s); ok {
 		t.Fatal("no night step is running during role view")
 	}
+	s, _ = timeout(t, s)
 	s, _ = timeout(t, s)
 	var seen []RoleID
 	for role, ok := CurrentNightRole(s); ok; role, ok = CurrentNightRole(s) {

@@ -15,6 +15,9 @@ func TestVi_DawnAnnouncements(t *testing.T) {
 		{"several dead, names as given", DawnSomeoneDied, []string{"An", "Binh"}, "Đêm qua, An, Binh đã chết."},
 		{"protected", DawnProtected, nil, "Không có ai chết, được bảo vệ."},
 		{"nobody died", DawnNobodyDied, nil, "Không có ai chết."},
+		{"chief elected", ChiefElected, []string{"An"}, "An đã được bầu làm Trưởng làng."},
+		{"chief succeeded", ChiefSucceeded, []string{"Binh"}, "Trưởng làng mới là Binh."},
+		{"chief lost", ChiefLost, nil, "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất."},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

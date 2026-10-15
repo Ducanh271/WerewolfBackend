@@ -8,6 +8,9 @@ var vi = map[string]string{
 	DawnSomeoneDied: "Đêm qua, %s đã chết.",
 	DawnProtected:   "Không có ai chết, được bảo vệ.",
 	DawnNobodyDied:  "Không có ai chết.",
+	ChiefElected:    "%s đã được bầu làm Trưởng làng.",
+	ChiefSucceeded:  "Trưởng làng mới là %s.",
+	ChiefLost:       "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.
