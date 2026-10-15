@@ -66,6 +66,14 @@ type AlwaysCalled interface {
 	AlwaysCalled() bool
 }
 
+// BiteWitness is implemented by a role whose holder learns, on their own night
+// step, whom the pack is biting: the Witch while she still has the heal potion
+// (rules §6 "Phù thủy"). The view shows it only during that step and not when
+// the holder was visited.
+type BiteWitness interface {
+	SeesBite(holder *Player) bool
+}
+
 // Registry holds every known role. Roles add themselves with Register in
 // init(); the engine never names a role itself.
 var Registry = map[RoleID]Role{}

@@ -41,6 +41,7 @@ type NightActions struct {
 	WolfVotes  map[PlayerID]PlayerID // each wolf's current bite choice
 	Protected  PlayerID              // the Guard's choice, empty if none
 	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
+	Visited    PlayerID              // the Visitor's target (T14), empty if nobody
 }
 
 // LoversLink is the pair created by Cupid.

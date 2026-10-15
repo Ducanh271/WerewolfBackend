@@ -30,6 +30,11 @@ type SeerChecked struct {
 
 func init() { engine.Register(seer{}) }
 
+// Audience: the result is the Seer's alone, even when she is cursed.
+func (e SeerChecked) Audience(engine.State) engine.Audience {
+	return engine.Audience{Players: []engine.PlayerID{e.Seer}}
+}
+
 func (seer) ID() engine.RoleID            { return Seer }
 func (seer) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (seer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 7} }

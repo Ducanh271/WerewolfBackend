@@ -23,7 +23,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 
 ## Milestone 3 — Secrecy and room
 
-- [ ] **T9 Views.** `ViewFor(player|narrator)`; tests per role proving no leaks; dead players see everything. Write `docs/protocol.md` (message shapes) for review.
+- [x] **T9 Views.** `ViewFor(player|narrator)`; tests per role proving no leaks; dead players see everything. Write `docs/protocol.md` (message shapes) for review.
 - [ ] **T10 Room + timers.** Room goroutine, injected clock, timeouts → commands, event store in memory, rejoin by room code + nickname. The room generates every seed (`DealRoles`, Chief election tie-break) with `crypto/rand`; seeds never come from a client.
 - [ ] **T11 WebSocket transport.** Implements `docs/protocol.md`. One end-to-end test with fake clients playing a 5-player game.
 
@@ -40,4 +40,4 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [ ] **T20 Cross-role scenarios.** One test per row of §9 "Tình huống đã chốt"; fix whatever fails.
 
 ## Open questions (ask the user, don't guess)
-- None yet. Add here when a rule is unclear.
+- Rejoin (T10): rules §2 says room code + nickname; proposal in `docs/protocol.md` is to require the token given at join, so nobody can take over a player by typing their nickname.

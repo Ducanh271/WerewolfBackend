@@ -30,6 +30,9 @@ type WolfVoted struct {
 
 func init() { engine.Register(werewolf{}) }
 
+// Audience: the live votes are shown to the whole pack (rules §3).
+func (WolfVoted) Audience(engine.State) engine.Audience { return engine.Audience{Wolves: true} }
+
 func (werewolf) ID() engine.RoleID            { return Werewolf }
 func (werewolf) BaseTeam() engine.Team        { return engine.TeamWolves }
 func (werewolf) AllowsMultipleCopies() bool   { return true }

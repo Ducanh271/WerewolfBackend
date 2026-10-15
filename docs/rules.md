@@ -6,6 +6,8 @@ Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên 
 > trong repo trước, tài liệu gốc chưa có:
 > - §2 "Số lượng mỗi vai" (thêm 14/10/2026): dân và sói thường ≥ 1, mọi vai còn
 >   lại tối đa 1.
+> - §4 "Ván kết thúc" (thêm 15/10/2026): khi ván kết thúc, mọi người được xem
+>   toàn bộ vai và diễn biến.
 >
 > Xoá dòng tương ứng sau khi đã copy sang tài liệu gốc.
 
@@ -116,6 +118,8 @@ Tất cả nhắm mắt. Máy quản trò gọi từng vai bằng giọng nói; 
 Mỗi ngày treo **tối đa 1 người**. Mọi phiếu ban ngày đều **công khai**: điện thoại và máy quản trò hiện rõ ai vote ai.
 
 Người đã chết không được nói, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết. Khi chơi online sau này, người chết bị cấm chat và video call.
+
+Khi **ván kết thúc**, mọi người (cả người còn sống) được xem toàn bộ vai và diễn biến.
 
 ### Thông báo buổi sáng
 

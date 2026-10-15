@@ -38,6 +38,11 @@ type PlayerProtected struct {
 
 func init() { engine.Register(guard{}) }
 
+// Audience: only the Guard knows whom she protected.
+func (e PlayerProtected) Audience(engine.State) engine.Audience {
+	return engine.Audience{Players: []engine.PlayerID{e.Guard}}
+}
+
 func (guard) ID() engine.RoleID            { return Guard }
 func (guard) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (guard) NightCall() *engine.NightCall { return &engine.NightCall{Order: 2} }

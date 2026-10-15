@@ -119,9 +119,15 @@ Roles hook into named steps via `Resolution` fields instead of editing the pipel
 
 ### Views (secrecy boundary)
 ```go
-func ViewFor(s State, viewer Viewer) View   // Viewer = Player(id) | Narrator
+func ViewFor(s State, viewer Viewer) View              // the screen now; Viewer = PlayerViewer(id) | NarratorViewer()
+func Visible(s State, log []Event, viewer Viewer) []Event // the events this screen may know, judged at the time of each event
 ```
-Rules for the projection live in one file (`view.go`) with a test per role proving what that role can and cannot see. Dead players get the full view. The narrator view contains only public info plus what must be read aloud.
+The rules are summed up in `view.go`; the projection is in `view_project.go`, the event audiences in `view_audience.go`. Tests per role (`internal/roles/view_*_test.go`) prove what each screen can and cannot see. Dead players, and everybody once the game is over, get the full view. The narrator view contains only public info plus what must be read aloud.
+
+- Engine events get their audience in `view_audience.go`. A role event declares its own by implementing `Audienced` (`Audience(s) Audience`: everyone, narrator, the living wolves, or listed players). An event without an audience is seen only by full views, so a forgotten audience hides information instead of leaking it.
+- `PlayerDied` is never shown to the living: the order of a night's deaths would tell who was bitten and who was poisoned.
+- Role-specific secrets derived from state go through optional role interfaces, e.g. `BiteWitness` (the Witch sees the bite on her turn while she can heal, not when visited). `Pending.Visited` drives the "visited" notice; `TeamChanged` (the curse) tells only the player concerned.
+- Message shapes: `docs/protocol.md`.
 
 ## Room layer
 - One goroutine per room owns the state; commands arrive through a channel (no locks on game state).
