@@ -147,6 +147,9 @@ var commandTable = map[string]commandSpec{
 	"cursedWolfCurse": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.CursedWolfCurse{By: by, Target: a.Target}
 	}),
+	"wolfSeerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
+		return roles.WolfSeerCheck{By: by, Target: a.Target}
+	}),
 	"seerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.SeerCheck{By: by, Target: a.Target}
 	}),

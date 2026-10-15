@@ -33,7 +33,7 @@ A task is done when `make fmt test lint` passes and its acceptance tests exist. 
 - [x] **T13 Hunter** (shot phase, any cause of death, reveals role). *§6 Thợ săn.*
 - [x] **T14 Visitor (Nguyệt Nữ).** Blocks target; per-role effect of being blocked. *§6, §5.*
 - [x] **T15 Cursed wolf.** Immediate effect, nights 1–3, blocked on night 3 = lost, "phone check" step (rules §3) with the same notice for everybody; win check only by day (rules §8). *§5 Sói nguyền.*
-- [ ] **T16 Wolf seer.** *§5 Sói tiên tri.*
+- [x] **T16 Wolf seer.** *§5 Sói tiên tri.*
 - [ ] **T17 Detective.** Uses seating; one use; not lost when blocked. *§6 Thám tử.*
 - [ ] **T18 Rusty knight.** Nearest living wolf to the left dies next night. *§6, §9 step 4.*
 - [ ] **T19 Cupid + lovers.** Link colour, team recalculated on curse, third team win. *§7, §8.*

@@ -91,12 +91,13 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
 | `seerCheck` | `target` | Seer step | `SeerCheck` |
+| `wolfSeerCheck` | `target` (any living player, wolves and himself too) | Wolf seer step, every night; not blocked | `WolfSeerCheck`; a dead player → `invalid_target`; second check → `already_acted`; blocked → `blocked`. Answer: `WolfSeerChecked {wolfSeer, target, isSeer}` to the whole pack (a role check: a cursed Seer is still `isSeer: true`) |
 | `cursedWolfCurse` | `target` (a living non-wolf, not himself) | Cursed wolf step, nights 1–3, once per game; not blocked | `CursedWolfCurse`; a wolf, himself or a dead player → `invalid_target`; second curse → `already_acted`; blocked → `blocked` |
 | `hunterShoot` | `target` (a living player; required) | `HunterShot` phase, the dead Hunter only | `HunterShoot`; no target or a dead one → `invalid_target`; 15 s without it = nobody shot |
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |
 | `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not blocked |
 
-Later roles add their own rows (Wolf seer, Detective, Cupid). The server **rejects** any `seed` field and never
+Later roles add their own rows (Detective, Cupid). The server **rejects** any `seed` field and never
 accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
 
 ## Server → client
@@ -146,7 +147,7 @@ The `view` object (`engine.View`); absent parts are omitted:
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
   `HunterShotStarted`, `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
-  `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice); `WolfVoted` for the pack, from the moment
+  `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
   the player is in it.
 - Never sent to the living: `PlayerDied` (its order would tell bitten from
   poisoned; deaths are known through `DawnAnnounced`, `Hanged` and the alive

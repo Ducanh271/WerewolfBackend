@@ -1,0 +1,80 @@
+package roles
+
+import (
+	"fmt"
+
+	"masoi/internal/engine"
+)
+
+// WolfSeer checks one player a night and learns whether they are the Seer
+// (rules §5 "Sói tiên tri"). The answer goes to the whole pack, which is
+// called right after. The Wolf seer also bites with the pack: the pack step
+// accepts every wolf role.
+type wolfSeer struct{}
+
+// WolfSeer is the ID of the Wolf seer.
+const WolfSeer engine.RoleID = "WolfSeer"
+
+// WolfSeerCheck is the Wolf seer's choice for tonight. Any living player may
+// be checked, wolves and the Wolf seer himself included.
+type WolfSeerCheck struct {
+	engine.CommandMarker
+	By     engine.PlayerID
+	Target engine.PlayerID
+}
+
+// WolfSeerChecked is the result, shared with the pack. It is a role check, not
+// a team check: a cursed Seer is still the Seer.
+type WolfSeerChecked struct {
+	engine.EventMarker
+	WolfSeer engine.PlayerID
+	Target   engine.PlayerID
+	IsSeer   bool
+}
+
+func init() { engine.Register(wolfSeer{}) }
+
+// Audience: the whole pack. A player cursed earlier tonight gets it from the
+// phone check on, like the rest of the pack screen (engine.VisibleTeam).
+func (WolfSeerChecked) Audience(engine.State) engine.Audience {
+	return engine.Audience{Wolves: true}
+}
+
+func (wolfSeer) ID() engine.RoleID            { return WolfSeer }
+func (wolfSeer) BaseTeam() engine.Team        { return engine.TeamWolves }
+func (wolfSeer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 4} }
+
+func (wolfSeer) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
+	cmd, ok := c.(WolfSeerCheck)
+	if !ok {
+		return nil, false, nil
+	}
+	me, err := engine.NightActor(s, cmd.By, WolfSeer)
+	if err != nil {
+		return nil, true, err
+	}
+	if me.Role != WolfSeer {
+		return nil, true, fmt.Errorf("%w: %s is not the Wolf seer", engine.ErrNotYourTurn, cmd.By)
+	}
+	if s.Pending.WolfSeerTarget != "" {
+		return nil, true, engine.ErrAlreadyActed
+	}
+	target, err := engine.LivingTarget(s, cmd.Target)
+	if err != nil {
+		return nil, true, err
+	}
+	return []engine.Event{WolfSeerChecked{
+		WolfSeer: cmd.By,
+		Target:   cmd.Target,
+		IsSeer:   target.Role == Seer,
+	}}, true, nil
+}
+
+func (wolfSeer) Evolve(s *engine.State, e engine.Event) bool {
+	ev, ok := e.(WolfSeerChecked)
+	if !ok {
+		return false
+	}
+	s.Pending.WolfSeerTarget = ev.Target
+	return true
+}

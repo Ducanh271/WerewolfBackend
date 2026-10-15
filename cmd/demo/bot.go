@@ -111,6 +111,9 @@ func (b *bot) night(f wsclient.Frame, me map[string]any, living []string) (strin
 		}
 		b.cursed = true
 		return "cursedWolfCurse", map[string]any{"target": pick(without(others, packMembers(f)...))}
+	case "WolfSeer":
+		// His own step comes before the pack's; the pack step is handled above.
+		return "wolfSeerCheck", map[string]any{"target": pick(living)}
 	case "Seer":
 		return "seerCheck", map[string]any{"target": pick(others)}
 	}

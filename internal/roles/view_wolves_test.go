@@ -1,9 +1,13 @@
 package roles_test
 
-import "testing"
+import (
+	"testing"
+
+	"masoi/internal/roles"
+)
 
 func TestView_Wolves_SeePackLiveVotesAndWolfSeerResults(t *testing.T) {
-	result := wolfSeerSaw{Target: "Em", IsSeer: true}
+	result := roles.WolfSeerChecked{WolfSeer: "Binh", Target: "Em", IsSeer: true}
 	tests := []struct {
 		name string
 		run  func(t *testing.T)

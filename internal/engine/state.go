@@ -39,12 +39,13 @@ type Player struct {
 // resolved at dawn. Each role's own events fill in its part, and the night
 // start clears it. More fields arrive with the later night roles.
 type NightActions struct {
-	WolfVotes  map[PlayerID]PlayerID // each wolf's current bite choice
-	Protected  PlayerID              // the Guard's choice, empty if none
-	SeerTarget PlayerID              // whom the Seer checked, empty if nobody
-	Blocked    map[PlayerID]RoleID   // players who lose their night ability tonight -> the role that blocked them (engine-internal, never in a view)
-	Healed     bool                  // the Witch used the heal potion on the bitten player
-	Poisoned   PlayerID              // the Witch's poison target, empty if none
+	WolfVotes      map[PlayerID]PlayerID // each wolf's current bite choice
+	Protected      PlayerID              // the Guard's choice, empty if none
+	SeerTarget     PlayerID              // whom the Seer checked, empty if nobody
+	WolfSeerTarget PlayerID              // whom the Wolf seer checked, empty if nobody
+	Blocked        map[PlayerID]RoleID   // players who lose their night ability tonight -> the role that blocked them (engine-internal, never in a view)
+	Healed         bool                  // the Witch used the heal potion on the bitten player
+	Poisoned       PlayerID              // the Witch's poison target, empty if none
 }
 
 // LoversLink is the pair created by Cupid.
