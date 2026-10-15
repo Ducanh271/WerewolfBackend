@@ -145,7 +145,7 @@ func resolveVerdict(s State) []Event {
 	who := s.Day.Defendant
 	if kill > spare {
 		evs := []Event{PlayerDied{Player: who}, Hanged{Player: who}}
-		return append(evs, afterDeaths(s, []PlayerID{who})...)
+		return append(evs, afterDeaths(s, evs, []PlayerID{who})...)
 	}
 	evs := []Event{Spared{Player: who}}
 	if s.Day.ClockOut {

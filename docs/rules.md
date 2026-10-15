@@ -257,6 +257,13 @@ App kiểm tra điều kiện thắng **sau mỗi lần có người chết ho�
 
 Người bị nguyền tính là sói từ lúc bị nguyền.
 
+Làm rõ:
+
+- Nếu **tất cả** người chơi chết cùng một lúc thì ván **hòa**.
+- Nếu nhiều điều kiện thắng cùng đúng, thứ tự ưu tiên là: **Cặp đôi khác phe > Dân > Sói**. Ví dụ: chỉ còn một cặp khác phe sống thì Cặp đôi thắng, không phải Sói thắng (0 sói ≥ 0 dân không được tính là sói thắng).
+- Sói chỉ thắng khi còn **ít nhất một con sói** sống (không tính sói trong cặp khác phe).
+- Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9) và sau mỗi lần đổi phe (nguyền). Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
+
 ## 9. Thứ tự phân giải lúc trời sáng
 
 App tính kết quả đêm theo đúng thứ tự sau:

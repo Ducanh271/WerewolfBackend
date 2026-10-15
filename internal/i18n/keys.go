@@ -30,3 +30,15 @@ const (
 	// DayNobodyHanged: the day ended without an execution.
 	DayNobodyHanged = "day.nobody_hanged"
 )
+
+// Game over announcements (rules §8), read to everybody.
+const (
+	// WinVillage: no wolf is left.
+	WinVillage = "win.village"
+	// WinWolves: the wolves reached the villagers' number.
+	WinWolves = "win.wolves"
+	// WinLovers: only the cross-team couple is left.
+	WinLovers = "win.lovers"
+	// WinDraw: everybody died at the same moment.
+	WinDraw = "win.draw"
+)

@@ -16,7 +16,7 @@ type Resolution struct {
 // rest are added by their tasks in the numbered place:
 // 1 Visitor, 2 Curse, 4 RustyKnight, 5 Witch poison, 6 delayed wolf deaths,
 // 7 lover deaths. Step 8 (announce) is resolveNight below, step 9 (win check)
-// arrives with T8.
+// is afterDeaths.
 var nightPipeline = []func(*Resolution){
 	stepBite, // 3
 }
@@ -47,7 +47,7 @@ func resolveNight(s State) []Event {
 		evs = append(evs, PlayerDied{Player: id})
 	}
 	evs = append(evs, announceDawn(r)) // step 8
-	return append(evs, afterDeaths(s, r.Deaths)...)
+	return append(evs, afterDeaths(s, evs, r.Deaths)...)
 }
 
 func announceDawn(r *Resolution) Event {

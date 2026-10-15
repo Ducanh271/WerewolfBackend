@@ -14,6 +14,10 @@ var vi = map[string]string{
 	DaySpared:       "Làng tha cho %s.",
 	DayNobodyHanged: "Không ai bị treo.",
 	ChiefLost:       "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
+	WinVillage:      "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt.",
+	WinWolves:       "Phe Sói chiến thắng.",
+	WinLovers:       "Cặp đôi khác phe chiến thắng.",
+	WinDraw:         "Tất cả đã chết, ván đấu hòa.",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.
