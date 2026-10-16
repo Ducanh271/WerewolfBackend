@@ -59,6 +59,9 @@ func (g *simGame) do(c engine.Command) error {
 }
 
 func TestSim_ManyGames_FinishAndNeverLeakSecrets(t *testing.T) {
+	if testing.Short() {
+		t.Skip("slow: many simulated games; skipped with -short (make test-fast)")
+	}
 	games, first := simGamesDefault, uint64(simBaseSeed)
 	if v := os.Getenv("SIM_GAMES"); v != "" {
 		games, _ = strconv.Atoi(v)

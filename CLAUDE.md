@@ -13,11 +13,12 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - No database in v1: in-memory store behind an interface.
 
 ## Commands
-- `make test` — run all tests (`go test ./... -race`)
+- `make test` — full check: all tests, race detector, simulation at its default `SIM_GAMES=300` (`go test ./... -race`)
+- `make test-fast` — fast loop: no race detector, skips the simulation and other slow tests (`go test ./... -short`)
 - `make lint` — `go vet` + `golangci-lint run`
 - `make fmt` — `gofmt` + `goimports`
 - `make run` — start the server
-Run `make fmt test lint` before declaring a task done. All must pass.
+While iterating, run only the affected package (`go test ./internal/<pkg> -run <Name>`) or `make test-fast`. Run `make fmt test lint` ONCE before committing — all must pass. Run a bigger simulation (`SIM_GAMES=1000+`) only when the task asks for it.
 
 ## Architecture rules (hard)
 1. `internal/engine` is pure: no I/O, no goroutines, no `time.Now()`, no global `rand`, no logging. Time and randomness come in through commands/arguments.

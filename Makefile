@@ -1,11 +1,19 @@
-.PHONY: fmt test lint run demo demo-12
+.PHONY: fmt test test-fast lint run demo demo-12
 
 fmt:
 	gofmt -w .
 	go run golang.org/x/tools/cmd/goimports@latest -w .
 
+# Full check: race detector + the simulation at its default SIM_GAMES=300. Run
+# this once before committing.
 test:
 	go test ./... -race -count=1
+
+# Fast loop while iterating: no race detector, skips the simulation and other
+# slow tests (testing.Short()). Prefer `go test ./internal/<pkg> -run <Name>`
+# for a single test.
+test-fast:
+	go test ./... -short
 
 lint:
 	go vet ./...
