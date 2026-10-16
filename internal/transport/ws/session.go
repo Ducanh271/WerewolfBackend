@@ -30,15 +30,17 @@ type session struct {
 	out        chan []byte
 	writerDone chan struct{}
 
-	mu      sync.Mutex
-	ready   bool     // the first reply was queued; before that the room's messages wait
-	pending [][]byte // views delivered while joining, sent after `welcome`
-	closing *closeReason
+	mu        sync.Mutex
+	ready     bool     // the first reply was queued; before that the room's messages wait
+	pending   [][]byte // views delivered while joining, sent after `welcome`
+	closing   *closeReason
+	pingTimer room.Timer // the next scheduled ping, if any
 
 	// Touched only by the reader goroutine.
-	client *room.Client
-	rm     *room.Room
-	player engine.PlayerID
+	client       *room.Client
+	rm           *room.Room
+	player       engine.PlayerID
+	joinFailures int // failed join/rejoin messages so far, before client is set
 }
 
 type closeReason struct {
@@ -79,6 +81,25 @@ func (s *session) Deliver(m room.Message) {
 
 // reply queues a message to this phone from the reader goroutine.
 func (s *session) reply(b []byte) { s.enqueue(b) }
+
+// Evict implements room.Sink. A rejoin elsewhere took this player over
+// (R2/S7): tell this phone why, then close it, without waiting for it to
+// send anything itself.
+//
+// This writes directly instead of going through the s.out queue, and only
+// cancels s.ctx (which the reader goroutine's blocked Read also uses) once
+// that write is done. Queuing first and cancelling right after, as reply+
+// shut do elsewhere, races the reader: cancelling s.ctx while its Read is
+// still blocked can tear the whole connection down as a side effect, before
+// writeLoop gets a turn to drain the queue. A direct Write is safe to run
+// concurrently with a blocked Read (unlike two Reads together), so writing
+// before cancelling avoids the race.
+func (s *session) Evict(reason error) {
+	go func() {
+		s.write(errorFrame(reason))
+		s.shut(websocket.StatusPolicyViolation, "replaced by another phone")
+	}()
+}
 
 func (s *session) enqueue(b []byte) {
 	select {
@@ -163,6 +184,57 @@ func (s *session) write(b []byte) bool {
 	return s.ws.Write(ctx, websocket.MessageText, b) == nil
 }
 
+// startHeartbeat arms the first ping (R1). A silent connection — one that
+// stops answering, not one that was cleanly closed — is dropped once a ping
+// goes unanswered, so a dead speaker phone is replaced quickly.
+func (s *session) startHeartbeat() { s.scheduleNextPing() }
+
+func (s *session) setPingTimer(t room.Timer) {
+	s.mu.Lock()
+	s.pingTimer = t
+	s.mu.Unlock()
+}
+
+func (s *session) stopPingTimer() {
+	s.mu.Lock()
+	t := s.pingTimer
+	s.pingTimer = nil
+	s.mu.Unlock()
+	if t != nil {
+		t.Stop()
+	}
+}
+
+func (s *session) scheduleNextPing() {
+	s.setPingTimer(s.srv.cfg.PingClock.AfterFunc(s.srv.cfg.PingInterval, s.sendPing))
+}
+
+// sendPing writes one ping and waits for its pong on a goroutine of its own,
+// so the scheduling timer (PingClock.AfterFunc, fake in tests) never blocks.
+// The wait is bounded by cancelling the ping's context when PongTimeout
+// elapses, rather than by the ping's own ctx deadline: that keeps the whole
+// thing driven by PingClock instead of the wall clock, so a fake clock can
+// drive it in tests without a real wait.
+func (s *session) sendPing() {
+	if s.ctx.Err() != nil {
+		return // already closing
+	}
+	pingCtx, cancelPing := context.WithCancel(s.ctx)
+	timeout := s.srv.cfg.PingClock.AfterFunc(s.srv.cfg.PongTimeout, cancelPing)
+	go func() {
+		err := s.ws.Ping(pingCtx)
+		timeout.Stop()
+		cancelPing()
+		if err != nil {
+			if s.ctx.Err() == nil { // not already closing for another reason
+				s.shut(websocket.StatusPolicyViolation, "ping timeout")
+			}
+			return
+		}
+		s.scheduleNextPing()
+	}()
+}
+
 // watchRoom closes the connection when the room is deleted.
 func (s *session) watchRoom(done <-chan struct{}) {
 	select {
@@ -174,16 +246,20 @@ func (s *session) watchRoom(done <-chan struct{}) {
 
 // run reads messages until the connection ends. A dropped connection only
 // disconnects the phone: the player keeps their place (rejoin works).
+//
+// The join deadline (S6) is set once here, from connect, not recreated on
+// every message: a connection that keeps sending something every few
+// seconds must not stay unjoined forever.
 func (s *session) run() {
 	defer s.finish()
+	joinCtx, cancelJoin := context.WithTimeout(s.ctx, s.srv.cfg.JoinTimeout)
+	defer cancelJoin()
 	for {
 		ctx := s.ctx
-		cancel := func() {}
 		if s.client == nil {
-			ctx, cancel = context.WithTimeout(s.ctx, s.srv.cfg.JoinTimeout)
+			ctx = joinCtx
 		}
 		_, data, err := s.ws.Read(ctx)
-		cancel()
 		if err != nil {
 			if s.client == nil && errors.Is(err, context.DeadlineExceeded) {
 				s.shut(websocket.StatusPolicyViolation, "no join message")
@@ -198,6 +274,7 @@ func (s *session) run() {
 
 func (s *session) finish() {
 	s.cancel()
+	s.stopPingTimer()
 	<-s.writerDone
 	if s.client != nil {
 		s.client.Disconnect()

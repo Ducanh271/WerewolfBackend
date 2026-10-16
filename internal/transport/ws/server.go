@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"strings"
 
@@ -17,9 +18,10 @@ import (
 
 // Server is the HTTP side of the game: creating rooms and the WebSocket.
 type Server struct {
-	cfg Config
-	log *slog.Logger
-	mux *http.ServeMux
+	cfg   Config
+	log   *slog.Logger
+	mux   *http.ServeMux
+	conns *connGuard
 }
 
 // New returns the handler serving:
@@ -29,7 +31,10 @@ type Server struct {
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
 func New(cfg Config) http.Handler {
 	cfg.setDefaults()
-	s := &Server{cfg: cfg, log: cfg.Logger, mux: http.NewServeMux()}
+	s := &Server{
+		cfg: cfg, log: cfg.Logger, mux: http.NewServeMux(),
+		conns: newConnGuard(cfg.MaxConnections, cfg.MaxConnectionsPerIP, cfg.NewConnPerMinute, cfg.NewConnBurst, cfg.Now),
+	}
 	s.mux.HandleFunc("POST /rooms", s.createRoom)
 	s.mux.HandleFunc("GET /join/{code}", s.checkRoom)
 	s.mux.HandleFunc("GET /ws", s.serveWS)
@@ -88,15 +93,34 @@ func (s *Server) serveWS(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusForbidden, errorFrameMap(&protoError{codeBadOrigin, "origin not allowed"}))
 		return
 	}
+	ip := clientIP(r)
+	if !s.conns.admit(ip) {
+		writeJSON(w, http.StatusServiceUnavailable, errorFrameMap(&protoError{codeTooManyConnections, "too many connections, try again later"}))
+		return
+	}
 	// The origin was checked above, against the configured list.
 	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{InsecureSkipVerify: true})
 	if err != nil {
+		s.conns.release(ip)
 		return
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	sess := newSession(s, c, ctx, cancel)
+	sess.startHeartbeat()
 	go sess.writeLoop()
 	sess.run()
+	s.conns.release(ip)
+}
+
+// clientIP is the host part of the request's remote address. No reverse
+// proxy header is read yet (D7): behind one, every connection would look
+// like it came from the proxy.
+func clientIP(r *http.Request) string {
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+	return host
 }
 
 func (s *Server) originAllowed(origin string) bool {

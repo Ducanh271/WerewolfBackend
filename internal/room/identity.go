@@ -4,6 +4,7 @@ import (
 	"crypto/subtle"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -51,6 +52,10 @@ type Identity interface {
 const (
 	maxPINFailures = 5
 	pinLockTime    = time.Minute
+	// maxPINFailEntries bounds the fails table (S7): a flood of bogus
+	// nicknames must not grow it without limit. Once full, the entries
+	// least recently tried are dropped to make room.
+	maxPINFailEntries = 5000
 )
 
 // SecretIdentity is the v1 identity: secret token and 4-digit PIN.
@@ -66,6 +71,7 @@ type SecretIdentity struct {
 type pinFailures struct {
 	count       int
 	lockedUntil time.Time
+	lastTry     time.Time
 }
 
 // NewSecretIdentity returns an identity that locks PIN rejoin on the clock.
@@ -107,9 +113,11 @@ func (id *SecretIdentity) ByPIN(nickname, pin string) (engine.PlayerID, string, 
 	now := id.clock.Now()
 	f := id.fails[key]
 	if f == nil {
+		id.evictOldFails(now)
 		f = &pinFailures{}
 		id.fails[key] = f
 	}
+	f.lastTry = now
 	if now.Before(f.lockedUntil) {
 		return "", "", PINLockedError{RetryAfter: f.lockedUntil.Sub(now)}
 	}
@@ -131,6 +139,27 @@ func (id *SecretIdentity) ByPIN(nickname, pin string) (engine.PlayerID, string, 
 	token := id.rnd.Token()
 	id.tokens[token] = p
 	return p, token, nil
+}
+
+// evictOldFails drops the least recently tried entries once the table is
+// full, so a flood of made-up nicknames cannot grow it without limit.
+func (id *SecretIdentity) evictOldFails(now time.Time) {
+	if len(id.fails) < maxPINFailEntries {
+		return
+	}
+	type entry struct {
+		key  string
+		last time.Time
+	}
+	all := make([]entry, 0, len(id.fails))
+	for k, f := range id.fails {
+		all = append(all, entry{k, f.lastTry})
+	}
+	sort.Slice(all, func(i, j int) bool { return all[i].last.Before(all[j].last) })
+	drop := len(all) - maxPINFailEntries + 1
+	for _, e := range all[:drop] {
+		delete(id.fails, e.key)
+	}
 }
 
 // Revoke implements Identity.

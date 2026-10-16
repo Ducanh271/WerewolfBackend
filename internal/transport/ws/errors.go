@@ -10,17 +10,18 @@ import (
 
 // Codes of errors the transport itself raises.
 const (
-	codeBadMessage      = "bad_message"
-	codeUnknownType     = "unknown_type"
-	codeUnknownCommand  = "unknown_command"
-	codeTooLarge        = "message_too_large"
-	codeRateLimited     = "rate_limited"
-	codeNotJoined       = "not_joined"
-	codeAlreadyJoined   = "already_joined"
-	codeInternal        = "internal"
-	codeSecretInURL     = "secret_in_url"
-	codeBadOrigin       = "bad_origin"
-	codeTimerOutOfRange = "timer_out_of_range"
+	codeBadMessage         = "bad_message"
+	codeUnknownType        = "unknown_type"
+	codeUnknownCommand     = "unknown_command"
+	codeTooLarge           = "message_too_large"
+	codeRateLimited        = "rate_limited"
+	codeNotJoined          = "not_joined"
+	codeAlreadyJoined      = "already_joined"
+	codeInternal           = "internal"
+	codeSecretInURL        = "secret_in_url"
+	codeBadOrigin          = "bad_origin"
+	codeTimerOutOfRange    = "timer_out_of_range"
+	codeTooManyConnections = "too_many_connections"
 )
 
 // protoError is a refusal the transport makes before the room hears of the

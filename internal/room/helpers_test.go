@@ -50,13 +50,20 @@ func (f *fixedRandom) setSeed(s int64) {
 
 // recSink records what one phone was sent.
 type recSink struct {
-	mu   sync.Mutex
-	msgs []Message
+	mu      sync.Mutex
+	msgs    []Message
+	evicted []error
 }
 
 func (s *recSink) Deliver(m Message) {
 	s.mu.Lock()
 	s.msgs = append(s.msgs, m)
+	s.mu.Unlock()
+}
+
+func (s *recSink) Evict(reason error) {
+	s.mu.Lock()
+	s.evicted = append(s.evicted, reason)
 	s.mu.Unlock()
 }
 

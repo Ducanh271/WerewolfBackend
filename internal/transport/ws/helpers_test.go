@@ -73,6 +73,12 @@ func newEnv(t *testing.T, mod func(*Config)) *env {
 	}
 	e.rooms = room.NewManager(room.ManagerConfig{Clock: e.clk})
 	cfg := Config{
+		// PingClock is left at its default (room.RealClock{}): the heartbeat's
+		// real 12s/10s defaults never fire within a test's real run time. Tests
+		// of the heartbeat itself (heartbeat_test.go) set PingClock to e.clk
+		// explicitly; sharing it here by default would mean any test that
+		// advances e.clk for an unrelated reason (a game timer) could also
+		// cross the ping-timeout threshold and close connections spuriously.
 		Rooms: e.rooms, AllowAnyOrigin: true, Now: e.now.Now,
 		Logger: slog.New(slog.NewTextHandler(e.logs, &slog.HandlerOptions{Level: slog.LevelDebug})),
 	}

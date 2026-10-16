@@ -52,7 +52,7 @@ func (r *Room) RejoinToken(token string, sink Sink) (*Client, error) {
 		if err != nil {
 			return err
 		}
-		cl = r.reattach(id, sink)
+		cl = r.reattach(id, sink, ReasonAnotherDevice)
 		return nil
 	})
 	return cl, err
@@ -69,7 +69,7 @@ func (r *Room) RejoinPIN(nickname, pin string, sink Sink) (*Client, Credentials,
 			return err
 		}
 		creds = Credentials{Token: token}
-		cl = r.reattach(id, sink)
+		cl = r.reattach(id, sink, ReasonPINTakenOver)
 		return nil
 	})
 	return cl, creds, err
@@ -81,8 +81,14 @@ func (r *Room) attach(id engine.PlayerID, sink Sink) *Client {
 	return &Client{room: r, player: id, conn: conn}
 }
 
-// reattach replaces any earlier connection of the player: one phone at a time.
-func (r *Room) reattach(id engine.PlayerID, sink Sink) *Client {
+// reattach replaces any earlier connection of the player: one phone at a
+// time. A connection still open at this player's old seat is told why and
+// closed (rules §2); a connection already dropped (Disconnect ran first) has
+// nothing left to evict.
+func (r *Room) reattach(id engine.PlayerID, sink Sink, reason error) *Client {
+	if old := r.conns[id]; old != nil {
+		old.sink.Evict(reason)
+	}
 	cl := r.attach(id, sink)
 	if r.host == "" && !r.state.Dealt {
 		r.host = id

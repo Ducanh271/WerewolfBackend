@@ -97,6 +97,60 @@ func TestRejoin_FiveWrongPINsLockWithRetryAfter(t *testing.T) {
 	}
 }
 
+func TestRejoin_TokenFromAnotherTabClosesTheOldOneWithoutItSendingAnything(t *testing.T) {
+	e := newEnv(t, nil)
+	code := e.createRoom()
+	tab1 := e.join(code, "An")
+	token := tab1.Snapshot().Welcome.Str("token")
+
+	tab2 := e.dial(nil)
+	e.send(tab2, map[string]any{"type": "rejoin", "room": code, "token": token})
+	if !tab2.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.Welcome != nil }) {
+		t.Fatalf("second tab: no welcome; errors: %v", tab2.Snapshot().Errors)
+	}
+
+	// tab1 is told and closed on its own, without sending anything itself.
+	if !tab1.Wait(ctx(t), func(s wsclient.Snapshot) bool { return len(s.Errors) >= 1 }) {
+		t.Fatalf("old tab got no error: %v", tab1.Snapshot().Frames)
+	}
+	if got := tab1.Snapshot().Errors[0].Str("code"); got != "disconnected" {
+		t.Fatalf("old tab: code = %q, want disconnected", got)
+	}
+	if got := tab1.Snapshot().Errors[0].Str("message"); got != "disconnected: joined from another device" {
+		t.Fatalf("old tab: message = %q", got)
+	}
+	select {
+	case <-tab1.Done():
+	case <-ctx(t).Done():
+		t.Fatal("the old tab was not closed")
+	}
+}
+
+func TestRejoin_PINFromAnotherPhoneTellsTheOldPhoneBeforeClosingIt(t *testing.T) {
+	e := newEnv(t, nil)
+	code := e.createRoom()
+	old := e.join(code, "An")
+	w := old.Snapshot().Welcome
+
+	fresh := e.dial(nil)
+	e.send(fresh, map[string]any{"type": "rejoin", "room": code, "nickname": "An", "pin": w.Str("pin")})
+	if !fresh.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.Welcome != nil }) {
+		t.Fatalf("new phone: no welcome; errors: %v", fresh.Snapshot().Errors)
+	}
+
+	if !old.Wait(ctx(t), func(s wsclient.Snapshot) bool { return len(s.Errors) >= 1 }) {
+		t.Fatalf("old phone got no error before closing: %v", old.Snapshot().Frames)
+	}
+	if got := old.Snapshot().Errors[0].Str("message"); got != "someone joined with your PIN" {
+		t.Fatalf("old phone: message = %q, want \"someone joined with your PIN\"", got)
+	}
+	select {
+	case <-old.Done():
+	case <-ctx(t).Done():
+		t.Fatal("the old phone was not closed")
+	}
+}
+
 func TestRejoin_LeaveRemovesThePlayerForGood(t *testing.T) {
 	e := newEnv(t, nil)
 	code := e.createRoom()

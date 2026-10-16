@@ -46,6 +46,16 @@ func (s *session) handle(data []byte) bool {
 		}
 		s.reply(errorFrame(err))
 	}
+	// S6: a connection that keeps failing to join/rejoin is closed, so it
+	// cannot sit around forever. S7: this also bounds how many PINs one
+	// connection may try across nicknames before it is cut off.
+	if s.client == nil && err != nil && (typ == typeJoin || typ == typeRejoin) {
+		s.joinFailures++
+		if s.joinFailures >= s.srv.cfg.MaxJoinAttempts {
+			s.shut(websocket.StatusPolicyViolation, "too many failed join attempts")
+			return false
+		}
+	}
 	return true
 }
 

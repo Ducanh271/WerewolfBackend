@@ -77,10 +77,10 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
 | Chủ phòng/máy làm loa sai người | room | `room/speaker.go`, `room/join.go` (`passHost`) |
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
-| Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`), `transport/ws/session.go` (`finish`) |
+| Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`, `reattach` gọi `Sink.Evict` khi vào lại cướp chỗ máy cũ), `transport/ws/session.go` (`finish`, `Evict`) |
 | Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`, mã lỗi ở `errors.go` |
 | Lệnh nhận lỗi `internal`, log có "panic in room" | room | `room/room.go` (`safe`): lỗi lập trình trong engine/vai bị bắt lại, phòng chạy tiếp; xem `stack` trong log |
-| Bị ngắt kết nối bất ngờ | transport | `ratelimit.go` (flood), `session.go` (hàng đợi đầy = "too slow"), `server.go` (Origin) |
+| Bị ngắt kết nối bất ngờ | transport | `ratelimit.go` (flood), `session.go` (hàng đợi đầy = "too slow"; ping/pong không trả lời; quá N lần join/rejoin sai), `server.go` (Origin, `connguard.go` giới hạn kết nối theo IP/tổng) |
 | Lộ thông tin (thấy vai người khác, thấy phiếu sói) | engine view | `engine/view_project.go`, `engine/view_audience.go` (`Audience` của sự kiện), `roles/view_*_test.go`; sau đó `transport/ws/jsonenc.go` |
 | Câu đọc tiếng Việt sai/thiếu | i18n + transport | `i18n/vi.go`; ghép tên người ở `transport/ws/encode.go` → `announcedPlayers` |
 | Định dạng JSON gửi ra sai | transport | `encode.go`, `jsonenc.go`, đối chiếu `docs/protocol.md` |
@@ -128,8 +128,10 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Khoảng cho phép khi chủ phòng chỉnh giờ | `internal/engine/timers_config.go` (`shortTimer`, `dayTimer`, `pauseTimer`) |
 | Câu đọc tiếng Việt | `internal/i18n/vi.go` (mã câu ở `keys.go`) |
 | Số ký tự mã phòng, bảng chữ, thời gian phòng bỏ không | `internal/room/manager.go` (`CodeLength`, `CodeAlphabet`, `IdleTimeout`) |
-| Giới hạn tin nhắn (4 KB, 10 tin/giây, dồn 20, flood 3s, chờ tin đầu 10s) | `internal/transport/ws/config.go` (các hằng `Default...`) |
-| Số lần sai PIN, thời gian khoá | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`) |
+| Giới hạn tin nhắn (4 KB, 10 tin/giây, dồn 20, flood 3s, chờ tin đầu 10s, tối đa 8 lần join/rejoin sai) | `internal/transport/ws/config.go` (các hằng `Default...`) |
+| Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
+| Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
+| Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |
 | Thêm lệnh cho vai mới | `internal/transport/ws/commands.go` (`commandTable`) + `docs/protocol.md` |
 
 Nhớ: luật chơi mới hay mơ hồ thì **hỏi trước**, không tự bịa (xem `CLAUDE.md`). Sau khi sửa, chạy `make fmt test lint`.

@@ -32,6 +32,10 @@ type EventsMsg struct {
 // Sink receives messages on the room goroutine; it must not block.
 type Sink interface {
 	Deliver(Message)
+	// Evict tells this phone that a rejoin elsewhere has taken over its
+	// player: the sink must close the connection, after telling it why if
+	// it can (the message is reason.Error()).
+	Evict(reason error)
 }
 
 type connection struct {

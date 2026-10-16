@@ -24,6 +24,25 @@ var (
 	ErrInternal = errors.New("internal error")
 )
 
+// disconnectReason is an error passed to Sink.Evict: it matches
+// ErrDisconnected (same error code to the client) but carries a message that
+// says why, for the phone being replaced.
+type disconnectReason struct{ msg string }
+
+func (e disconnectReason) Error() string        { return e.msg }
+func (e disconnectReason) Is(target error) bool { return target == ErrDisconnected }
+
+// Reasons a connection is evicted by a later rejoin (rules §2).
+var (
+	// ReasonAnotherDevice is for a rejoin by token: the same player's secret
+	// code was used from a different connection (two tabs, a reload racing
+	// an old tab, a borrowed phone).
+	ReasonAnotherDevice error = disconnectReason{"disconnected: joined from another device"}
+	// ReasonPINTakenOver is for a rejoin by nickname + PIN: another phone
+	// just proved it has the PIN and took the seat.
+	ReasonPINTakenOver error = disconnectReason{"someone joined with your PIN"}
+)
+
 // Config wires a room. Only Code is required; the rest default to the real
 // thing.
 type Config struct {

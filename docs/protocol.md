@@ -19,11 +19,25 @@ durations are milliseconds, times are Unix milliseconds.
 - `/ws` takes **no query string** (a request with one gets `400` `secret_in_url`):
   the secret code and the PIN only ever travel inside messages, because URLs end
   up in logs. The room code goes in the first message, `join` or `rejoin`, which
-  must arrive within 10 s.
+  must arrive within 10 s. That 10 s is counted once, from when the socket
+  opens, not reset by later messages; a connection that fails to join or
+  rejoin 8 times in a row is also closed (bogus tokens, PINs guessed across
+  nicknames).
 - **Origin.** The `Origin` header must be one of the configured origins
   (`ALLOWED_ORIGINS`, comma separated, `scheme://host[:port]`). No `Origin` is
   refused too, unless `ALLOW_ANY_ORIGIN=1` (demo and tests), which allows
   everything. Refused → `403` `bad_origin`.
+- **Connection limits.** The upgrade to `/ws` is refused with `503`
+  `too_many_connections` when the server already holds its configured global
+  cap of open sockets, when one IP already holds its (deliberately high —
+  a table of players usually shares one IP) concurrent cap, or when that IP
+  has opened new connections faster than its per-minute allowance (the real
+  control on connection-flood abuse; defaults 2000 / 100 / 30 per minute).
+- **Heartbeat.** The server pings every connection roughly every 12 s; a
+  connection that does not pong within 10 s of a ping is closed with no
+  further notice (the next connected phone takes over as speaker, rules §1).
+  This is how a phone that lost signal, rather than one that closed cleanly,
+  is noticed.
 - **Limits per connection.** A message over 4 KB gets `error` `message_too_large`
   (over 64 KB the connection is closed). More than 10 messages per second
   (a burst of 20 is allowed) gets `error` `rate_limited` and the message is
@@ -32,8 +46,11 @@ durations are milliseconds, times are Unix milliseconds.
   `unknown_command`. Unknown fields anywhere (a `seed`, a `by`, a `voter`),
   wrong field types, wrong capitals and trailing data are `bad_message`.
 - A dropped connection never removes the player; reconnect with `rejoin`. A
-  rejoin from another phone closes the old socket (its next command gets
-  `disconnected`).
+  rejoin from another phone — by token (another tab, a reload racing the old
+  one) or by nickname + PIN — tells the old socket why and closes it right
+  away, without waiting for it to send anything: `error` `disconnected`,
+  message `"disconnected: joined from another device"` for a token takeover,
+  `"someone joined with your PIN"` for a PIN takeover.
 - `welcome` always comes first, before the first `view`.
 
 The secrecy rule: the server never sends `engine.State`. Every outgoing game
@@ -180,9 +197,12 @@ The `view` object (`engine.View`); absent parts are omitted:
 scheme (`not_host`, `forbidden`, `disconnected`, `bad_credentials`,
 `pin_locked` with `retryAfter`, `room_not_found`), and so do the transport's own:
 `bad_message`, `unknown_type`, `unknown_command`, `message_too_large`,
-`rate_limited`, `not_joined`, `already_joined`. An error the server does not
-know how to name is `internal` with no detail; so is a command that hit a bug
-in the server (it changed nothing, the room goes on).
+`rate_limited`, `not_joined`, `already_joined`, `too_many_connections`. An
+error the server does not know how to name is `internal` with no detail; so
+is a command that hit a bug in the server (it changed nothing, the room goes
+on). A connection closed for failing to join/rejoin too many times, or for
+not answering a ping, gets no error frame first — it is already not behaving
+like a phone that is still there.
 
 A player who does not hold the role of a night command (the pack's vote: who
 is not on the wolf team) always gets exactly

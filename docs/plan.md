@@ -65,7 +65,7 @@ IDs in brackets refer to docs/audit.md.
 - [x] T23 Fix leaks: [S1] [S2] [S3], leak tests [T1], panic recovery [R4] (Opus)
 - [ ] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet) — waits for rule decisions
 - [ ] T25 Voice lines for the speaker phone [L3]; text approved by me first (Sonnet)
-- [ ] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
+- [x] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
 - [ ] T27 Room: [K2] lobby kick, [K3] new game same room, [K1] abort by vote, [S8] host = room creator, [S4] nickname rules (Sonnet)
 - [ ] T28 End-of-game summary [K4] + in-app rules guide and per-role how-to (Sonnet)
 - [ ] T29 Deploy: [D1]–[D9], [S5] IP limits, [R7] room expiry (Sonnet)
