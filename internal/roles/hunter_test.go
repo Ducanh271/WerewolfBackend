@@ -159,6 +159,15 @@ func TestHunter_Shoots_AnnouncedAndTheTargetDiesAtOnce(t *testing.T) {
 	if got := i18n.Vi(i18n.HunterShot, "Phuc", "An"); got != "Phuc bắn An." {
 		t.Fatalf("shot line %q", got)
 	}
+	announced := false
+	for _, e := range g.Events() {
+		if hs, ok := e.(engine.HunterShot); ok {
+			announced = hs.AnnouncementKey() == i18n.HunterShot
+		}
+	}
+	if !announced {
+		t.Fatal("the shot was not announced")
+	}
 	g.As("Hoa").Event(engine.HunterShot{Hunter: g.Player("Phuc"), Target: g.Player("An")})
 	g.Day().NobodyHanged()
 }

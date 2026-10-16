@@ -84,14 +84,23 @@ func decideNominate(s State, cmd Nominate) ([]Event, error) {
 			return nil, fmt.Errorf("%w: %s", ErrAlreadySpared, cmd.Target)
 		}
 	}
+	// A real change restarts the countdown (rules §4 "mỗi lần có người đổi");
+	// resending the same pick is not a change.
+	changed := true
+	if prev, had := s.Day.Nominations[cmd.Voter]; had {
+		changed = prev.Target != cmd.Target
+	}
 	evs := []Event{NominationCast{Voter: cmd.Voter, Target: cmd.Target}}
 	after := Fold(s, evs...)
 	if !nominationsClosed(after) {
 		return evs, nil
 	}
-	// Everybody has chosen. Each change restarts the countdown; when the
+	// Everybody has chosen. Each real change restarts the countdown; when the
 	// change leaves nobody nominated, discussion goes on.
 	if _, ok := topNominee(after); ok {
+		if !changed {
+			return evs, nil
+		}
 		return append(evs, NominationsLocking{Duration: s.Settings.NominationLock}), nil
 	}
 	if s.Phase == PhaseNominationLock {

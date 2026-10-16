@@ -61,10 +61,20 @@ func crossTeamLovers(s State) (a, b PlayerID, ok bool) {
 	return pa.ID, pb.ID, true
 }
 
+// isThirdTeam reports whether the couple is, or was, the third team: either
+// right now (crossed, both alive) or for good once it broke that way
+// (LoversLink.ThirdTeam, frozen at the first lover's death, rules §8).
+func isThirdTeam(s State, crossed bool) bool {
+	return s.Lovers != nil && (crossed || s.Lovers.ThirdTeam)
+}
+
 // CheckWin applies rules §8. Priority when several hold: draw, then the
 // cross-team lovers, then the village, then the wolves.
 func CheckWin(s State) (Outcome, bool) {
 	lovA, lovB, crossed := crossTeamLovers(s)
+	// The lover still alive and waiting to die of grief is left out of the
+	// wolves/villagers count too, not only while both are alive.
+	thirdTeam := isThirdTeam(s, crossed)
 	alive, wolvesAll, wolves, villagers := 0, 0, 0, 0
 	for id, p := range s.Players {
 		if !p.Alive {
@@ -74,8 +84,8 @@ func CheckWin(s State) (Outcome, bool) {
 		if p.Team == TeamWolves {
 			wolvesAll++
 		}
-		if crossed && (id == lovA || id == lovB) {
-			continue // the couple counts on neither side
+		if thirdTeam && (id == s.Lovers.A || id == s.Lovers.B) {
+			continue // the couple counts on neither side, dead or still grieving
 		}
 		switch p.Team {
 		case TeamWolves:
@@ -105,7 +115,7 @@ func CheckWin(s State) (Outcome, bool) {
 // couple. That holds while the couple lives and after it broke as the third
 // team (LoversLink.ThirdTeam): the wolf lover never shares a wolf win (rules §8).
 func teamWinners(s State, winner Team, crossed bool) []PlayerID {
-	thirdTeam := s.Lovers != nil && (crossed || s.Lovers.ThirdTeam)
+	thirdTeam := isThirdTeam(s, crossed)
 	var out []PlayerID
 	for _, id := range s.Seats {
 		p := s.Players[id]

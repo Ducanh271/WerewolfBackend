@@ -20,6 +20,7 @@ func (r *Room) stopTimers() {
 		r.dayT.Stop()
 		r.dayT = nil
 	}
+	r.stopHostGrace()
 }
 
 // phaseDuration is how long the current phase lasts, if it is timed.

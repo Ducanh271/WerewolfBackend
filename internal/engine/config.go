@@ -70,5 +70,25 @@ func validateRoleConfig(playerCount int, roles map[RoleID]int) error {
 		return fmt.Errorf("%w: %d wolves (+%d to be cursed) at %d players, allowed at most %d",
 			ErrTooManyWolves, wolves, cursedReserve, playerCount, limit)
 	}
+	// Every registered role with a copy floor must be met (rules §2 "Dân làng:
+	// 1 trở lên"); visited in ID order like the loop above, for the same
+	// one-error-every-time determinism.
+	for _, id := range sortedRegistryIDs() {
+		rule, ok := Registry[id].(MinCopiesRole)
+		if ok && roles[id] < rule.MinCopies() {
+			return fmt.Errorf("%w: %s needs at least %d", ErrRoleRequired, id, rule.MinCopies())
+		}
+	}
 	return nil
+}
+
+// sortedRegistryIDs lists every registered role once, in a fixed order, so a
+// config with several missing roles always reports the same error.
+func sortedRegistryIDs() []RoleID {
+	ids := make([]RoleID, 0, len(Registry))
+	for id := range Registry {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	return ids
 }

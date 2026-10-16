@@ -46,6 +46,27 @@ func TestWin_CrossTeamCouple_LeftOutOfTheCounts_WolfLoverStillBlocksTheVillage(t
 	expectWinner(t, g, engine.TeamLovers)
 }
 
+// Rules §8: once the village half of a cross-team couple is hanged, the
+// surviving wolf lover (grieving, waiting to die at night) is left out of
+// "wolves ≥ villagers" — so the village does not win just because the wolf
+// is the only wolf left and a lone villager remains — but the wolf still
+// blocks a village win while alive.
+func TestWin_GrievingWolfLover_NotCountedButStillBlocksTheVillage(t *testing.T) {
+	g := cupidTable(t)
+	g.Night().Cupid("Lan").Pairs("An", "Em")
+	killOff(g, "An", "Em", "Chi")
+	g.Dawn()
+	g.Day().Hanged("Em") // the villager half dies by day; An grieves tonight
+	g.ExpectPhase(engine.PhaseDusk)
+	if w := g.State().Winner; w != nil {
+		t.Fatalf("winner = %v, want none yet: the grieving wolf still blocks the village", *w)
+	}
+
+	g.Night() // An, grieving, dies at his own first night call
+	g.Dawn().ExpectDead("An")
+	expectWinner(t, g, engine.TeamVillage)
+}
+
 // Rules §7: Cupid who pairs himself with a wolf belongs to the third team.
 func TestWin_CupidPairedWithAWolf_IsInTheThirdTeam(t *testing.T) {
 	g := cupidTable(t)

@@ -28,6 +28,15 @@ func TestChiefDies_DeadChiefHasFifteenSecondsToNameASuccessor(t *testing.T) {
 	}
 	g.NameSuccessor("Phuc", "Em")
 	g.ExpectChief("Em").ExpectPhase(engine.PhaseDawn)
+	announced := false
+	for _, e := range g.Events() {
+		if cs, ok := e.(engine.ChiefSucceeded); ok {
+			announced = cs.AnnouncementKey() == i18n.ChiefSucceeded
+		}
+	}
+	if !announced {
+		t.Fatal("the succession was not announced")
+	}
 }
 
 func TestChiefDies_NoAnswerInTime_TitleIsLost(t *testing.T) {

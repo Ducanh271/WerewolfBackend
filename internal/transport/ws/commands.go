@@ -51,6 +51,9 @@ type (
 	onArgs struct {
 		On bool `json:"on"`
 	}
+	soundModeArgs struct {
+		Mode string `json:"mode"`
+	}
 	killArgs struct {
 		Kill bool `json:"kill"`
 	}
@@ -113,6 +116,7 @@ var commandTable = map[string]commandSpec{
 		return engine.ConfigureRoles{Roles: a.Roles}
 	}),
 	"configureTimers": configureTimers,
+	"configureSound":  configureSound,
 	"dealRoles": spec(func(_ noArgs, _ engine.PlayerID) engine.Command {
 		return engine.DealRoles{} // the room draws the seed
 	}),
@@ -180,6 +184,24 @@ func wolfVote(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error)
 	}
 	target := *a.Target
 	return func(by engine.PlayerID) engine.Command { return roles.WolfVote{By: by, Target: target} }, nil
+}
+
+// soundModes maps the protocol's string to the engine's SoundMode.
+var soundModes = map[string]engine.SoundMode{
+	"oneSpeaker": engine.OneSpeaker,
+	"allPhones":  engine.AllPhonesSpeak,
+}
+
+func configureSound(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
+	var a soundModeArgs
+	if err := decodeStrict(raw, &a); err != nil {
+		return nil, err
+	}
+	mode, ok := soundModes[a.Mode]
+	if !ok {
+		return nil, badMessage(fmt.Sprintf("unknown sound mode %q", a.Mode))
+	}
+	return func(engine.PlayerID) engine.Command { return engine.ConfigureSound{Mode: mode} }, nil
 }
 
 func configureTimers(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {

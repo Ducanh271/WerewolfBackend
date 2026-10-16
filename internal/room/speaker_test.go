@@ -3,6 +3,7 @@ package room
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	"masoi/internal/engine"
 )
@@ -41,6 +42,33 @@ func TestInPersonSpeaker_HostThenNextConnectedBySeat(t *testing.T) {
 	}
 }
 
+// AllPhones is the "Mọi máy cùng phát" room option (rules §1): everyone
+// speaks, whoever is host and whoever is connected.
+func TestAllPhones_EverySeatSpeaks(t *testing.T) {
+	order := []engine.PlayerID{"a", "b", "c"}
+	got := AllPhones{}.Speakers(Table{Host: "b", Order: order, Connected: func(engine.PlayerID) bool { return false }})
+	if !reflect.DeepEqual(got, order) {
+		t.Fatalf("speakers = %v, want %v", got, order)
+	}
+}
+
+// The host picks the sound mode before the deal (rules §1); it switches
+// every connected phone's speaker flag at once.
+func TestRoom_ConfigureSound_SwitchesToAllPhones(t *testing.T) {
+	g := newGame(t, 3)
+	onlySpeaker(t, g, "p1") // the default, OneSpeaker, starts with the host
+
+	g.must(g.cl["p1"].Submit(as(engine.ConfigureSound{Mode: engine.AllPhonesSpeak})))
+	for _, speaks := range speakerFlags(g) {
+		if !speaks {
+			t.Fatalf("speaker flags = %v, want everyone speaking", speakerFlags(g))
+		}
+	}
+
+	g.must(g.cl["p1"].Submit(as(engine.ConfigureSound{Mode: engine.OneSpeaker})))
+	onlySpeaker(t, g, "p1")
+}
+
 func speakerFlags(g *game) map[engine.PlayerID]bool {
 	out := map[engine.PlayerID]bool{}
 	for id, sink := range g.sink {
@@ -75,21 +103,30 @@ func TestSpeaker_HostSpeaksAndPassesBySeatWhenDisconnected(t *testing.T) {
 	g.cl["p2"].Disconnect()
 	onlySpeaker(t, g, "p3")
 
+	// The room remembers who is currently speaking (rules §1): p1 coming back
+	// does not take the speaker back from p3, who never dropped.
 	cl, err := g.r.RejoinToken(g.cred["p1"].Token, g.sink["p1"])
 	if err != nil {
 		t.Fatal(err)
 	}
 	g.cl["p1"] = cl
-	onlySpeaker(t, g, "p1") // after the deal the host stays the host
+	onlySpeaker(t, g, "p3")
+
+	g.cl["p3"].Disconnect() // only now does it move on, to the next connected seat
+	onlySpeaker(t, g, "p1")
 }
 
 func TestHost_PassesToTheNextPlayerBeforeTheDeal(t *testing.T) {
 	g := newGame(t, 5)
-	g.cl["p1"].Disconnect() // lost connection: the seat is kept, the powers pass
+	g.cl["p1"].Disconnect() // lost connection: the seat is kept, the powers wait
 	order := []engine.PlayerID{"p1", "p2", "p3", "p4", "p5"}
 	if err := g.cl["p1"].Submit(as(engine.SetSeats{Order: order})); err == nil {
 		t.Fatal("a disconnected phone must not act")
 	}
+	if err := g.cl["p2"].Submit(as(engine.SetSeats{Order: order})); !errorsIs(err, ErrNotHost) {
+		t.Fatalf("a few seconds of lost wifi must not transfer host powers, got %v", err)
+	}
+	g.step(hostDisconnectGrace) // still disconnected once the grace period runs out: powers pass
 	g.must(g.cl["p2"].Submit(as(engine.SetSeats{Order: order})))
 	if _, ok := g.snap().Players["p1"]; !ok {
 		t.Fatal("a dropped connection must keep the player's place")
@@ -104,4 +141,22 @@ func TestHost_PassesToTheNextPlayerBeforeTheDeal(t *testing.T) {
 	}
 	onlySpeaker(t, g, "p3")
 	g.must(g.cl["p3"].Submit(as(engine.SetSeats{Order: []engine.PlayerID{"p1", "p3", "p4", "p5"}})))
+}
+
+// Rules §2: the host only loses the powers by pressing leave, or after
+// staying disconnected past the grace period; a short drop changes nothing.
+func TestHost_ReconnectingWithinTheGracePeriod_KeepsThePowers(t *testing.T) {
+	g := newGame(t, 5)
+	g.cl["p1"].Disconnect()
+	g.step(10 * time.Second) // well inside the grace period
+
+	cl, err := g.r.RejoinToken(g.cred["p1"].Token, g.sink["p1"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	g.cl["p1"] = cl
+
+	g.step(hostDisconnectGrace) // long enough that a still-armed timer would have fired by now
+	order := []engine.PlayerID{"p1", "p2", "p3", "p4", "p5"}
+	g.must(g.cl["p1"].Submit(as(engine.SetSeats{Order: order})))
 }

@@ -35,7 +35,7 @@ func TestSetup_OnlyTheHostMayConfigureAndDeal(t *testing.T) {
 	order := []engine.PlayerID{"p1", "p2", "p3", "p4", "p5"}
 	for name, c := range map[string]engine.Command{
 		"seats": engine.SetSeats{Order: order}, "roles": engine.ConfigureRoles{}, "deal": engine.DealRoles{},
-		"timers": engine.ConfigureTimers{},
+		"timers": engine.ConfigureTimers{}, "sound": engine.ConfigureSound{Mode: engine.AllPhonesSpeak},
 	} {
 		if err := g.cl["p2"].Submit(as(c)); !errors.Is(err, ErrNotHost) {
 			t.Errorf("%s from a non-host: %v, want ErrNotHost", name, err)
@@ -55,6 +55,7 @@ func TestSetup_LobbyCommandsAreRejectedAfterTheDeal(t *testing.T) {
 		"roles":  engine.ConfigureRoles{Roles: map[engine.RoleID]int{"Villager": 5}},
 		"deal":   engine.DealRoles{},
 		"timers": engine.ConfigureTimers{Timers: engine.Timers{Day: 5 * time.Minute}},
+		"sound":  engine.ConfigureSound{Mode: engine.AllPhonesSpeak},
 	} {
 		if err := host.Submit(as(c)); !errors.Is(err, engine.ErrWrongPhase) {
 			t.Errorf("host %s after the deal: %v, want ErrWrongPhase", name, err)

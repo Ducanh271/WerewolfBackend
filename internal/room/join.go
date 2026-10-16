@@ -2,9 +2,16 @@ package room
 
 import (
 	"fmt"
+	"time"
 
 	"masoi/internal/engine"
 )
+
+// hostDisconnectGrace is how long the host may be disconnected, before the
+// deal, without losing the host's powers (rules §2): a few seconds of lost
+// wifi changes nothing. Only pressing leave (Client.Leave) transfers them
+// sooner.
+const hostDisconnectGrace = 60 * time.Second
 
 // Client is one phone's handle on the room. Everything it does is done as the
 // player it was admitted as: the room, not the caller, says who that is.
@@ -90,6 +97,9 @@ func (r *Room) reattach(id engine.PlayerID, sink Sink, reason error) *Client {
 		old.sink.Evict(reason)
 	}
 	cl := r.attach(id, sink)
+	if id == r.host {
+		r.stopHostGrace() // the host is back: no transfer was due anyway
+	}
 	if r.host == "" && !r.state.Dealt {
 		r.host = id
 	}
@@ -98,7 +108,9 @@ func (r *Room) reattach(id engine.PlayerID, sink Sink, reason error) *Client {
 }
 
 // Disconnect drops the phone. The player keeps their seat and role. Before
-// the deal the host's powers pass to the next player still connected.
+// the deal, if the host drops, their powers only pass once they have stayed
+// disconnected past hostDisconnectGrace (rules §2); reconnecting before then
+// keeps them.
 func (c *Client) Disconnect() {
 	r := c.room
 	_ = r.do(func() error {
@@ -107,11 +119,33 @@ func (c *Client) Disconnect() {
 		}
 		delete(r.conns, c.player)
 		if c.player == r.host && !r.state.Dealt {
-			r.passHost(c.player)
+			r.armHostGrace(c.player)
 		}
 		r.changed()
 		return nil
 	})
+}
+
+// armHostGrace schedules the host's powers to pass to the next connected
+// player if id, the host, stays disconnected for hostDisconnectGrace.
+func (r *Room) armHostGrace(id engine.PlayerID) {
+	r.stopHostGrace()
+	r.hostGraceT = r.clock.AfterFunc(hostDisconnectGrace, func() {
+		r.post(func() {
+			if r.host == id && !r.connected(id) && !r.state.Dealt {
+				r.passHost(id)
+				r.changed()
+			}
+			r.hostGraceT = nil
+		})
+	})
+}
+
+func (r *Room) stopHostGrace() {
+	if r.hostGraceT != nil {
+		r.hostGraceT.Stop()
+		r.hostGraceT = nil
+	}
 }
 
 // Leave takes the player out of the room for good. Only before the deal.

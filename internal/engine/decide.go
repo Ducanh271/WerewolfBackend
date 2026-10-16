@@ -19,6 +19,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideSetSeats(s, cmd)
 	case ConfigureRoles:
 		return decideConfigureRoles(s, cmd)
+	case ConfigureSound:
+		return decideConfigureSound(s, cmd)
 	case DealRoles:
 		return decideDealRoles(s, cmd)
 	case VoteChief:

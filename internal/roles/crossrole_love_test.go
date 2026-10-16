@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"masoi/internal/engine"
-	"masoi/internal/i18n"
 
 	. "masoi/internal/engine/enginetest"
 )
@@ -28,10 +27,10 @@ func expectWinners(t testing.TB, g *Game, names ...string) {
 	}
 }
 
-// The cursed Hunter in a cross-team couple is hanged. He shoots; the win check
-// after the shot counts his lover alive, on her own team (the couple is
-// broken). She dies of grief in the next night, announced in the morning, and
-// the win check runs again then.
+// The cursed Hunter in a cross-team couple is hanged. He shoots; once he is
+// dead, his grieving partner (rules §8, frozen third team) no longer counts
+// as a villager either, same as neither counted while both were alive, so
+// the win check right after the shot already has 1 wolf ≥ 1 villager.
 func TestCross_CursedHunterInACrossTeamCouple_IsHanged(t *testing.T) {
 	g := cupidTable(t)
 	n := g.Night().Cupid("Lan").Pairs("Phuc", "Chi").PhoneCheck()
@@ -44,11 +43,9 @@ func TestCross_CursedHunterInACrossTeamCouple_IsHanged(t *testing.T) {
 	g.Day().Hanged("Phuc")
 	g.ExpectPhase(engine.PhaseHunterShot)
 	g.Hunter("Phuc").Shoots("Dung")
-	// An against Em and Chi, still alive until the night: the game goes on.
-	g.ExpectPhase(engine.PhaseDusk).ExpectAlive("An", "Chi", "Em")
-
-	g.Night().Wolf("An").Bites("Em")
-	g.Dawn().ExpectDead("Chi", "Em").ExpectAnnouncement(i18n.WinWolves)
+	// An (wolf) against Em (villager): Chi, grieving for Phuc, still does not
+	// count on either side (rules §8 "luôn là phe thứ ba"), so the wolves win
+	// right after the shot, before any further night.
 	expectWinner(t, g, engine.TeamWolves)
 	expectWinners(t, g, "An", "Binh") // Phuc stays on the third team after the couple broke: he loses
 }

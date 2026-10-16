@@ -54,7 +54,7 @@ func (r *Room) table() Table {
 	if len(r.state.Seats) > 0 && len(r.state.Seats) == len(r.joined) {
 		order = r.state.Seats
 	}
-	return Table{Host: r.host, Order: order, Connected: r.connected}
+	return Table{Host: r.host, Order: order, Connected: r.connected, Current: r.speaker}
 }
 
 // changed sends every connected phone whose screen changed its own view and
@@ -62,9 +62,16 @@ func (r *Room) table() Table {
 // message arriving on every phone when one player acts in secret would tell
 // the table that the role being called is alive (rules §3).
 func (r *Room) changed() {
+	speakers := r.pol.Speakers(r.table())
 	speaking := map[engine.PlayerID]bool{}
-	for _, p := range r.pol.Speakers(r.table()) {
+	for _, p := range speakers {
 		speaking[p] = true
+	}
+	// The room remembers who is speaking (rules §1) only when there is a
+	// single one to remember; in AllPhones mode there is nothing to stick to.
+	r.speaker = ""
+	if len(speakers) == 1 {
+		r.speaker = speakers[0]
 	}
 	for _, c := range r.conns {
 		r.send(c, speaking[c.player])

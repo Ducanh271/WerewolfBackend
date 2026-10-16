@@ -63,7 +63,7 @@ IDs in brackets refer to docs/audit.md.
 - [x] T22 Audit → docs/audit.md (Opus)
 - [ ] P0 Throwaway prototype: one human + bots, browser speech (Sonnet). Any time.
 - [x] T23 Fix leaks: [S1] [S2] [S3], leak tests [T1], panic recovery [R4] (Opus)
-- [ ] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet) — waits for rule decisions
+- [x] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet)
 - [ ] T25 Voice lines for the speaker phone [L3]; text approved by me first (Sonnet)
 - [x] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
 - [ ] T27 Room: [K2] lobby kick, [K3] new game same room, [K1] abort by vote, [S8] host = room creator, [S4] nickname rules (Sonnet)
@@ -75,7 +75,3 @@ IDs in brackets refer to docs/audit.md.
 - [ ] P1 Playtest with friends, collect feedback, rebalance
 
 Later (Low in audit): [S9] [S10] [R6] [R8].
-Pending rule decisions (do not implement yet): [L1] [R3] [L5] [K1].
-
-## Open questions (ask the user, don't guess)
-- The pending rule decisions above: [L1] [R3] [L5] [K1], see docs/audit.md §9.

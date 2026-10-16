@@ -98,9 +98,30 @@ func randomRoleList(rng *rand.Rand, players int) map[engine.RoleID]int {
 			}
 		}
 	}
-	if v := players - special - plain; v > 0 {
-		list[roles.Villager] = v
+	v := players - special - plain
+	if v < 1 {
+		// rules §2 "Dân làng: 1 trở lên" is never optional; free one slot for
+		// it, a non-wolf special first, else one plain wolf.
+		freed := false
+		for _, id := range ids {
+			if _, in := list[id]; in && id != roles.Werewolf && engine.Registry[id].BaseTeam() != engine.TeamWolves {
+				delete(list, id)
+				special--
+				freed = true
+				break
+			}
+		}
+		if !freed && plain > 0 {
+			plain--
+			if plain == 0 {
+				delete(list, roles.Werewolf)
+			} else {
+				list[roles.Werewolf] = plain
+			}
+		}
+		v = players - special - plain
 	}
+	list[roles.Villager] = v
 	return list
 }
 

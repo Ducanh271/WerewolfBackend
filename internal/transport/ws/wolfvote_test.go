@@ -43,3 +43,19 @@ func TestCommandTable_CupidPairCarriesTwoPlayers(t *testing.T) {
 		t.Fatal("an unknown field was accepted")
 	}
 }
+
+// docs/protocol.md: configureSound maps "oneSpeaker"/"allPhones" to the
+// engine's SoundMode; anything else is bad_message.
+func TestCommandTable_ConfigureSound(t *testing.T) {
+	build, err := commandTable["configureSound"](json.RawMessage(`{"mode":"allPhones"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := build("p1").(engine.ConfigureSound)
+	if !ok || got.Mode != engine.AllPhonesSpeak {
+		t.Fatalf("got %+v, want ConfigureSound{AllPhonesSpeak}", build("p1"))
+	}
+	if _, err := commandTable["configureSound"](json.RawMessage(`{"mode":"megaphone"}`)); err == nil {
+		t.Fatal("an unknown sound mode was accepted")
+	}
+}

@@ -25,6 +25,8 @@ var (
 	// ErrModeUnsupported means the game mode exists in the model but is not
 	// built yet (Online).
 	ErrModeUnsupported = errors.New("game mode not supported yet")
+	// ErrInvalidSoundMode means ConfigureSound was sent an unknown mode.
+	ErrInvalidSoundMode = errors.New("invalid sound mode")
 
 	// Dealing (rules §2).
 	ErrRolesNotConfigured = errors.New("roles are not configured")
@@ -41,6 +43,9 @@ var (
 	ErrNoWolves             = errors.New("the game needs at least one wolf")
 	ErrTooManyWolves        = errors.New("too many wolves for this number of players")
 	ErrRoleNeedsMorePlayers = errors.New("role needs more players")
+	// ErrRoleRequired means the role list is missing a role that every game
+	// must include at least one copy of (rules §2: at least one Villager).
+	ErrRoleRequired = errors.New("role list is missing a required role")
 
 	// Night actions (rules §3, §5, §6).
 	ErrNotYourTurn       = errors.New("not your turn")

@@ -71,18 +71,20 @@ type Room struct {
 	done  chan struct{}
 
 	// Owned by the room goroutine.
-	state     engine.State
-	log       []engine.Event
-	nextID    int
-	joined    []engine.PlayerID // join order
-	host      engine.PlayerID
-	conns     map[engine.PlayerID]*connection
-	day       dayClock
-	armedFor  armKey
-	phaseT    Timer
-	dayT      Timer
-	deadline  time.Time
-	closeOnce bool
+	state      engine.State
+	log        []engine.Event
+	nextID     int
+	joined     []engine.PlayerID // join order
+	host       engine.PlayerID
+	speaker    engine.PlayerID // who is reading announcements aloud now, "" before the first choice (rules §1)
+	conns      map[engine.PlayerID]*connection
+	day        dayClock
+	armedFor   armKey
+	phaseT     Timer
+	dayT       Timer
+	hostGraceT Timer // pending host-powers transfer, armed while the host is disconnected before the deal (rules §2)
+	deadline   time.Time
+	closeOnce  bool
 
 	active atomic.Int64 // unix nanoseconds of the last thing a player did
 }
@@ -219,6 +221,9 @@ func (r *Room) apply(c engine.Command) error {
 	for _, e := range evs {
 		if started, ok := e.(engine.DayStarted); ok {
 			r.day.reset(started.Duration, r.clock.Now())
+		}
+		if sound, ok := e.(engine.SoundConfigured); ok {
+			r.setSoundPolicy(sound.Mode)
 		}
 	}
 	r.rearm()

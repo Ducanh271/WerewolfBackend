@@ -32,7 +32,7 @@ func (c *Client) Submit(build PlayerCommand) error {
 			}
 			cmd.Seed = r.rnd.Seed() // whatever the client sent is dropped
 			return r.execute(cmd)
-		case engine.SetSeats, engine.ConfigureRoles, engine.ConfigureTimers:
+		case engine.SetSeats, engine.ConfigureRoles, engine.ConfigureTimers, engine.ConfigureSound:
 			if err := r.hostOnly(c.player); err != nil {
 				return err
 			}

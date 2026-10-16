@@ -7,7 +7,8 @@ Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên 
 App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi. **Không có thiết bị quản trò riêng**: mỗi người chỉ dùng điện thoại của mình.
 
 - **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày. Mọi điện thoại đều hiện phần công khai (lượt gọi đêm, đếm giờ, lời công bố, phiếu ban ngày) bằng chữ.
-- **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa.
+- **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa: máy đang đọc giữ vai loa cho tới khi chính máy đó mất kết nối; chủ phòng quay lại giữa lúc máy khác đang đọc **không** lấy lại vai loa ngay, chỉ chuyển tiếp khi máy đang đọc mất kết nối.
+- **Âm thanh**: chủ phòng chọn trước khi chia vai, một trong hai: **Một máy làm loa** (mặc định, chơi trực tiếp — như mô tả trên) hoặc **Mọi máy cùng phát** (mọi điện thoại đều đọc; dành cho chơi online sau này). Thông báo công khai luôn được gửi dạng chữ cho mọi máy ở cả hai chế độ; tuỳ chọn chỉ quyết định máy nào phát thêm bằng giọng nói.
 - **Ban ngày** mọi người nói chuyện trực tiếp; app chỉ lo đếm giờ, đếm phiếu và công bố.
 
 Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
@@ -22,7 +23,7 @@ Nguyên tắc chung: **không lật vai khi chết**. Ngoại lệ duy nhất l�
 
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự. **Chủ phòng là người tạo phòng, và cũng là người chơi.** Quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào (nhưng điện thoại vẫn làm loa như đã nói ở §1). Chủ phòng rời phòng trước khi chia vai thì quyền chuyển cho người vào phòng kế tiếp (còn trong phòng). Các bước:
+Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự. **Chủ phòng là người tạo phòng, và cũng là người chơi.** Quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào (nhưng điện thoại vẫn làm loa như đã nói ở §1). Trước khi chia vai, chủ phòng **chỉ mất quyền** khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối vài giây rồi vào lại không đổi gì. Khi mất quyền (rời phòng hoặc hết 60 giây), quyền chuyển cho người vào phòng kế tiếp (còn kết nối). Các bước:
 
 1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
 2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
@@ -270,7 +271,7 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 - Điện thoại cặp đôi hiện **liên kết** giữa hai người (người kia, vai của họ, màu theo phe hiện tại của cặp, bảng dưới). Cupid không thấy liên kết và không biết phe của cặp.
 - Một người trong cặp chết thì người kia **chết theo**, vì bất kỳ lý do gì, nhưng thời điểm phụ thuộc lúc người đầu tiên chết:
   - **Chết ban đêm** (cắn, thuốc độc, độc Hiệp sĩ): người kia chết **cùng đêm đó**, ở bước 7 của §9.
-  - **Chết ban ngày** (bị treo, bị Thợ săn bắn, kể cả Thợ săn bắn lúc trời sáng): người kia **chưa chết ngay** mà “đau buồn mà chết” trong **đêm kế tiếp**. Đến lúc đó họ vẫn là người sống: được vote, đề cử, có thể bị treo (bị treo thì chết luôn), kiểm tra thắng thua tính họ còn sống, và trên máy người khác họ hiện còn sống đến khi loa đọc tên.
+  - **Chết ban ngày** (bị treo, bị Thợ săn bắn, kể cả Thợ săn bắn lúc trời sáng): người kia **chưa chết ngay** mà “đau buồn mà chết” trong **đêm kế tiếp**. Đến lúc đó họ vẫn là người sống: được vote, đề cử, có thể bị treo (bị treo thì chết luôn), kiểm tra thắng thua tính họ là **còn sống** (không phải đã chết), và trên máy người khác họ hiện còn sống đến khi loa đọc tên. Vẫn không được tính vào số sói/số dân khi xét thắng, vì vẫn là phe thứ ba (§8).
   - Vai **có lượt gọi ban đêm** chết ngay khi đến lượt **đầu tiên** của mình trong đêm đó (Sói nguyền chết ở lượt Sói nguyền, không đợi tới lượt bầy; người phe sói còn có lượt bầy thì lượt nào đến trước). Điện thoại báo cho họ, họ không dùng được chức năng, lượt gọi vẫn chạy đủ giờ. Sói chết kiểu này không được tính vào phiếu bầy.
   - Vai **không có lượt gọi** (Dân, Thợ săn, Hiệp sĩ…) chết ở bước 7 khi tính kết quả đêm.
   - Cái chết được loa công bố **sáng hôm sau cùng người chết khác** (theo thứ tự ghế, không nêu nguyên nhân). Thợ săn chết kiểu này bắn sau thông báo sáng; Trưởng làng truyền chức sau khi xét thắng thua.
@@ -318,7 +319,16 @@ Làm rõ:
 - Nếu nhiều điều kiện thắng cùng đúng, thứ tự ưu tiên là: **Cặp đôi khác phe > Dân > Sói**. Ví dụ: chỉ còn một cặp khác phe sống thì Cặp đôi thắng, không phải Sói thắng (0 sói ≥ 0 dân không được tính là sói thắng).
 - Sói chỉ thắng khi còn **ít nhất một con sói** sống (không tính sói trong cặp khác phe).
 - Đã thành cặp khác phe (phe thứ ba) thì **luôn** là phe thứ ba, kể cả sau khi một người trong cặp chết: hai người yêu chỉ thắng khi Cặp đôi thắng. Sói thắng thì con sói trong cặp **thua** (nhiệm vụ của nó là diệt cả sói khác lẫn dân); Dân thắng thì người dân trong cặp cũng thua. Màn hình kết thúc ván không tính họ là người thắng.
+- Khi một người trong cặp khác phe đã chết (người kia đang đau buồn, chờ chết đêm sau, §7): người còn sống **không tính** vào "số sói còn sống" hay "số dân còn sống" khi xét thắng, giống như lúc cả hai còn sống. Nhưng nếu người đó là sói, con sói ấy **vẫn được tính** ở điều kiện "còn ít nhất một con sói sống": Dân không thắng chỉ vì cặp đó không được tính vào phe dân.
 - Kiểm tra điều kiện thắng chạy **sau khi Thợ săn bắn** (bước 9 của mục 9), luôn vào ban ngày. Nếu ván đã kết thúc thì **bỏ qua** việc Trưởng làng chọn người kế nhiệm.
+
+## 8b. Huỷ ván
+
+Sau khi chia vai, bất kỳ người chơi nào (còn sống hay đã chết) cũng đề xuất **huỷ ván** được. Ván chỉ huỷ khi **trên 70%** tổng số người từng vào ván (cả còn sống và đã chết) bỏ phiếu đồng ý; chủ phòng **không** có quyền huỷ một mình, và không ai có quyền huỷ riêng ngoài phiếu này.
+
+Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng hồ hay bước đang chạy, ai vẫn phải thao tác đúng lượt của mình trong khi phiếu đang diễn ra. Khi phiếu đạt trên 70%, ván kết thúc ngay (không có phe thắng), và **mọi người xem được toàn bộ vai và diễn biến**, giống lúc ván kết thúc bình thường (mục 4).
+
+(Cài đặt ở T27; mục này chỉ chốt luật.)
 
 ## 9. Thứ tự phân giải lúc trời sáng
 
@@ -348,6 +358,7 @@ App tính kết quả đêm theo đúng thứ tự sau:
 | Thợ săn chết theo người yêu hoặc vì thuốc độc | Vẫn được bắn |
 | Một người yêu bị treo hoặc bị Thợ săn bắn ban ngày | Người kia sống qua hết ngày, chết đêm kế tiếp (§7), công bố sáng hôm sau |
 | Cặp khác phe còn sống cùng Dân và sói khác | Cặp không tính vào hai bên; sói trong cặp vẫn chặn Dân thắng; cặp chỉ thắng khi là hai người cuối |
+| Một người trong cặp khác phe đã chết (đau buồn), người còn lại là sói, còn Dân và sói khác sống | Người còn sống không tính vào số sói/số dân; vẫn chặn Dân thắng vì vẫn là một con sói sống |
 
 ## 9b. Thẻ vai (mô tả cho người chơi)
 

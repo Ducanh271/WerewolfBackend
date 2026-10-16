@@ -69,6 +69,10 @@ type Settings struct {
 	// Mode is how the table plays. Only InPerson exists in v1.
 	Mode Mode
 
+	// Sound picks who reads announcements aloud (rules §1 "Âm thanh");
+	// zero value is OneSpeaker, the default.
+	Sound SoundMode
+
 	RoleView       time.Duration // everyone looks at their role after the deal
 	Announce       time.Duration // pause after the dawn announcement and at dusk
 	NightStep      time.Duration // each role's turn at night, real or fake

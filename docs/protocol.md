@@ -98,6 +98,7 @@ place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 | `setSeats` | `order: [id]` | lobby, host (the room checks) | `SetSeats` |
 | `configureRoles` | `roles: {role: n}` | lobby, host | `ConfigureRoles` |
 | `configureTimers` | `timers: {roleView, chiefElection, nightStep, phoneCheck, loversMeet, announce, day, nominationLock, defense, verdict, hunterShot, chiefSuccession}` in ms, only the ones to change | lobby, host | `ConfigureTimers`; out of range → `timer_out_of_range` |
+| `configureSound` | `mode: "oneSpeaker"` (default) or `"allPhones"` | lobby, host | `ConfigureSound`; unknown mode → `bad_message` |
 | `dealRoles` | – | lobby, host | `DealRoles` (seed from the room) |
 | `voteChief` | `candidate` | Chief election | `VoteChief` |
 | `nameSuccessor` | `successor` | dead Chief, 15 s | `NameSuccessor` |
@@ -129,8 +130,13 @@ on every phone would tell that the role being called is alive, rules §3).
 ```json
 {"type": "view", "deadline": 1760500000000, "speaker": true, "view": { … }}
 ```
-`speaker` is added by the room, only `true` and only for the phone that reads aloud
-(the host, or the next connected player in seat order if the host is gone).
+`speaker` is added by the room, only `true` and only for the phone(s) that read
+aloud. The host sets the room's sound mode with `configureSound` before the
+deal (rules §1, default `oneSpeaker`): in `oneSpeaker` mode exactly one phone
+speaks — the one currently reading keeps it until it drops, which is then the
+next connected player in seat order (the room remembers who is speaking, so a
+phone coming back mid-announcement never takes it back); in `allPhones` mode
+`speaker: true` goes out to every phone.
 `deadline` is added by the room: when the running phase or night step ends.
 Every night step lasts the same time, so it tells nothing about who is alive.
 

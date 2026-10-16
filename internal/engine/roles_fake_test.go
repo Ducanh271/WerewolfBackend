@@ -57,11 +57,20 @@ type fakePackRole struct {
 
 func (fakePackRole) AlwaysCalled() bool { return true }
 
+// fakeMinCopiesRole is a role every game must deal at least once, like the
+// Villager.
+type fakeMinCopiesRole struct {
+	fakeMultiRole
+	min int
+}
+
+func (r fakeMinCopiesRole) MinCopies() int { return r.min }
+
 func init() {
 	Register(fakePackRole{fakeMultiRole{fakeRole{id: roleWerewolf, team: TeamWolves, call: &NightCall{Order: 5}}}})
 	Register(fakeRole{id: roleWolfSeer, team: TeamWolves, call: &NightCall{Order: 4}})
 	Register(fakeCurseRole{fakeRole{id: roleCursedWolf, team: TeamWolves, call: &NightCall{Order: 3, Nights: []int{1, 2, 3}}}})
-	Register(fakeMultiRole{fakeRole{id: roleVillager, team: TeamVillage}})
+	Register(fakeMinCopiesRole{fakeMultiRole{fakeRole{id: roleVillager, team: TeamVillage}}, 1})
 	Register(fakeRole{id: roleSeer, team: TeamVillage, call: &NightCall{Order: 7}})
 	Register(fakeMinPlayersRole{fakeRole{id: roleDetective, team: TeamVillage, call: &NightCall{Order: 8}}, 9})
 	Register(fakeMinPlayersRole{fakeRole{id: roleCupid, team: TeamVillage, call: &NightCall{Order: 0, Nights: []int{1}}}, 10})

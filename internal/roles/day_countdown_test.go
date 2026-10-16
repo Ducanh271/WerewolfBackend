@@ -22,6 +22,24 @@ func TestDay_NominationCountdown_ChangingAChoiceRestartsIt(t *testing.T) {
 	d.TimeOut().ExpectPhase(engine.PhaseTrial).ExpectOnTrial("Hoa")
 }
 
+// Rules §4: "mỗi lần có người đổi thì đếm lại từ đầu" — resending the exact
+// same pick is not a change, so it must not restart the countdown.
+func TestDay_NominationCountdown_ResendingTheSameChoiceDoesNotRestartIt(t *testing.T) {
+	g, d := day(t)
+	d.Nominate("An", "Giang")
+	nobodyExcept(d, "An")
+	d.ExpectPhase(engine.PhaseNominationLock)
+	first := engine.PhaseTimeout{Phase: g.State().Phase, Seq: g.State().Seq}
+
+	for i := 0; i < 3; i++ {
+		d.Nominate("An", "Giang") // the exact same pick, resent again and again
+	}
+	d.ExpectPhase(engine.PhaseNominationLock)
+
+	g.Do(first) // the original countdown's timeout must still be the live one
+	d.ExpectPhase(engine.PhaseTrial).ExpectOnTrial("Giang")
+}
+
 func TestDay_NominationCountdown_IsTenSecondsByDefault(t *testing.T) {
 	g, d := day(t)
 	d.Nominate("An", "Giang")

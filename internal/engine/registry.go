@@ -52,6 +52,13 @@ type MultiCopyRole interface {
 	AllowsMultipleCopies() bool
 }
 
+// MinCopiesRole is implemented by a role every game must deal at least once,
+// like the Villager (rules §2 "Dân làng: 1 trở lên"). Unlike MinPlayersRule
+// (a table-size floor), this is a floor on the role's own count.
+type MinCopiesRole interface {
+	MinCopies() int
+}
+
 // CurseSource is implemented by roles that turn a villager into a wolf during
 // the game. The wolf limit of rules §2 counts that future wolf, so one wolf
 // slot is reserved when such a role is selected.

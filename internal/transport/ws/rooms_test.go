@@ -91,3 +91,24 @@ func TestRooms_OnlyTheHostPhoneIsTheSpeaker(t *testing.T) {
 		t.Errorf("a second phone is told to speak: %v", other.Snapshot().View)
 	}
 }
+
+// docs/protocol.md "configureSound": the host switches the room to the
+// "Mọi máy cùng phát" option before the deal (rules §1) and every phone, not
+// just the host's, is told to speak.
+func TestRooms_ConfigureSoundAllPhones_EveryoneBecomesSpeaker(t *testing.T) {
+	e := newEnv(t, nil)
+	code := e.createRoom()
+	host := e.join(code, "An")
+	other := e.join(code, "Binh")
+	two := func(s wsclient.Snapshot) bool { return len(s.Events) == 2 }
+	host.Wait(ctx(t), two)
+	other.Wait(ctx(t), two)
+
+	e.send(host, cmd("configureSound", map[string]any{"mode": "allPhones"}))
+	if !other.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.View.Get("speaker") == true }) {
+		t.Fatalf("Binh was never told to speak: %v", other.Snapshot().View)
+	}
+	if host.Snapshot().View["speaker"] != true {
+		t.Errorf("the host must still speak too: %v", host.Snapshot().View)
+	}
+}

@@ -50,6 +50,7 @@ var codeTable = []struct {
 	{engine.ErrDuplicateSeat, "duplicate_seat"},
 	{engine.ErrTimerOutOfRange, codeTimerOutOfRange},
 	{engine.ErrModeUnsupported, "mode_unsupported"},
+	{engine.ErrInvalidSoundMode, "invalid_sound_mode"},
 	{engine.ErrRolesNotConfigured, "roles_not_configured"},
 	{engine.ErrSeatsNotSet, "seats_not_set"},
 	{engine.ErrAlreadyDealt, "already_dealt"},

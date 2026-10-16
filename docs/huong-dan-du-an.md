@@ -15,7 +15,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 |---|---|---|
 | engine | `internal/engine` | **Luật chơi thuần túy**: trạng thái, lệnh, sự kiện, đêm/ngày, kiểm tra thắng, "view" cho từng người. Không mạng, không giờ, không ngẫu nhiên. |
 | roles | `internal/roles` | Mỗi vai một file (Sói, Dân, Bảo vệ, Tiên tri...). Tự đăng ký vào engine. |
-| room | `internal/room` | Một phòng = một goroutine: nhận lệnh lần lượt, hẹn giờ, phát view, vào lại phòng (token/PIN), chọn máy làm loa. `Manager` tạo phòng theo mã và xoá phòng bỏ không 2 giờ. |
+| room | `internal/room` | Một phòng = một goroutine: nhận lệnh lần lượt, hẹn giờ, phát view, vào lại phòng (token/PIN), chọn máy làm loa (`SpeakerPolicy`: `InPersonSpeaker` một máy, nhớ máy đang đọc; `AllPhones` mọi máy, chọn bằng lệnh `configureSound`). `Manager` tạo phòng theo mã và xoá phòng bỏ không 2 giờ. |
 | transport | `internal/transport/ws` | HTTP + WebSocket: đọc JSON, kiểm tra, đổi thành lệnh; đổi view thành JSON. Không có luật chơi. `wsclient/` là "điện thoại giả" cho test và demo. |
 | store | `internal/store` | Kho sự kiện trong RAM (sau này đổi sang database mà không sửa chỗ khác). |
 | i18n | `internal/i18n` | Câu đọc tiếng Việt (`vi.go`) và mã câu (`keys.go`). |
@@ -75,7 +75,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Luật sai (ai thắng, ai chết, thứ tự đêm) | engine / roles | `engine/night_resolve.go`, `engine/win.go` (thắng thua chỉ xét ban ngày, trong `engine/after_death.go`), file vai trong `roles/`; luật gốc `docs/rules.md` |
 | Lệnh bị báo `wrong_phase` / `not_your_turn` | engine | `engine/decide.go`, `engine/night_actor.go`, `engine/day_nominate.go` |
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
-| Chủ phòng/máy làm loa sai người | room | `room/speaker.go`, `room/join.go` (`passHost`) |
+| Chủ phòng/máy làm loa sai người | room | `room/speaker.go` (`InPersonSpeaker`, `AllPhones`), `room/join.go` (`passHost`, `armHostGrace` — chủ phòng rớt mạng chưa quá 60 giây (`hostDisconnectGrace`) thì chưa mất quyền) |
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
 | Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`, `reattach` gọi `Sink.Evict` khi vào lại cướp chỗ máy cũ), `transport/ws/session.go` (`finish`, `Evict`) |
 | Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`, mã lỗi ở `errors.go` |
@@ -132,6 +132,7 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |
+| Thời gian chủ phòng được rớt mạng trước khi mất quyền (60s) | `internal/room/join.go` (`hostDisconnectGrace`) |
 | Thêm lệnh cho vai mới | `internal/transport/ws/commands.go` (`commandTable`) + `docs/protocol.md` |
 
 Nhớ: luật chơi mới hay mơ hồ thì **hỏi trước**, không tự bịa (xem `CLAUDE.md`). Sau khi sửa, chạy `make fmt test lint`.
