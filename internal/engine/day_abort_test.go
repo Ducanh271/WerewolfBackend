@@ -169,6 +169,49 @@ func TestDay_AbortVote_DeathDuringTheDayRechecksTheThreshold(t *testing.T) {
 	}
 }
 
+// TestDay_AbortVote_WinTakesPriorityOverAbortOnTheSameDeath: a hanging that
+// both wins the game and pushes a pending abort vote over 2/3 is a win, not
+// an abort (the user's call: check the win first).
+func TestDay_AbortVote_WinTakesPriorityOverAbortOnTheSameDeath(t *testing.T) {
+	s := NewState()
+	s.Phase = PhaseVerdict
+	s.Day.Defendant = "wolf"
+	s.Day.Verdicts = map[PlayerID]bool{}
+	// The last wolf is on trial: hanging it wins the game for the village.
+	s.Players["a"] = &Player{ID: "a", Alive: true, Team: TeamVillage}
+	s.Players["b"] = &Player{ID: "b", Alive: true, Team: TeamVillage}
+	s.Players["c"] = &Player{ID: "c", Alive: true, Team: TeamVillage}
+	s.Players["wolf"] = &Player{ID: "wolf", Alive: true, Team: TeamWolves}
+	// 4 alive needs 3 yes; only 2 voted (a, b). Once "wolf" is hanged, only 3
+	// remain and 2 yes is already 2/3 of them — the same death that wins the
+	// game for the village would also pass the abort vote if it were checked.
+	s = Fold(s, AbortVoteCast{Voter: "a", Yes: true})
+	s = Fold(s, AbortVoteCast{Voter: "b", Yes: true})
+	s = Fold(s, VerdictCast{Voter: "a", Kill: true})
+	s = Fold(s, VerdictCast{Voter: "b", Kill: true})
+
+	evs, err := Decide(s, CastVerdict{Voter: "c", Kill: true})
+	if err != nil {
+		t.Fatalf("Decide(CastVerdict) = %v, want no error", err)
+	}
+	after := Fold(s, evs...)
+	if after.Phase != PhaseEnded {
+		t.Fatalf("phase = %s, want Ended", after.Phase)
+	}
+	if after.Winner == nil || *after.Winner != TeamVillage {
+		t.Fatalf("winner = %v, want Village: the win must be checked before the abort vote", after.Winner)
+	}
+	var ended GameEnded
+	for _, e := range evs {
+		if ge, ok := e.(GameEnded); ok {
+			ended = ge
+		}
+	}
+	if ended.Outcome.Aborted {
+		t.Fatalf("outcome = %+v, want Aborted: false — a real win, not an abort", ended.Outcome)
+	}
+}
+
 func TestDay_AbortVote_IsPublicInTheView(t *testing.T) {
 	s := NewState()
 	s.Phase = PhaseDay
