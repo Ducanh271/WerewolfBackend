@@ -41,12 +41,12 @@ func (e DetectiveChecked) Audience(engine.State) engine.Audience {
 }
 
 // Narrate: the end-of-game summary (audit K4) says what he found.
-func (e DetectiveChecked) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+func (e DetectiveChecked) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
 	key := i18n.SummaryDetectiveClear
 	if e.HasWolf {
 		key = i18n.SummaryDetectiveWolf
 	}
-	return engine.NarrateDetective, i18n.Vi(key, name(e.Target)), true
+	return engine.NarrateDetective, i18n.Vi(key, name(e.Target)), e.Target, true
 }
 
 func (detective) ID() engine.RoleID            { return Detective }

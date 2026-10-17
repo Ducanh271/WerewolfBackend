@@ -30,6 +30,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 
 ## Conventions
 - Code, identifiers, comments: English. User-facing strings (announcements): Vietnamese, kept in `internal/i18n/vi.go`.
+- Mọi chữ người dùng thấy nằm trong i18n dưới dạng mẫu câu đầy đủ có placeholder; không ghép mảnh câu trong code (để sau thêm ngôn ngữ khác chỉ cần thêm 1 file).
 - Errors: return typed errors from `engine/errors.go` (e.g. `ErrNotYourTurn`); never panic on player input.
 - Tests: table-driven. Rule tests are scenario tests named after the rule, e.g. `TestNight_GuardAndWitchSaveSameTarget_AnnouncesProtected`. Every row of the table in `docs/rules.md` §9 must have a test.
 - Use the test helper `enginetest.NewGame(t, roles...)` and builder-style actions; keep scenarios readable by a non-programmer.

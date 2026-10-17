@@ -49,8 +49,8 @@ func (e PlayerVisited) Audience(engine.State) engine.Audience {
 }
 
 // Narrate: the end-of-game summary (audit K4) says whom she blocked.
-func (e PlayerVisited) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
-	return engine.NarrateVisitor, i18n.Vi(i18n.SummaryVisitorBlock, name(e.Target)), true
+func (e PlayerVisited) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
+	return engine.NarrateVisitor, i18n.Vi(i18n.SummaryVisitorBlock, name(e.Target)), e.Target, true
 }
 
 func (visitor) ID() engine.RoleID            { return Visitor }

@@ -61,12 +61,12 @@ func (e WitchPoisoned) Audience(engine.State) engine.Audience {
 }
 
 // Narrate: the end-of-game summary (audit K4) says whom she saved or killed.
-func (e WitchHealed) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
-	return engine.NarrateWitch, i18n.Vi(i18n.SummaryHeal, name(e.Target)), true
+func (e WitchHealed) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
+	return engine.NarrateWitch, i18n.Vi(i18n.SummaryHeal, name(e.Target)), e.Target, true
 }
 
-func (e WitchPoisoned) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
-	return engine.NarrateWitch, i18n.Vi(i18n.SummaryWitchPoison, name(e.Target)), true
+func (e WitchPoisoned) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
+	return engine.NarrateWitch, i18n.Vi(i18n.SummaryWitchPoison, name(e.Target)), e.Target, true
 }
 
 func (witch) ID() engine.RoleID            { return Witch }

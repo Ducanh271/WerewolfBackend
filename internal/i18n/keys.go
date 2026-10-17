@@ -73,6 +73,21 @@ const (
 	SummaryCurse           = "summary.curse"
 	SummaryKnightPoison    = "summary.knight_poison"
 	SummaryCupidPair       = "summary.cupid_pair"
+	// SummaryNightLabel and SummaryDayLabel are the "Đêm N" / "Ngày N" line
+	// headers; the number is passed as a string (i18n.Vi only substitutes
+	// "%s").
+	SummaryNightLabel = "summary.night_label"
+	SummaryDayLabel   = "summary.day_label"
+	// SummaryDawnDeaths and SummaryDawnNobodyDied are the night's outcome,
+	// read after "→ ". They say only who died, never why (that is already in
+	// the clauses before the arrow): a Guard's or Witch's save and an
+	// uneventful night both read as "Không ai chết."
+	SummaryDawnDeaths     = "summary.dawn_deaths"
+	SummaryDawnNobodyDied = "summary.dawn_nobody_died"
+	// SummaryAborted is the final line of a game the table voted to call off
+	// (audit K1): shorter than the live announcement (i18n.GameAborted),
+	// which the summary does not reuse.
+	SummaryAborted = "summary.aborted"
 )
 
 // Night notices, shown as text on one player's phone (rules §3).

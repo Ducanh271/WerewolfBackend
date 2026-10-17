@@ -46,8 +46,8 @@ func (e LoversPaired) Audience(engine.State) engine.Audience {
 }
 
 // Narrate: the end-of-game summary (audit K4) says who the couple is.
-func (e LoversPaired) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
-	return engine.NarrateCupid, i18n.Vi(i18n.SummaryCupidPair, name(e.A), name(e.B)), true
+func (e LoversPaired) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
+	return engine.NarrateCupid, i18n.Vi(i18n.SummaryCupidPair, name(e.A), name(e.B)), "", true
 }
 
 func (cupid) ID() engine.RoleID     { return Cupid }

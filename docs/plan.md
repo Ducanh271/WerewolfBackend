@@ -86,3 +86,6 @@ Later (Low in audit): [S9] [S10] [R6] [R8].
 
 Later (not designed yet): room visibility — public (listed, anyone can join) vs
 private (invite-only, needs a friends feature).
+
+Later (not designed yet): Đa ngôn ngữ: thêm `i18n/en.go` cùng khoá, người chơi
+chọn ngôn ngữ khi vào phòng, `ViewFor` soạn câu theo ngôn ngữ người xem.

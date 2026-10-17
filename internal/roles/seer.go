@@ -35,12 +35,12 @@ func (e SeerChecked) Audience(engine.State) engine.Audience {
 }
 
 // Narrate: the end-of-game summary (audit K4) says what she saw.
-func (e SeerChecked) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+func (e SeerChecked) Narrate(name func(engine.PlayerID) string) (int, string, engine.PlayerID, bool) {
 	key := i18n.SummarySeerVillager
 	if e.IsWolf {
 		key = i18n.SummarySeerWolf
 	}
-	return engine.NarrateSeer, i18n.Vi(key, name(e.Target)), true
+	return engine.NarrateSeer, i18n.Vi(key, name(e.Target)), e.Target, true
 }
 
 func (seer) ID() engine.RoleID            { return Seer }

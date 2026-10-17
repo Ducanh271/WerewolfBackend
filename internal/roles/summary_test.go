@@ -40,11 +40,11 @@ func TestSummary_NarratesNightsAndDaysInVietnamese(t *testing.T) {
 	g.ExpectPhase(engine.PhaseEnded)
 
 	want := []string{
-		"Em đã được bầu làm Trưởng làng.",
-		"Đêm 1: Bảo vệ bảo vệ Hoa, Sói cắn Phuc, Phù thủy cứu Phuc, Tiên tri soi Dung ra không phải Sói, Không có ai chết.",
+		"Em được bầu làm Trưởng làng.",
+		"Đêm 1: Bảo vệ che chở Hoa. Sói cắn Phuc, Phù thủy cứu Phuc. Tiên tri soi Dung: không phải Sói. → Không ai chết.",
 		"Ngày 1: Không ai bị treo.",
-		"Đêm 2: Sói cắn Giang, Đêm qua, Giang đã chết.",
-		"Bàn đã bỏ phiếu huỷ ván. Ván kết thúc, không có phe thắng.",
+		"Đêm 2: Sói cắn Giang. → Giang chết.",
+		"Bàn bỏ phiếu huỷ ván. Không có phe thắng.",
 	}
 	for _, who := range []string{"An", "Giang", "Khoa"} { // a wolf, the dead, a bystander: everybody sees it
 		if got := g.As(who).View().Summary; !reflect.DeepEqual(got, want) {
