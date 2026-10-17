@@ -45,6 +45,10 @@ type View struct {
 	Winner     *Team      // set when the game ended with a winner
 	Winners    []PlayerID // the players who win, in seating order (rules §8)
 	Draw       bool       // the game ended and nobody won
+	// Summary narrates the game that just ended, one line per night and day
+	// plus the final outcome, Vietnamese text from i18n (audit K4). Set only
+	// once the game has ended, for everybody.
+	Summary []string
 
 	// Full is true when the viewer sees everything: a dead player, or anybody
 	// once the game is over. Then every PlayerView carries Role and Team and

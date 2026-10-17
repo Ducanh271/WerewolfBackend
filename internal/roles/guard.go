@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Guard shields one player a night from the bite (rules §6 "Bảo vệ"). It can
@@ -41,6 +42,11 @@ func init() { engine.Register(guard{}) }
 // Audience: only the Guard knows whom she protected.
 func (e PlayerProtected) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Guard}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says whom she protected.
+func (e PlayerProtected) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateGuard, i18n.Vi(i18n.SummaryGuardProtect, name(e.Target)), true
 }
 
 func (guard) ID() engine.RoleID            { return Guard }

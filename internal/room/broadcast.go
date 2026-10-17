@@ -80,7 +80,7 @@ func (r *Room) changed() {
 
 func (r *Room) send(c *connection, speaker bool) {
 	viewer := engine.PlayerViewer(c.player)
-	view := engine.ViewFor(r.state, viewer)
+	view := engine.ViewFor(r.state, r.log, viewer)
 	visible := engine.Visible(r.state, r.log, viewer)
 
 	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, View: view}

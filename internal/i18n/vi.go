@@ -31,6 +31,21 @@ var vi = map[string]string{
 	WinLovers:       "Cặp đôi khác phe chiến thắng.",
 	WinDraw:         "Tất cả đã chết, ván đấu hòa.",
 	GameAborted:     "Bàn đã bỏ phiếu huỷ ván. Ván kết thúc, không có phe thắng.",
+
+	SummaryBite:            "Sói cắn %s",
+	SummaryHeal:            "Phù thủy cứu %s",
+	SummaryWitchPoison:     "Phù thủy đầu độc %s",
+	SummaryGuardProtect:    "Bảo vệ bảo vệ %s",
+	SummarySeerWolf:        "Tiên tri soi %s ra là Sói",
+	SummarySeerVillager:    "Tiên tri soi %s ra không phải Sói",
+	SummaryWolfSeerIsSeer:  "Sói tiên tri soi %s ra là Tiên tri",
+	SummaryWolfSeerNotSeer: "Sói tiên tri soi %s ra không phải Tiên tri",
+	SummaryDetectiveWolf:   "Thám tử dò %s thấy có Sói",
+	SummaryDetectiveClear:  "Thám tử dò %s không thấy Sói",
+	SummaryVisitorBlock:    "Nguyệt Nữ chặn %s",
+	SummaryCurse:           "Sói nguyền nguyền %s",
+	SummaryKnightPoison:    "Hiệp sĩ kiếm gỉ đầu độc %s",
+	SummaryCupidPair:       "Cupid ghép đôi %s và %s",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.

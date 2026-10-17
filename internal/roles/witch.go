@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Witch has one heal potion and one poison potion for the whole game and may
@@ -57,6 +58,15 @@ func (e WitchHealed) Audience(engine.State) engine.Audience {
 // Audience: only the Witch knows what she brewed.
 func (e WitchPoisoned) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Witch}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says whom she saved or killed.
+func (e WitchHealed) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateWitch, i18n.Vi(i18n.SummaryHeal, name(e.Target)), true
+}
+
+func (e WitchPoisoned) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateWitch, i18n.Vi(i18n.SummaryWitchPoison, name(e.Target)), true
 }
 
 func (witch) ID() engine.RoleID            { return Witch }

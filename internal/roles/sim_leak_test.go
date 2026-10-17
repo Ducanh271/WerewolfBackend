@@ -15,7 +15,7 @@ func (g *simGame) checkViews() {
 		return // after the end everybody sees everything (rules §4)
 	}
 	for _, id := range g.living() {
-		v := engine.ViewFor(g.s, engine.PlayerViewer(id))
+		v := engine.ViewFor(g.s, g.log, engine.PlayerViewer(id))
 		me := g.s.Players[id]
 		if v.Full || v.Secrets != nil {
 			g.leak(id, "a living player got a full view")

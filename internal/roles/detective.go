@@ -2,6 +2,7 @@ package roles
 
 import (
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Detective checks one player once a game and learns whether there is a wolf
@@ -37,6 +38,15 @@ func init() { engine.Register(detective{}) }
 // Audience: the result is the Detective's alone.
 func (e DetectiveChecked) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Detective}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says what he found.
+func (e DetectiveChecked) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	key := i18n.SummaryDetectiveClear
+	if e.HasWolf {
+		key = i18n.SummaryDetectiveWolf
+	}
+	return engine.NarrateDetective, i18n.Vi(key, name(e.Target)), true
 }
 
 func (detective) ID() engine.RoleID            { return Detective }

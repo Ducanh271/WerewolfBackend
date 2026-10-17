@@ -26,6 +26,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 - Engine không I/O, không `time.Now()`, không `rand` toàn cục: giờ và seed do `room` đưa vào.
 - Mọi thay đổi trạng thái đi qua sự kiện: `Decide(state, lệnh) → sự kiện`, rồi `Evolve(state, sự kiện) → state mới`.
 - Server **không bao giờ** gửi nguyên state. Mọi tin gửi đi đều qua `engine.ViewFor` (màn hình hiện tại) và `engine.Visible` (sự kiện người đó được biết). Lộ thông tin là loại lỗi nguy hiểm nhất.
+- Lúc ván kết thúc (`Ended`, kể cả huỷ ván), `ViewFor` còn trả về `Summary`: tổng kết mỗi đêm/ngày bằng câu tiếng Việt (`engine/summary.go`), dựng từ sự kiện mà lúc chơi vẫn giữ kín (sói cắn ai, Phù thủy cứu ai...) — vì lúc này ai cũng đã thấy toàn bộ nhật ký rồi (rules §4), tổng kết chỉ viết lại cho dễ đọc. Vai nào muốn góp một dòng thì cho sự kiện của mình cài `engine.Narrated` (giống `Audienced`), vì `engine` không được import `roles`.
 - Mã bí mật (seed chia bài, token, PIN) luôn do server sinh bằng `crypto/rand`, không bao giờ nhận từ điện thoại.
 
 ## 2. Công nghệ và lý do
@@ -73,6 +74,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Triệu chứng | Tầng | Xem trước |
 |---|---|---|
 | Luật sai (ai thắng, ai chết, thứ tự đêm) | engine / roles | `engine/night_resolve.go`, `engine/win.go` (thắng thua chỉ xét ban ngày, trong `engine/after_death.go`), file vai trong `roles/`; luật gốc `docs/rules.md` |
+| Tổng kết cuối ván thiếu/sai dòng, thứ tự lộn | engine / roles | `engine/summary.go` (`summaryFor`, thứ tự câu theo hằng số `Narrate*`/`narrate*` ở `engine/narrate.go`), vai nào góp dòng thì xem `Narrate` trong file vai đó (`roles/*.go`) |
 | Lệnh bị báo `wrong_phase` / `not_your_turn` | engine | `engine/decide.go`, `engine/night_actor.go`, `engine/day_nominate.go` |
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
 | Chủ phòng/máy làm loa sai người | room | Chủ phòng là người giữ `hostKey` bí mật từ lúc tạo phòng (`room/manager.go` `randomHostKey`, `room/join.go` `Join`), không phải người vào trước; `room/speaker.go` (`InPersonSpeaker`, `AllPhones` — không ai làm loa khi chưa có chủ phòng, `Host == ""`), `room/join.go` (`passHost`, `armHostGrace`, `TransferHost` — chủ phòng tự chuyển chức bất cứ lúc nào) |

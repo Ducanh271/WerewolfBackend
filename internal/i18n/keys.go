@@ -53,6 +53,28 @@ const (
 	GameAborted = "win.aborted"
 )
 
+// Summary clauses (audit K4): the end-of-game narration, one line per night
+// and day. Unlike the announcements above, these name the secret actor and
+// target of a night step (who the pack bit, who the Witch healed...); they
+// are only ever shown once the game has ended, when everybody already sees
+// everything, and never read aloud during play.
+const (
+	SummaryBite            = "summary.bite"
+	SummaryHeal            = "summary.heal"
+	SummaryWitchPoison     = "summary.witch_poison"
+	SummaryGuardProtect    = "summary.guard_protect"
+	SummarySeerWolf        = "summary.seer_wolf"
+	SummarySeerVillager    = "summary.seer_villager"
+	SummaryWolfSeerIsSeer  = "summary.wolfseer_is_seer"
+	SummaryWolfSeerNotSeer = "summary.wolfseer_not_seer"
+	SummaryDetectiveWolf   = "summary.detective_wolf"
+	SummaryDetectiveClear  = "summary.detective_clear"
+	SummaryVisitorBlock    = "summary.visitor_block"
+	SummaryCurse           = "summary.curse"
+	SummaryKnightPoison    = "summary.knight_poison"
+	SummaryCupidPair       = "summary.cupid_pair"
+)
+
 // Night notices, shown as text on one player's phone (rules §3).
 const (
 	// NightBlocked: the player cannot use their night ability. It never names

@@ -2,6 +2,7 @@ package roles
 
 import (
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Seer checks one player a night and learns wolf or not (rules §6 "Tiên tri").
@@ -31,6 +32,15 @@ func init() { engine.Register(seer{}) }
 // Audience: the result is the Seer's alone, even when she is cursed.
 func (e SeerChecked) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Seer}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says what she saw.
+func (e SeerChecked) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	key := i18n.SummarySeerVillager
+	if e.IsWolf {
+		key = i18n.SummarySeerWolf
+	}
+	return engine.NarrateSeer, i18n.Vi(key, name(e.Target)), true
 }
 
 func (seer) ID() engine.RoleID            { return Seer }

@@ -2,6 +2,7 @@ package roles
 
 import (
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // WolfSeer checks one player a night and learns whether they are the Seer
@@ -36,6 +37,15 @@ func init() { engine.Register(wolfSeer{}) }
 // phone check on, like the rest of the pack screen (engine.VisibleTeam).
 func (WolfSeerChecked) Audience(engine.State) engine.Audience {
 	return engine.Audience{Wolves: true}
+}
+
+// Narrate: the end-of-game summary (audit K4) says what he saw.
+func (e WolfSeerChecked) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	key := i18n.SummaryWolfSeerNotSeer
+	if e.IsSeer {
+		key = i18n.SummaryWolfSeerIsSeer
+	}
+	return engine.NarrateWolfSeer, i18n.Vi(key, name(e.Target)), true
 }
 
 func (wolfSeer) ID() engine.RoleID            { return WolfSeer }

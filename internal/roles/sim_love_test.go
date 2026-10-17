@@ -27,7 +27,7 @@ func (g *simGame) checkLovers() error {
 		}
 	}
 	for _, p := range []*engine.Player{a, b} {
-		v := engine.ViewFor(g.s, engine.PlayerViewer(p.ID))
+		v := engine.ViewFor(g.s, g.log, engine.PlayerViewer(p.ID))
 		if p.Alive && v.Lover != nil && p.Flags[engine.FlagLoveKnown] == 0 {
 			return fmt.Errorf("%s sees the pair before the phone check (%s)", p.ID, g.desc)
 		}

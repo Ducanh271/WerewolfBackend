@@ -64,7 +64,7 @@ IDs in brackets refer to docs/audit.md.
 - [ ] P0 Throwaway prototype: one human + bots, browser speech (Sonnet). Any time.
 - [x] T23 Fix leaks: [S1] [S2] [S3], leak tests [T1], panic recovery [R4] (Opus)
 - [x] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet)
-- [ ] T25 Voice lines for the speaker phone [L3]; text approved by me first (Sonnet)
+- [ ] T25 Voice lines for the speaker phone [L3] + in-app rules guide and per-role how-to (merged from T28b); all Vietnamese text approved by me first (Sonnet)
 - [x] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
 - [x] T27a Lobby: [S8] host = room creator, [S4] nickname rules, [K2] lobby kick (Sonnet)
   - Decided: leaving or being kicked only removes that one player from the seat order (the rest keep their relative order, no reshuffle) and never touches the chosen role list. If the role list stops matching the new player count (wolf ratio, Detective/Cupid headcount), the lobby blocks "Deal" and tells the host why, instead of silently clearing seats/roles for everyone.
@@ -75,7 +75,7 @@ IDs in brackets refer to docs/audit.md.
 - [x] T27b Game lifecycle: [K3] new game in the same room, [K1] abort by vote (Sonnet)
   - Decided (K1, replaces the T24 "over 70% of everyone who ever joined" rule — see `docs/rules.md` §8b): only **living** players may vote to abort, and only while it is **day** (`Day`, `NominationLock`, `Trial`, `Verdict`, `Dusk` — never at night, during role viewing, or during the Chief election, so voting never reveals who is awake). The vote passes once yes votes reach **2/3 of the living players**, computed with integers as `yes*3 >= alive*2` (3 alive → needs 2, 4 → 3, 5 → 4, 6 → 4, 9 → 6), re-checked after every vote and after every death that happens the same day (a hanging, a Hunter's shot) — a death alone can push a pending vote over the line, with no new vote cast. On a pass the game ends exactly like a normal win: `Ended`, no winner, **everyone sees every role and the full history**. The table only goes back to the lobby when the host runs `NewGame` (K3 below), same as after a normal win. Abort votes are cleared when the next night starts (a vote does not carry over to the next day).
   - Decided (K3): once a game is `Ended` (by winning or by this abort vote), the host can start a new game in the same room with a `NewGame` command. It keeps the players, their seats and the configured role list, resets the match (no roles dealt, nobody dead, no night/day state), and the host re-deals with a fresh seed as usual.
-- [ ] T28 End-of-game summary [K4] + in-app rules guide and per-role how-to (Sonnet)
+- [x] T28a End-of-game summary [K4] (Sonnet)
 - [ ] T29 Deploy: [D1]–[D9], [S5] IP limits, [R7] room expiry (Sonnet)
 - [ ] T30 Code health: [C1] roles self-register commands, [C6] rules single source, [C2]–[C5] cleanup, [R5] [T2] faster broadcast (Opus)
 - [ ] T21 Frontend guide docs/frontend (Opus) — after T23–T30

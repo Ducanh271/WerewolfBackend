@@ -220,7 +220,7 @@ func TestDay_AbortVote_IsPublicInTheView(t *testing.T) {
 	s.Players["b"] = &Player{ID: "b", Nickname: "B", Alive: true}
 	s = apply(t, s, CastAbortVote{Voter: "a", Yes: true})
 
-	v := ViewFor(s, PlayerViewer("b"))
+	v := ViewFor(s, nil, PlayerViewer("b"))
 	if v.Votes.AbortVotes["a"] != true {
 		t.Fatalf("votes.abortVotes = %v, want {a: true} visible to another living player", v.Votes.AbortVotes)
 	}

@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Visitor sleeps over at one player a night; that player loses their night
@@ -45,6 +46,11 @@ func init() { engine.Register(visitor{}) }
 // blocked, not by whom.
 func (e PlayerVisited) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Visitor}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says whom she blocked.
+func (e PlayerVisited) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateVisitor, i18n.Vi(i18n.SummaryVisitorBlock, name(e.Target)), true
 }
 
 func (visitor) ID() engine.RoleID            { return Visitor }

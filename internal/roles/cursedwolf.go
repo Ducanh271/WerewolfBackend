@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // CursedWolf curses one living non-wolf, once per game, on one of the first
@@ -40,6 +41,11 @@ func init() { engine.Register(cursedWolf{}) }
 // Audience: the Cursed wolf alone.
 func (e PlayerCursed) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Wolf}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says whom he cursed.
+func (e PlayerCursed) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateCurse, i18n.Vi(i18n.SummaryCurse, name(e.Target)), true
 }
 
 func (cursedWolf) ID() engine.RoleID     { return CursedWolf }

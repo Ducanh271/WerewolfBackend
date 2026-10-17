@@ -19,7 +19,7 @@ func (g *Game) seen(who string, v engine.Viewer) *Seen {
 	return &Seen{
 		g:    g,
 		who:  who,
-		view: engine.ViewFor(g.state, v),
+		view: engine.ViewFor(g.state, g.events, v),
 		feed: engine.Visible(g.state, g.events, v),
 	}
 }

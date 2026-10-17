@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	"masoi/internal/engine"
+	"masoi/internal/i18n"
 )
 
 // Cupid pairs two living players on night 1 (rules §7). He may pair himself.
@@ -42,6 +43,11 @@ func init() { engine.Register(cupid{}) }
 // Audience: Cupid alone.
 func (e LoversPaired) Audience(engine.State) engine.Audience {
 	return engine.Audience{Players: []engine.PlayerID{e.Cupid}}
+}
+
+// Narrate: the end-of-game summary (audit K4) says who the couple is.
+func (e LoversPaired) Narrate(name func(engine.PlayerID) string) (int, string, bool) {
+	return engine.NarrateCupid, i18n.Vi(i18n.SummaryCupidPair, name(e.A), name(e.B)), true
 }
 
 func (cupid) ID() engine.RoleID     { return Cupid }

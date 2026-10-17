@@ -1,8 +1,10 @@
 package engine
 
 // ViewFor projects the state for one viewer. It is the only way state leaves
-// the engine towards a screen.
-func ViewFor(s State, v Viewer) View {
+// the engine towards a screen. log is the room's whole event log, needed only
+// once the game has ended, to narrate the end-of-game summary (audit K4); nil
+// is fine the rest of the time.
+func ViewFor(s State, log []Event, v Viewer) View {
 	full := seesAll(s, v)
 	out := View{
 		Phase:      s.Phase,
@@ -19,6 +21,7 @@ func ViewFor(s State, v Viewer) View {
 	if s.Phase == PhaseEnded {
 		out.Winner, out.Draw = copyWinner(s.Winner), s.Winner == nil
 		out.Winners = append([]PlayerID(nil), s.Winners...)
+		out.Summary = summaryFor(log)
 	}
 	for i, id := range s.Seats {
 		p := s.Players[id]

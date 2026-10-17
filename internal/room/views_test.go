@@ -33,7 +33,7 @@ func TestBroadcast_EachPhoneGetsOnlyItsOwnProjection(t *testing.T) {
 	for id, sink := range g.sink {
 		viewer := engine.PlayerViewer(id)
 		got := sink.last().View.View
-		if want := engine.ViewFor(state, viewer); !reflect.DeepEqual(got, want) {
+		if want := engine.ViewFor(state, log, viewer); !reflect.DeepEqual(got, want) {
 			t.Errorf("%s: view differs from ViewFor", id)
 		}
 		if known, want := sink.events(), engine.Visible(state, log, viewer); !reflect.DeepEqual(known, want) {
