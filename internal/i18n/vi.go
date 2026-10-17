@@ -30,6 +30,7 @@ var vi = map[string]string{
 	WinWolves:       "Phe Sói chiến thắng.",
 	WinLovers:       "Cặp đôi khác phe chiến thắng.",
 	WinDraw:         "Tất cả đã chết, ván đấu hòa.",
+	GameAborted:     "Bàn đã bỏ phiếu huỷ ván. Ván kết thúc, không có phe thắng.",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.

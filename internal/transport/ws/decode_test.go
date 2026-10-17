@@ -26,6 +26,8 @@ func TestDecode_UnknownTypesAndUnknownFieldsAreRejected(t *testing.T) {
 		{"timer out of range", cmd("configureTimers", map[string]any{"timers": map[string]any{"day": -5}}), "timer_out_of_range"},
 		{"unknown sound mode", cmd("configureSound", map[string]any{"mode": "megaphone"}), "bad_message"},
 		{"wrong field type", cmd("skipDay", map[string]any{"on": "yes"}), "bad_message"},
+		{"voter in abortVote args", cmd("abortVote", map[string]any{"on": true, "voter": "p3"}), "bad_message"},
+		{"seed in newGame", cmd("newGame", map[string]any{"seed": 1}), "bad_message"},
 		{"timeout is not a command", cmd("phaseTimeout", nil), "unknown_command"},
 	}
 	for i, row := range rows {

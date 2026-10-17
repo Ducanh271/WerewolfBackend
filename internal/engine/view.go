@@ -78,6 +78,7 @@ type PublicVotes struct {
 	Defendant   PlayerID
 	Verdicts    map[PlayerID]bool // voter -> true for kill
 	Spared      []PlayerID        // spared today, in seating order
+	AbortVotes  map[PlayerID]bool // voter -> true for "abort" (audit K1)
 }
 
 // NightCallView is the cue shown on every phone. It has no real/fake flag on purpose.

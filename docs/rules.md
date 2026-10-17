@@ -324,11 +324,19 @@ Làm rõ:
 
 ## 8b. Huỷ ván
 
-Sau khi chia vai, bất kỳ người chơi nào (còn sống hay đã chết) cũng đề xuất **huỷ ván** được. Ván chỉ huỷ khi **trên 70%** tổng số người từng vào ván (cả còn sống và đã chết) bỏ phiếu đồng ý; chủ phòng **không** có quyền huỷ một mình, và không ai có quyền huỷ riêng ngoài phiếu này.
+Chỉ người chơi **còn sống** mới được bỏ phiếu huỷ ván, và chỉ vào **ban ngày** (lúc thảo luận, đề cử, bào chữa, giết-tha, hoặc lúc trời vừa quyết xong chờ sang đêm) — không được vào lúc ban đêm, lúc xem vai, hay lúc bầu Trưởng làng, để việc bỏ phiếu không lộ ra ai đang thức. Chủ phòng không có quyền huỷ một mình, và không ai có quyền huỷ riêng ngoài phiếu này.
 
-Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng hồ hay bước đang chạy, ai vẫn phải thao tác đúng lượt của mình trong khi phiếu đang diễn ra. Khi phiếu đạt trên 70%, ván kết thúc ngay (không có phe thắng), và **mọi người xem được toàn bộ vai và diễn biến**, giống lúc ván kết thúc bình thường (mục 4).
+Phiếu huỷ qua khi số phiếu đồng ý đạt **từ 2/3 số người còn sống** trở lên, tính theo số nguyên: `đồng ý × 3 ≥ số người còn sống × 2` (3 người sống → cần 2; 4 → 3; 5 → 4; 6 → 4; 9 → 6). Mỗi lần có phiếu mới, hoặc có người chết trong ngày đó (bị treo, bị Thợ săn bắn), tỷ lệ được tính lại trên số người còn sống **lúc đó**: có người chết cũng có thể khiến phiếu đủ mà không cần ai bỏ phiếu thêm. Phiếu huỷ bị xoá khi sang đêm (không giữ qua ngày sau).
 
-(Cài đặt ở T27; mục này chỉ chốt luật.)
+Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng hồ hay bước đang chạy, ai vẫn phải thao tác đúng lượt của mình trong khi phiếu đang diễn ra. Khi phiếu qua, ván kết thúc ngay (không có phe thắng), giống lúc ván kết thúc bình thường (mục 4): **mọi người xem được toàn bộ vai và diễn biến**. Bàn chỉ trở về sảnh chờ khi chủ phòng bấm bắt đầu ván mới (mục 8c), lúc đó ghế và danh sách vai được giữ nguyên.
+
+(Cài đặt ở T27b; mục này chỉ chốt luật.)
+
+## 8c. Ván mới trong cùng phòng
+
+Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu.
+
+(Cài đặt ở T27b; mục này chỉ chốt luật.)
 
 ## 9. Thứ tự phân giải lúc trời sáng
 

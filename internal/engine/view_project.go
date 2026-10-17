@@ -96,9 +96,10 @@ func copyWinner(w *Team) *Team {
 
 func publicVotes(s State) PublicVotes {
 	out := PublicVotes{
-		Chief:     copyMap(s.ChiefVotes),
-		Verdicts:  copyMap(s.Day.Verdicts),
-		Defendant: s.Day.Defendant,
+		Chief:      copyMap(s.ChiefVotes),
+		Verdicts:   copyMap(s.Day.Verdicts),
+		Defendant:  s.Day.Defendant,
+		AbortVotes: copyMap(s.Day.AbortVotes),
 	}
 	if len(s.Day.Nominations) > 0 {
 		out.Nominations = make(map[PlayerID]PlayerID, len(s.Day.Nominations))

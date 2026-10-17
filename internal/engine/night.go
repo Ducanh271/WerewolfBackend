@@ -153,6 +153,7 @@ func evolveNight(s State, e Event) (State, bool) {
 		out.Night = ev.Night
 		out.NightStep = 0
 		out.Pending = NightActions{}
+		out.Day.AbortVotes = nil // an abort proposal does not carry into the night (rules §8b)
 		out.Seq++
 		return out, true
 	case NightStepCalled:

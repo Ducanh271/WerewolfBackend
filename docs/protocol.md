@@ -133,6 +133,8 @@ while not the host is `not_host`.
 | `nominate` | `target` (`""` = no one) | day | `Nominate` |
 | `skipDay` | `on: bool` | day | `SkipDay` |
 | `verdict` | `kill: bool` | verdict | `CastVerdict` |
+| `abortVote` | `on: bool` (true = vote to abort, false = withdraw) | by day only: `Day`, `NominationLock`, `Trial`, `Verdict`, `Dusk`; living players only (audit K1) | `CastAbortVote`; passes at `yes*3 >= alive*2` (2/3 of the living), re-checked after every vote and every death, ending the game with `draw: true` and no `winner` |
+| `newGame` | – | `Ended`, host only (audit K3) | `NewGame`; keeps the players, seats and role list, resets the match; the host deals again with a fresh seed |
 | `wolfVote` | `target` (required: `""` = "Không cắn ai", no bite; a missing or `null` target → `bad_message`) | pack step | `WolfVote`; `""` counts like a target: more than half of the voters for it and nobody is bitten, announced as the usual "Không có ai chết". The pack sees it in `view.pack.votes` as `""` for that wolf |
 | `visitorVisit` | `target` (not herself, not last night's) | Visitor step; a missing choice is made at random by the server when the step ends | `VisitorVisit` |
 | `guardProtect` | `target` | Guard step | `GuardProtect` |
@@ -177,7 +179,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `roleCards` | all | the same roles in the order of rules §9b, each `{role, name, team, description}` (`team` is the role's own team; Vietnamese text from the server; no card text in the frontend) |
 | `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`; `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
 | `chief`, `succession`, `shooter` | all | Chief id; the dead Chief naming a successor; the dead Hunter choosing a target |
-| `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]` |
+| `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]`, `abortVotes {voter: yes}` |
 | `winner`, `draw`, `winners` | all, at the end | winning team, or a draw; `winners`: the ids of the players who win, dead or alive, in seat order (the lovers of a cross-team couple, alive or broken, are never in it unless the couple wins) |
 | `nightCall` | all phones | `{role, duration}`, nothing else: a fake call looks the same |
 | `me` | players | `id`, `role`, `team`, `alive`, `cursed` (known only from the phone check on), `canShoot` (only the dead Hunter while he chooses), `phoneCheck`, `turn`, `roleCard`, `statusCards` |
@@ -213,7 +215,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
-  `HunterShotStarted` (`hunter`, `duration` only), `HunterShot`, `HunterTimedOut`, `GameEnded`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
+  `HunterShotStarted` (`hunter`, `duration` only), `HunterShot`, `HunterTimedOut`, `GameEnded` (its `say` tells a normal win/draw from an abort, see `votes.abortVotes`), `AbortVoteCast`, `NewGameStarted`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
   `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice, `LoversPaired` for Cupid); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
   the player is in it.

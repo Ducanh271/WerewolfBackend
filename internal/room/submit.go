@@ -36,6 +36,13 @@ func (c *Client) Submit(build PlayerCommand) error {
 			if err := r.hostOnly(c.player); err != nil {
 				return err
 			}
+		case engine.NewGame:
+			// Unlike hostOnly (gated to before the deal), NewGame only runs once
+			// the game has ended, i.e. after the deal, so it checks the host
+			// directly (audit K3).
+			if c.player != r.host {
+				return ErrNotHost
+			}
 		}
 		return r.execute(cmd)
 	})

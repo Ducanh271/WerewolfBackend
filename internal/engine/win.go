@@ -7,6 +7,9 @@ type Outcome struct {
 	Winner  Team // TeamNone when Draw
 	Draw    bool
 	Winners []PlayerID // the players who win, dead or alive, in seating order; empty on a draw
+	// Aborted is set when the game ended by an abort vote rather than by
+	// everybody dying (audit K1, rules §8b); it is always a Draw too.
+	Aborted bool
 }
 
 // GameEnded closes the game. A draw has no winner.
@@ -18,6 +21,8 @@ type GameEnded struct {
 // AnnouncementKey is read aloud to everybody.
 func (e GameEnded) AnnouncementKey() string {
 	switch {
+	case e.Outcome.Aborted:
+		return i18n.GameAborted
 	case e.Outcome.Draw:
 		return i18n.WinDraw
 	case e.Outcome.Winner == TeamLovers:

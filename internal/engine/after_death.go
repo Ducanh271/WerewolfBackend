@@ -51,6 +51,12 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 	if out, over := CheckWin(after); over {
 		return append(evs, GameEnded{Outcome: out})
 	}
+	// A day death can bring a pending abort vote over 2/3 of the living on its
+	// own, with no new vote cast (rules §8b); a night death never does, since
+	// AbortVotes is already empty by then.
+	if abortVoteDue(after) {
+		return append(evs, GameEnded{Outcome: Outcome{Draw: true, Aborted: true}})
+	}
 	for _, id := range dead {
 		if id == s.Chief {
 			evs = append(evs, ChiefSuccessionStarted{Former: id, Duration: s.Settings.ChiefSuccession})

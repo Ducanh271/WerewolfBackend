@@ -26,6 +26,9 @@ type DayState struct {
 	ClockOut    bool              // the 7 minutes ran out; the verdict is the last step
 	Defendant   PlayerID          // on trial, empty outside Trial and Verdict
 	Verdicts    map[PlayerID]bool // voter -> true for kill, false for spare
+	// AbortVotes is who voted to call the game off and how (audit K1, rules
+	// §8b). Cleared when the next night starts and when a new day does.
+	AbortVotes map[PlayerID]bool
 }
 
 func (d DayState) clone() DayState {
@@ -34,6 +37,7 @@ func (d DayState) clone() DayState {
 	out.Skips = copyMap(d.Skips)
 	out.Spared = copyMap(d.Spared)
 	out.Verdicts = copyMap(d.Verdicts)
+	out.AbortVotes = copyMap(d.AbortVotes)
 	return out
 }
 
@@ -115,6 +119,13 @@ func evolveDay(s State, e Event) (State, bool) {
 		if ev.Target != "" {
 			delete(out.Day.Skips, ev.Voter) // nominating cancels the skip
 		}
+		return out, true
+	case AbortVoteCast:
+		out := s.clone()
+		if out.Day.AbortVotes == nil {
+			out.Day.AbortVotes = map[PlayerID]bool{}
+		}
+		out.Day.AbortVotes[ev.Voter] = ev.Yes
 		return out, true
 	case SkipSet:
 		out := s.clone()

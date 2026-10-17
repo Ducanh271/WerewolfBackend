@@ -49,6 +49,8 @@ const (
 	WinLovers = "win.lovers"
 	// WinDraw: everybody died at the same moment.
 	WinDraw = "win.draw"
+	// GameAborted: the table voted to call the game off (audit K1, rules §8b).
+	GameAborted = "win.aborted"
 )
 
 // Night notices, shown as text on one player's phone (rules §3).

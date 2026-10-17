@@ -37,6 +37,10 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideSkipDay(s, cmd)
 	case CastVerdict:
 		return decideCastVerdict(s, cmd)
+	case CastAbortVote:
+		return decideCastAbortVote(s, cmd)
+	case NewGame:
+		return decideNewGame(s, cmd)
 	case PhaseTimeout:
 		return decidePhaseTimeout(s, cmd)
 	}

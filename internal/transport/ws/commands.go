@@ -135,6 +135,12 @@ var commandTable = map[string]commandSpec{
 	"verdict": spec(func(a killArgs, by engine.PlayerID) engine.Command {
 		return engine.CastVerdict{Voter: by, Kill: a.Kill}
 	}),
+	"abortVote": spec(func(a onArgs, by engine.PlayerID) engine.Command {
+		return engine.CastAbortVote{Voter: by, Yes: a.On}
+	}),
+	"newGame": spec(func(_ noArgs, _ engine.PlayerID) engine.Command {
+		return engine.NewGame{}
+	}),
 	"wolfVote": wolfVote,
 	"guardProtect": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return roles.GuardProtect{By: by, Target: a.Target}
