@@ -8,12 +8,16 @@ durations are milliseconds, times are Unix milliseconds.
 
 | request | reply |
 |---|---|
-| `POST /rooms` (body optional: `{"mode": "inPerson"}`) | `201 {"room": "K7QP"}`; `mode: "online"` → `400` with `mode_unsupported`; `503` `too_many_rooms` |
+| `POST /rooms` (body optional: `{"mode": "inPerson"}`) | `201 {"room": "K7QP", "hostKey": "…"}`; `mode: "online"` → `400` with `mode_unsupported`; `503` `too_many_rooms` |
 | `GET /join/{code}` | `200 {"room": "K7QP"}`, or `404` `room_not_found`. This is the link the QR code will carry (the UI is built later); case is ignored |
 | `GET /ws` | upgrades to the game socket |
 
 - The room code is 4 characters from `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (no O, 0, I,
-  1, L). It is not a secret.
+  1, L). It is not a secret. `hostKey` is: only the phone that created the room
+  ever sees it, and only its first `join` needs to carry it (rules §2 "chủ
+  phòng là người tạo phòng", audit S8). Presenting it again later, including
+  after the title has moved on (`transferHost` or a dropped host, below),
+  grants nothing.
 - A room nobody has joined, left, dropped from or sent a command to for **2 hours**
   is deleted, and its sockets are closed.
 - `/ws` takes **no query string** (a request with one gets `400` `secret_in_url`):
@@ -74,19 +78,43 @@ sees what.
 
 ### Joining
 ```json
-{"type": "join",     "room": "K7QP", "nickname": "An"}
+{"type": "join",     "room": "K7QP", "nickname": "An", "hostKey": "…"}
 {"type": "rejoin",   "room": "K7QP", "token": "…"}
 {"type": "rejoin",   "room": "K7QP", "nickname": "An", "pin": "4821"}
 {"type": "leave"}
+{"type": "kick",         "target": "p5"}
+{"type": "transferHost", "target": "p5"}
 ```
+`hostKey` is only ever sent by the room's creator, on their own first `join`
+(see above); every other phone omits it.
+
 Reply: `{"type": "welcome", "player": "p3", "token": "…", "pin": "4821"}` (on
 rejoin by token only `player`; rejoin by nickname + PIN returns a **new** `token`
 and the old one stops working), then a full `view` and
 a full `events` message. A refused rejoin is an `error` with code
-`bad_credentials` or `pin_locked` (with `retryAfter` in ms).
+`bad_credentials` or `pin_locked` (with `retryAfter` in ms). `join` with an
+invalid nickname (empty, over 20 characters, or outside Vietnamese/Latin
+letters, digits and spaces — audit S4) is `error` `invalid_nickname`.
 
 `leave` (lobby only) removes the player for good; a closed connection keeps their
 place. Creating a room in `Online` mode is refused with `mode_unsupported`.
+
+`kick` (lobby only, host only; audit K2) removes another player for good,
+the same as `leave` would for themselves: their token and PIN are revoked and
+their connection, if any, is told why (`error` `disconnected`, message
+"removed from the lobby by the host") and closed. Kicking yourself is
+`forbidden`; kicking after the deal is `wrong_phase`; a non-host is
+`not_host`. Either `leave` or `kick` only drops that one seat — the rest of
+the seating and the chosen role list stay as they were; `dealRoles` still
+checks the list fits the new player count (wolf ratio, Detective/Cupid
+headcount) and refuses with the usual error if it no longer does.
+
+`transferHost` gives another player in the room the host's title right away,
+no vote and no need for them to agree, at any time including mid-game (so the
+table can line up who will run the next game, T27b, without waiting for this
+one to end). Only the current host may send it; transferring to yourself is
+`forbidden`, to someone not in the room is `unknown_player`, and sending it
+while not the host is `not_host`.
 
 ### Commands
 ```json

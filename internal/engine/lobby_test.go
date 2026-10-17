@@ -80,6 +80,10 @@ func TestJoinRoom_Rejects(t *testing.T) {
 		{"empty player id", joined, JoinRoom{Player: "", Nickname: "Chi"}, ErrInvalidPlayerID},
 		{"empty nickname", joined, JoinRoom{Player: "p3", Nickname: ""}, ErrInvalidNickname},
 		{"blank nickname", joined, JoinRoom{Player: "p3", Nickname: "   "}, ErrInvalidNickname},
+		{"nickname too long", joined, JoinRoom{Player: "p3", Nickname: "123456789012345678901"}, ErrInvalidNickname},
+		{"nickname with a look-alike letter", joined, JoinRoom{Player: "p3", Nickname: "Аn"}, ErrInvalidNickname},
+		{"nickname with an invisible character", joined, JoinRoom{Player: "p3", Nickname: "An​"}, ErrInvalidNickname},
+		{"nickname with a control character", joined, JoinRoom{Player: "p3", Nickname: "An\x01"}, ErrInvalidNickname},
 		{"same player twice", joined, JoinRoom{Player: "p1", Nickname: "Khác"}, ErrAlreadyJoined},
 		{"nickname taken", joined, JoinRoom{Player: "p3", Nickname: "An"}, ErrNicknameTaken},
 		{"nickname taken, other case", joined, JoinRoom{Player: "p3", Nickname: " aN "}, ErrNicknameTaken},
@@ -92,6 +96,25 @@ func TestJoinRoom_Rejects(t *testing.T) {
 			_, err := Decide(tt.base, tt.cmd)
 			if !errors.Is(err, tt.want) {
 				t.Fatalf("Decide(JoinRoom) = %v, want %v", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestJoinRoom_AcceptsVietnameseNicknames(t *testing.T) {
+	names := []string{
+		"Nguyễn Văn An", "Đặng Thị Ngọc Ánh", "Dương", "Trần Hữu Phước",
+		"Vũ Thị Yến", "Lê Thị Ơn", "Phạm Ngọc Hường", "Bùi Thị Ẩn",
+		"Hoàng Tuấn Kiệt", "Đỗ Thị Diễm Quỳnh", "12345678901234567890", // exactly 20
+	}
+	for _, name := range names {
+		t.Run(name, func(t *testing.T) {
+			s, err := Decide(NewState(), JoinRoom{Player: "p1", Nickname: name})
+			if err != nil {
+				t.Fatalf("Decide(JoinRoom{%q}) = %v, want no error", name, err)
+			}
+			if got := s[0].(PlayerJoined).Nickname; got != name {
+				t.Errorf("nickname = %q, want %q", got, name)
 			}
 		})
 	}

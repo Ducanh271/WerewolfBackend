@@ -13,6 +13,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideJoinRoom(s, cmd)
 	case LeaveRoom:
 		return decideLeaveRoom(s, cmd)
+	case KickPlayer:
+		return decideKickPlayer(s, cmd)
 	case ConfigureTimers:
 		return decideConfigureTimers(s, cmd)
 	case SetSeats:
@@ -58,8 +60,10 @@ func decideJoinRoom(s State, cmd JoinRoom) ([]Event, error) {
 		return nil, ErrInvalidPlayerID
 	}
 	nickname := strings.TrimSpace(cmd.Nickname)
-	if nickname == "" {
-		return nil, fmt.Errorf("%w: nickname is empty", ErrInvalidNickname)
+	if !validNickname(nickname) {
+		return nil, fmt.Errorf(
+			"%w: must be 1-%d characters, Vietnamese/Latin letters, digits and spaces only",
+			ErrInvalidNickname, MaxNicknameLen)
 	}
 	if _, joined := s.Players[cmd.Player]; joined {
 		return nil, fmt.Errorf("%w: %s", ErrAlreadyJoined, cmd.Player)
@@ -83,6 +87,20 @@ func decideLeaveRoom(s State, cmd LeaveRoom) ([]Event, error) {
 		return nil, fmt.Errorf("%w: %s", ErrUnknownPlayer, cmd.Player)
 	}
 	return []Event{PlayerLeft{Player: cmd.Player}}, nil
+}
+
+// decideKickPlayer removes another player from the lobby. The engine has no
+// notion of "host": the room layer checks the actor before ever building
+// this command (rules §2's host powers are a setup-time concept it alone
+// tracks).
+func decideKickPlayer(s State, cmd KickPlayer) ([]Event, error) {
+	if s.Phase != PhaseLobby || s.Dealt {
+		return nil, fmt.Errorf("%w: cannot kick during %s", ErrWrongPhase, s.Phase)
+	}
+	if _, joined := s.Players[cmd.Target]; !joined {
+		return nil, fmt.Errorf("%w: %s", ErrUnknownPlayer, cmd.Target)
+	}
+	return []Event{PlayerKicked{Player: cmd.Target}}, nil
 }
 
 func decideSetSeats(s State, cmd SetSeats) ([]Event, error) {

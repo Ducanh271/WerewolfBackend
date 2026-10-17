@@ -29,6 +29,14 @@ type LeaveRoom struct {
 	Player PlayerID
 }
 
+// KickPlayer removes another player from the lobby, before the deal (audit
+// K2). The room layer only ever builds this for the host; the engine does
+// not check who sent it.
+type KickPlayer struct {
+	CommandMarker
+	Target PlayerID
+}
+
 // SetSeats fixes the seating circle, clockwise. Order must list every player
 // in the lobby exactly once. "Left" is index-1, wrapping.
 type SetSeats struct {

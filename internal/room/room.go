@@ -41,6 +41,8 @@ var (
 	// ReasonPINTakenOver is for a rejoin by nickname + PIN: another phone
 	// just proved it has the PIN and took the seat.
 	ReasonPINTakenOver error = disconnectReason{"someone joined with your PIN"}
+	// ReasonKicked is for a player the host removed from the lobby (audit K2).
+	ReasonKicked error = disconnectReason{"removed from the lobby by the host"}
 )
 
 // Config wires a room. Only Code is required; the rest default to the real
@@ -54,6 +56,10 @@ type Config struct {
 	Store    store.EventStore
 	Speaker  SpeakerPolicy
 	Logger   *slog.Logger // where a recovered panic is reported; default: discard
+	// HostKey is the creator's one-time secret (rules §2, audit S8): whoever's
+	// first `join` carries it becomes the host. Empty means nobody can claim
+	// the host this way (tests that do not care about who is host).
+	HostKey string
 }
 
 // Room is one game. A single goroutine owns all of its state; everything else
@@ -76,6 +82,7 @@ type Room struct {
 	nextID     int
 	joined     []engine.PlayerID // join order
 	host       engine.PlayerID
+	hostKey    string          // the creator's unused secret; cleared the moment it grants host
 	speaker    engine.PlayerID // who is reading announcements aloud now, "" before the first choice (rules §1)
 	conns      map[engine.PlayerID]*connection
 	day        dayClock
@@ -114,7 +121,7 @@ func New(cfg Config) (*Room, error) {
 	}
 	r := &Room{
 		code: cfg.Code, clock: cfg.Clock, rnd: cfg.Random, ident: cfg.Identity,
-		store: cfg.Store, pol: cfg.Speaker, logf: cfg.Logger,
+		store: cfg.Store, pol: cfg.Speaker, logf: cfg.Logger, hostKey: cfg.HostKey,
 		inbox: make(chan func(), 256),
 		done:  make(chan struct{}),
 		state: engine.NewState(),

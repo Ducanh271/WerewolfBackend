@@ -66,7 +66,13 @@ IDs in brackets refer to docs/audit.md.
 - [x] T24 Rules vs code: [L1] [L2] [L4] [L5] [R3] + missing tests [T3] [T5] (Sonnet)
 - [ ] T25 Voice lines for the speaker phone [L3]; text approved by me first (Sonnet)
 - [x] T26 Connection robustness: [R1] [R2] [S6] [S7] + tests [T4] (Sonnet)
-- [ ] T27 Room: [K2] lobby kick, [K3] new game same room, [K1] abort by vote, [S8] host = room creator, [S4] nickname rules (Sonnet)
+- [x] T27a Lobby: [S8] host = room creator, [S4] nickname rules, [K2] lobby kick (Sonnet)
+  - Decided: leaving or being kicked only removes that one player from the seat order (the rest keep their relative order, no reshuffle) and never touches the chosen role list. If the role list stops matching the new player count (wolf ratio, Detective/Cupid headcount), the lobby blocks "Deal" and tells the host why, instead of silently clearing seats/roles for everyone.
+  - Decided: nickname is 1–20 characters after trimming, NFC-normalized, and restricted to Vietnamese/Latin letters, digits and single spaces (no other scripts, no control or invisible characters) — closes both the length-spam and the look-alike-character tricks from audit S4.
+  - Decided: a `TransferHost` command lets the host hand the title to anyone currently in the room, no consent needed, usable at any time including mid-game (so the table can line up who will run the next game, T27b, without waiting for this one to end).
+  - Decided: the creator's `hostKey` (S8) only ever grants host once — the first time it is presented. Once the title has moved on (by `TransferHost` or by the 60 s auto-transfer below), the creator does not get it back by presenting the key again.
+  - Decided: the existing 60 s auto-transfer when the host leaves or disconnects (to the next-joined player still connected, rules §2) is unchanged.
+- [ ] T27b Game lifecycle: [K3] new game in the same room, [K1] abort by vote (Sonnet)
 - [ ] T28 End-of-game summary [K4] + in-app rules guide and per-role how-to (Sonnet)
 - [ ] T29 Deploy: [D1]–[D9], [S5] IP limits, [R7] room expiry (Sonnet)
 - [ ] T30 Code health: [C1] roles self-register commands, [C6] rules single source, [C2]–[C5] cleanup, [R5] [T2] faster broadcast (Opus)
@@ -75,3 +81,6 @@ IDs in brackets refer to docs/audit.md.
 - [ ] P1 Playtest with friends, collect feedback, rebalance
 
 Later (Low in audit): [S9] [S10] [R6] [R8].
+
+Later (not designed yet): room visibility — public (listed, anyone can join) vs
+private (invite-only, needs a friends feature).

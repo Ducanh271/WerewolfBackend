@@ -63,16 +63,16 @@ func TestRoom_PanicInACommand_IsRejectedAsInternal_RoomAndOtherRoomsGoOn(t *test
 	m := NewManager(ManagerConfig{Clock: NewFakeClock(time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)), Random: &fixedRandom{seed: 1},
 		Logger: slog.New(slog.NewTextHandler(logs, nil))})
 	t.Cleanup(m.Close)
-	broken, err := m.Create(engine.InPerson)
+	broken, _, err := m.Create(engine.InPerson)
 	if err != nil {
 		t.Fatal(err)
 	}
-	other, err := m.Create(engine.InPerson)
+	other, _, err := m.Create(engine.InPerson)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	an, _, err := broken.Join("An", &recSink{})
+	an, _, err := broken.Join("An", "", &recSink{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,12 +93,12 @@ func TestRoom_PanicInACommand_IsRejectedAsInternal_RoomAndOtherRoomsGoOn(t *test
 	if after.Seq != before.Seq || len(after.Players) != len(before.Players) {
 		t.Fatal("the command that panicked changed the state")
 	}
-	if _, _, err := broken.Join("Binh", &recSink{}); err != nil {
+	if _, _, err := broken.Join("Binh", "", &recSink{}); err != nil {
 		t.Fatalf("the room stopped working after the panic: %v", err)
 	}
 
 	// The other room never noticed.
-	if _, _, err := other.Join("Chi", &recSink{}); err != nil {
+	if _, _, err := other.Join("Chi", "", &recSink{}); err != nil {
 		t.Fatalf("another room was hit by the panic: %v", err)
 	}
 	if m.Len() != 2 {

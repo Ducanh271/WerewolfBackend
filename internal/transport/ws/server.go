@@ -26,7 +26,7 @@ type Server struct {
 
 // New returns the handler serving:
 //
-//	POST /rooms        create a room, reply {"room": "K7QP"}
+//	POST /rooms        create a room, reply {"room": "K7QP", "hostKey": "…"}
 //	GET  /join/{code}  does the room exist (the link behind the QR code)
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
 func New(cfg Config) http.Handler {
@@ -65,13 +65,13 @@ func (s *Server) createRoom(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	rm, err := s.cfg.Rooms.Create(mode)
+	rm, hostKey, err := s.cfg.Rooms.Create(mode)
 	if err != nil {
 		writeJSON(w, statusOf(err), errorFrameMap(err))
 		return
 	}
 	s.log.Info("room created", "room", rm.Code())
-	writeJSON(w, http.StatusCreated, map[string]any{"room": rm.Code()})
+	writeJSON(w, http.StatusCreated, map[string]any{"room": rm.Code(), "hostKey": hostKey})
 }
 
 func (s *Server) checkRoom(w http.ResponseWriter, r *http.Request) {

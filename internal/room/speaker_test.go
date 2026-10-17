@@ -136,11 +136,12 @@ func TestHost_PassesToTheNextPlayerBeforeTheDeal(t *testing.T) {
 	if _, ok := g.snap().Players["p2"]; ok {
 		t.Fatal("p2 should be gone")
 	}
-	if len(g.snap().Seats) != 0 {
-		t.Fatal("seats must be redone after someone leaves")
+	wantSeats := []engine.PlayerID{"p1", "p3", "p4", "p5"}
+	if got := g.snap().Seats; !reflect.DeepEqual(got, wantSeats) {
+		t.Fatalf("seats = %v, want %v (p2 dropped, the rest keep their seat)", got, wantSeats)
 	}
 	onlySpeaker(t, g, "p3")
-	g.must(g.cl["p3"].Submit(as(engine.SetSeats{Order: []engine.PlayerID{"p1", "p3", "p4", "p5"}})))
+	g.must(g.cl["p3"].Submit(as(engine.SetSeats{Order: wantSeats})))
 }
 
 // Rules §2: the host only loses the powers by pressing leave, or after

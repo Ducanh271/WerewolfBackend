@@ -32,6 +32,12 @@ func (InPersonSpeaker) Speakers(t Table) []engine.PlayerID {
 	if t.Current != "" && t.Connected(t.Current) {
 		return []engine.PlayerID{t.Current}
 	}
+	if t.Host == "" {
+		// Nobody to anchor speaking on yet: before the creator's phone
+		// claims the room (audit S8), an earlier connection must not become
+		// the permanent speaker just because it joined first.
+		return nil
+	}
 	start := 0
 	for i, p := range t.Order {
 		if p == t.Host {

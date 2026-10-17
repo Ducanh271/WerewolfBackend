@@ -28,9 +28,12 @@ func (c *Client) Player() engine.PlayerID { return c.player }
 // that was replaced by a rejoin, or disconnected, is not.
 func (c *Client) live() bool { return c.room.conns[c.player] == c.conn }
 
-// Join adds a player to the lobby. The first player is the host (the one who
-// created the room). The result carries the secret token and the PIN.
-func (r *Room) Join(nickname string, sink Sink) (*Client, Credentials, error) {
+// Join adds a player to the lobby. hostKey is the creator's secret from room
+// creation (rules §2 "chủ phòng là người tạo phòng", audit S8): the first
+// join to present the matching key becomes the host, whatever order phones
+// actually connect in. Empty, or already used once, claims nothing. The
+// result carries the secret token and the PIN.
+func (r *Room) Join(nickname, hostKey string, sink Sink) (*Client, Credentials, error) {
 	var cl *Client
 	var creds Credentials
 	err := r.do(func() error {
@@ -41,8 +44,9 @@ func (r *Room) Join(nickname string, sink Sink) (*Client, Credentials, error) {
 		r.nextID++
 		r.joined = append(r.joined, id)
 		creds = r.ident.Issue(id, nickname)
-		if r.host == "" {
+		if hostKey != "" && r.hostKey != "" && hostKey == r.hostKey {
 			r.host = id
+			r.hostKey = "" // one-time: a later presentation, even the right one, grants nothing
 		}
 		cl = r.attach(id, sink)
 		r.changed()
@@ -184,4 +188,65 @@ func (r *Room) passHost(from engine.PlayerID) {
 			return
 		}
 	}
+}
+
+// KickPlayer removes another player from the lobby. Only the host, and only
+// before the deal (hostOnly); the host cannot kick themselves (audit K2).
+// Their token and PIN are revoked like a Leave, and their connection, if any,
+// is told why and closed.
+func (c *Client) KickPlayer(target engine.PlayerID) error {
+	r := c.room
+	return r.do(func() error {
+		if !c.live() {
+			return ErrDisconnected
+		}
+		if err := r.hostOnly(c.player); err != nil {
+			return err
+		}
+		if target == c.player {
+			return fmt.Errorf("%w: the host cannot kick themselves", ErrForbidden)
+		}
+		if err := r.apply(engine.KickPlayer{Target: target}); err != nil {
+			return err
+		}
+		if conn := r.conns[target]; conn != nil {
+			conn.sink.Evict(ReasonKicked)
+		}
+		delete(r.conns, target)
+		r.ident.Revoke(target)
+		for i, p := range r.joined {
+			if p == target {
+				r.joined = append(r.joined[:i], r.joined[i+1:]...)
+				break
+			}
+		}
+		r.changed()
+		return nil
+	})
+}
+
+// TransferHost gives another player in the room the host's powers right
+// away: no vote, no need for them to agree. Unlike the setup commands
+// (hostOnly, gated to before the deal), this works at any time, including
+// mid-game, so the table can line up who will run the next game (T27b)
+// without waiting for this one to end.
+func (c *Client) TransferHost(target engine.PlayerID) error {
+	r := c.room
+	return r.do(func() error {
+		if !c.live() {
+			return ErrDisconnected
+		}
+		if c.player != r.host {
+			return ErrNotHost
+		}
+		if target == c.player {
+			return fmt.Errorf("%w: already the host", ErrForbidden)
+		}
+		if _, ok := r.state.Players[target]; !ok {
+			return fmt.Errorf("%w: %s", engine.ErrUnknownPlayer, target)
+		}
+		r.host = target
+		r.changed()
+		return nil
+	})
 }

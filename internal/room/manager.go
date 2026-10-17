@@ -2,6 +2,7 @@ package room
 
 import (
 	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"log/slog"
 	"math/big"
@@ -70,30 +71,33 @@ func NewManager(cfg ManagerConfig) *Manager {
 	return m
 }
 
-// Create opens a room in the given mode and returns it. Online rooms are
-// refused (engine.ErrModeUnsupported).
-func (m *Manager) Create(mode engine.Mode) (*Room, error) {
+// Create opens a room in the given mode and returns it, along with the
+// secret hostKey for its creator (rules §2, audit S8): whoever's first
+// `join` message carries it becomes the host. Online rooms are refused
+// (engine.ErrModeUnsupported).
+func (m *Manager) Create(mode engine.Mode) (*Room, string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if m.closed {
-		return nil, ErrClosed
+		return nil, "", ErrClosed
 	}
 	if len(m.rooms) >= m.cfg.MaxRooms {
-		return nil, ErrTooManyRooms
+		return nil, "", ErrTooManyRooms
 	}
 	code := m.cfg.NewCode()
 	for tries := 0; m.rooms[code] != nil; tries++ {
 		if tries > 100 {
-			return nil, ErrTooManyRooms
+			return nil, "", ErrTooManyRooms
 		}
 		code = m.cfg.NewCode()
 	}
-	r, err := New(Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random, Logger: m.cfg.Logger})
+	hostKey := randomHostKey()
+	r, err := New(Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random, Logger: m.cfg.Logger, HostKey: hostKey})
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	m.rooms[code] = r
-	return r, nil
+	return r, hostKey, nil
 }
 
 // Get finds a room by its code. Codes are typed by hand, so case and
@@ -152,6 +156,15 @@ func (m *Manager) sweep() {
 	for _, r := range idle {
 		r.Close() // outside the lock: it waits for the room goroutine
 	}
+}
+
+// randomHostKey draws a 128-bit secret for a room's creator (audit S8).
+func randomHostKey() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		panic("crypto/rand failed: " + err.Error()) // no safe fallback for a secret value
+	}
+	return hex.EncodeToString(b[:])
 }
 
 func randomCode() string {

@@ -28,14 +28,18 @@ func pingClockFor(t *testing.T) *room.FakeClock {
 // a phone that genuinely lost signal, so nothing it holds auto-answers a
 // ping, is to never read at all. The TCP connection itself stays open, as a
 // real network partition would leave it.
-func (e *env) silentJoin(code, nickname string) *websocket.Conn {
+func (e *env) silentJoin(code, hostKey, nickname string) *websocket.Conn {
 	e.t.Helper()
 	conn, _, err := websocket.Dial(ctx(e.t), e.wsURL(), nil)
 	if err != nil {
 		e.t.Fatalf("dial: %v", err)
 	}
 	e.t.Cleanup(func() { _ = conn.CloseNow() })
-	b, err := json.Marshal(map[string]any{"type": "join", "room": code, "nickname": nickname})
+	msg := map[string]any{"type": "join", "room": code, "nickname": nickname}
+	if hostKey != "" {
+		msg["hostKey"] = hostKey
+	}
+	b, err := json.Marshal(msg)
 	if err != nil {
 		e.t.Fatal(err)
 	}
@@ -56,8 +60,8 @@ func TestHeartbeat_SilentConnectionIsDroppedAndSpeakerMoves(t *testing.T) {
 		c.PongTimeout = time.Second
 		c.PingClock = pingClk
 	})
-	code := e.createRoom()
-	e.silentJoin(code, "An")          // joins first: the host, and so the speaker
+	code, hostKey := e.createRoomWithHost()
+	e.silentJoin(code, hostKey, "An") // the creator, joins first: the host, and so the speaker
 	time.Sleep(50 * time.Millisecond) // let the server process it before Binh joins
 	other := e.join(code, "Binh")
 

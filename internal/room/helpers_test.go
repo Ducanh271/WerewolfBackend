@@ -90,17 +90,19 @@ func (s *recSink) events() []engine.Event {
 	return out
 }
 
-// game is a room with a fake clock and a few joined players.
+// game is a room with a fake clock and a few joined players. p1 is always
+// the host: newGame presents the room's hostKey on its first join.
 type game struct {
-	t     *testing.T
-	r     *Room
-	clk   *FakeClock
-	rnd   *fixedRandom
-	store *store.Memory
-	cl    map[engine.PlayerID]*Client
-	sink  map[engine.PlayerID]*recSink
-	cred  map[engine.PlayerID]Credentials
-	nick  map[engine.PlayerID]string
+	t       *testing.T
+	r       *Room
+	clk     *FakeClock
+	rnd     *fixedRandom
+	store   *store.Memory
+	hostKey string
+	cl      map[engine.PlayerID]*Client
+	sink    map[engine.PlayerID]*recSink
+	cred    map[engine.PlayerID]Credentials
+	nick    map[engine.PlayerID]string
 }
 
 var nicknames = []string{"An", "Binh", "Chi", "Dung", "Em", "Phuc", "Giang", "Hoa", "Khoa", "Lan", "Minh", "Nga"}
@@ -109,26 +111,30 @@ func newGame(t *testing.T, players int) *game {
 	t.Helper()
 	g := &game{
 		t: t, clk: NewFakeClock(time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)),
-		rnd: &fixedRandom{seed: 1}, store: store.NewMemory(),
+		rnd: &fixedRandom{seed: 1}, store: store.NewMemory(), hostKey: "test-host-key",
 		cl: map[engine.PlayerID]*Client{}, sink: map[engine.PlayerID]*recSink{},
 		cred: map[engine.PlayerID]Credentials{}, nick: map[engine.PlayerID]string{},
 	}
-	r, err := New(Config{Code: "K7QP", Clock: g.clk, Random: g.rnd, Store: g.store})
+	r, err := New(Config{Code: "K7QP", Clock: g.clk, Random: g.rnd, Store: g.store, HostKey: g.hostKey})
 	if err != nil {
 		t.Fatal(err)
 	}
 	g.r = r
 	t.Cleanup(r.Close)
 	for i := 0; i < players; i++ {
-		g.join(nicknames[i])
+		key := ""
+		if i == 0 {
+			key = g.hostKey
+		}
+		g.joinAs(nicknames[i], key)
 	}
 	return g
 }
 
-func (g *game) join(nickname string) engine.PlayerID {
+func (g *game) joinAs(nickname, hostKey string) engine.PlayerID {
 	g.t.Helper()
 	sink := &recSink{}
-	cl, creds, err := g.r.Join(nickname, sink)
+	cl, creds, err := g.r.Join(nickname, hostKey, sink)
 	if err != nil {
 		g.t.Fatalf("Join(%s): %v", nickname, err)
 	}
@@ -170,6 +176,14 @@ func (g *game) eventLog() []engine.Event {
 	var l []engine.Event
 	_ = g.r.do(func() error { l = append(l, g.r.log...); return nil })
 	return l
+}
+
+// host is who the room currently thinks the host is, including after the
+// deal (rules §2's hostOnly checks stop there, but TransferHost does not).
+func (g *game) host() engine.PlayerID {
+	var h engine.PlayerID
+	_ = g.r.do(func() error { h = g.r.host; return nil })
+	return h
 }
 
 func (g *game) who(role engine.RoleID) engine.PlayerID {

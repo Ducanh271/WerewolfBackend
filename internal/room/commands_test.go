@@ -64,7 +64,7 @@ func TestSetup_LobbyCommandsAreRejectedAfterTheDeal(t *testing.T) {
 	if err := host.Leave(); !errors.Is(err, engine.ErrWrongPhase) {
 		t.Errorf("Leave after the deal: %v, want ErrWrongPhase", err)
 	}
-	if _, _, err := g.r.Join("Late", &recSink{}); !errors.Is(err, engine.ErrWrongPhase) {
+	if _, _, err := g.r.Join("Late", "", &recSink{}); !errors.Is(err, engine.ErrWrongPhase) {
 		t.Errorf("Join after the deal: %v, want ErrWrongPhase", err)
 	}
 }
@@ -91,7 +91,7 @@ func TestRoom_EventsAreStoredBeforeAnyoneIsTold(t *testing.T) {
 	r, _ := New(Config{Code: "F", Store: &failingStore{}})
 	defer r.Close()
 	sink := &recSink{}
-	if _, _, err := r.Join("An", sink); err == nil {
+	if _, _, err := r.Join("An", "", sink); err == nil {
 		t.Fatal("join succeeded although the event could not be stored")
 	}
 	if len(sink.msgs) != 0 {

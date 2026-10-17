@@ -59,7 +59,7 @@ func (a Audience) includes(s State, v Viewer) bool {
 // each player reads their own role from the view.
 func audienceOf(s State, e Event) Audience {
 	switch ev := e.(type) {
-	case PlayerJoined, PlayerLeft, SeatsSet, TimersConfigured, RolesConfigured,
+	case PlayerJoined, PlayerLeft, PlayerKicked, SeatsSet, TimersConfigured, RolesConfigured,
 		ChiefElectionStarted, ChiefVoteCast, ChiefElected,
 		ChiefSuccessionStarted, ChiefSucceeded, ChiefLost,
 		NightStarted, NightEnded, DawnAnnounced,

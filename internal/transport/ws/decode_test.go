@@ -61,8 +61,8 @@ func TestDecode_CommandsBeforeJoiningAreRefused(t *testing.T) {
 
 func TestDecode_ClientNeverChoosesWhoActs(t *testing.T) {
 	e := newEnv(t, nil)
-	code := e.createRoom()
-	host := e.join(code, "An")
+	code, hostKey := e.createRoomWithHost()
+	host := e.joinHost(code, hostKey, "An")
 	other := e.join(code, "Binh")
 	// Only the host may set seats; a player cannot borrow the host's identity
 	// because there is nowhere in a message to put one.

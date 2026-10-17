@@ -21,9 +21,17 @@ type PlayerJoined struct {
 	Nickname string
 }
 
-// PlayerLeft records a player leaving the lobby. The seating and the role
-// list were made for the old table, so both are cleared.
+// PlayerLeft records a player leaving the lobby. Only their own seat is
+// freed (the rest keep theirs); the chosen role list is untouched. DealRoles
+// re-checks the role list against the new player count before dealing.
 type PlayerLeft struct {
+	EventMarker
+	Player PlayerID
+}
+
+// PlayerKicked records the host removing a player from the lobby (audit
+// K2). Handled exactly like PlayerLeft.
+type PlayerKicked struct {
 	EventMarker
 	Player PlayerID
 }

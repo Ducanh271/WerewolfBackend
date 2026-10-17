@@ -32,7 +32,7 @@ func TestManager_CodesAreFourCharactersWithoutConfusingOnes(t *testing.T) {
 
 func TestManager_CreateThenGetFindsTheRoom_IgnoringCase(t *testing.T) {
 	m, _ := newManager(t, ManagerConfig{NewCode: func() string { return "K7QP" }})
-	r, err := m.Create(engine.InPerson)
+	r, _, err := m.Create(engine.InPerson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,8 +52,8 @@ func TestManager_CodeCollisionDrawsAnotherCode(t *testing.T) {
 		codes = codes[1:]
 		return c
 	}})
-	a, _ := m.Create(engine.InPerson)
-	b, err := m.Create(engine.InPerson)
+	a, _, _ := m.Create(engine.InPerson)
+	b, _, err := m.Create(engine.InPerson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,24 +64,24 @@ func TestManager_CodeCollisionDrawsAnotherCode(t *testing.T) {
 
 func TestManager_OnlineRoomsAreRefused(t *testing.T) {
 	m, _ := newManager(t, ManagerConfig{})
-	if _, err := m.Create(engine.Online); !errors.Is(err, engine.ErrModeUnsupported) {
+	if _, _, err := m.Create(engine.Online); !errors.Is(err, engine.ErrModeUnsupported) {
 		t.Fatalf("err = %v, want ErrModeUnsupported", err)
 	}
 }
 
 func TestManager_RoomLimit(t *testing.T) {
 	m, _ := newManager(t, ManagerConfig{MaxRooms: 1})
-	if _, err := m.Create(engine.InPerson); err != nil {
+	if _, _, err := m.Create(engine.InPerson); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := m.Create(engine.InPerson); !errors.Is(err, ErrTooManyRooms) {
+	if _, _, err := m.Create(engine.InPerson); !errors.Is(err, ErrTooManyRooms) {
 		t.Fatalf("err = %v, want ErrTooManyRooms", err)
 	}
 }
 
 func TestManager_RoomIdleForTwoHoursIsDeleted(t *testing.T) {
 	m, clk := newManager(t, ManagerConfig{NewCode: func() string { return "K7QP" }})
-	r, _ := m.Create(engine.InPerson)
+	r, _, _ := m.Create(engine.InPerson)
 
 	clk.Advance(IdleTimeout - 2*sweepEvery)
 	if _, err := m.Get("K7QP"); err != nil {
@@ -89,7 +89,7 @@ func TestManager_RoomIdleForTwoHoursIsDeleted(t *testing.T) {
 	}
 
 	// Somebody joins: the idle time starts again.
-	if _, _, err := r.Join("An", &recSink{}); err != nil {
+	if _, _, err := r.Join("An", "", &recSink{}); err != nil {
 		t.Fatal(err)
 	}
 	clk.Advance(IdleTimeout - 2*sweepEvery)

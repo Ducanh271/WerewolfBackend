@@ -78,17 +78,15 @@ func TestRooms_JoiningAnUnknownRoomIsAnError(t *testing.T) {
 
 func TestRooms_OnlyTheHostPhoneIsTheSpeaker(t *testing.T) {
 	e := newEnv(t, nil)
-	code := e.createRoom()
-	host := e.join(code, "An")
-	other := e.join(code, "Binh")
-	two := func(s wsclient.Snapshot) bool { return len(s.Events) == 2 }
-	host.Wait(ctx(t), two)
-	other.Wait(ctx(t), two)
-	if host.Snapshot().View["speaker"] != true {
-		t.Errorf("the host phone is not the speaker: %v", host.Snapshot().View)
+	code, hostKey := e.createRoomWithHost()
+	other := e.join(code, "An")               // connects first, not the creator
+	host := e.joinHost(code, hostKey, "Binh") // the creator, connects second
+
+	if !host.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.View.Get("speaker") == true }) {
+		t.Fatalf("the host phone is never told to speak: %v", host.Snapshot().View)
 	}
-	if _, has := other.Snapshot().View["speaker"]; has {
-		t.Errorf("a second phone is told to speak: %v", other.Snapshot().View)
+	if !other.Wait(ctx(t), func(s wsclient.Snapshot) bool { _, has := s.View["speaker"]; return !has }) {
+		t.Fatalf("a non-host phone is told to speak: %v", other.Snapshot().View)
 	}
 }
 
@@ -97,8 +95,8 @@ func TestRooms_OnlyTheHostPhoneIsTheSpeaker(t *testing.T) {
 // just the host's, is told to speak.
 func TestRooms_ConfigureSoundAllPhones_EveryoneBecomesSpeaker(t *testing.T) {
 	e := newEnv(t, nil)
-	code := e.createRoom()
-	host := e.join(code, "An")
+	code, hostKey := e.createRoomWithHost()
+	host := e.joinHost(code, hostKey, "An")
 	other := e.join(code, "Binh")
 	two := func(s wsclient.Snapshot) bool { return len(s.Events) == 2 }
 	host.Wait(ctx(t), two)

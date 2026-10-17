@@ -97,17 +97,24 @@ func (e *env) wsURL() string { return "ws" + strings.TrimPrefix(e.srv.URL, "http
 
 // createRoom does POST /rooms and returns the code.
 func (e *env) createRoom() string {
+	code, _ := e.createRoomWithHost()
+	return code
+}
+
+// createRoomWithHost does POST /rooms and returns the code and the creator's
+// secret hostKey (audit S8): only the join that presents it becomes host.
+func (e *env) createRoomWithHost() (code, hostKey string) {
 	e.t.Helper()
 	resp, err := http.Post(e.srv.URL+"/rooms", "application/json", nil)
 	if err != nil {
 		e.t.Fatal(err)
 	}
 	defer resp.Body.Close()
-	var body struct{ Room string }
+	var body struct{ Room, HostKey string }
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil || resp.StatusCode != http.StatusCreated {
 		e.t.Fatalf("POST /rooms: status %d, err %v", resp.StatusCode, err)
 	}
-	return body.Room
+	return body.Room, body.HostKey
 }
 
 func ctx(t *testing.T) context.Context {
@@ -129,9 +136,22 @@ func (e *env) dial(header http.Header) *wsclient.Client {
 
 // join connects a phone and joins the room; it waits for the welcome.
 func (e *env) join(code, nickname string) *wsclient.Client {
+	return e.joinAs(code, "", nickname)
+}
+
+// joinHost is join, presenting the room's hostKey (audit S8).
+func (e *env) joinHost(code, hostKey, nickname string) *wsclient.Client {
+	return e.joinAs(code, hostKey, nickname)
+}
+
+func (e *env) joinAs(code, hostKey, nickname string) *wsclient.Client {
 	e.t.Helper()
 	c := e.dial(nil)
-	e.send(c, map[string]any{"type": "join", "room": code, "nickname": nickname})
+	msg := map[string]any{"type": "join", "room": code, "nickname": nickname}
+	if hostKey != "" {
+		msg["hostKey"] = hostKey
+	}
+	e.send(c, msg)
 	if !c.Wait(ctx(e.t), func(s wsclient.Snapshot) bool { return s.Welcome != nil }) {
 		e.t.Fatalf("%s: no welcome; errors: %v", nickname, c.Snapshot().Errors)
 	}

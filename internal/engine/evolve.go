@@ -16,11 +16,10 @@ func Evolve(s State, e Event) State {
 		return out
 
 	case PlayerLeft:
-		out := s.clone()
-		delete(out.Players, ev.Player)
-		out.Seats = nil
-		out.Settings.Roles = nil
-		return out
+		return evolvePlayerRemoved(s, ev.Player)
+
+	case PlayerKicked:
+		return evolvePlayerRemoved(s, ev.Player)
 
 	case TimersConfigured:
 		out := s.clone()
@@ -92,6 +91,21 @@ func Evolve(s State, e Event) State {
 		}
 	}
 	return s
+}
+
+// evolvePlayerRemoved takes a player out of the lobby: only their own seat is
+// freed, the rest keep theirs in order, and the chosen role list is left
+// alone (PlayerLeft, PlayerKicked).
+func evolvePlayerRemoved(s State, id PlayerID) State {
+	out := s.clone()
+	delete(out.Players, id)
+	for i, p := range out.Seats {
+		if p == id {
+			out.Seats = append(out.Seats[:i], out.Seats[i+1:]...)
+			break
+		}
+	}
+	return out
 }
 
 // Fold rebuilds a state by applying events in order.

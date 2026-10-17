@@ -13,16 +13,31 @@ import (
 
 // Client message types (docs/protocol.md).
 const (
-	typeJoin    = "join"
-	typeRejoin  = "rejoin"
-	typeLeave   = "leave"
-	typeCommand = "command"
+	typeJoin         = "join"
+	typeRejoin       = "rejoin"
+	typeLeave        = "leave"
+	typeKick         = "kick"
+	typeTransferHost = "transferHost"
+	typeCommand      = "command"
 )
 
 type joinMsg struct {
 	Type     string `json:"type"`
 	Room     string `json:"room"`
 	Nickname string `json:"nickname"`
+	// HostKey is the creator's secret from POST /rooms (audit S8). Only their
+	// own first join needs to send it; empty otherwise.
+	HostKey string `json:"hostKey"`
+}
+
+type kickMsg struct {
+	Type   string `json:"type"`
+	Target string `json:"target"`
+}
+
+type transferHostMsg struct {
+	Type   string `json:"type"`
+	Target string `json:"target"`
 }
 
 type rejoinMsg struct {

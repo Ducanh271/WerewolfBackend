@@ -11,10 +11,15 @@ import (
 
 func TestE2E_FivePhonesPlayANightAndADayToAHanging(t *testing.T) {
 	e := newEnv(t, func(c *Config) { c.Burst = 100 })
-	code := e.createRoom()
+	code, hostKey := e.createRoomWithHost()
 	tb := &table{t: t, e: e}
 	for _, nick := range []string{"An", "Binh", "Chi", "Dung", "Em"} {
-		c := e.join(code, nick)
+		var c *wsclient.Client
+		if nick == "An" {
+			c = e.joinHost(code, hostKey, nick)
+		} else {
+			c = e.join(code, nick)
+		}
 		tb.p = append(tb.p, &phone{c: c, id: c.Snapshot().Welcome.Str("player"), nick: nick})
 	}
 

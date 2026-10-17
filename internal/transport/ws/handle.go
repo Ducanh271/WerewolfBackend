@@ -5,6 +5,7 @@ import (
 
 	"github.com/coder/websocket"
 
+	"masoi/internal/engine"
 	"masoi/internal/room"
 )
 
@@ -94,6 +95,24 @@ func (s *session) dispatch(typ string, data []byte) error {
 			return err
 		}
 		return errLeft
+	case typeKick:
+		var m kickMsg
+		if err := decodeStrict(data, &m); err != nil {
+			return err
+		}
+		if s.client == nil {
+			return &protoError{codeNotJoined, "join a room first"}
+		}
+		return s.client.KickPlayer(engine.PlayerID(m.Target))
+	case typeTransferHost:
+		var m transferHostMsg
+		if err := decodeStrict(data, &m); err != nil {
+			return err
+		}
+		if s.client == nil {
+			return &protoError{codeNotJoined, "join a room first"}
+		}
+		return s.client.TransferHost(engine.PlayerID(m.Target))
 	case typeCommand:
 		var m commandMsg
 		if err := decodeStrict(data, &m); err != nil {
@@ -119,7 +138,7 @@ func (s *session) join(m joinMsg) error {
 	if err != nil {
 		return err
 	}
-	cl, creds, err := rm.Join(m.Nickname, s)
+	cl, creds, err := rm.Join(m.Nickname, m.HostKey, s)
 	if err != nil {
 		return err
 	}
