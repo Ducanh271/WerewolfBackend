@@ -17,7 +17,7 @@ func TestSummary_NarratesNightsAndDaysInVietnamese(t *testing.T) {
 	g := NewGame(t, Seats(all...),
 		Cast("An", Werewolf, "Binh", Werewolf, "Chi", Werewolf, "Dung", Guard, "Em", Seer,
 			"Phuc", Villager, "Giang", Villager, "Hoa", Villager, "Khoa", Villager, "Lan", Witch),
-		Chief("Em"))
+		Chief("Hoa"))
 
 	// Night 1: the Guard shields the wrong player, the pack bites Phuc, the
 	// Witch heals him (saved), the Seer checks Dung (not a wolf).
@@ -40,7 +40,7 @@ func TestSummary_NarratesNightsAndDaysInVietnamese(t *testing.T) {
 	g.ExpectPhase(engine.PhaseEnded)
 
 	want := []string{
-		"Em được bầu làm Trưởng làng.",
+		"Hoa được bầu làm Trưởng làng.",
 		"Đêm 1: Bảo vệ che chở Hoa. Sói cắn Phuc, Phù thủy cứu Phuc. Tiên tri soi Dung: không phải Sói. → Không ai chết.",
 		"Ngày 1: Không ai bị treo.",
 		"Đêm 2: Sói cắn Giang. → Giang chết.",
