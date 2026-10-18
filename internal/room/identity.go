@@ -50,8 +50,10 @@ type Identity interface {
 }
 
 const (
-	maxPINFailures = 5
-	pinLockTime    = time.Minute
+	// MaxPINFailures and PINLockTime are exported so the in-app guide (T25)
+	// can quote the real numbers instead of typing them into guide text.
+	MaxPINFailures = 5
+	PINLockTime    = time.Minute
 	// maxPINFailEntries bounds the fails table (S7): a flood of bogus
 	// nicknames must not grow it without limit. Once full, the entries
 	// least recently tried are dropped to make room.
@@ -124,9 +126,9 @@ func (id *SecretIdentity) ByPIN(nickname, pin string) (engine.PlayerID, string, 
 	p, known := id.nicks[key]
 	if !known || subtle.ConstantTimeCompare([]byte(id.pins[p]), []byte(pin)) != 1 {
 		f.count++
-		if f.count >= maxPINFailures {
+		if f.count >= MaxPINFailures {
 			f.count = 0
-			f.lockedUntil = now.Add(pinLockTime)
+			f.lockedUntil = now.Add(PINLockTime)
 		}
 		return "", "", ErrBadCredentials
 	}

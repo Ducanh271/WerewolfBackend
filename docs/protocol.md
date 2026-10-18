@@ -10,7 +10,39 @@ durations are milliseconds, times are Unix milliseconds.
 |---|---|
 | `POST /rooms` (body optional: `{"mode": "inPerson"}`) | `201 {"room": "K7QP", "hostKey": "…"}`; `mode: "online"` → `400` with `mode_unsupported`; `503` `too_many_rooms` |
 | `GET /join/{code}` | `200 {"room": "K7QP"}`, or `404` `room_not_found`. This is the link the QR code will carry (the UI is built later); case is ignored |
+| `GET /guide` | `200` the in-app rules guide (below). Public, same for everyone, needs no room: usable from the lobby before anyone has joined |
 | `GET /ws` | upgrades to the game socket |
+
+### `GET /guide` (T25)
+
+The in-app "rules guide" and "how to play your role" screens, in Vietnamese,
+rendered server-side from the real settings and constants (a number here can
+never drift from the number the game actually uses). Always `200`, same body
+for every caller:
+
+```json
+{
+  "quickRules": ["Ma Sói chơi bằng điện thoại của chính mỗi người, không cần ai làm quản trò riêng.", "..."],
+  "roles": [
+    {"role": "Werewolf", "title": "Sói", "whenCalled": "...", "howTo": "...", "onTimeout": "...", "gotcha": "..."},
+    {"role": "RustyKnight", "title": "Hiệp sĩ kiếm gỉ", "whenCalled": "...", "howTo": "...", "onTimeout": "...", "gotcha": "...", "note": "..."}
+  ],
+  "statuses": [
+    {"role": "chief", "title": "Trưởng làng (danh hiệu công khai, không phải vai riêng)", "whenCalled": "...", "howTo": "...", "onTimeout": "...", "gotcha": "...", "note": "..."},
+    {"role": "lovers", "title": "Cặp đôi (...)", "...": "..."},
+    {"role": "cursed", "title": "Bị nguyền (...)", "...": "..."}
+  ],
+  "firstTime": ["Che màn hình ...", "..."],
+  "tips": ["Tiên tri: ...", "..."]
+}
+```
+
+- `quickRules`: the 12-line "Luật nhanh" (`docs/guide-text.md` §1), fixed text, no settings number.
+- `roles`: one entry per role in `engine.Registry` (`i18n.RoleGuides`), in the rules §9b card order. `note` is omitted when the role has none.
+- `statuses`: the three states that are not a role — Chief, Lovers, Cursed (`i18n.StatusGuides`) — same shape as `roles`.
+- `firstTime`: the "Lần đầu chơi?" checklist (`i18n.FirstTimeChecklist`).
+- `tips`: optional strategy tips (`i18n.OptionalTips`), fixed text.
+- Every number in `howTo`/`whenCalled`/`title` (the Hunter's shot time, the lovers looking at each other, a dead Chief's time to name a successor, the role-view time, the PIN retry/lock numbers, Cupid's and the Detective's minimum table size) is read from `engine.DefaultSettings()`, the roles' own `MinPlayers()`, and `room.MaxPINFailures`/`room.PINLockTime` — never typed into the text (`internal/i18n/guide.go`).
 
 - The room code is 4 characters from `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (no O, 0, I,
   1, L). It is not a secret. `hostKey` is: only the phone that created the room

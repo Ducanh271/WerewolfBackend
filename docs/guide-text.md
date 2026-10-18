@@ -12,6 +12,15 @@ Nguồn: `docs/rules.md` (toàn bộ). Phần "Mô tả ngắn" của từng vai
 dưới đây là hướng dẫn thao tác trên điện thoại, bổ sung thêm cho thẻ vai sẵn
 có, không thay thế nó.
 
+**T25 bước 3b (đã triển khai, `internal/i18n/guide.go`):** vài câu ở mục 2 và
+3 có một số thật (thời gian, số lần, số người) nay viết bằng placeholder có
+tên (`{seconds}`, `{pinTries}`, `{lockMinutes}`, `{minPlayers}`) thay cho số
+gõ cứng, để server điền từ `Settings`/hằng số thật — không gõ số trực tiếp
+trong code, và không dùng `%d` vị trí (để sau thêm ngôn ngữ khác không bị vỡ
+nếu câu đổi thứ tự). Mục 1 (Luật nhanh) và mục 4 (Mẹo chơi) không đổi — không
+có số nào trong đó. Câu khoá đề cử 10 giây: giữ nguyên như đã duyệt, không
+thêm số.
+
 ---
 
 ## 1. "Luật nhanh" (≤ 1 phút đọc, 12 dòng)
@@ -83,7 +92,7 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 
 ### Thợ săn (rules.md §6)
 - Khi nào được gọi: không có lượt đêm; chỉ hoạt động ngay khi chết, vì bất kỳ lý do gì.
-- Cách dùng: lúc chết, vai được công khai ngay; trong thời gian quy định, chọn một người sống bất kỳ để bắn.
+- Cách dùng: lúc chết, vai được công khai ngay; trong {seconds} giây, chọn một người sống bất kỳ để bắn.
 - Nếu hết giờ: không bắn ai.
 - Dễ nhầm: nghĩ mình còn cơ hội bắn lần sau — Thợ săn chỉ bắn đúng một lần, ngay lúc chết.
 
@@ -93,7 +102,7 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 - Nếu hết giờ: server tự chọn ngẫu nhiên một người hợp lệ (không phải chính mình, không trùng người đêm trước).
 - Dễ nhầm: chọn lại đúng người đã ghé đêm trước — app không cho chọn.
 
-### Thám tử (rules.md §6, ván trên 8 người)
+### Thám tử (rules.md §6, ván từ {minPlayers} người)
 - Khi nào được gọi: được gọi mỗi đêm, kể cả sau khi đã dùng (lượt gọi giả, vẫn chạy đủ giờ, để không lộ đã dùng).
 - Cách dùng: chọn một người sống (được chọn chính mình); biết vùng gồm người đó và hai người sống ngồi gần nhất có Sói hay không — không biết số lượng hay tên.
 - Nếu hết giờ (khi chưa dùng): đêm đó bỏ qua, lượt vẫn còn cho đêm sau.
@@ -106,7 +115,7 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 - Dễ nhầm: tưởng có nút bấm ban đêm — Hiệp sĩ không làm gì cả, năng lực chỉ kích hoạt khi bị cắn chết.
 - Lưu ý: con sói trúng độc không chết ngay đêm đó — nó sống thêm đúng 24 giờ và chết vào đêm sau; cái chết đó được loa đọc sáng hôm sau cùng các cái chết khác.
 
-### Cupid (rules.md §7, ván từ 10 người)
+### Cupid (rules.md §7, ván từ {minPlayers} người)
 - Khi nào được gọi: được gọi đầu tiên, chỉ đêm đầu tiên.
 - Cách dùng: chọn hai người sống khác nhau (được chọn chính mình) để thành một cặp đôi.
 - Nếu hết giờ: server tự ghép ngẫu nhiên hai người sống.
@@ -114,13 +123,13 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 
 ### Trưởng làng (rules.md §7b — danh hiệu công khai, không phải vai riêng)
 - Khi nào được gọi: bầu ngay sau khi xem vai, trước đêm 1; giữ cho tới khi chết.
-- Cách dùng: lúc bầu, chọn một người (được tự bầu mình); khi đang giữ danh hiệu, phiếu đề cử và phiếu giết/tha của bạn tự tính gấp đôi, không cần làm gì thêm; khi Trưởng làng chết, trong thời gian quy định chọn một người sống kế nhiệm.
+- Cách dùng: lúc bầu, chọn một người (được tự bầu mình); khi đang giữ danh hiệu, phiếu đề cử và phiếu giết/tha của bạn tự tính gấp đôi, không cần làm gì thêm; khi Trưởng làng chết, trong {seconds} giây chọn một người sống kế nhiệm.
 - Nếu hết giờ: lúc bầu, không ai bầu cho ai thì server chọn ngẫu nhiên một người. Lúc chọn kế nhiệm, hết giờ thì danh hiệu mất, không ai thay.
 - Dễ nhầm: nghĩ vai gốc của mình đổi khi làm Trưởng làng — vai và phe gốc không đổi, chỉ có phiếu tính gấp đôi.
 - Lưu ý: đang bị đề cử lên giàn thì mất quyền bỏ phiếu như mọi người khác, kể cả khi đang là Trưởng làng.
 
 ### Cặp đôi (rules.md §7 — trạng thái do Cupid ghép, không phải vai riêng)
-- Khi nào được gọi: không có lượt riêng; biết nhau ở bước Kiểm tra điện thoại ngay sau lượt Cupid, đêm 1; ngay sau đó mở mắt nhìn nhau 10 giây (chỉ hai người, người khác vẫn nhắm mắt).
+- Khi nào được gọi: không có lượt riêng; biết nhau ở bước Kiểm tra điện thoại ngay sau lượt Cupid, đêm 1; ngay sau đó mở mắt nhìn nhau {seconds} giây (chỉ hai người, người khác vẫn nhắm mắt).
 - Cách dùng: không chọn gì; điện thoại hiện người yêu là ai, vai gì, và màu liên kết theo phe hiện tại của cặp.
 - Nếu hết giờ: không áp dụng.
 - Dễ nhầm: một người chết **ban đêm** thì người kia chết theo **cùng đêm đó**; một người chết **ban ngày** (bị treo, bị Thợ săn bắn) thì người kia chưa chết ngay, mà chết vào **đêm kế tiếp**. Nếu cặp gồm một người phe Sói và một người phe Dân, hai người thuộc **phe thứ ba**: chỉ thắng khi chính hai người đó là hai người cuối cùng còn sống, dù phe Dân hay phe Sói thắng thì cả hai đều thua.
@@ -135,13 +144,13 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 
 ## 3. "Lần đầu chơi?" — việc cần nhớ
 
-- Che màn hình (tay, hoặc ngồi quay màn hình vào trong) mỗi khi điện thoại hiện vai của bạn hoặc lượt đêm — người ngồi cạnh không được thấy.
+- Che màn hình (tay, hoặc ngồi quay màn hình vào trong) mỗi khi điện thoại hiện vai của bạn (có {seconds} giây để xem) hoặc lượt đêm — người ngồi cạnh không được thấy.
 - Thẻ vai che mặc định; nhấn giữ để xem, thả tay là ẩn lại ngay — đừng mở thẻ vai lâu để người khác liếc thấy.
 - Nếu bạn đã chết, màn hình vẫn tối/im ban đêm cho tới khi bạn tự chạm vào xem — đừng để màn hình tự sáng, vì vậy sẽ lộ ra là bạn đã chết.
 - Mỗi lượt gọi đêm chạy đủ thời gian như nhau dù vai đó còn sống hay đã chết — đừng đoán ai còn sống vì lượt nhanh hay chậm.
 - Tắt âm bàn phím và rung khi chạm máy — tiếng gõ ban đêm lộ ra ai đang thao tác.
 - Hết pin hoặc lỡ tắt app giữa ván: vào lại đúng phòng bằng **cùng máy** sẽ tự nhận lại vai ngay; đổi sang **máy khác** thì nhập đúng nickname và mã PIN 4 số được cấp lúc vào phòng.
-- Tự nhớ mã PIN của mình, không ai nhắc lại giúp — nhập sai PIN 5 lần sẽ bị khoá vào lại bằng PIN trong 1 phút.
+- Tự nhớ mã PIN của mình, không ai nhắc lại giúp — nhập sai PIN {pinTries} lần sẽ bị khoá vào lại bằng PIN trong {lockMinutes} phút.
 - Khi chết, bạn không được nói hay bỏ phiếu nữa, nhưng được xem toàn bộ vai thật và diễn biến của ván từ lúc đó.
 
 ---

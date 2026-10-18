@@ -30,13 +30,13 @@ func TestSecretIdentity_LockingStillWorksAfterTheTableFills(t *testing.T) {
 	for i := 0; i < maxPINFailEntries+500; i++ {
 		_, _, _ = id.ByPIN(fmt.Sprintf("ghost-%d", i), "0000")
 	}
-	for i := 0; i < maxPINFailures; i++ {
+	for i := 0; i < MaxPINFailures; i++ {
 		clk.Advance(time.Millisecond)
 		if _, _, err := id.ByPIN("An", "0000"); !errors.Is(err, ErrBadCredentials) {
 			t.Fatalf("attempt %d: err = %v, want ErrBadCredentials", i, err)
 		}
 	}
 	if _, _, err := id.ByPIN("An", "0000"); !errors.Is(err, ErrPINLocked) {
-		t.Fatalf("after %d wrong PINs: err = %v, want ErrPINLocked", maxPINFailures, err)
+		t.Fatalf("after %d wrong PINs: err = %v, want ErrPINLocked", MaxPINFailures, err)
 	}
 }

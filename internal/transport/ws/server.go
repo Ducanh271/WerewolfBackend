@@ -22,21 +22,25 @@ type Server struct {
 	log   *slog.Logger
 	mux   *http.ServeMux
 	conns *connGuard
+	guide guideResponse
 }
 
 // New returns the handler serving:
 //
 //	POST /rooms        create a room, reply {"room": "K7QP", "hostKey": "…"}
 //	GET  /join/{code}  does the room exist (the link behind the QR code)
+//	GET  /guide         the in-app rules guide and per-role how-to (T25); public, no room needed
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
 func New(cfg Config) http.Handler {
 	cfg.setDefaults()
 	s := &Server{
 		cfg: cfg, log: cfg.Logger, mux: http.NewServeMux(),
 		conns: newConnGuard(cfg.MaxConnections, cfg.MaxConnectionsPerIP, cfg.NewConnPerMinute, cfg.NewConnBurst, cfg.Now),
+		guide: buildGuide(),
 	}
 	s.mux.HandleFunc("POST /rooms", s.createRoom)
 	s.mux.HandleFunc("GET /join/{code}", s.checkRoom)
+	s.mux.HandleFunc("GET /guide", s.serveGuide)
 	s.mux.HandleFunc("GET /ws", s.serveWS)
 	return s.mux
 }
