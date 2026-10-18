@@ -73,10 +73,11 @@ type Succession struct {
 	Resume Phase
 }
 
-// AnnouncementKey implementations: all three are read aloud to everybody.
-func (ChiefElected) AnnouncementKey() string   { return i18n.ChiefElected }
-func (ChiefSucceeded) AnnouncementKey() string { return i18n.ChiefSucceeded }
-func (ChiefLost) AnnouncementKey() string      { return i18n.ChiefLost }
+// AnnouncementKey implementations: all four are read aloud to everybody.
+func (ChiefElectionStarted) AnnouncementKey() string { return i18n.ChiefElectionStarted }
+func (ChiefElected) AnnouncementKey() string         { return i18n.ChiefElected }
+func (ChiefSucceeded) AnnouncementKey() string       { return i18n.ChiefSucceeded }
+func (ChiefLost) AnnouncementKey() string            { return i18n.ChiefLost }
 
 func evolveChief(s State, e Event) (State, bool) {
 	switch ev := e.(type) {

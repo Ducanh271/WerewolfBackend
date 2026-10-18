@@ -13,7 +13,7 @@ func TestVi_DawnAnnouncements(t *testing.T) {
 		want  string
 	}{
 		{"several dead, names as given", DawnSomeoneDied, []string{"An", "Binh"}, "Đêm qua, An, Binh đã chết."},
-		{"protected", DawnProtected, nil, "Không có ai chết, được bảo vệ."},
+		{"protected", DawnProtected, nil, "Đêm qua không ai chết, có người đã được bảo vệ."},
 		{"nobody died", DawnNobodyDied, nil, "Không có ai chết."},
 		{"chief elected", ChiefElected, []string{"An"}, "An được bầu làm Trưởng làng."},
 		{"chief succeeded", ChiefSucceeded, []string{"Binh"}, "Trưởng làng mới là Binh."},
@@ -36,6 +36,59 @@ func TestVi_DawnNeverStatesCauseOrRole(t *testing.T) {
 				t.Errorf("%s mentions %q: %s", key, banned, text)
 			}
 		}
+	}
+}
+
+// TestVi_NewVoiceLines (audit [L3], docs/voice-lines.md): the 9 new keys plus
+// the 2 added on top of the audit, text as approved.
+func TestVi_NewVoiceLines(t *testing.T) {
+	tests := []struct{ key, want string }{
+		{RoleViewStarted, "Mời mọi người xem vai của mình. Nhớ che màn hình nhé."},
+		{ChiefElectionStarted, "Mời cả làng bầu Trưởng làng."},
+		{NightStarted, "Trời đã tối, tất cả nhắm mắt lại."},
+		{DawnStarted, "Trời đã sáng, mọi người mở mắt."},
+		{DayStarted, "Cả làng bắt đầu thảo luận và đề cử."},
+		{VerdictStarted, "Hết giờ bào chữa. Cả làng bỏ phiếu: treo hay tha."},
+	}
+	for _, tc := range tests {
+		if got := Vi(tc.key); got != tc.want {
+			t.Errorf("%s: got %q, want %q", tc.key, got, tc.want)
+		}
+	}
+	if got := Vi(TrialStarted, "An"); got != "An lên giàn bào chữa." {
+		t.Errorf("TrialStarted = %q", got)
+	}
+	if got := Vi(HunterTimedOut, "Binh"); got != "Hết giờ, Binh không bắn ai." {
+		t.Errorf("HunterTimedOut = %q", got)
+	}
+}
+
+// TestVi_NightCallName (rules §3): the calling name of every role that has a
+// night turn, and no name for a step that belongs to no role.
+func TestVi_NightCallName(t *testing.T) {
+	tests := []struct{ role, want string }{
+		{"Cupid", "Cupid"},
+		{"Visitor", "Nguyệt Nữ"},
+		{"Guard", "Bảo vệ"},
+		{"CursedWolf", "Sói nguyền"},
+		{"WolfSeer", "Sói tiên tri"},
+		{"Werewolf", "Bầy sói"}, // never "Sói": that is the card name, not the night call
+		{"Witch", "Phù thủy"},
+		{"Seer", "Tiên tri"},
+		{"Detective", "Thám tử"},
+	}
+	for _, tc := range tests {
+		if got, ok := NightCallName(tc.role); !ok || got != tc.want {
+			t.Errorf("NightCallName(%s) = %q, %v; want %q, true", tc.role, got, ok, tc.want)
+		}
+	}
+	for _, step := range []string{"PhoneCheck", "LoversMeet", "Hunter", "RustyKnight", "Villager"} {
+		if _, ok := NightCallName(step); ok {
+			t.Errorf("NightCallName(%s) should have no calling name", step)
+		}
+	}
+	if got := Vi(NightStepCalled, "Bầy sói"); got != "Bầy sói hãy mở mắt, thực hiện xong thì nhắm mắt lại." {
+		t.Errorf("NightStepCalled sentence = %q", got)
 	}
 }
 

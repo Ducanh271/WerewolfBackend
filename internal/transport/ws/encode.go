@@ -58,18 +58,40 @@ func eventTree(ev engine.Event, names func(engine.PlayerID) string) map[string]a
 		data = map[string]any{}
 	}
 	out := map[string]any{"type": reflect.TypeOf(ev).Name(), "data": data}
-	if a, ok := ev.(announcement); ok {
-		var who []string
-		for _, id := range announcedPlayers(ev) {
-			if names != nil {
-				who = append(who, names(id))
-			} else {
-				who = append(who, string(id))
-			}
-		}
-		out["say"] = i18n.Vi(a.AnnouncementKey(), who...)
+	if say, ok := sayLine(ev, names); ok {
+		out["say"] = say
 	}
 	return out
+}
+
+// sayLine is the Vietnamese line the speaker reads for ev, if any.
+// NightStepCalled names the role being called (never a player), using the
+// exact calling name of rules §3 (i18n.NightCallName); the two night steps
+// that belong to no role (the phone check, the lovers looking at each other)
+// already have their own voice line and get none here, so nothing is read
+// twice. The role carried is the same whether its holder is alive, dead or
+// absent (gọi giả), so this line can never tell the two apart.
+func sayLine(ev engine.Event, names func(engine.PlayerID) string) (string, bool) {
+	if c, ok := ev.(engine.NightStepCalled); ok {
+		role, ok := i18n.NightCallName(string(c.Role))
+		if !ok {
+			return "", false
+		}
+		return i18n.Vi(i18n.NightStepCalled, role), true
+	}
+	a, ok := ev.(announcement)
+	if !ok {
+		return "", false
+	}
+	var who []string
+	for _, id := range announcedPlayers(ev) {
+		if names != nil {
+			who = append(who, names(id))
+		} else {
+			who = append(who, string(id))
+		}
+	}
+	return i18n.Vi(a.AnnouncementKey(), who...), true
 }
 
 // announcedPlayers lists, in order, the players an announcement names.
@@ -77,6 +99,8 @@ func announcedPlayers(ev engine.Event) []engine.PlayerID {
 	switch e := ev.(type) {
 	case engine.DawnAnnounced:
 		return e.Dead
+	case engine.TrialStarted:
+		return []engine.PlayerID{e.Defendant}
 	case engine.ChiefElected:
 		return []engine.PlayerID{e.Chief}
 	case engine.ChiefSucceeded:
@@ -85,6 +109,8 @@ func announcedPlayers(ev engine.Event) []engine.PlayerID {
 		return []engine.PlayerID{e.Hunter}
 	case engine.HunterShot:
 		return []engine.PlayerID{e.Hunter, e.Target}
+	case engine.HunterTimedOut:
+		return []engine.PlayerID{e.Hunter}
 	case engine.Hanged:
 		return []engine.PlayerID{e.Player}
 	case engine.Spared:

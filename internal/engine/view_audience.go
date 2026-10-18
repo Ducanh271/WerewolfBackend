@@ -60,9 +60,10 @@ func (a Audience) includes(s State, v Viewer) bool {
 func audienceOf(s State, e Event) Audience {
 	switch ev := e.(type) {
 	case PlayerJoined, PlayerLeft, PlayerKicked, SeatsSet, TimersConfigured, RolesConfigured,
+		RoleViewStarted,
 		ChiefElectionStarted, ChiefVoteCast, ChiefElected,
 		ChiefSuccessionStarted, ChiefSucceeded, ChiefLost,
-		NightStarted, NightEnded, DawnAnnounced,
+		NightStarted, NightEnded, DawnStarted, DawnAnnounced,
 		DayStarted, DayEnded, NominationCast, SkipSet,
 		NominationsLocking, NominationsReopened, DayClockExpired,
 		TrialStarted, VerdictStarted, VerdictCast, Spared, Hanged,

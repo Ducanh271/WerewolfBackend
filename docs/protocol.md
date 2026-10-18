@@ -212,7 +212,17 @@ The `view` object (`engine.View`); absent parts are omitted:
   them (`cmd/demo/printer.go`, `afterSubsequence`). A message without reset
   always has `from` equal to the length of the list the client holds.
 - `say` is present on announcements (events with an i18n key): the speaker
-  phone reads it aloud; every phone shows it as text.
+  phone reads it aloud; every phone shows it as text. Since audit [L3]
+  (docs/voice-lines.md) this also covers `RoleViewStarted` (right after the
+  deal), `ChiefElectionStarted`, `NightStarted`, `DawnStarted` (right after
+  `NightEnded`, before the morning announcement), `DayStarted`,
+  `TrialStarted` (names the defendant), `VerdictStarted` and `HunterTimedOut`
+  (names the Hunter). `NightStepCalled` gets a `say` too, but it names the
+  role being called, never a player (e.g. "Bầy sói hãy mở mắt..."); the two
+  night steps that belong to no role (the phone check, the lovers looking at
+  each other) read their own line instead (`PhoneCheckAnnounced`,
+  `LoversMeetAnnounced`) and get none on `NightStepCalled`, so nothing is read
+  twice.
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,

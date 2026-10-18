@@ -4,7 +4,20 @@ import (
 	"fmt"
 	"math/rand"
 	"sort"
+	"time"
+
+	"masoi/internal/i18n"
 )
+
+// RoleViewStarted opens the role-view countdown right after the deal (rules
+// §2 bước 5): every player looks at their own role before anything else.
+type RoleViewStarted struct {
+	EventMarker
+	Duration time.Duration
+}
+
+// AnnouncementKey is read aloud to everybody.
+func (RoleViewStarted) AnnouncementKey() string { return i18n.RoleViewStarted }
 
 func decideDealRoles(s State, cmd DealRoles) ([]Event, error) {
 	if s.Dealt {
@@ -23,7 +36,10 @@ func decideDealRoles(s State, cmd DealRoles) ([]Event, error) {
 	if err := validateRoleConfig(len(s.Players), s.Settings.Roles); err != nil {
 		return nil, err
 	}
-	return []Event{RolesDealt{Assignments: shuffleRoles(cmd.Seed, s.Seats, s.Settings.Roles)}}, nil
+	return []Event{
+		RolesDealt{Assignments: shuffleRoles(cmd.Seed, s.Seats, s.Settings.Roles)},
+		RoleViewStarted{Duration: s.Settings.RoleView},
+	}, nil
 }
 
 // shuffleRoles deals roles to seats. The role list is expanded in ID order

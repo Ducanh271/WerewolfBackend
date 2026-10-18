@@ -54,8 +54,10 @@ type Hanged struct {
 	Player PlayerID
 }
 
-func (Spared) AnnouncementKey() string { return i18n.DaySpared }
-func (Hanged) AnnouncementKey() string { return i18n.DayHanged }
+func (TrialStarted) AnnouncementKey() string   { return i18n.TrialStarted }
+func (VerdictStarted) AnnouncementKey() string { return i18n.VerdictStarted }
+func (Spared) AnnouncementKey() string         { return i18n.DaySpared }
+func (Hanged) AnnouncementKey() string         { return i18n.DayHanged }
 
 func startTrial(s State, defendant PlayerID) []Event {
 	return []Event{TrialStarted{Defendant: defendant, Duration: s.Settings.Defense}}

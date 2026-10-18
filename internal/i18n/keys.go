@@ -3,6 +3,9 @@ package i18n
 // Keys of the announcements the narrator reads aloud. Scenarios and the
 // engine use the keys; the Vietnamese wording lives in vi.go (task T6).
 const (
+	// DawnStarted opens the morning, before the narrator says who died (audit
+	// [L3]).
+	DawnStarted = "dawn.started"
 	// DawnSomeoneDied announces who died in the night, without their role.
 	DawnSomeoneDied = "dawn.someone_died"
 	// DawnProtected: the Guard shielded the player the pack bit.
@@ -11,8 +14,27 @@ const (
 	DawnNobodyDied = "dawn.nobody_died"
 )
 
+// RoleViewStarted opens the role-view countdown right after the deal (rules
+// §2 bước 5). The rule itself asks for no voice line here; this opener was
+// chosen on top of it, not a reading of the rule.
+const RoleViewStarted = "roleview.started"
+
+// Night announcements (rules §3), read to everybody. NightStepCalled never
+// says whether the role being called is alive, dead or absent (gọi giả).
+const (
+	// NightStarted opens the night (audit [L3]).
+	NightStarted = "night.started"
+	// NightStepCalled: "<role>, open your eyes..."; the role's calling name
+	// (never a player) is the one placeholder. engineSlots's own steps (the
+	// phone check, the lovers looking at each other) read their own line
+	// instead and never use this key (see i18n.NightCallName).
+	NightStepCalled = "night.step_called"
+)
+
 // Chief announcements (rules §7b), read to everybody.
 const (
+	// ChiefElectionStarted opens the public vote (audit [L3]).
+	ChiefElectionStarted = "chief.election_started"
 	// ChiefElected: the election result; the name is the new Chief.
 	ChiefElected = "chief.elected"
 	// ChiefSucceeded: the dead Chief named the new Chief.
@@ -23,6 +45,13 @@ const (
 
 // Day announcements (rules §4), read to everybody. No role is ever named.
 const (
+	// DayStarted opens discussion and nominations (audit [L3]).
+	DayStarted = "day.started"
+	// TrialStarted: the top nominee goes up for their defense (audit [L3]).
+	TrialStarted = "day.trial_started"
+	// VerdictStarted: defense is over, the kill-or-spare vote opens (audit
+	// [L3]).
+	VerdictStarted = "day.verdict_started"
 	// DayHanged: the village killed the player on trial.
 	DayHanged = "day.hanged"
 	// DaySpared: the village spared the player on trial.
@@ -37,6 +66,8 @@ const (
 	HunterRevealed = "hunter.revealed"
 	// HunterShot: "<Hunter> bắn <target>".
 	HunterShot = "hunter.shot"
+	// HunterTimedOut: the 15 seconds ran out, nobody is shot (audit [L3]).
+	HunterTimedOut = "hunter.timed_out"
 )
 
 // Game over announcements (rules §8), read to everybody.

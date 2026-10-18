@@ -77,6 +77,9 @@ type DayStarted struct {
 	Duration time.Duration
 }
 
+// AnnouncementKey is read aloud to everybody.
+func (DayStarted) AnnouncementKey() string { return i18n.DayStarted }
+
 // DayEnded closes a day nobody was hanged in; the game waits at dusk.
 type DayEnded struct {
 	EventMarker

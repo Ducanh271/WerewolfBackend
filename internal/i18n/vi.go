@@ -5,32 +5,41 @@ import "strings"
 // vi maps announcement keys to the Vietnamese text read aloud. %s is replaced
 // by the names, if the message takes any.
 var vi = map[string]string{
-	DawnSomeoneDied: "Đêm qua, %s đã chết.",
-	DawnProtected:   "Không có ai chết, được bảo vệ.",
-	DawnNobodyDied:  "Không có ai chết.",
-	ChiefElected:    "%s được bầu làm Trưởng làng.",
-	ChiefSucceeded:  "Trưởng làng mới là %s.",
-	DayHanged:       "%s đã bị treo.",
-	DaySpared:       "Làng tha cho %s.",
-	DayNobodyHanged: "Không ai bị treo.",
-	ChiefLost:       "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
-	HunterRevealed:  "%s là Thợ săn.",
-	HunterShot:      "%s bắn %s.",
-	NightBlocked:    "Bạn không thể sử dụng chức năng đêm nay.",
-	NightWolfDoomed: "Bạn đã trúng độc và chết từ lúc này, bạn không được vote.",
-	NightPackDoomed: "%s không thể vote đêm nay.",
-	NightGrief:      "Người yêu của bạn đã chết, bạn đau buồn mà chết từ lúc này và không dùng được chức năng.",
-	NoticeNoLove:    "Bạn không ở trong cặp đôi.",
-	NoticeInLove:    "Bạn yêu %s, vai %s.",
-	NightPhoneCheck: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.",
-	NightLoversMeet: "Cặp đôi hãy mở mắt nhìn nhau.",
-	NoticeNotCursed: "Bạn không bị nguyền.",
-	NoticeCursed:    "Bạn đã bị nguyền.",
-	WinVillage:      "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt.",
-	WinWolves:       "Phe Sói chiến thắng.",
-	WinLovers:       "Cặp đôi khác phe chiến thắng.",
-	WinDraw:         "Tất cả đã chết, ván đấu hòa.",
-	GameAborted:     "Bàn đã bỏ phiếu huỷ ván. Ván kết thúc, không có phe thắng.",
+	RoleViewStarted:      "Mời mọi người xem vai của mình. Nhớ che màn hình nhé.",
+	ChiefElectionStarted: "Mời cả làng bầu Trưởng làng.",
+	NightStarted:         "Trời đã tối, tất cả nhắm mắt lại.",
+	NightStepCalled:      "%s hãy mở mắt, thực hiện xong thì nhắm mắt lại.",
+	DawnStarted:          "Trời đã sáng, mọi người mở mắt.",
+	DawnSomeoneDied:      "Đêm qua, %s đã chết.",
+	DawnProtected:        "Đêm qua không ai chết, có người đã được bảo vệ.",
+	DawnNobodyDied:       "Không có ai chết.",
+	DayStarted:           "Cả làng bắt đầu thảo luận và đề cử.",
+	TrialStarted:         "%s lên giàn bào chữa.",
+	VerdictStarted:       "Hết giờ bào chữa. Cả làng bỏ phiếu: treo hay tha.",
+	ChiefElected:         "%s được bầu làm Trưởng làng.",
+	ChiefSucceeded:       "Trưởng làng mới là %s.",
+	DayHanged:            "%s đã bị treo.",
+	DaySpared:            "Làng tha cho %s.",
+	DayNobodyHanged:      "Không ai bị treo.",
+	ChiefLost:            "Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
+	HunterRevealed:       "%s là Thợ săn.",
+	HunterShot:           "%s bắn %s.",
+	HunterTimedOut:       "Hết giờ, %s không bắn ai.",
+	NightBlocked:         "Bạn không thể sử dụng chức năng đêm nay.",
+	NightWolfDoomed:      "Bạn đã trúng độc và chết từ lúc này, bạn không được vote.",
+	NightPackDoomed:      "%s không thể vote đêm nay.",
+	NightGrief:           "Người yêu của bạn đã chết, bạn đau buồn mà chết từ lúc này và không dùng được chức năng.",
+	NoticeNoLove:         "Bạn không ở trong cặp đôi.",
+	NoticeInLove:         "Bạn yêu %s, vai %s.",
+	NightPhoneCheck:      "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.",
+	NightLoversMeet:      "Cặp đôi hãy mở mắt nhìn nhau.",
+	NoticeNotCursed:      "Bạn không bị nguyền.",
+	NoticeCursed:         "Bạn đã bị nguyền.",
+	WinVillage:           "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt.",
+	WinWolves:            "Phe Sói chiến thắng.",
+	WinLovers:            "Cặp đôi khác phe chiến thắng.",
+	WinDraw:              "Tất cả đã chết, ván đấu hòa.",
+	GameAborted:          "Bàn đã bỏ phiếu huỷ ván. Ván kết thúc, không có phe thắng.",
 
 	SummaryBite:            "Sói cắn %s",
 	SummaryHeal:            "Phù thủy cứu %s",
@@ -67,6 +76,31 @@ func Vi(key string, names ...string) string {
 		return text
 	}
 	return strings.Replace(text, "%s", strings.Join(names, ", "), 1)
+}
+
+// nightCallNames are the names read aloud when a role's turn comes at night
+// (rules §3, NightStepCalled): the same as the role card's name, except the
+// wolf pack step, always called "Bầy sói" even when the only wolf role dealt
+// is a lone Werewolf (whose card says "Sói").
+var nightCallNames = map[string]string{
+	"Cupid":      "Cupid",
+	"Visitor":    "Nguyệt Nữ",
+	"Guard":      "Bảo vệ",
+	"CursedWolf": "Sói nguyền",
+	"WolfSeer":   "Sói tiên tri",
+	"Werewolf":   "Bầy sói",
+	"Witch":      "Phù thủy",
+	"Seer":       "Tiên tri",
+	"Detective":  "Thám tử",
+}
+
+// NightCallName is the name read aloud for role's turn at night. ok is false
+// for a night step that belongs to no role (the phone check, the lovers
+// looking at each other): those read their own voice line instead, so
+// NightStepCalled gets no "say" for them (encode.go).
+func NightCallName(role string) (name string, ok bool) {
+	name, ok = nightCallNames[role]
+	return name, ok
 }
 
 // RoleCard is the text of one role's card as printed (rules §9b): Team and

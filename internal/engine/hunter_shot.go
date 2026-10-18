@@ -81,9 +81,10 @@ func (s Shot) clone() Shot {
 	return s
 }
 
-// AnnouncementKey implementations: both are read aloud to everybody.
+// AnnouncementKey implementations: all three are read aloud to everybody.
 func (HunterRevealed) AnnouncementKey() string { return i18n.HunterRevealed }
 func (HunterShot) AnnouncementKey() string     { return i18n.HunterShot }
+func (HunterTimedOut) AnnouncementKey() string { return i18n.HunterTimedOut }
 
 func evolveHunter(s State, e Event) (State, bool) {
 	switch ev := e.(type) {

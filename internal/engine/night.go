@@ -3,6 +3,8 @@ package engine
 import (
 	"sort"
 	"time"
+
+	"masoi/internal/i18n"
 )
 
 // NightStarted records the start of a night.
@@ -10,6 +12,18 @@ type NightStarted struct {
 	EventMarker
 	Night int
 }
+
+// AnnouncementKey is read aloud to everybody.
+func (NightStarted) AnnouncementKey() string { return i18n.NightStarted }
+
+// DawnStarted opens the morning, right after the night's last step ran out
+// and before the narrator says who died (rules §4).
+type DawnStarted struct {
+	EventMarker
+}
+
+// AnnouncementKey is read aloud to everybody.
+func (DawnStarted) AnnouncementKey() string { return i18n.DawnStarted }
 
 // NightStepCalled is the public cue: call this role now and wait Duration.
 // It is the same for a living role and for a dead or absent one (rules §3,
@@ -140,6 +154,7 @@ func decideNightTimeout(s State, seed int64) []Event {
 	next := nextNightEvents(s, s.Night, s.NightStep)
 	evs = append(evs, next...)
 	if _, over := next[0].(NightEnded); over {
+		evs = append(evs, DawnStarted{})
 		evs = append(evs, resolveNight(s)...)
 	}
 	return evs
