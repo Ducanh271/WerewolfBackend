@@ -131,6 +131,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
   Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” Ở mỗi lần kiểm tra, **mọi người còn sống** nhận **một** thông báo trên điện thoại, gộp hai phần: tình trạng nguyền (nếu có Sói nguyền): “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”; và tình trạng tình yêu (nếu có Cupid): “Bạn không ở trong cặp đôi” hoặc “Bạn yêu X, vai Y” kèm màu liên kết (§7). Mọi thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền hay ai đang yêu từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu; phần tình yêu được nhắc lại ở các lần kiểm tra sau Sói nguyền, nên cặp đôi thấy màu liên kết mới ngay sau khi một người bị nguyền. Lúc kiểm tra điện thoại mọi người đều mở mắt, nên cặp đôi **không** được nhìn nhau lúc này.
 - **Cặp đôi mở mắt nhìn nhau** (10 giây, đêm 1 khi danh sách vai có Cupid) chạy ngay sau lần kiểm tra điện thoại sau Cupid. Loa đọc: “Cặp đôi hãy mở mắt nhìn nhau.” Chỉ hai người yêu mở mắt; mọi người khác nhắm mắt.
 - **Thám tử được gọi mỗi đêm, kể cả sau khi đã dùng năng lực**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật. Ngừng gọi sẽ báo cho cả bàn biết ông ta đã dùng.
+- **Sói nguyền được gọi đủ 3 đêm đầu, kể cả sau khi đã nguyền xong**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật, giống Thám tử ở trên. Ngừng gọi sớm sẽ lộ là đã nguyền xong.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
 - Người bị chặn chức năng ban đêm (hiện chỉ do Nguyệt Nữ, sau này có thể có vai chặn khác) thấy thông báo chung trên màn hình khi đến lượt: “Bạn không thể sử dụng chức năng đêm nay”. Thông báo **không nêu ai hay vai nào chặn**; người bị chặn không được biết nguồn chặn.
 
@@ -185,6 +186,7 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 ### Sói nguyền
 
 - Được gọi riêng **trước bầy sói**, chỉ trong **3 đêm đầu**. Nguyền **1 lần duy nhất** trong game.
+- Vẫn được gọi (giả) đủ cả 3 đêm đầu dù đã nguyền xong từ trước (xem §3): ngừng gọi sớm sẽ lộ là đã dùng, giống cách Thám tử vẫn được gọi giả sau khi dùng.
 - Việc nguyền có hiệu lực **ngay lập tức** về phe: người bị nguyền thành sói, ngay đêm đó được gọi dậy cắn cùng bầy và được vote cắn. Điện thoại của người bị nguyền và của bầy sói **chỉ hiện thay đổi ở bước Kiểm tra điện thoại** (§3): người bị nguyền thấy “Bạn đã bị nguyền”, bầy thấy đồng bọn mới. Mọi người khác thấy “Bạn không bị nguyền”, nên không ai biết Sói nguyền có nguyền hay không.
 - Người bị nguyền chuyển sang phe sói và **giữ nguyên năng lực** của vai cũ (Tiên tri, Bảo vệ, Thợ săn…).
 - Bầy vẫn cắn được người vừa bị nguyền như mọi người sống khác (xem “Sói”).
