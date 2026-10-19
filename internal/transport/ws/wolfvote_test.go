@@ -10,7 +10,7 @@ import (
 
 // docs/protocol.md: wolfVote with target "" is the vote "Không cắn ai".
 func TestCommandTable_WolfVoteWithEmptyTargetIsTheNoBiteVote(t *testing.T) {
-	build, err := commandTable["wolfVote"](json.RawMessage(`{"target":""}`))
+	build, err := wireCommand(t, "wolfVote", json.RawMessage(`{"target":""}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,7 +23,7 @@ func TestCommandTable_WolfVoteWithEmptyTargetIsTheNoBiteVote(t *testing.T) {
 // A missing target is invalid; only an explicit "" means "Không cắn ai".
 func TestCommandTable_WolfVoteWithoutTargetIsRejected(t *testing.T) {
 	for _, raw := range []string{`{}`, `{"target":null}`} {
-		if _, err := commandTable["wolfVote"](json.RawMessage(raw)); err == nil {
+		if _, err := wireCommand(t, "wolfVote", json.RawMessage(raw)); err == nil {
 			t.Errorf("wolfVote %s accepted, want a bad_message error", raw)
 		}
 	}
@@ -31,7 +31,7 @@ func TestCommandTable_WolfVoteWithoutTargetIsRejected(t *testing.T) {
 
 // docs/protocol.md: cupidPair carries the two players as "a" and "b".
 func TestCommandTable_CupidPairCarriesTwoPlayers(t *testing.T) {
-	build, err := commandTable["cupidPair"](json.RawMessage(`{"a":"p1","b":"p2"}`))
+	build, err := wireCommand(t, "cupidPair", json.RawMessage(`{"a":"p1","b":"p2"}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func TestCommandTable_CupidPairCarriesTwoPlayers(t *testing.T) {
 	if !ok || got.By != "p3" || got.A != "p1" || got.B != "p2" {
 		t.Fatalf("got %+v, want a CupidPair by p3 of p1 and p2", build("p3"))
 	}
-	if _, err := commandTable["cupidPair"](json.RawMessage(`{"a":"p1","seed":1}`)); err == nil {
+	if _, err := wireCommand(t, "cupidPair", json.RawMessage(`{"a":"p1","seed":1}`)); err == nil {
 		t.Fatal("an unknown field was accepted")
 	}
 }
@@ -47,7 +47,7 @@ func TestCommandTable_CupidPairCarriesTwoPlayers(t *testing.T) {
 // docs/protocol.md: configureSound maps "oneSpeaker"/"allPhones" to the
 // engine's SoundMode; anything else is bad_message.
 func TestCommandTable_ConfigureSound(t *testing.T) {
-	build, err := commandTable["configureSound"](json.RawMessage(`{"mode":"allPhones"}`))
+	build, err := wireCommand(t, "configureSound", json.RawMessage(`{"mode":"allPhones"}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +55,7 @@ func TestCommandTable_ConfigureSound(t *testing.T) {
 	if !ok || got.Mode != engine.AllPhonesSpeak {
 		t.Fatalf("got %+v, want ConfigureSound{AllPhonesSpeak}", build("p1"))
 	}
-	if _, err := commandTable["configureSound"](json.RawMessage(`{"mode":"megaphone"}`)); err == nil {
+	if _, err := wireCommand(t, "configureSound", json.RawMessage(`{"mode":"megaphone"}`)); err == nil {
 		t.Fatal("an unknown sound mode was accepted")
 	}
 }

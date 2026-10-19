@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"masoi/internal/engine"
 	_ "masoi/internal/roles"
 	"masoi/internal/room"
 	"masoi/internal/transport/ws/wsclient"
@@ -176,4 +177,21 @@ func (e *env) waitError(c *wsclient.Client, n int) string {
 
 func cmd(name string, args map[string]any) map[string]any {
 	return map[string]any{"type": "command", "name": name, "args": args}
+}
+
+// wireCommand decodes a `command` message the way the server does, for the
+// player-free part: it returns the builder that fills in the sender.
+func wireCommand(t *testing.T, name string, args json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
+	t.Helper()
+	return buildCommand(commandMsg{Type: typeCommand, Name: name, Args: args})
+}
+
+// wireCommandNames lists every command name the server accepts.
+func wireCommandNames(t *testing.T) []string {
+	t.Helper()
+	names := make([]string, 0, len(commandTable))
+	for n := range commandTable {
+		names = append(names, n)
+	}
+	return names
 }
