@@ -1,6 +1,6 @@
-# Protocol (T9 draft, implemented in T11)
+# Protocol
 
-JSON over one WebSocket per screen. Implemented by `internal/transport/ws` (T11).
+JSON over one WebSocket per screen. Implemented by `internal/transport/ws`.
 Every message is an object with a `type` field. Field names are camelCase,
 durations are milliseconds, times are Unix milliseconds.
 
@@ -216,7 +216,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `phase`, `seq`, `night` | all | phase name, change counter, night number |
 | `roles` | all | public role list `{role: count}` |
 | `roleCards` | all | the same roles in the order of rules §9b, each `{role, name, team, description}` (`team` is the role's own team; Vietnamese text from the server; no card text in the frontend) |
-| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`; `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
+| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`. Empty in the lobby until the host sends `setSeats` (who is in the room is known from the `PlayerJoined`/`PlayerLeft`/`PlayerKicked` events until then); `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
 | `chief`, `succession`, `shooter` | all | Chief id; the dead Chief naming a successor; the dead Hunter choosing a target |
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]`, `abortVotes {voter: yes}` |
 | `winner`, `draw`, `winners` | all, at the end | winning team, or a draw; `winners`: the ids of the players who win, dead or alive, in seat order (the lovers of a cross-team couple, alive or broken, are never in it unless the couple wins) |

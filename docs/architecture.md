@@ -57,11 +57,11 @@ Randomness (role dealing) is a command input: `DealRoles{Seed int64}`, dealt by 
 ### State (sketch)
 ```go
 type State struct {
-    Phase      Phase          // Lobby, RoleView, Night, Dawn, Day, NominationLock, Trial, Verdict, Dusk, HunterShot, Ended
+    Phase      Phase          // Lobby, RoleView, ChiefElection, Night, Dawn, Day, NominationLock, Trial, Verdict, Dusk, HunterShot, ChiefSuccession, Ended
     Seq        int            // increments on every phase or night step change
     Night      int            // 1-based night counter
     NightStep  int            // night steps called so far; current step = steps[NightStep-1]
-    Seats      []PlayerID     // seating circle, clockwise; "left" = index-1 (wraps)
+    Seats      []PlayerID     // seating circle, clockwise; "left" = the next seat, index+1 (wraps, rules §6)
     Players    map[PlayerID]*Player
     Pending    NightActions   // choices collected this night, resolved at dawn
     Day        DayState       // nominations (ordered), skip votes, trial, verdict votes, clock

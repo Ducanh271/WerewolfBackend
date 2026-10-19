@@ -9,7 +9,7 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - If a rule is ambiguous or missing: STOP and ask. Never invent game rules.
 
 ## Stack
-- Go 1.23+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only). Ask before adding anything else.
+- Go 1.24+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only). Ask before adding anything else.
 - No database in v1: in-memory store behind an interface.
 
 ## Commands

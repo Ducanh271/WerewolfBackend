@@ -38,7 +38,8 @@ type KickPlayer struct {
 }
 
 // SetSeats fixes the seating circle, clockwise. Order must list every player
-// in the lobby exactly once. "Left" is index-1, wrapping.
+// in the lobby exactly once. "Left" is the next seat, index+1, wrapping
+// (rules §6).
 type SetSeats struct {
 	CommandMarker
 	Order []PlayerID
