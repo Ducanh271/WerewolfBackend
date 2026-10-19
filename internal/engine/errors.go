@@ -46,8 +46,7 @@ var (
 	ErrRoleNeedsMorePlayers = NewError("role_needs_more_players", "role needs more players")
 	// ErrRoleRequired means the role list is missing a role that every game
 	// must include at least one copy of (rules §2: at least one Villager).
-	// It has no wire code yet, so a client is told "internal".
-	ErrRoleRequired = errors.New("role list is missing a required role")
+	ErrRoleRequired = NewError("role_required", "role list is missing a required role")
 
 	// Night actions (rules §3, §5, §6).
 	ErrNotYourTurn       = NewError("not_your_turn", "not your turn")

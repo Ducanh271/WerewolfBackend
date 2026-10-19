@@ -172,9 +172,7 @@ var goldenErrors = []struct {
 	{engine.ErrNoWolves, "no_wolves", "the game needs at least one wolf"},
 	{engine.ErrTooManyWolves, "too_many_wolves", "too many wolves for this number of players"},
 	{engine.ErrRoleNeedsMorePlayers, "role_needs_more_players", "role needs more players"},
-	// Today a role list without a Villager reaches the host as "internal"
-	// (no code of its own). Kept as is by T30b; fixed in its own change.
-	{engine.ErrRoleRequired, "internal", "internal error"},
+	{engine.ErrRoleRequired, "role_required", "role list is missing a required role"},
 	{engine.ErrNotYourTurn, "not_your_turn", "not your turn"},
 	{engine.ErrNotAlive, "not_alive", "player is dead"},
 	{engine.ErrInvalidTarget, "invalid_target", "invalid target"},
@@ -217,6 +215,8 @@ func TestGolden_WrappedErrors(t *testing.T) {
 		err  error
 		want map[string]any
 	}{
+		{fmt.Errorf("%w: Villager needs at least 1", engine.ErrRoleRequired),
+			map[string]any{"type": "error", "code": "role_required", "message": "role list is missing a required role: Villager needs at least 1"}},
 		{fmt.Errorf("%w: heal", engine.ErrPotionUsed),
 			map[string]any{"type": "error", "code": "potion_used", "message": "this potion is already used up: heal"}},
 		{fmt.Errorf("%w: p3", engine.ErrSameGuardTarget),
