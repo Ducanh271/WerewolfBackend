@@ -86,7 +86,7 @@ IDs in brackets refer to docs/audit.md.
     - Changes: engine helpers `SetFlag`, `HolderOf`, the "not the same target two nights in a row" rule, merge `livingCount`/`anyoneAlive`; use them in `guard.go`, `visitor.go`, `cupid.go` and the ~10 `if p.Flags == nil` sites. Delete or use `engine.BlockedBy`, `DealRoles.DayClock` (+ wrong comment), `store.Load`, the unused server i18n keys; fix or document the `secrets()` / `Pending.Blocked` mismatch. Split `roles/visitor_test.go` into block tests and random-pick tests (< 300 lines each).
     - Packages: `internal/engine`, `internal/roles`, `internal/store`, `internal/i18n`.
     - Proof: pure refactor — all existing tests pass unchanged (no test edited except moving visitor tests between files; test count for visitor stays the same); small table tests for each new helper; simulation at default size.
-  - [ ] T30d Docs single source [C6] + doc drift [C3] (Sonnet).
+  - [x] T30d Docs single source [C6] + doc drift [C3] (Sonnet).
     - Changes: `docs/rules.md` is the only place rules are written; `protocol.md`, `architecture.md` and code comments link to rule section numbers instead of re-explaining. Fix C3 drift: seat "left = next seat (+1)" in `command.go` `SetSeats` and `architecture.md` `State` sketch, `protocol.md` title (drop "T9 draft"), full `Phase` list in `architecture.md`, Go version in CLAUDE.md vs `go.mod` (1.24), `players` empty in lobby until seats are set. Card text in `vi.go` stays (players see it) but gets a test.
     - Packages: `docs/`, `CLAUDE.md`, `internal/i18n` (test only), comment-only edits in `internal/engine`.
     - Proof: new test that each role card in `vi.go` matches the role's row in `docs/rules.md` §9b (fails if one changes without the other); existing tests pass; no non-test Go code changes besides comments.
@@ -97,6 +97,7 @@ IDs in brackets refer to docs/audit.md.
     - Packages: `internal/room` (benchmark), `internal/roles` (sim_test.go); `internal/engine` only if the incremental view is needed.
     - Proof: benchmark numbers in the commit message; `make test` with every-night checks still passes at default `SIM_GAMES=300`.
 - [ ] T30e Server sends the text of the notices that today are only flags (`me.turn` blocked / doomed / grief, `me.phoneCheck` cursed / love, the pack's doomed-wolf notice) from i18n, like `roleCard`, so no frontend rewrites them. New fields only, old fields unchanged; update `docs/protocol.md` + golden test. The keys exist (`NightBlocked`, `NightWolfDoomed`, `NightGrief`, `NightPackDoomed`, `Notice*` in `i18n/keys.go`).
+  - Also: view ở sảnh có danh sách người trong phòng (id, nickname, đang kết nối hay không, ai là chủ phòng), để màn hình tự đủ thông tin khi vào lại phòng — không bắt frontend gom từ sự kiện PlayerJoined. (Today `players` is empty in the lobby until `setSeats`, see `docs/protocol.md`.)
 - [ ] T21 Frontend guide docs/frontend (Opus) — after T23–T30
 - [ ] F1… Phone UI (planned separately), following the secrecy checklist
 - [ ] P1 Playtest with friends, collect feedback, rebalance
