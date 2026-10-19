@@ -30,6 +30,9 @@ type Game struct {
 	events []engine.Event
 	driver Driver
 	stage  stage
+	views  engine.ViewCache // checked against the full replay after every event
+
+	allViewers bool // CheckEveryViewer
 }
 
 // NewGame builds a table: players join, sit in the given order and, with Cast
@@ -43,7 +46,7 @@ func NewGame(t testing.TB, opts ...Option) *Game {
 	if cfg.driver == nil {
 		cfg.driver = realDriver{chief: engine.PlayerID(cfg.chief)}
 	}
-	g := &Game{t: t, state: engine.NewState(), driver: cfg.driver}
+	g := &Game{t: t, state: engine.NewState(), driver: cfg.driver, allViewers: cfg.allViewers}
 	if len(cfg.errs) > 0 {
 		t.Fatalf("bad scenario setup: %s", cfg.errs[0])
 	}
@@ -99,8 +102,12 @@ func (g *Game) castRoles(cast map[string]engine.RoleID) {
 
 // record folds an event that no command produces (the cast deal).
 func (g *Game) record(evs ...engine.Event) {
-	g.state = engine.Fold(g.state, evs...)
-	g.events = append(g.events, evs...)
+	g.t.Helper()
+	for _, e := range evs {
+		g.state = engine.Evolve(g.state, e)
+		g.events = append(g.events, e)
+		g.checkViewCache()
+	}
 }
 
 // Do sends a command and fails the test if the engine rejects it.

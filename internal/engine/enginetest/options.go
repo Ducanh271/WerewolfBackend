@@ -17,6 +17,8 @@ type setup struct {
 	chief  string
 	driver Driver
 	errs   []string
+
+	allViewers bool // CheckEveryViewer
 }
 
 // Seats lists the players clockwise. A name is both the player's ID and

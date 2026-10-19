@@ -5,6 +5,12 @@ package engine
 // once the game has ended, to narrate the end-of-game summary (audit K4); nil
 // is fine the rest of the time.
 func ViewFor(s State, log []Event, v Viewer) View {
+	return project(s, v, func() []string { return summaryFor(log) })
+}
+
+// project is ViewFor with the end-of-game summary given by the caller, so
+// ViewCache can narrate it once for every viewer.
+func project(s State, v Viewer, summary func() []string) View {
 	full := seesAll(s, v)
 	out := View{
 		Phase:      s.Phase,
@@ -21,7 +27,7 @@ func ViewFor(s State, log []Event, v Viewer) View {
 	if s.Phase == PhaseEnded {
 		out.Winner, out.Draw = copyWinner(s.Winner), s.Winner == nil
 		out.Winners = append([]PlayerID(nil), s.Winners...)
-		out.Summary = summaryFor(log)
+		out.Summary = summary()
 	}
 	for i, id := range s.Seats {
 		p := s.Players[id]
