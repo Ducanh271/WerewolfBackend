@@ -3,6 +3,7 @@ package ws
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -73,12 +74,22 @@ func decodeStrict(data []byte, v any) error {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(v); err != nil {
-		return badMessage("wrong field type: " + err.Error())
+		return wrongType(err)
 	}
 	if _, err := dec.Token(); err != io.EOF {
 		return badMessage("unexpected data after the message")
 	}
 	return nil
+}
+
+// wrongType names the field by its JSON key only: the decoder's own text names
+// Go types, which are not part of the protocol.
+func wrongType(err error) error {
+	var typeErr *json.UnmarshalTypeError
+	if errors.As(err, &typeErr) && typeErr.Field != "" {
+		return badMessage(fmt.Sprintf("field %q has wrong type", typeErr.Field))
+	}
+	return badMessage("wrong field type")
 }
 
 func jsonKeys(t reflect.Type) map[string]bool {

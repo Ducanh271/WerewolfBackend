@@ -80,7 +80,9 @@ for every caller:
   ignored; staying over the limit without a break for 3 s closes the connection.
 - **Strict decoding.** An unknown `type` is `unknown_type`, an unknown command
   `unknown_command`. Unknown fields anywhere (a `seed`, a `by`, a `voter`),
-  wrong field types, wrong capitals and trailing data are `bad_message`.
+  wrong field types, wrong capitals and trailing data are `bad_message`. A
+  wrong field type names the field by its JSON key, e.g.
+  `field "target" has wrong type`.
 - A dropped connection never removes the player; reconnect with `rejoin`. A
   rejoin from another phone — by token (another tab, a reload racing the old
   one) or by nickname + PIN — tells the old socket why and closes it right

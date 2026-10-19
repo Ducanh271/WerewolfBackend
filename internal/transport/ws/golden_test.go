@@ -115,11 +115,12 @@ func TestGolden_CommandRefusals(t *testing.T) {
 		{"configureTimers", `{"timers":{"week":1}}`, "bad_message", `unknown field "week"`},
 		{"nominate", `[]`, "bad_message", "not a JSON object"},
 		{"nominate", `{"Target":"p1"}`, "bad_message", `unknown field "Target"`},
-		{"nominate", `{"target":1}`, "bad_message", "wrong field type: json: cannot unmarshal number into Go struct field targetArgs.target of type engine.PlayerID"},
-		{"guardProtect", `{"target":1}`, "bad_message", "wrong field type: json: cannot unmarshal number into Go struct field targetArgs.target of type engine.PlayerID"},
-		{"cupidPair", `{"a":"p1","b":2}`, "bad_message", "wrong field type: json: cannot unmarshal number into Go struct field pairArgs.b of type engine.PlayerID"},
-		{"wolfVote", `{"target":1}`, "bad_message", "wrong field type: json: cannot unmarshal number into Go struct field wolfVoteArgs.target of type engine.PlayerID"},
-		{"verdict", `{"kill":"yes"}`, "bad_message", "wrong field type: json: cannot unmarshal string into Go struct field killArgs.kill of type bool"},
+		{"nominate", `{"target":1}`, "bad_message", `field "target" has wrong type`},
+		{"guardProtect", `{"target":1}`, "bad_message", `field "target" has wrong type`},
+		{"cupidPair", `{"a":"p1","b":2}`, "bad_message", `field "b" has wrong type`},
+		{"wolfVote", `{"target":1}`, "bad_message", `field "target" has wrong type`},
+		{"verdict", `{"kill":"yes"}`, "bad_message", `field "kill" has wrong type`},
+		{"configureTimers", `{"timers":{"day":"x"}}`, "bad_message", `field "day" has wrong type`},
 	}
 	for _, tc := range tests {
 		_, err := wireCommand(t, tc.name, json.RawMessage(tc.args))
