@@ -91,10 +91,7 @@ func evolveHunter(s State, e Event) (State, bool) {
 	case HunterRevealed:
 		out := s.clone()
 		if p := out.Players[ev.Hunter]; p != nil {
-			if p.Flags == nil {
-				p.Flags = map[string]int{}
-			}
-			p.Flags[FlagRevealed] = 1
+			SetFlag(p, FlagRevealed, 1)
 		}
 		return out, true
 	case HunterChainNoted:

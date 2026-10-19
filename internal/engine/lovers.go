@@ -85,10 +85,7 @@ func evolveLovers(s State, e Event) (State, bool) {
 	}
 	out := s.clone()
 	if p := out.Players[ev.Player]; p != nil {
-		if p.Flags == nil {
-			p.Flags = map[string]int{}
-		}
-		p.Flags[FlagGrieving] = ev.Night
+		SetFlag(p, FlagGrieving, ev.Night)
 	}
 	return out, true
 }

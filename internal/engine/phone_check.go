@@ -140,10 +140,7 @@ func evolvePhoneCheck(s State, e Event) (State, bool) {
 	if p := out.Players[ev.Player]; p != nil {
 		delete(p.Flags, FlagTeamHidden)
 		if ev.Love.InLove {
-			if p.Flags == nil {
-				p.Flags = map[string]int{}
-			}
-			p.Flags[FlagLoveKnown] = 1
+			SetFlag(p, FlagLoveKnown, 1)
 		}
 	}
 	return out, true

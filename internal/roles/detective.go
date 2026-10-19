@@ -96,10 +96,7 @@ func (detective) Evolve(s *engine.State, e engine.Event) bool {
 		return false
 	}
 	if p := s.Players[ev.Detective]; p != nil {
-		if p.Flags == nil {
-			p.Flags = map[string]int{}
-		}
-		p.Flags[flagDetectiveUsed] = 1
+		engine.SetFlag(p, flagDetectiveUsed, 1)
 	}
 	return true
 }

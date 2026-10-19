@@ -17,12 +17,9 @@ type visitor struct{}
 // Visitor is the ID of the Visitor.
 const Visitor engine.RoleID = "Visitor"
 
-// Flags kept on the Visitor's player: the night of her last visit and whom it
-// was (seat index + 1, so 0 means nobody).
-const (
-	flagVisitNight  = "visitor.last_night"
-	flagVisitTarget = "visitor.last_target"
-)
+// visitorLast is kept on the Visitor's player: the night of her last visit and
+// whom it was.
+var visitorLast = engine.LastTarget{Night: "visitor.last_night", Target: "visitor.last_target"}
 
 // VisitorVisit is the Visitor's choice for tonight.
 type VisitorVisit struct {
@@ -85,7 +82,7 @@ func (visitor) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, e
 	if cmd.Target == cmd.By {
 		return nil, true, fmt.Errorf("%w: the Visitor cannot visit herself", engine.ErrInvalidTarget)
 	}
-	if visitedLastNight(s, me, cmd.Target) {
+	if visitorLast.Is(s, me, cmd.Target) {
 		return nil, true, fmt.Errorf("%w: %s", engine.ErrSameVisitorTarget, cmd.Target)
 	}
 	return []engine.Event{PlayerVisited{Visitor: cmd.By, Target: cmd.Target, Night: s.Night}}, true, nil
@@ -97,13 +94,13 @@ func (visitor) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, e
 // (grief or poison), or one who already chose does nothing, and so does a
 // table with nobody left to visit.
 func (visitor) OnNightTimeout(s engine.State, seed int64) []engine.Event {
-	me := holder(s)
+	me := engine.HolderOf(s, Visitor)
 	if me == nil || !me.Alive || engine.Blocked(s, me.ID) || engine.Doomed(s, me.ID) || hasVisited(s) {
 		return nil
 	}
 	var pool []engine.PlayerID
 	for _, id := range s.Seats {
-		if p := s.Players[id]; p != nil && p.Alive && id != me.ID && !visitedLastNight(s, me, id) {
+		if p := s.Players[id]; p != nil && p.Alive && id != me.ID && !visitorLast.Is(s, me, id) {
 			pool = append(pool, id)
 		}
 	}
@@ -121,11 +118,7 @@ func (visitor) Evolve(s *engine.State, e engine.Event) bool {
 	}
 	engine.Block(s, ev.Target, Visitor)
 	if p := s.Players[ev.Visitor]; p != nil {
-		if p.Flags == nil {
-			p.Flags = map[string]int{}
-		}
-		p.Flags[flagVisitNight] = ev.Night
-		p.Flags[flagVisitTarget] = seatNumber(*s, ev.Target)
+		visitorLast.Record(*s, p, ev.Night, ev.Target)
 	}
 	return true
 }
@@ -138,18 +131,4 @@ func hasVisited(s engine.State) bool {
 		}
 	}
 	return false
-}
-
-func visitedLastNight(s engine.State, me *engine.Player, target engine.PlayerID) bool {
-	return me.Flags[flagVisitNight] == s.Night-1 && me.Flags[flagVisitTarget] == seatNumber(s, target)
-}
-
-// holder is the player holding the Visitor role, nil when nobody does.
-func holder(s engine.State) *engine.Player {
-	for _, id := range s.Seats {
-		if p := s.Players[id]; p != nil && p.Role == Visitor {
-			return p
-		}
-	}
-	return nil
 }

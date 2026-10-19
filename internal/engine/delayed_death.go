@@ -132,10 +132,7 @@ func evolveWolfPoisoned(s State, e Event) (State, bool) {
 	}
 	out := s.clone()
 	if p := out.Players[ev.Wolf]; p != nil {
-		if p.Flags == nil {
-			p.Flags = map[string]int{}
-		}
-		p.Flags[FlagWolfPoisoned] = ev.Night
+		SetFlag(p, FlagWolfPoisoned, ev.Night)
 	}
 	return out, true
 }

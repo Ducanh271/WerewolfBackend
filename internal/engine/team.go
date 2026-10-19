@@ -20,10 +20,7 @@ func evolveTeam(s State, e Event) (State, bool) {
 	if p := out.Players[ev.Player]; p != nil {
 		p.Team = ev.Team
 		if s.Phase == PhaseNight {
-			if p.Flags == nil {
-				p.Flags = map[string]int{}
-			}
-			p.Flags[FlagTeamHidden] = 1
+			SetFlag(p, FlagTeamHidden, 1)
 		}
 	}
 	return out, true

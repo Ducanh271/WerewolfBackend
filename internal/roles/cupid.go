@@ -96,19 +96,14 @@ func (cupid) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, err
 // OnNightTimeout pairs two random living players when Cupid's step ran out
 // without a choice; the seed comes from the room.
 func (cupid) OnNightTimeout(s engine.State, seed int64) []engine.Event {
-	var me *engine.Player
+	me := engine.HolderOf(s, Cupid)
 	var pool []engine.PlayerID
 	for _, id := range s.Seats {
-		p := s.Players[id]
-		if p == nil || !p.Alive {
-			continue
-		}
-		pool = append(pool, id)
-		if p.Role == Cupid {
-			me = p
+		if p := s.Players[id]; p != nil && p.Alive {
+			pool = append(pool, id)
 		}
 	}
-	if me == nil || s.Lovers != nil || len(pool) < 2 {
+	if me == nil || !me.Alive || s.Lovers != nil || len(pool) < 2 {
 		return nil
 	}
 	pick := rand.New(rand.NewSource(seed)).Perm(len(pool))

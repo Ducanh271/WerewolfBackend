@@ -37,7 +37,7 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 		shooters = shooters[1:]
 		reveal := HunterRevealed{Hunter: hunter}
 		evs = append(evs, reveal)
-		if !anyoneAlive(after) {
+		if livingCount(after) == 0 {
 			continue
 		}
 		return append(evs,
@@ -63,13 +63,4 @@ func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 		}
 	}
 	return evs
-}
-
-func anyoneAlive(s State) bool {
-	for _, p := range s.Players {
-		if p.Alive {
-			return true
-		}
-	}
-	return false
 }

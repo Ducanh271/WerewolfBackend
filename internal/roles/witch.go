@@ -154,8 +154,5 @@ func useFlag(s *engine.State, id engine.PlayerID, flag string) {
 	if p == nil {
 		return
 	}
-	if p.Flags == nil {
-		p.Flags = map[string]int{}
-	}
-	p.Flags[flag] = 1
+	engine.SetFlag(p, flag, 1)
 }

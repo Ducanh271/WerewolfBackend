@@ -98,10 +98,7 @@ func (cursedWolf) Evolve(s *engine.State, e engine.Event) bool {
 		return false
 	}
 	if p := s.Players[ev.Wolf]; p != nil {
-		if p.Flags == nil {
-			p.Flags = map[string]int{}
-		}
-		p.Flags[flagCurseUsed] = 1
+		engine.SetFlag(p, flagCurseUsed, 1)
 	}
 	return true
 }
