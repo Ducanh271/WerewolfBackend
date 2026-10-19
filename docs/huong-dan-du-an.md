@@ -1,5 +1,7 @@
 # Hướng dẫn dự án Ma Sói (cho người không đọc code)
 
+[![CI](https://github.com/Ducanh271/WerewolfBackend/actions/workflows/ci.yml/badge.svg)](https://github.com/Ducanh271/WerewolfBackend/actions/workflows/ci.yml)
+
 Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một điện thoại; máy chủ phòng là loa đọc lời dẫn. **Server là nguồn sự thật duy nhất**: điện thoại chỉ gửi ý định ("tôi soi An") và nhận màn hình của riêng mình.
 
 ## 1. Các tầng và quy tắc ai gọi ai
@@ -92,8 +94,11 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 ## 5. Lệnh hay dùng
 
+CI (GitHub Actions) chạy `make test` trên mọi lần push; ở máy local chỉ cần `make test-fast` khi đang làm.
+
 ```bash
-make test                      # toàn bộ test (có -race)
+make test-fast                 # vòng lặp nhanh: không -race, bỏ simulation (dùng khi đang làm)
+make test                      # toàn bộ test (có -race, simulation); CI chạy lệnh này
 make lint                      # go vet + golangci-lint
 make fmt                       # định dạng code
 make run                       # chạy server (cổng :8080, đổi bằng ADDR=:9000)

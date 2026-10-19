@@ -3,7 +3,7 @@
 One task per agent session. Start each session with:
 > Read CLAUDE.md and docs/plan.md. Do task Tn. Plan first, wait for my OK, then implement.
 
-A task is done when `make fmt test lint` passes and its acceptance tests exist. Tick `[x]` and commit.
+A task is done when `make fmt`, `make test-fast` and `make lint` pass locally, its acceptance tests exist, and CI (full `make test`) is green after the push. Tick `[x]` and commit.
 
 ## Milestone 1 — Engine core
 
@@ -73,7 +73,7 @@ IDs in brackets refer to docs/audit.md.
   - Decided (K3): once a game is `Ended` (by winning or by this abort vote), the host can start a new game in the same room with a `NewGame` command. It keeps the players, their seats and the configured role list, resets the match (no roles dealt, nobody dead, no night/day state), and the host re-deals with a fresh seed as usual.
 - [x] T28a End-of-game summary [K4] (Sonnet)
 - [ ] T29 Deploy: [D1]–[D9], [S5] IP limits, [R7] room expiry (Sonnet) — split into sub-tasks, one session each. T29a (CI) now; T29b → T29c → T29d → T29e → T29f moved below, after F1 and the first playtest (P1). No game-rule changes; every sub-task leaves `make fmt test lint` green.
-  - [ ] T29a CI: GitHub Actions runs the full check on every push (Sonnet).
+  - [x] T29a CI: GitHub Actions runs the full check on every push (Sonnet). First green run 3m59s (setup 11s, gofmt <1s, vet 14s, golangci-lint 7s, make test 3m17s); red proof run failed as intended; timeout-minutes 10.
     - Changes: `.github/workflows/ci.yml` on `push` (all branches) and `pull_request`: checkout, `actions/setup-go` with `go-version-file: go.mod` and module cache, `make test` (race + `SIM_GAMES=300`), then `go vet ./...` and `golangci-lint` via `golangci/golangci-lint-action` pinned to the local version (v1.64.8, `.golangci.yml` is v1 format), and a `gofmt -l .` check that fails on any output. `concurrency` cancels an older run on the same branch; `timeout-minutes: 20`. Badge + one line in `docs/huong-dan-du-an.md` ("CI runs `make test`; locally `make test-fast` is enough while iterating").
     - Packages: `.github/`, `docs/huong-dan-du-an.md`, CLAUDE.md "Commands" (say CI runs the full check).
     - Proof: a green run on GitHub for the commit; a deliberately failing test on a scratch commit turns it red (then reverted), noted in the commit message with the run time.
