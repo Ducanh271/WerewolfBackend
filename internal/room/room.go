@@ -95,7 +95,8 @@ type Room struct {
 	armedFor   armKey
 	phaseT     Timer
 	dayT       Timer
-	hostGraceT Timer // pending host-powers transfer, armed while the host is disconnected before the deal (rules §2)
+	hostGraceT Timer                         // pending host-powers transfer (watchHost)
+	offSince   map[engine.PlayerID]time.Time // when each disconnected player's phone dropped
 	deadline   time.Time
 	closeOnce  bool
 
@@ -132,6 +133,8 @@ func New(cfg Config) (*Room, error) {
 		done:  make(chan struct{}),
 		state: engine.NewState(),
 		conns: map[engine.PlayerID]*connection{},
+
+		offSince: map[engine.PlayerID]time.Time{},
 	}
 	r.active.Store(cfg.Clock.Now().UnixNano())
 	go r.loop()

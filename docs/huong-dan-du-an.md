@@ -77,7 +77,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Tổng kết cuối ván thiếu/sai dòng, thứ tự lộn | engine / roles | `engine/summary.go` (`summaryFor`, thứ tự câu theo hằng số `Narrate*`/`narrate*` ở `engine/narrate.go`), vai nào góp dòng thì xem `Narrate` trong file vai đó (`roles/*.go`) |
 | Lệnh bị báo `wrong_phase` / `not_your_turn` | engine | `engine/decide.go`, `engine/night_actor.go`, `engine/day_nominate.go` |
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
-| Chủ phòng/máy làm loa sai người | room | Chủ phòng là người giữ `hostKey` bí mật từ lúc tạo phòng (`room/manager.go` `randomHostKey`, `room/join.go` `Join`), không phải người vào trước; `room/speaker.go` (`InPersonSpeaker`, `AllPhones` — không ai làm loa khi chưa có chủ phòng, `Host == ""`), `room/join.go` (`passHost`, `armHostGrace`, `TransferHost` — chủ phòng tự chuyển chức bất cứ lúc nào) |
+| Chủ phòng/máy làm loa sai người | room | Chủ phòng là người giữ `hostKey` bí mật từ lúc tạo phòng (`room/manager.go` `randomHostKey`, `room/join.go` `Join`), không phải người vào trước; `room/speaker.go` (`InPersonSpeaker`, `AllPhones` — không ai làm loa khi chưa có chủ phòng, `Host == ""`), `room/host.go` (`watchHost` hẹn giờ chuyển chức khi chủ phòng rớt mạng, trước khi chia vai hoặc khi ván đã kết thúc; `passHost`), `room/join.go` (`TransferHost` — chủ phòng tự chuyển chức bất cứ lúc nào) |
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
 | Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`, `reattach` gọi `Sink.Evict` khi vào lại cướp chỗ máy cũ, `KickPlayer` khi chủ phòng đá — chỉ trước khi chia vai, không tự đá mình, ghế/vai của người khác giữ nguyên), `transport/ws/session.go` (`finish`, `Evict`) |
 | Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`; mã lỗi: mỗi lỗi tự mang mã nơi khai báo (`engine.NewError`), đổi ra tin `error` ở `transport/ws/errors.go` (`toErrorMsg`) |
@@ -134,7 +134,7 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |
-| Thời gian chủ phòng được rớt mạng trước khi mất quyền (luật: rules §2) | `internal/room/join.go` (`hostDisconnectGrace`) |
+| Thời gian chủ phòng được rớt mạng trước khi mất quyền (luật: rules §2) | `internal/room/host.go` (`hostDisconnectGrace`) |
 | Thêm lệnh cho vai mới | file của vai (`Commands()`, kiểu tham số dùng chung ở `roles/wire_args.go`) + một dòng trong `docs/protocol.md` |
 | Thứ tự vai trong danh sách vai (bảng §9b) | file của vai (`CardOrder()`, cách nhau 10 để chèn vai mới) |
 | Thêm vai mới | file mới trong `internal/roles/` (lệnh, thứ tự, lỗi riêng) + chữ trên thẻ ở `i18n/vi.go` + mục hướng dẫn ở `i18n/guide.go` + test + dòng trong `rules.md` và `protocol.md`. Ví dụ đầy đủ: `transport/ws/newrole_test.go` |

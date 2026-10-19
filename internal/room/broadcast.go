@@ -57,11 +57,14 @@ func (r *Room) table() Table {
 	return Table{Host: r.host, Order: order, Connected: r.connected, Current: r.speaker}
 }
 
-// changed sends every connected phone whose screen changed its own view and
-// any new events. A phone whose screen is the same as before gets nothing: a
-// message arriving on every phone when one player acts in secret would tell
-// the table that the role being called is alive (rules §3).
+// changed brings the host's grace timer up to date (watchHost: every change
+// of state or of connections ends here), then sends every connected phone
+// whose screen changed its own view and any new events. A phone whose screen
+// is the same as before gets nothing: a message arriving on every phone when
+// one player acts in secret would tell the table that the role being called
+// is alive (rules §3).
 func (r *Room) changed() {
+	r.watchHost()
 	speakers := r.pol.Speakers(r.table())
 	speaking := map[engine.PlayerID]bool{}
 	for _, p := range speakers {

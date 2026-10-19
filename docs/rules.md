@@ -35,8 +35,8 @@ Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước
 
 - Người **tạo phòng** là chủ phòng. Lúc tạo phòng, điện thoại đó nhận một **mã chủ phòng** bí mật; lần vào phòng đầu tiên của người tạo mang mã này để nhận chức. Mã chỉ có tác dụng **một lần**: dùng lại sau đó, kể cả khi chức đã sang người khác, không được gì.
 - Chủ phòng **chuyển chức** được cho bất kỳ ai đang ở trong phòng, bất cứ lúc nào, **kể cả giữa ván**, không cần bỏ phiếu và không cần người nhận đồng ý, để bàn xếp sẵn ai điều khiển ván sau. Không chuyển cho chính mình được.
-- **Trước khi chia vai**, chủ phòng mất chức khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối ngắn hơn rồi vào lại thì không đổi gì. Khi đó chức chuyển cho người **vào phòng sớm nhất** trong số người còn kết nối; không còn ai kết nối thì người kết nối lại đầu tiên nhận chức. **Từ lúc chia vai**, mất kết nối không làm mất chức.
-- (Chưa cài, T30e.) Khi ván đã kết thúc, luật 60 giây mất kết nối ở trên áp dụng lại cho chủ phòng, để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới.
+- **Trước khi chia vai**, chủ phòng mất chức khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối ngắn hơn rồi vào lại thì không đổi gì. Khi đó chức chuyển cho người **vào phòng sớm nhất** trong số người còn kết nối; không còn ai kết nối thì người kết nối lại đầu tiên nhận chức. **Từ lúc chia vai đến khi ván kết thúc**, mất kết nối không làm mất chức.
+- Khi ván đã kết thúc, luật 60 giây mất kết nối ở trên áp dụng lại cho chủ phòng, để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới. 60 giây tính từ **lúc mất kết nối**, không phải từ lúc ván kết thúc: chủ phòng đã mất kết nối quá 60 giây thì ván vừa kết thúc là chức chuyển ngay; mất kết nối 10 giây trước khi ván kết thúc thì còn 50 giây để vào lại.
 - Người đã mất chức (do chuyển chức hay do tự chuyển ở trên) quay lại phòng **không lấy lại chức**. Chỉ chủ phòng hiện tại chuyển lại cho họ được.
 
 ### Nickname, rời phòng và đá người

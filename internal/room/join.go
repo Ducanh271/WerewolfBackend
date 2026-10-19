@@ -2,16 +2,9 @@ package room
 
 import (
 	"fmt"
-	"time"
 
 	"masoi/internal/engine"
 )
-
-// hostDisconnectGrace is how long the host may be disconnected, before the
-// deal, without losing the host's powers (rules §2): a few seconds of lost
-// wifi changes nothing. Only pressing leave (Client.Leave) transfers them
-// sooner.
-const hostDisconnectGrace = 60 * time.Second
 
 // Client is one phone's handle on the room. Everything it does is done as the
 // player it was admitted as: the room, not the caller, says who that is.
@@ -89,6 +82,7 @@ func (r *Room) RejoinPIN(nickname, pin string, sink Sink) (*Client, Credentials,
 func (r *Room) attach(id engine.PlayerID, sink Sink) *Client {
 	conn := &connection{player: id, sink: sink, fresh: true}
 	r.conns[id] = conn
+	delete(r.offSince, id)
 	return &Client{room: r, player: id, conn: conn}
 }
 
@@ -101,20 +95,15 @@ func (r *Room) reattach(id engine.PlayerID, sink Sink, reason error) *Client {
 		old.sink.Evict(reason)
 	}
 	cl := r.attach(id, sink)
-	if id == r.host {
-		r.stopHostGrace() // the host is back: no transfer was due anyway
-	}
-	if r.host == "" && !r.state.Dealt {
+	if r.host == "" && r.hostMayLapse() {
 		r.host = id
 	}
 	r.changed()
 	return cl
 }
 
-// Disconnect drops the phone. The player keeps their seat and role. Before
-// the deal, if the host drops, their powers only pass once they have stayed
-// disconnected past hostDisconnectGrace (rules §2); reconnecting before then
-// keeps them.
+// Disconnect drops the phone. The player keeps their seat and role. If the
+// host drops, their powers pass only as watchHost says (rules §2).
 func (c *Client) Disconnect() {
 	r := c.room
 	_ = r.do(func() error {
@@ -122,34 +111,10 @@ func (c *Client) Disconnect() {
 			return nil
 		}
 		delete(r.conns, c.player)
-		if c.player == r.host && !r.state.Dealt {
-			r.armHostGrace(c.player)
-		}
+		r.offSince[c.player] = r.clock.Now()
 		r.changed()
 		return nil
 	})
-}
-
-// armHostGrace schedules the host's powers to pass to the next connected
-// player if id, the host, stays disconnected for hostDisconnectGrace.
-func (r *Room) armHostGrace(id engine.PlayerID) {
-	r.stopHostGrace()
-	r.hostGraceT = r.clock.AfterFunc(hostDisconnectGrace, func() {
-		r.post(func() {
-			if r.host == id && !r.connected(id) && !r.state.Dealt {
-				r.passHost(id)
-				r.changed()
-			}
-			r.hostGraceT = nil
-		})
-	})
-}
-
-func (r *Room) stopHostGrace() {
-	if r.hostGraceT != nil {
-		r.hostGraceT.Stop()
-		r.hostGraceT = nil
-	}
 }
 
 // Leave takes the player out of the room for good. Only before the deal.
@@ -178,18 +143,6 @@ func (c *Client) Leave() error {
 	})
 }
 
-// passHost gives the host's powers to the next player (in join order) who is
-// connected.
-func (r *Room) passHost(from engine.PlayerID) {
-	r.host = ""
-	for _, p := range r.joined {
-		if p != from && r.connected(p) {
-			r.host = p
-			return
-		}
-	}
-}
-
 // KickPlayer removes another player from the lobby. Only the host, and only
 // before the deal (hostOnly); the host cannot kick themselves (audit K2).
 // Their token and PIN are revoked like a Leave, and their connection, if any,
@@ -213,6 +166,7 @@ func (c *Client) KickPlayer(target engine.PlayerID) error {
 			conn.sink.Evict(ReasonKicked)
 		}
 		delete(r.conns, target)
+		delete(r.offSince, target)
 		r.ident.Revoke(target)
 		for i, p := range r.joined {
 			if p == target {

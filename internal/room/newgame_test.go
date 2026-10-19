@@ -8,13 +8,15 @@ import (
 )
 
 // forceEnded ends the game right away, however it got dealt, so tests do not
-// have to play a whole night out just to reach NewGame (audit K3).
+// have to play a whole night out just to reach NewGame (audit K3). The room
+// reacts as to any real end: phones are told, the host's grace is rechecked.
 func (g *game) forceEnded() {
 	g.t.Helper()
 	_ = g.r.do(func() error {
 		evs := []engine.Event{engine.GameEnded{Outcome: engine.Outcome{Draw: true}}}
 		g.r.state = engine.Fold(g.r.state, evs...)
 		g.r.log = append(g.r.log, evs...)
+		g.r.changed()
 		return nil
 	})
 }
