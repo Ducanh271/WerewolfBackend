@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"masoi/internal/engine"
+	"masoi/internal/engine/enginetest"
 	"masoi/internal/roles"
 )
 
@@ -64,7 +65,7 @@ func (g *simGame) checkEventsOf(id engine.PlayerID) {
 		g.leak(id, leak)
 	}
 	me := g.s.Players[id]
-	for _, e := range engine.Visible(g.s, g.log, engine.PlayerViewer(id)) {
+	for _, e := range g.views.Visible(g.s, g.log, engine.PlayerViewer(id)) {
 		switch ev := e.(type) {
 		case engine.RolesDealt, engine.PlayerDied, engine.HunterChainNoted:
 			g.leak(id, fmt.Sprintf("receives %T", e))
@@ -94,4 +95,14 @@ func (g *simGame) mustBe(viewer engine.PlayerID, ok bool, e engine.Event) {
 
 func (g *simGame) leak(viewer engine.PlayerID, what string) {
 	panic(fmt.Sprintf("secret leak to %s (%s, night %d, phase %v): %s", viewer, g.s.Players[viewer].Role, g.s.Night, g.s.Phase, what))
+}
+
+// checkViewCache is the differential test of the fast view path (audit R5):
+// every phone's view and events from the cache equal the full replay.
+func (g *simGame) checkViewCache() {
+	for _, v := range enginetest.Viewers(g.log) {
+		if diff := enginetest.ViewCacheDiff(&g.views, g.s, g.log, v); diff != "" {
+			panic(fmt.Sprintf("view cache differs from the full replay (%s): %s", g.desc, diff))
+		}
+	}
 }

@@ -16,12 +16,19 @@ import (
 //
 //	SIM_SEED=<seed> go test ./internal/roles -run TestSim -v
 //
-// and change the number of games with SIM_GAMES.
+// and change the number of games with SIM_GAMES. A replayed game checks the
+// view cache after every event.
 const (
 	simGamesDefault = 300
 	simBaseSeed     = 20250
 	simMaxCommands  = 20000
 	simMaxNights    = 80
+	// simEveryEventGames is how many of the first games check the fast view
+	// path against the full replay after every event (audit R5); the full
+	// replay costs one replay of the log per viewer per event (a few seconds
+	// a game). The other games check it at the end of every night. Change it
+	// with SIM_EVERY_EVENT_GAMES.
+	simEveryEventGames = 3
 )
 
 type simGame struct {
@@ -34,6 +41,9 @@ type simGame struct {
 	// rejected counts commands the engine refused with a typed error; the bots
 	// try some wrong moves on purpose.
 	rejected int
+
+	views      engine.ViewCache // the fast view path, as the room uses it
+	everyEvent bool             // check views against the full replay after every event
 }
 
 func newSimGame(seed uint64) *simGame {
@@ -53,8 +63,13 @@ func (g *simGame) do(c engine.Command) error {
 		return err
 	}
 	g.count++
-	g.log = append(g.log, evs...)
-	g.s = engine.Fold(g.s, evs...)
+	for _, e := range evs {
+		g.log = append(g.log, e)
+		g.s = engine.Evolve(g.s, e)
+		if g.everyEvent {
+			g.checkViewCache()
+		}
+	}
 	return nil
 }
 
@@ -62,19 +77,22 @@ func TestSim_ManyGames_FinishAndNeverLeakSecrets(t *testing.T) {
 	if testing.Short() {
 		t.Skip("slow: many simulated games; skipped with -short (make test-fast)")
 	}
-	games, first := simGamesDefault, uint64(simBaseSeed)
+	games, first, everyEvent := simGamesDefault, uint64(simBaseSeed), simEveryEventGames
 	if v := os.Getenv("SIM_GAMES"); v != "" {
 		games, _ = strconv.Atoi(v)
 	}
 	if v := os.Getenv("SIM_SEED"); v != "" {
 		n, _ := strconv.ParseUint(v, 10, 64)
-		first, games = n, 1
+		first, games, everyEvent = n, 1, 1
+	}
+	if v := os.Getenv("SIM_EVERY_EVENT_GAMES"); v != "" {
+		everyEvent, _ = strconv.Atoi(v)
 	}
 	outcomes := map[string]int{}
 	used := map[string]int{}
 	for i := 0; i < games; i++ {
 		seed := first + uint64(i)
-		out, err := playSimGame(seed, used)
+		out, err := playSimGame(seed, i < everyEvent, used)
 		if err != nil {
 			t.Fatalf("game with seed %d failed: %v\nreplay: SIM_SEED=%d go test ./internal/roles -run TestSim -v", seed, err, seed)
 		}
@@ -84,8 +102,9 @@ func TestSim_ManyGames_FinishAndNeverLeakSecrets(t *testing.T) {
 }
 
 // playSimGame plays one game to its end and returns how it ended.
-func playSimGame(seed uint64, used map[string]int) (outcome string, err error) {
+func playSimGame(seed uint64, everyEvent bool, used map[string]int) (outcome string, err error) {
 	g := newSimGame(seed)
+	g.everyEvent = everyEvent
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("panic (%s): %v", g.desc, r)
@@ -113,6 +132,7 @@ func playSimGame(seed uint64, used map[string]int) (outcome string, err error) {
 		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn {
 			// Every night under make test; one night in three under -short,
 			// since replaying the log per viewer is costly (audit R5, T2).
+			g.checkViewCache()
 			if !testing.Short() || g.s.Night%3 == 1 {
 				g.checkEvents()
 			} else if living := g.living(); len(living) > 0 { // one viewer each other night, in turn
