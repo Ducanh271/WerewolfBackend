@@ -121,11 +121,10 @@ const (
 	SummaryAborted = "summary.aborted"
 )
 
-// Night notices, shown as text on one player's phone (rules §3). The server
-// does not send the text of NightBlocked, NightWolfDoomed, NightGrief,
-// NightPackDoomed and the Notice* keys yet: the view carries a flag
-// (me.turn, me.phoneCheck in docs/protocol.md) and these are the approved
-// wordings for it, kept here so no client writes its own (plan T30e).
+// Night notices, shown as text on one player's phone (rules §3). The view
+// sends each text next to the flag it spells out (engine/view_notices.go;
+// me.turn.notice, me.phoneCheck.cursedText/loveText, pack.doomedNotices in
+// docs/protocol.md), so no client writes its own.
 const (
 	// NightBlocked: the player cannot use their night ability. It never names
 	// who blocked them.
@@ -147,8 +146,8 @@ const (
 	NightPhoneCheck = "night.phone_check"
 	// NightLoversMeet is read aloud at the lovers' step of night 1 (rules §3).
 	NightLoversMeet = "night.lovers_meet"
-	// NoticeNotCursed and NoticeCursed are the two phone check notices. The
-	// view carries one boolean; the client picks the text with it.
+	// NoticeNotCursed and NoticeCursed are the two curse lines of the phone
+	// check notice.
 	NoticeNotCursed = "notice.not_cursed"
 	NoticeCursed    = "notice.cursed"
 )

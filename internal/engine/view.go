@@ -120,6 +120,9 @@ type TurnView struct {
 	// for the viewer's own phone only.
 	Doomed bool
 	Grief  bool
+	// Notice is the text to show for Blocked, Doomed or Grief (i18n), "" when
+	// none is set.
+	Notice string
 	Bitten PlayerID // BiteWitness only: the pack's current target
 	// BiteShown is set when the viewer is shown the bite information at all, so
 	// an empty Bitten then means "nobody is bitten".
@@ -133,6 +136,9 @@ type PackView struct {
 	// Doomed lists the wolves that can no longer vote tonight because the
 	// Rusty knight's poison killed them as the pack step started.
 	Doomed []PlayerID
+	// DoomedNotices is the text the pack is shown, one line per wolf in Doomed,
+	// in the same order (i18n).
+	DoomedNotices []string
 }
 
 // LinkColour is the colour of the lovers' link (rules §7).

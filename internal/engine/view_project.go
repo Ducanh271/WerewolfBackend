@@ -148,7 +148,7 @@ func myView(s State, p *Player) *MyView {
 	out.Cursed = IsCursed(p) && p.Flags[FlagTeamHidden] == 0
 	out.Team = VisibleTeam(p)
 	if step, ok := CurrentNightRole(s); ok && step == StepPhoneCheck && p.Alive {
-		out.PhoneCheck = &PhoneCheckView{Cursed: IsCursed(p), Love: loveNotice(s, p, VisibleTeam)}
+		out.PhoneCheck = phoneCheckView(s, p)
 	}
 	out.Turn = turnView(s, p)
 	return out
@@ -169,6 +169,7 @@ func turnView(s State, p *Player) *TurnView {
 	}
 	out := &TurnView{Step: step, Blocked: Blocked(s, p.ID), Doomed: Doomed(s, p.ID)}
 	out.Grief = out.Doomed && p.Flags[FlagGrieving] != 0
+	out.Notice = turnNotice(out)
 	if out.Blocked || out.Doomed || step != p.Role {
 		return out
 	}
@@ -211,6 +212,7 @@ func packView(s State) *PackView {
 			out.Members = append(out.Members, id)
 		}
 	}
+	out.DoomedNotices = packDoomedNotices(s, out.Doomed)
 	return out
 }
 

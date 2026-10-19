@@ -48,9 +48,14 @@ type LoveNotice struct {
 }
 
 // PhoneCheckView is that notice as the phone shows it, while the step runs.
+// CursedText and LoveText are its two lines (i18n), each set only when the
+// public role list has the role it is about (phoneCheckView): nil, not "", so
+// the line is left out of the message, the same way for every phone.
 type PhoneCheckView struct {
-	Cursed bool
-	Love   LoveNotice
+	Cursed     bool
+	CursedText *string
+	Love       LoveNotice
+	LoveText   *string
 }
 
 // loveNotice is what the player is told of the pair, with the colour worked

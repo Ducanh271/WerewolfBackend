@@ -68,3 +68,43 @@ func TestGolden_ViewPeople_AbsentDuringTheGame(t *testing.T) {
 		t.Errorf("people = %s, want no key during the game", got)
 	}
 }
+
+func TestGolden_ViewNoticeTexts(t *testing.T) {
+	notCursed, inLove := "Bạn không bị nguyền.", "Bạn yêu Chi, vai Dân làng."
+	msg := viewFrame(t, room.Message{View: &room.ViewMsg{View: engine.View{
+		Phase: engine.PhaseNight,
+		Me: &engine.MyView{
+			ID:   "p1",
+			Turn: &engine.TurnView{Step: "Werewolf", Doomed: true, Notice: "Bạn đã trúng độc và chết từ lúc này, bạn không được vote."},
+			PhoneCheck: &engine.PhoneCheckView{
+				CursedText: &notCursed,
+				Love:       engine.LoveNotice{InLove: true, Partner: "p3", PartnerRole: "Villager", Colour: engine.LinkWhite},
+				LoveText:   &inLove,
+			},
+		},
+		Pack: &engine.PackView{Members: []engine.PlayerID{"p1", "p2"}, Doomed: []engine.PlayerID{"p1"}, DoomedNotices: []string{"An không thể vote đêm nay."}},
+	}}})
+	var view map[string]json.RawMessage
+	if err := json.Unmarshal(msg["view"], &view); err != nil {
+		t.Fatal(err)
+	}
+	var me map[string]json.RawMessage
+	if err := json.Unmarshal(view["me"], &me); err != nil {
+		t.Fatal(err)
+	}
+
+	assertJSON(t, "me.turn", me["turn"], `{"step": "Werewolf", "blocked": false, "doomed": true, "grief": false, "biteShown": false,
+		"notice": "Bạn đã trúng độc và chết từ lúc này, bạn không được vote."}`)
+	assertJSON(t, "me.phoneCheck", me["phoneCheck"], `{"cursed": false, "cursedText": "Bạn không bị nguyền.",
+		"love": {"inLove": true, "partner": "p3", "partnerRole": "Villager", "colour": "white"},
+		"loveText": "Bạn yêu Chi, vai Dân làng."}`)
+	assertJSON(t, "pack", view["pack"], `{"members": ["p1", "p2"], "doomed": ["p1"], "doomedNotices": ["An không thể vote đêm nay."]}`)
+}
+
+// Without the Cursed wolf and Cupid in the role list, the phone check notice
+// keeps exactly its old keys.
+func TestGolden_ViewPhoneCheck_NoTextLinesWhenTheRolesAreNotInTheGame(t *testing.T) {
+	tree := toTree(engine.PhoneCheckView{})
+	b, _ := json.Marshal(tree)
+	assertJSON(t, "phoneCheck", b, `{"cursed": false, "love": {"inLove": false, "partner": "", "partnerRole": "", "colour": ""}}`)
+}

@@ -105,7 +105,10 @@ func TestPhoneCheck_BothNoticesAreIndistinguishableExceptTheValue(t *testing.T) 
 	if reflect.TypeOf(a) != reflect.TypeOf(b) {
 		t.Fatalf("notice kinds differ: %T and %T", a, b)
 	}
-	b.Cursed = true
+	if (a.CursedText == nil) != (b.CursedText == nil) || (a.LoveText == nil) != (b.LoveText == nil) {
+		t.Fatalf("notices carry different lines: %+v and %+v", a, b)
+	}
+	b.Cursed, b.CursedText = true, a.CursedText // the value and its text
 	if *a != *b {
 		t.Fatalf("notices differ in more than the value: %+v and %+v", a, b)
 	}
