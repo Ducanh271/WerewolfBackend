@@ -85,6 +85,7 @@ type Room struct {
 	// Owned by the room goroutine.
 	state      engine.State
 	log        []engine.Event
+	views      engine.ViewCache // every phone's view and events of log (send)
 	nextID     int
 	joined     []engine.PlayerID // join order
 	host       engine.PlayerID

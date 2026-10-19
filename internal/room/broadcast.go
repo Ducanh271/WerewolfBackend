@@ -8,7 +8,8 @@ import (
 )
 
 // Message is what one phone is sent. It carries only that phone's own
-// projection of the game (engine.ViewFor and engine.Visible), never State.
+// projection of the game (engine.ViewFor and engine.Visible, through the
+// room's engine.ViewCache), never State.
 type Message struct {
 	View   *ViewMsg
 	Events *EventsMsg
@@ -112,8 +113,8 @@ func (r *Room) people() []Person {
 
 func (r *Room) send(c *connection, speaker bool, people []Person) {
 	viewer := engine.PlayerViewer(c.player)
-	view := engine.ViewFor(r.state, r.log, viewer)
-	visible := engine.Visible(r.state, r.log, viewer)
+	view := r.views.ViewFor(r.state, r.log, viewer)
+	visible := r.views.Visible(r.state, r.log, viewer)
 
 	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, People: people, View: view}
 	msg := Message{View: vm}

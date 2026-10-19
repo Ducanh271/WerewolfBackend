@@ -77,7 +77,8 @@ func playBenchGame(tb testing.TB, players int, cast map[engine.RoleID]int) *benc
 }
 
 // cuts are a nomination on the first day, the one nearest the middle of the
-// log, and the last one before the game ended.
+// log, the last one before the game ended, and the ended game (every phone
+// sees the whole log and the summary, e.g. when a phone drops after the end).
 func (g *benchGame) cuts() []benchCut {
 	first, last := g.nominations[0], g.nominations[len(g.nominations)-1]
 	middle := first
@@ -86,7 +87,7 @@ func (g *benchGame) cuts() []benchCut {
 			middle = n
 		}
 	}
-	return []benchCut{{"start", first}, {"middle", middle}, {"end", last}}
+	return []benchCut{{"start", first}, {"middle", middle}, {"end", last}, {"ended", len(g.log)}}
 }
 
 func (g *benchGame) try(c engine.Command) bool {

@@ -103,14 +103,20 @@ type game struct {
 	sink    map[engine.PlayerID]*recSink
 	cred    map[engine.PlayerID]Credentials
 	nick    map[engine.PlayerID]string
+	checked bool // phones are refSinks (newCheckedGame)
 }
 
 var nicknames = []string{"An", "Binh", "Chi", "Dung", "Em", "Phuc", "Giang", "Hoa", "Khoa", "Lan", "Minh", "Nga"}
 
 func newGame(t *testing.T, players int) *game {
 	t.Helper()
+	return newGameOf(t, players, false)
+}
+
+func newGameOf(t *testing.T, players int, checked bool) *game {
+	t.Helper()
 	g := &game{
-		t: t, clk: NewFakeClock(time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)),
+		t: t, checked: checked, clk: NewFakeClock(time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)),
 		rnd: &fixedRandom{seed: 1}, store: store.NewMemory(), hostKey: "test-host-key",
 		cl: map[engine.PlayerID]*Client{}, sink: map[engine.PlayerID]*recSink{},
 		cred: map[engine.PlayerID]Credentials{}, nick: map[engine.PlayerID]string{},
@@ -133,8 +139,8 @@ func newGame(t *testing.T, players int) *game {
 
 func (g *game) joinAs(nickname, hostKey string) engine.PlayerID {
 	g.t.Helper()
-	sink := &recSink{}
-	cl, creds, err := g.r.Join(nickname, hostKey, sink)
+	sink, phone := g.newSink("")
+	cl, creds, err := g.r.Join(nickname, hostKey, phone)
 	if err != nil {
 		g.t.Fatalf("Join(%s): %v", nickname, err)
 	}
