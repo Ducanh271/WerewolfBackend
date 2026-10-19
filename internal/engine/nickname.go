@@ -5,9 +5,8 @@ import (
 	"unicode/utf8"
 )
 
-// MaxNicknameLen is the longest nickname accepted, in runes, after trimming.
-// Not in rules.md: picked so every phone and the speaker's announcements
-// stay readable (audit S4).
+// MaxNicknameLen is the longest nickname accepted, in runes, after trimming
+// (rules §2 "Nickname, rời phòng và đá người"; audit S4).
 const MaxNicknameLen = 20
 
 // vietnameseLetters holds every Vietnamese letter outside plain ASCII, lower
@@ -19,9 +18,9 @@ const vietnameseLetters = "" +
 	"àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ" +
 	"ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ"
 
-// validNickname reports whether a trimmed nickname may be accepted: 1–20
-// characters, each one an ASCII letter or digit, a space, or a Vietnamese
-// letter (rules §2 does not give exact limits; this is the room's own rule).
+// validNickname reports whether a trimmed nickname may be accepted (rules §2
+// "Nickname, rời phòng và đá người"): 1–20 characters, each one an ASCII
+// letter or digit, a space, or a Vietnamese letter.
 func validNickname(s string) bool {
 	if s == "" || utf8.RuneCountInString(s) > MaxNicknameLen {
 		return false

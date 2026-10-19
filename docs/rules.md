@@ -1,6 +1,6 @@
 # Ma Sói — Đặc tả luật chơi (App quản trò offline, chỉ dùng điện thoại)
 
-Nguồn chính thức: tài liệu "Ma Sói — Đặc tả luật chơi" trên Claude (bản 14/10/2026). File này là bản copy cho agent đọc. Khi luật thay đổi, cập nhật cả hai nơi.
+File này là bản gốc duy nhất của luật chơi. Tài liệu khác và chú thích trong code chỉ dẫn số mục ở đây, không chép lại luật.
 
 ## 1. Tổng quan
 
@@ -23,13 +23,28 @@ Nguyên tắc chung: **không lật vai khi chết**. Ngoại lệ duy nhất l�
 
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo thứ tự. **Chủ phòng là người tạo phòng, và cũng là người chơi.** Quyền chủ phòng **chỉ có đến hết bước chia vai**; từ lúc chia vai, chủ phòng là người chơi bình thường, không còn nút điều khiển nào (nhưng điện thoại vẫn làm loa như đã nói ở §1). Trước khi chia vai, chủ phòng **chỉ mất quyền** khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối vài giây rồi vào lại không đổi gì. Khi mất quyền (rời phòng hoặc hết 60 giây), quyền chuyển cho người vào phòng kế tiếp (còn kết nối). Các bước:
+Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước dưới; chủ phòng cũng là người chơi (xem "Chủ phòng"). Các nút thiết lập (xếp chỗ, chọn vai, chỉnh giờ, chọn âm thanh, chia vai, đá người) **chỉ có đến hết bước chia vai**. Từ lúc chia vai, chủ phòng chơi như mọi người, chỉ còn quyền chuyển chức (bất cứ lúc nào) và bắt đầu ván mới khi ván đã kết thúc (§8c). Máy làm loa chọn theo §1, không đổi khi chuyển chức. Các bước:
 
 1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
 2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
 3. **Chọn vai** theo số người (bảng dưới), chọn phương án Sói nguyền hoặc sói thường. **Danh sách vai của ván là công khai**: mọi người xem được trước khi chia vai (chỉ biết có vai nào, không biết ai giữ).
 4. **Chỉnh thời gian** các pha nếu muốn.
 5. **Chia vai** ngẫu nhiên; mỗi người xem vai trên điện thoại của mình trong pha **xem vai** có đếm ngược. Hết giờ, ván tự sang bước tiếp (bầu Trưởng làng, rồi đêm 1).
+
+### Chủ phòng
+
+- Người **tạo phòng** là chủ phòng. Lúc tạo phòng, điện thoại đó nhận một **mã chủ phòng** bí mật; lần vào phòng đầu tiên của người tạo mang mã này để nhận chức. Mã chỉ có tác dụng **một lần**: dùng lại sau đó, kể cả khi chức đã sang người khác, không được gì.
+- Chủ phòng **chuyển chức** được cho bất kỳ ai đang ở trong phòng, bất cứ lúc nào, **kể cả giữa ván**, không cần bỏ phiếu và không cần người nhận đồng ý, để bàn xếp sẵn ai điều khiển ván sau. Không chuyển cho chính mình được.
+- **Trước khi chia vai**, chủ phòng mất chức khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối ngắn hơn rồi vào lại thì không đổi gì. Khi đó chức chuyển cho người **vào phòng sớm nhất** trong số người còn kết nối; không còn ai kết nối thì người kết nối lại đầu tiên nhận chức. **Từ lúc chia vai**, mất kết nối không làm mất chức.
+- (Chưa cài, T30e.) Khi ván đã kết thúc, luật 60 giây mất kết nối ở trên áp dụng lại cho chủ phòng, để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới.
+- Người đã mất chức (do chuyển chức hay do tự chuyển ở trên) quay lại phòng **không lấy lại chức**. Chỉ chủ phòng hiện tại chuyển lại cho họ được.
+
+### Nickname, rời phòng và đá người
+
+- Nickname dài **1–20 ký tự** (không tính khoảng trắng ở hai đầu), chỉ gồm chữ cái Việt/Latin, chữ số và khoảng trắng. Ký tự khác (ký hiệu, emoji, chữ của bảng chữ khác, ký tự ẩn) bị từ chối. Trong một phòng không có hai nickname trùng nhau (không phân biệt hoa thường).
+- **Rời phòng** chỉ làm được ở sảnh chờ. Sau khi chia vai, người thoát app chỉ mất kết nối và giữ chỗ (xem "Vào lại phòng").
+- Ở sảnh chờ (trước khi chia vai), chủ phòng **đá** được người khác ra khỏi phòng, không tự đá mình được. Người bị đá mất mã bí mật và PIN nên không vào lại được bằng chúng; điện thoại của họ được báo lý do. Họ vẫn có thể vào phòng lại như một người mới.
+- Rời phòng hay bị đá chỉ bỏ **ghế của người đó**: những người khác giữ thứ tự ghế, danh sách vai đã chọn giữ nguyên. Nếu danh sách vai không còn hợp với số người mới (giới hạn số sói, số người tối thiểu của Thám tử/Cupid), app không cho chia vai và nói lý do cho tới khi chủ phòng sửa.
 
 ### Giới hạn số sói
 
