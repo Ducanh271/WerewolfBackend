@@ -27,6 +27,9 @@ func frames(m room.Message) ([][]byte, error) {
 		if v.Speaker {
 			msg["speaker"] = true
 		}
+		if v.People != nil {
+			msg["people"] = toTree(v.People)
+		}
 		b, err := json.Marshal(msg)
 		if err != nil {
 			return nil, err

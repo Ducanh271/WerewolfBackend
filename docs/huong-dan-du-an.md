@@ -66,6 +66,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại có màn hình thay đổi** (máy nào màn hình y như cũ và không có sự kiện mới thì không nhận gì, nên khi Tiên tri soi, các máy khác không nhận tin nào, không ai đoán được Tiên tri còn sống):
     - `engine/view_project.go` → `ViewFor` (màn hình của riêng người đó);
     - `engine/view_audience.go` → `Visible`: dùng `SeerChecked.Audience` (`roles/seer.go`) = chỉ Tiên tri. Người khác không nhận sự kiện này.
+    - `changed` cũng gọi `watchHost` (`room/host.go`, hẹn giờ chuyển chức chủ phòng) và, chỉ ở sảnh hoặc khi ván đã kết thúc, gắn thêm `people` (ai trong phòng, đang kết nối không, ai là chủ phòng) vào tin `view`. Đây là dữ liệu của room, không qua `ViewFor` vì engine không biết kết nối và chủ phòng; không có gì bí mật.
 14. `transport/ws/session.go` → `Deliver` → `encode.go` → `frames` → `jsonenc.go` → `toTree`: đổi sang JSON (`view` rồi `events`).
 15. `session.go` → `writeLoop` gửi xuống điện thoại Tiên tri: sự kiện `SeerChecked` với `isWolf`.
 

@@ -189,13 +189,22 @@ previous one. A phone whose screen did not change gets **nothing**: when one
 player acts in secret at night, no other phone receives a message (a message
 on every phone would tell that the role being called is alive, rules §3).
 ```json
-{"type": "view", "deadline": 1760500000000, "speaker": true, "view": { … }}
+{"type": "view", "deadline": 1760500000000, "speaker": true,
+ "people": [{"id": "p1", "nickname": "An", "connected": true, "isHost": true}],
+ "view": { … }}
 ```
 `speaker` is added by the room, only `true` and only for the phone(s) that read
 aloud. Which phones those are follows the sound mode the host sets with
 `configureSound` before the deal (rules §1 "Máy làm loa", "Âm thanh"; default
 `oneSpeaker`): one phone at a time in `oneSpeaker` mode, every phone in
 `allPhones` mode.
+`people` is added by the room, only in the lobby and once the game has ended
+(`Ended`), never while a game is played: everybody in the room, in join order,
+each `{id, nickname, connected, isHost}` (all four keys always sent). It is
+enough to draw the lobby, or the end screen's "who is the host, who dropped",
+from the latest `view` alone, without replaying `PlayerJoined`/`PlayerLeft`/
+`PlayerKicked`. It changes when someone joins, leaves, is kicked, drops,
+comes back, or when the host changes (`transferHost`, rules §2 "Chủ phòng").
 `deadline` is added by the room: when the running phase or night step ends.
 Every night step lasts its full time (rules §3), so it tells nothing about who
 is alive.
@@ -207,7 +216,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `phase`, `seq`, `night` | all | phase name, change counter, night number |
 | `roles` | all | public role list `{role: count}` |
 | `roleCards` | all | the same roles in the order of rules §9b, each `{role, name, team, description}` (`team` is the role's own team; Vietnamese text from the server; no card text in the frontend) |
-| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`. Empty in the lobby until the host sends `setSeats` (who is in the room is known from the `PlayerJoined`/`PlayerLeft`/`PlayerKicked` events until then); `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
+| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`. Empty in the lobby until the host sends `setSeats` (who is in the room: `people` above); `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
 | `chief`, `succession`, `shooter` | all | Chief id; the dead Chief naming a successor; the dead Hunter choosing a target |
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]`, `abortVotes {voter: yes}` |
 | `winner`, `draw`, `winners` | all, at the end | winning team, or a draw; `winners`: the ids of the players who win, dead or alive, in seat order (who wins: rules §8) |

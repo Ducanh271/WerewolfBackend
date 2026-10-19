@@ -18,7 +18,21 @@ type Message struct {
 type ViewMsg struct {
 	Deadline time.Time // when the running phase or night step ends, zero if untimed
 	Speaker  bool      // this phone reads announcements aloud
-	View     engine.View
+	// People is everybody in the room, in join order, only in the lobby and
+	// once the game has ended (Room.people), so a phone that comes back
+	// sees who is there without replaying PlayerJoined.
+	People []Person
+	View   engine.View
+}
+
+// Person is one player in the room as the lobby and end screens list them.
+// None of it is secret: the table sees who is there and who holds the phone
+// that runs the game.
+type Person struct {
+	ID        engine.PlayerID
+	Nickname  string
+	Connected bool
+	IsHost    bool
 }
 
 // EventsMsg is the events this phone may know about. Reset means Events is the
@@ -76,17 +90,32 @@ func (r *Room) changed() {
 	if len(speakers) == 1 {
 		r.speaker = speakers[0]
 	}
+	people := r.people()
 	for _, c := range r.conns {
-		r.send(c, speaking[c.player])
+		r.send(c, speaking[c.player], people)
 	}
 }
 
-func (r *Room) send(c *connection, speaker bool) {
+// people lists the room for ViewMsg.People, or nil while a game is being
+// played: then a phone dropping at night would reach every other phone, a
+// signal the table has no use for mid-game.
+func (r *Room) people() []Person {
+	if r.state.Dealt && r.state.Phase != engine.PhaseEnded {
+		return nil
+	}
+	out := make([]Person, 0, len(r.joined))
+	for _, id := range r.joined {
+		out = append(out, Person{ID: id, Nickname: r.state.Players[id].Nickname, Connected: r.connected(id), IsHost: id == r.host})
+	}
+	return out
+}
+
+func (r *Room) send(c *connection, speaker bool, people []Person) {
 	viewer := engine.PlayerViewer(c.player)
 	view := engine.ViewFor(r.state, r.log, viewer)
 	visible := engine.Visible(r.state, r.log, viewer)
 
-	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, View: view}
+	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, People: people, View: view}
 	msg := Message{View: vm}
 	switch {
 	case c.fresh || view.Full != c.full || len(visible) < c.sent:
