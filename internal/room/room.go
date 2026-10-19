@@ -155,6 +155,13 @@ func (r *Room) Code() string { return r.code }
 
 func (r *Room) loop() {
 	for {
+		// A closed room runs no more jobs: select alone picks at random when a
+		// job is queued and done is closed, so look at done first.
+		select {
+		case <-r.done:
+			return
+		default:
+		}
 		select {
 		case f := <-r.inbox:
 			r.run(f)
