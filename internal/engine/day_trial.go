@@ -22,8 +22,8 @@ type TrialStarted struct {
 	Duration  time.Duration
 }
 
-// DayClockExpired records that the 7 minutes ran out while somebody was
-// nominated: that player's trial is the last step of the day.
+// DayClockExpired records that the day clock ran out while somebody was
+// nominated: that player's trial is the last step of the day (rules §4 step 6).
 type DayClockExpired struct {
 	EventMarker
 }
@@ -171,7 +171,7 @@ func decideDayTimeout(s State, cmd PhaseTimeout) ([]Event, error) {
 		}
 		return []Event{NominationsReopened{}}, nil
 	case PhaseDay:
-		// The 7 minutes are up: the top nominee still goes through the trial.
+		// The day clock is up: the top nominee still goes through the trial.
 		if top, ok := topNominee(s); ok {
 			return append([]Event{DayClockExpired{}}, startTrial(s, top)...), nil
 		}

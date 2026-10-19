@@ -7,12 +7,10 @@ import (
 	"masoi/internal/i18n"
 )
 
-// CursedWolf curses one living non-wolf, once per game, on one of the first
-// three nights (rules §5 "Sói nguyền"). The curse takes effect at once: the
-// target is on the wolf team, keeps their role and bites with the pack the
-// same night. Their phone and the pack's only change at the phone check step
-// that follows (engine.StepPhoneCheck). The Guard cannot stop it: it does not
-// pass through the bite.
+// CursedWolf curses one living non-wolf, once per game (rules §5 "Sói
+// nguyền"). The team changes at once in State; the screens only show it from
+// the phone check (engine.StepPhoneCheck, engine.FlagTeamHidden). It does not
+// pass through the bite, so the Guard never sees it.
 type cursedWolf struct{}
 
 // CursedWolf is the ID of the Cursed wolf.
@@ -53,7 +51,7 @@ func (cursedWolf) BaseTeam() engine.Team { return engine.TeamWolves }
 func (cursedWolf) CardOrder() int        { return 20 } // rank in the rules §9b table
 func (cursedWolf) CursesVillager() bool  { return true }
 
-// NightCall: before the Wolf seer and the pack, on the first three nights.
+// NightCall: before the Wolf seer and the pack, on the nights of rules §3.
 func (cursedWolf) NightCall() *engine.NightCall {
 	return &engine.NightCall{Order: 3, Nights: []int{1, 2, 3}}
 }

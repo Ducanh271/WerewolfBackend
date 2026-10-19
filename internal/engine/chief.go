@@ -9,7 +9,7 @@ import (
 
 // The Chief (Trưởng làng) is a public title, not a role (rules §7b): the
 // holder's role and team never change and it does not count towards the wolf
-// limit. The x2 vote weight belongs to the day phase (T7).
+// limit. The vote weight belongs to the day phase (rules §4, §7b).
 
 // VoteChief is a player's public vote in the Chief election. A voter may vote
 // for themselves and may change the vote until time is up.
@@ -45,8 +45,9 @@ type ChiefElected struct {
 	Chief PlayerID
 }
 
-// ChiefSuccessionStarted opens the 15 seconds in which the dead Chief names a
-// successor. The title is empty meanwhile.
+// ChiefSuccessionStarted opens the time in which the dead Chief names a
+// successor (rules §7b, Settings.ChiefSuccession). The title is empty
+// meanwhile.
 type ChiefSuccessionStarted struct {
 	EventMarker
 	Former   PlayerID

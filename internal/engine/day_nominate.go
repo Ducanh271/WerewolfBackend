@@ -131,9 +131,8 @@ func nominationsClosed(s State) bool {
 	return true
 }
 
-// topNominee returns who goes on trial: the most weighted nomination votes, a
-// tie going to the target whose earliest standing vote came first. ok is false
-// when nobody was nominated.
+// topNominee returns who goes on trial: the most weighted nomination votes,
+// ties broken as rules §4 step 2 says. ok is false when nobody was nominated.
 func topNominee(s State) (top PlayerID, ok bool) {
 	score := map[PlayerID]int{}
 	first := map[PlayerID]int{}

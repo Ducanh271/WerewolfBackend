@@ -19,10 +19,9 @@ func WolfVoters(s State) []PlayerID {
 // target in WolfVotes (rules §5).
 const NoBite PlayerID = ""
 
-// BiteTarget returns the player the pack bites: the one with more than half of
-// the voters' votes. Votes of players who cannot vote tonight do not count.
-// ok is false when nobody has more than half, or when NoBite has, so nobody is
-// bitten.
+// BiteTarget returns the player the pack bites, counted as rules §5 "Sói"
+// says over voters, the wolves who can vote tonight. ok is false when nobody
+// is bitten.
 func BiteTarget(s State, voters []PlayerID) (target PlayerID, ok bool) {
 	counts := map[PlayerID]int{}
 	for _, wolf := range voters {

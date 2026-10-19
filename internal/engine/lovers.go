@@ -16,7 +16,7 @@ type LoveSource interface {
 }
 
 // LoverGrieving records that the partner of a lover who died by day will die
-// in the next night. Nobody is told: the survivor already knows their lover is
+// in the next night (rules §7). Nobody is told: the survivor already knows their lover is
 // dead, and the others see them alive until the morning announcement.
 type LoverGrieving struct {
 	EventMarker
@@ -37,8 +37,8 @@ func PartnerOf(s State, id PlayerID) PlayerID {
 	return ""
 }
 
-// griefMarks is what the death of a lover by day does: the surviving partner
-// is marked to die in the next night. dead is everybody who died in the chain;
+// griefMarks is what the death of a lover by day does (rules §7): the
+// surviving partner is marked to die in the next night. dead is everybody who died in the chain;
 // after is the state once the chain is over, so a partner who died in it too
 // is not marked.
 func griefMarks(after State, dead []PlayerID) []Event {

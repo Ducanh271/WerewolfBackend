@@ -12,8 +12,7 @@ const (
 	MaxPlayers = 30
 
 	// MaxWolfPercent is the share of players that may be wolves, rounded down
-	// ("không vượt 30% số người chơi, làm tròn xuống"). Every wolf role counts:
-	// Werewolf, CursedWolf and WolfSeer.
+	// (rules §2 "Giới hạn số sói"). Every wolf role counts.
 	MaxWolfPercent = 30
 
 	// CurseWolfReserve is how many extra wolf slots a CursedWolf takes from the

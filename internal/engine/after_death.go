@@ -27,8 +27,9 @@ func afterDeaths(s State, emitted []Event, dead []PlayerID) []Event {
 }
 
 // settle continues the aftermath: the first of the dead Hunters is revealed and
-// gets his shot, or, with none left, the win check and the Chief follow. dead
-// is everybody who died in the chain so far.
+// gets his shot, or, with none left, the win check and the Chief follow, in
+// the order of rules §8 and §7b. dead is everybody who died in the chain so
+// far.
 func settle(s State, emitted []Event, shooters, dead []PlayerID) []Event {
 	after := Fold(s, emitted...)
 	var evs []Event // reveals of Hunters with nobody left to shoot

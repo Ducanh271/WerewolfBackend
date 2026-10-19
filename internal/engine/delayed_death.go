@@ -53,7 +53,8 @@ func doomIndex(s State, p *Player) (index int, doomed bool) {
 }
 
 // Doomed reports whether the player is dead by the rules from the step now
-// running: they cannot act or vote, and the resolution kills them. The view
+// running (rules §6 "Hiệp sĩ kiếm gỉ", §7): they cannot act or vote, and the
+// resolution kills them. The view
 // keeps showing them alive until the morning announcement, so nobody learns of
 // it in the night.
 func Doomed(s State, id PlayerID) bool {

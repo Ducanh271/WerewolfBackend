@@ -8,11 +8,9 @@ import (
 	"masoi/internal/i18n"
 )
 
-// Cupid pairs two living players on night 1 (rules §7). He may pair himself.
-// The lovers learn of the pair at the phone check; Cupid never sees the pair on
-// his screen afterwards. His own team stays Village: a couple of one wolf and
-// one villager is the third team, worked out for the couple in engine.CheckWin,
-// never by changing Player.Team.
+// Cupid pairs two living players on night 1 (rules §7). His own team stays
+// Village: a cross-team couple is the third team, worked out for the couple
+// in engine.CheckWin, never by changing Player.Team.
 type cupid struct{}
 
 // Cupid is the ID of Cupid.

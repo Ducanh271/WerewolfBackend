@@ -7,9 +7,8 @@ import (
 )
 
 // StepPhoneCheck is the night step in which everybody looks at their phone
-// (rules §3 "Kiểm tra điện thoại"). It belongs to no role: it follows Cupid's
-// step on night 1 and the curse step on nights 1-3, on a fixed schedule (see
-// engineSlots), so it tells nothing. A night may have it twice.
+// (rules §3 "Kiểm tra điện thoại"). It belongs to no role; engineSlots places
+// it. A night may have it twice.
 const StepPhoneCheck RoleID = "PhoneCheck"
 
 // FlagTeamHidden is set on a player whose team changed during the night, until
@@ -26,7 +25,8 @@ type PhoneCheckAnnounced struct {
 // AnnouncementKey is read aloud to everybody.
 func (PhoneCheckAnnounced) AnnouncementKey() string { return i18n.NightPhoneCheck }
 
-// PhoneChecked is the notice one living player gets at the phone check. It
+// PhoneChecked is the notice one living player gets at the phone check
+// (rules §3). It
 // combines the curse status and the love status, and every notice has this
 // exact shape whatever the answer: only the values differ. A client shows the
 // curse part when the (public) role list has a Cursed wolf and the love part
@@ -97,8 +97,8 @@ func phoneCheckNotices(s State) []Event {
 
 // engineSlots are the steps of this night that belong to no role, each placed
 // right after the role step it follows (rules §3):
-//   - after a CurseSource's step (the Cursed wolf, nights 1-3): the phone check;
-//   - after a LoveSource's step (Cupid, night 1): the phone check, then the
+//   - after a CurseSource's step (the Cursed wolf), on its nights: the phone check;
+//   - after a LoveSource's step (Cupid), on its night: the phone check, then the
 //     lovers' step (StepLoversMeet).
 //
 // They depend on the role list and the night only, so they run whether or not

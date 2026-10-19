@@ -1,8 +1,7 @@
 package engine
 
 // CastAbortVote is a living player's vote to call the game off before it has
-// a winner (audit K1, rules §8b). Only allowed by day, so voting never
-// reveals who is awake at night. A later vote by the same player replaces
+// a winner (audit K1, rules §8b). A later vote by the same player replaces
 // the earlier one, so Yes: false withdraws it.
 type CastAbortVote struct {
 	CommandMarker
@@ -17,9 +16,8 @@ type AbortVoteCast struct {
 	Yes   bool
 }
 
-// dayPhases is every phase that counts as "by day" for the abort vote: the
-// whole span from discussion to the dusk that follows a verdict, but never
-// the night, role viewing or the Chief election.
+// dayPhases is every phase that counts as "by day" for the abort vote
+// (rules §8b).
 var dayPhases = []Phase{PhaseDay, PhaseNominationLock, PhaseTrial, PhaseVerdict, PhaseDusk}
 
 func decideCastAbortVote(s State, cmd CastAbortVote) ([]Event, error) {

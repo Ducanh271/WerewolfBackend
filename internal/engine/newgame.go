@@ -3,9 +3,8 @@ package engine
 import "fmt"
 
 // NewGame starts another game in the same room once the previous one ended,
-// by a win or by an abort vote (audit K3): the table does not have to
-// recreate the room and have everyone rejoin for a second game. The room
-// layer checks that the sender is the host; the engine only checks the phase.
+// by a win or by an abort vote (audit K3, rules §8c). The room layer checks
+// that the sender is the host; the engine only checks the phase.
 type NewGame struct {
 	CommandMarker
 }

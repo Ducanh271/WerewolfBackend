@@ -6,9 +6,8 @@ import (
 )
 
 // Detective checks one player once a game and learns whether there is a wolf
-// among that player and the nearest living neighbour on each side (rules §6
-// "Thám tử"). He is called every night, even after using the ability: the
-// later calls are fake and last as long, so the table cannot tell.
+// in the zone around them (rules §6 "Thám tử"). He is called every night, even
+// after using the ability (fake calls, rules §3).
 type detective struct{}
 
 // Detective is the ID of the Detective.
@@ -101,8 +100,8 @@ func (detective) Evolve(s *engine.State, e engine.Event) bool {
 	return true
 }
 
-// detectiveZone is the target and the nearest living player on each side, once
-// each. With fewer than 3 living players it is simply everyone alive.
+// detectiveZone is the zone of rules §6 "Thám tử": the target and the nearest
+// living player on each side, once each, or everyone alive on a small table.
 func detectiveZone(s engine.State, target engine.PlayerID) []engine.PlayerID {
 	zone := []engine.PlayerID{target}
 	for _, step := range []int{-1, 1} {
