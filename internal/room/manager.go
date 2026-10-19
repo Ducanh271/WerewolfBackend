@@ -3,7 +3,6 @@ package room
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"errors"
 	"log/slog"
 	"math/big"
 	"strings"
@@ -15,8 +14,8 @@ import (
 
 // Errors of the manager.
 var (
-	ErrRoomNotFound = errors.New("room not found")
-	ErrTooManyRooms = errors.New("too many rooms")
+	ErrRoomNotFound = engine.NewError("room_not_found", "room not found")
+	ErrTooManyRooms = engine.NewError("too_many_rooms", "too many rooms")
 )
 
 // CodeAlphabet has no O, 0, I, 1 or L: those get misread when a code is typed

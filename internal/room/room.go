@@ -14,10 +14,10 @@ import (
 
 // Errors of the room layer. Engine errors pass through unchanged.
 var (
-	ErrNotHost      = errors.New("only the host can do this")
-	ErrForbidden    = errors.New("command not allowed from a player")
-	ErrDisconnected = errors.New("this connection is no longer the player's")
-	ErrClosed       = errors.New("room is closed")
+	ErrNotHost      = engine.NewError("not_host", "only the host can do this")
+	ErrForbidden    = engine.NewError("forbidden", "command not allowed from a player")
+	ErrDisconnected = engine.NewError("disconnected", "this connection is no longer the player's")
+	ErrClosed       = engine.NewError("room_closed", "room is closed")
 	// ErrInternal answers a command that hit a bug (a panic) inside the room.
 	// The command changed nothing and the room goes on; the client is told
 	// "internal" and nothing more.
@@ -31,6 +31,12 @@ type disconnectReason struct{ msg string }
 
 func (e disconnectReason) Error() string        { return e.msg }
 func (e disconnectReason) Is(target error) bool { return target == ErrDisconnected }
+
+// Code is ErrDisconnected's wire code.
+func (e disconnectReason) Code() string {
+	code, _ := engine.ErrorCode(ErrDisconnected)
+	return code
+}
 
 // Reasons a connection is evicted by a later rejoin (rules §2).
 var (

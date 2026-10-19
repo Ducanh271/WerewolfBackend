@@ -2,7 +2,6 @@ package room
 
 import (
 	"crypto/subtle"
-	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -20,8 +19,8 @@ type Credentials struct {
 
 // Errors of rejoining.
 var (
-	ErrBadCredentials = errors.New("bad credentials")
-	ErrPINLocked      = errors.New("pin rejoin is locked")
+	ErrBadCredentials = engine.NewError("bad_credentials", "bad credentials")
+	ErrPINLocked      = engine.NewError("pin_locked", "pin rejoin is locked")
 )
 
 // PINLockedError says how long PIN rejoin stays locked for a nickname.

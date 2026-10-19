@@ -33,3 +33,13 @@ func TestErrors_RoomPanic_IsInternal(t *testing.T) {
 		t.Fatal("a room panic must be logged as an internal error")
 	}
 }
+
+// A phone replaced by a later rejoin, or kicked, is told "disconnected" with
+// the reason as the message.
+func TestErrors_DisconnectReasonsKeepTheDisconnectedCode(t *testing.T) {
+	for _, reason := range []error{room.ReasonAnotherDevice, room.ReasonPINTakenOver, room.ReasonKicked} {
+		if m := toErrorMsg(reason); m.Code != "disconnected" || m.Message != reason.Error() {
+			t.Errorf("%v: got %+v, want code disconnected and the reason", reason, m)
+		}
+	}
+}
