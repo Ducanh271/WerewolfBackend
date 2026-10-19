@@ -119,10 +119,12 @@ sees what.
 `hostKey` is only ever sent by the room's creator, on their own first `join`
 (see above); every other phone omits it.
 
-Reply: `{"type": "welcome", "player": "p3", "token": "…", "pin": "4821"}` (on
+Reply: `{"type": "welcome", "protocolVersion": 1, "player": "p3", "token": "…", "pin": "4821"}` (on
 rejoin by token only `player`; rejoin by nickname + PIN returns a **new** `token`
 and the old one stops working), then a full `view` and
-a full `events` message. A refused rejoin is an `error` with code
+a full `events` message. `protocolVersion` is always sent; it goes up only
+on a change an older client cannot ignore (`docs/api/README.md`
+"Versioning"). A refused rejoin is an `error` with code
 `bad_credentials` or `pin_locked` (with `retryAfter` in ms). `join` with an
 invalid nickname (empty, over 20 characters, or outside Vietnamese/Latin
 letters, digits and spaces, rules §2) is `error` `invalid_nickname`; one

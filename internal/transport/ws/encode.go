@@ -136,8 +136,13 @@ func nicknames(v engine.View) func(engine.PlayerID) string {
 	}
 }
 
+// ProtocolVersion is sent in every `welcome`. It goes up only on a change an
+// older client cannot ignore (docs/api/README.md "Versioning"), so an old app
+// can tell its player to update.
+const ProtocolVersion = 1
+
 func welcome(player engine.PlayerID, creds *room.Credentials) []byte {
-	m := map[string]any{"type": "welcome", "player": string(player)}
+	m := map[string]any{"type": "welcome", "protocolVersion": ProtocolVersion, "player": string(player)}
 	if creds != nil && creds.Token != "" {
 		m["token"] = creds.Token
 	}

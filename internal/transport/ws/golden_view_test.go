@@ -41,6 +41,20 @@ func assertJSON(t *testing.T, what string, got json.RawMessage, want string) {
 	}
 }
 
+func TestGolden_Welcome(t *testing.T) {
+	tests := []struct {
+		name  string
+		creds *room.Credentials
+		want  string
+	}{
+		{"join", &room.Credentials{Token: "tok", PIN: "4821"}, `{"type": "welcome", "protocolVersion": 1, "player": "p3", "token": "tok", "pin": "4821"}`},
+		{"rejoin by token", nil, `{"type": "welcome", "protocolVersion": 1, "player": "p3"}`},
+	}
+	for _, tc := range tests {
+		assertJSON(t, tc.name, welcome("p3", tc.creds), tc.want)
+	}
+}
+
 func TestGolden_ViewPeople(t *testing.T) {
 	msg := viewFrame(t, room.Message{View: &room.ViewMsg{
 		Speaker: true,
