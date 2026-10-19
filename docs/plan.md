@@ -52,9 +52,7 @@ A task is done when `make fmt`, `make test-fast` and `make lint` pass locally, i
 
 ## Milestone 5 — Frontend
 
-- [ ] **T21 Frontend guide (docs/frontend) — do LAST, after the backend backlog is done.**
-  - Role cards have a fixed size, are hidden by default, and are revealed only by press-and-hold.
-  - A dead player's phone keeps receiving live night updates, so at night it must stay dark/blank until tapped, otherwise neighbours can see the screen change when someone acts.
+- Moved to Phase 2: T21a (API contract), T21b (design system + screens), T21c (stack). Its two notes (role cards hold-to-reveal, dead phone dark at night) go into `docs/api/secrecy.md` in T21a-2.
 
 ## Phase 2 — fix the audit, reach "self-use" (play in person with friends)
 Goal: a group of 8–13 friends plays 3 games in a row on their own phones (link/QR, no install, not on the same wifi), first-timers understand their role from the app, nothing leaks, a dead phone can rejoin from another phone, an end-of-game summary is shown.
@@ -109,7 +107,16 @@ IDs in brackets refer to docs/audit.md.
   - Also: view ở sảnh có danh sách người trong phòng (id, nickname, đang kết nối hay không, ai là chủ phòng), để màn hình tự đủ thông tin khi vào lại phòng — không bắt frontend gom từ sự kiện PlayerJoined. (Today `players` is empty in the lobby until `setSeats`, see `docs/protocol.md`.) Decided: also sent once the game has Ended (who is host for Ván mới, who dropped), never during play.
   - Also: khi ván đã Ended, luật 60 giây mất kết nối áp dụng lại cho chủ phòng (để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới). Rule already in rules §2 "Chủ phòng", marked not built. Decided: the 60 seconds count from the drop, not from the end of the game.
   - Also: nickname chuẩn hoá NFC + gộp nhiều khoảng trắng thành một trước khi kiểm tra và so trùng (chặn hai tên "Bình" khác mã Unicode). Allowed dependency: `golang.org/x/text` (for NFC). Update rules §2 "Nickname, rời phòng và đá người" in the same change.
-- [ ] T21 Frontend guide docs/frontend (Opus) — after T23–T30
+- [ ] T21a Frontend API contract in `docs/api/` (Opus): a frontend developer (web now, mobile later) builds the client from these docs alone, without reading Go code. No frontend code; no wire change except `protocolVersion` below. Two sessions:
+  - [ ] T21a-1 Schema, examples, drift tests.
+    - Changes: `welcome` gains `protocolVersion: 1` (own commit, golden test, `docs/protocol.md`). JSON Schema draft 2020-12 generated from the Go types, following the encoder's rules (`jsonenc.go`): `docs/api/schema/server.schema.json` (`welcome`, `view`, `events` with one `data` schema per event type, `error`), `client.schema.json` (`join`, `rejoin`, `leave`, `kick`, `transferHost`, `command` with one `args` schema per command name), `http.schema.json` (`POST /rooms`, `GET /join/{code}`, `GET /guide` replies). Real JSON examples in `docs/api/examples/`, captured from scripted games played through the real WebSocket server (fake clock, fixed randomness, room code `K7QP`, players An, Bình, Chi...). `docs/api/README.md`: connecting, envelope, versioning (an old app compares `protocolVersion` to say "update the app"). `make api-docs` rewrites the files; without it the same test compares and fails on any drift.
+    - Allowed test-only dependency: `github.com/santhosh-tekuri/jsonschema/v6` (validates the schemas themselves and every captured frame against them).
+    - Proof: every client message type and command name, every server message type and every event type has an example (or sits in an explicit allowlist with its reason); every captured frame validates; a test finds every struct embedding `EventMarker` in the source, so a new event without a schema fails.
+  - [ ] T21a-2 Screen docs, errors, secrecy.
+    - Changes: one file per area (lobby, role view, chief, night, phone check, dawn, day/trial/verdict, hunter, end/summary, guide): which view fields drive the screen, which commands the client may send in that phase, which errors can come back, examples embedded from T21a-1 (between markers the test rewrites/compares). `errors.md`: code, when, suggested Vietnamese text. `secrecy.md`: what a client must never show/vibrate/animate differently, linking rules sections (including the old T21 notes: fixed-size role cards revealed only by press-and-hold; a dead player's phone stays dark at night until tapped).
+    - Error texts, in two groups: errors a player can hit at the table (one sentence each, approved by me) and errors only a buggy client causes (one shared sentence). Draft them in a file for my review first, then move them into `internal/i18n`; a test checks the `errors.md` table against the server's codes and i18n.
+- [ ] T21b Design system + screens (me with Claude), from `docs/api/`.
+- [ ] T21c Frontend stack choice: PWA first, Capacitor (native shell) later.
 - [ ] F1… Phone UI (planned separately), following the secrecy checklist
 - [ ] T29t Playtest through Cloudflare Tunnel (Sonnet) — once the frontend runs, before P1. `cloudflared tunnel --url http://localhost:PORT`: free HTTPS so phones keep the screen awake and friends far away can join. Write how to run it in `docs/huong-dan-du-an.md`; check the origin check [D4] allows the tunnel address (`*.trycloudflare.com`, new each run). No deploy, no host bought.
 - [ ] P1 Playtest with friends, collect feedback, rebalance
