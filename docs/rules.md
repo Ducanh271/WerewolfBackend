@@ -41,7 +41,7 @@ Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước
 
 ### Nickname, rời phòng và đá người
 
-- Nickname dài **1–20 ký tự** (không tính khoảng trắng ở hai đầu), chỉ gồm chữ cái Việt/Latin, chữ số và khoảng trắng. Ký tự khác (ký hiệu, emoji, chữ của bảng chữ khác, ký tự ẩn) bị từ chối. Trong một phòng không có hai nickname trùng nhau (không phân biệt hoa thường).
+- Nickname dài **1–20 ký tự** (không tính khoảng trắng ở hai đầu), chỉ gồm chữ cái Việt/Latin, chữ số và khoảng trắng. Ký tự khác (ký hiệu, emoji, chữ của bảng chữ khác, ký tự ẩn) bị từ chối. Trong một phòng không có hai nickname trùng nhau (không phân biệt hoa thường). Trước khi kiểm tra và so trùng, nickname được chuẩn hoá: bỏ khoảng trắng ở hai đầu, gộp nhiều dấu cách liền nhau thành một, và đưa chữ có dấu về một dạng mã Unicode duy nhất (NFC). Vì vậy hai tên trông giống hệt nhau (ví dụ "Bình" gõ bằng hai bộ gõ khác nhau, hay "An  Bình" và "An Bình") luôn bị coi là trùng, và tên được lưu ở dạng đã chuẩn hoá. Vào lại bằng nickname và PIN cũng so theo dạng này.
 - **Rời phòng** chỉ làm được ở sảnh chờ. Sau khi chia vai, người thoát app chỉ mất kết nối và giữ chỗ (xem "Vào lại phòng").
 - Ở sảnh chờ (trước khi chia vai), chủ phòng **đá** được người khác ra khỏi phòng, không tự đá mình được. Người bị đá mất mã bí mật và PIN nên không vào lại được bằng chúng; điện thoại của họ được báo lý do. Họ vẫn có thể vào phòng lại như một người mới.
 - Rời phòng hay bị đá chỉ bỏ **ghế của người đó**: những người khác giữ thứ tự ghế, danh sách vai đã chọn giữ nguyên. Nếu danh sách vai không còn hợp với số người mới (giới hạn số sói, số người tối thiểu của Thám tử/Cupid), app không cho chia vai và nói lý do cho tới khi chủ phòng sửa.

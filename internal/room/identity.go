@@ -87,7 +87,9 @@ func NewSecretIdentity(clock Clock, rnd Randomness) *SecretIdentity {
 	}
 }
 
-func nickKey(nickname string) string { return strings.ToLower(strings.TrimSpace(nickname)) }
+// nickKey matches a nickname the way the engine compares them (rules §2):
+// normalized, any case.
+func nickKey(nickname string) string { return strings.ToLower(engine.NormalizeNickname(nickname)) }
 
 // Issue implements Identity.
 func (id *SecretIdentity) Issue(p engine.PlayerID, nickname string) Credentials {

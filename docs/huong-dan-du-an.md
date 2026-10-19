@@ -31,7 +31,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 ## 2. Công nghệ và lý do
 
-- **Go (chỉ thư viện chuẩn là chính)**: đơn giản, chạy nhiều kết nối đồng thời tốt, test có `-race` bắt lỗi chạy song song. Chỉ thêm `coder/websocket` (kết nối) và `testify` (test).
+- **Go (chỉ thư viện chuẩn là chính)**: đơn giản, chạy nhiều kết nối đồng thời tốt, test có `-race` bắt lỗi chạy song song. Chỉ thêm `coder/websocket` (kết nối), `testify` (test) và `golang.org/x/text` (chuẩn hoá NFC cho nickname).
 - **WebSocket**: server phải đẩy tin xuống điện thoại ngay (đến lượt bạn, trời sáng, có người bị treo) mà không để điện thoại hỏi liên tục.
 - **JSON**: dễ đọc, dễ gỡ lỗi, app/web nào cũng nói được. Mẫu tin nhắn nằm ở `docs/protocol.md`.
 - **Lưu trong RAM**: phiên bản 1 chưa cần database; tắt server là mất phòng. Có interface `store.EventStore` để thay sau.

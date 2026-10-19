@@ -63,7 +63,7 @@ func decideJoinRoom(s State, cmd JoinRoom) ([]Event, error) {
 	if cmd.Player == "" {
 		return nil, ErrInvalidPlayerID
 	}
-	nickname := strings.TrimSpace(cmd.Nickname)
+	nickname := NormalizeNickname(cmd.Nickname)
 	if !validNickname(nickname) {
 		return nil, fmt.Errorf(
 			"%w: must be 1-%d characters, Vietnamese/Latin letters, digits and spaces only",

@@ -3,6 +3,8 @@ package engine
 import (
 	"strings"
 	"unicode/utf8"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // MaxNicknameLen is the longest nickname accepted, in runes, after trimming
@@ -18,7 +20,20 @@ const vietnameseLetters = "" +
 	"àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ" +
 	"ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ"
 
-// validNickname reports whether a trimmed nickname may be accepted (rules §2
+// NormalizeNickname is the form a nickname is checked and stored in (rules §2
+// "Nickname, rời phòng và đá người"): NFC, no spaces at either end, and runs
+// of spaces collapsed to one, so two names that look the same are the same
+// string. Only the plain space is collapsed: any other blank stays and is
+// refused by validNickname.
+func NormalizeNickname(s string) string {
+	s = strings.TrimSpace(norm.NFC.String(s))
+	for strings.Contains(s, "  ") {
+		s = strings.ReplaceAll(s, "  ", " ")
+	}
+	return s
+}
+
+// validNickname reports whether a normalized nickname may be accepted (rules §2
 // "Nickname, rời phòng và đá người"): 1–20 characters, each one an ASCII
 // letter or digit, a space, or a Vietnamese letter.
 func validNickname(s string) bool {

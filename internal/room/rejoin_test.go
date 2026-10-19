@@ -51,6 +51,25 @@ func TestRejoin_OtherPhoneWithNicknameAndPIN_GetsNewSecretCode(t *testing.T) {
 	}
 }
 
+// Rules §2: the nickname is matched in its normal form, so typing the accents
+// or the spaces differently on the new phone still finds the player.
+func TestRejoin_OtherPhoneWithTheSameNameTypedDifferently_IsFound(t *testing.T) {
+	tests := []struct{ joined, typed string }{
+		{"B\u00ecnh", "Bi\u0300nh"},
+		{"An Bình", "  an   bình "},
+	}
+	for _, tt := range tests {
+		t.Run(tt.typed, func(t *testing.T) {
+			g := newGame(t, 4)
+			id := g.joinAs(tt.joined, "")
+			cl, _, err := g.r.RejoinPIN(tt.typed, g.cred[id].PIN, &recSink{})
+			if err != nil || cl.Player() != id {
+				t.Fatalf("RejoinPIN(%q) = %v, %v, want %s", tt.typed, cl, err, id)
+			}
+		})
+	}
+}
+
 func TestRejoin_FiveWrongPINsLockPINRejoinForOneMinute_ButNotTheSecretCode(t *testing.T) {
 	g := newGame(t, 5)
 	g.deal()
