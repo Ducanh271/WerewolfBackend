@@ -116,7 +116,8 @@ shared shapes); if it implements `ArgsValidator` the transport checks it after
 decoding (`wolfVote` needs `target`). A role's own errors are declared in its
 file with `engine.NewError(code, message)`: the error carries its wire code.
 The card text stays in `i18n/vi.go`, keyed by role ID, with the other
-user-facing strings.
+user-facing strings; `i18n/rules_cards_test.go` checks it word for word, and
+the card order, against the rules §9b tables.
 
 Game-wide rule limits (player count, wolf percentage, the cursed wolf's reserved slot) live in `internal/engine/limits.go`. Limits that belong to one role (minimum table size, number of copies) live in that role's own file.
 
