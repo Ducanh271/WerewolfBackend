@@ -60,7 +60,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 **D. Ghi nhận**
 11. `room.go` → `apply`: `store.Append` (ghi nhật ký trước), rồi `engine.Fold` → `Evolve` → `roles/seer.go` → `Evolve` đặt `Pending.SeerTarget`.
-12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. (Bước đêm **không kết thúc sớm**; luôn chạy đủ giờ để không lộ ai còn sống.) Khi bàn có Sói nguyền, sau lượt Sói nguyền (đêm 1–3) có thêm bước **Kiểm tra điện thoại** (5 giây, `engine/phone_check.go`); khi bàn có Cupid, đêm 1 có thêm một lần kiểm tra ngay sau lượt Cupid, rồi bước **Cặp đôi mở mắt nhìn nhau** (10 giây, `engine/lovers_meet.go`, chỉ hai người yêu thấy đến lượt mình). Lịch các bước này cố định theo danh sách vai và số đêm. Ở mỗi lần kiểm tra, mọi người sống nhận **một** thông báo cùng một dạng, gộp “bị nguyền / không bị nguyền” và “yêu ai / không ở trong cặp đôi”. Người bị nguyền, bầy sói và cặp đôi chỉ thấy thay đổi ở bước này. Thẻ vai (rules §9b) đi kèm view: `engine/view_cards.go` lấy chữ từ `i18n/vi.go` (`me.roleCard`, `me.statusCards`, danh sách vai công khai `roleCards`), frontend không giữ chữ nào của thẻ. Người yêu chết ban ngày thì người kia “đau buồn mà chết” ở đêm kế tiếp, dùng chung cơ chế chết muộn với độc của Hiệp sĩ (`engine/delayed_death.go`).
+12. `room/timers.go` → `rearm`: chỉnh lại hẹn giờ. Bước đêm luôn chạy đủ giờ, không kết thúc sớm (rules §3). Bước **Kiểm tra điện thoại** (`engine/phone_check.go`) và **Cặp đôi mở mắt nhìn nhau** (`engine/lovers_meet.go`) là bước của engine, không phải của vai; lịch chạy theo rules §3. Thẻ vai (rules §9b) đi kèm view: `engine/view_cards.go` lấy chữ từ `i18n/vi.go` (`me.roleCard`, `me.statusCards`, danh sách vai công khai `roleCards`), frontend không giữ chữ nào của thẻ. Chết muộn (đau buồn vì người yêu, rules §7; độc của Hiệp sĩ, rules §6) dùng chung `engine/delayed_death.go`.
 
 **E. Gửi kết quả về (chỉ Tiên tri thấy)**
 13. `room/broadcast.go` → `changed` → `send`, **cho từng điện thoại có màn hình thay đổi** (máy nào màn hình y như cũ và không có sự kiện mới thì không nhận gì, nên khi Tiên tri soi, các máy khác không nhận tin nào, không ai đoán được Tiên tri còn sống):
@@ -119,14 +119,14 @@ func TestNight_SeerChecksACursedPlayer_SeesAWolf(t *testing.T) {
 }
 ```
 
-Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `newTable` hoặc `enginetest.NewGame`; (3) viết các bước `Night()`, `Day()`...; (4) viết `Expect...` cho kết quả đúng theo `docs/rules.md`; (5) chạy, thấy đỏ rồi mới sửa code. Các bảng trường hợp (table-driven) cho nhiều đầu vào cùng lúc có ví dụ ở `TestNight_SeerChoiceIsRejectedWhenInvalid`. **Lưu ý khi bàn có Nguyệt Nữ (`Visitor`)**: Nguyệt Nữ bắt buộc ghé, hết giờ mà chưa chọn thì server random một người. Vì vậy test nào có Nguyệt Nữ trong bàn phải cho cô ấy ghé tường minh (`n.Visitor("Khoa").Visits("Hoa")`), nếu không cô ấy sẽ ghé ngẫu nhiên và làm người đó bị chặn, khiến kết quả test sai khó hiểu. Muốn test việc random thì dùng `n.Visitor("Khoa").RunsOutOfTime(seed)` với seed cố định. Với lỗi ở phòng/mạng, xem mẫu `room/*_test.go` (đồng hồ giả `FakeClock`) và `transport/ws/*_test.go`.
+Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `newTable` hoặc `enginetest.NewGame`; (3) viết các bước `Night()`, `Day()`...; (4) viết `Expect...` cho kết quả đúng theo `docs/rules.md`; (5) chạy, thấy đỏ rồi mới sửa code. Các bảng trường hợp (table-driven) cho nhiều đầu vào cùng lúc có ví dụ ở `TestNight_SeerChoiceIsRejectedWhenInvalid`. **Lưu ý khi bàn có Nguyệt Nữ (`Visitor`)**: hết giờ mà chưa chọn thì server chọn ngẫu nhiên (rules §6). Vì vậy test nào có Nguyệt Nữ trong bàn phải cho cô ấy ghé tường minh (`n.Visitor("Khoa").Visits("Hoa")`), nếu không cô ấy sẽ ghé ngẫu nhiên và làm người đó bị chặn, khiến kết quả test sai khó hiểu. Muốn test việc random thì dùng `n.Visitor("Khoa").RunsOutOfTime(seed)` với seed cố định. Với lỗi ở phòng/mạng, xem mẫu `room/*_test.go` (đồng hồ giả `FakeClock`) và `transport/ws/*_test.go`.
 
 ## 6. Chỗ chỉnh nhanh
 
 | Muốn đổi | File |
 |---|---|
-| Số người tối thiểu/tối đa (5–30), tỉ lệ Sói tối đa (30%) | `internal/engine/limits.go` (`MinPlayers`, `MaxPlayers`, `MaxWolfPercent`) |
-| Thời gian mặc định (xem vai 30s, mỗi bước đêm 30s, ngày 7 phút, bào chữa 1 phút...) | `internal/engine/state.go` → `DefaultSettings` |
+| Số người tối thiểu/tối đa, tỉ lệ Sói tối đa (luật: rules §2) | `internal/engine/limits.go` (`MinPlayers`, `MaxPlayers`, `MaxWolfPercent`) |
+| Thời gian mặc định (luật: rules §2 "Thời gian mặc định") | `internal/engine/state.go` → `DefaultSettings` |
 | Khoảng cho phép khi chủ phòng chỉnh giờ | `internal/engine/timers_config.go` (`shortTimer`, `dayTimer`, `pauseTimer`) |
 | Câu đọc tiếng Việt | `internal/i18n/vi.go` (mã câu ở `keys.go`) |
 | Số ký tự mã phòng, bảng chữ, thời gian phòng bỏ không | `internal/room/manager.go` (`CodeLength`, `CodeAlphabet`, `IdleTimeout`) |
@@ -134,7 +134,7 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |
-| Thời gian chủ phòng được rớt mạng trước khi mất quyền (60s) | `internal/room/join.go` (`hostDisconnectGrace`) |
+| Thời gian chủ phòng được rớt mạng trước khi mất quyền (luật: rules §2) | `internal/room/join.go` (`hostDisconnectGrace`) |
 | Thêm lệnh cho vai mới | file của vai (`Commands()`, kiểu tham số dùng chung ở `roles/wire_args.go`) + một dòng trong `docs/protocol.md` |
 | Thứ tự vai trong danh sách vai (bảng §9b) | file của vai (`CardOrder()`, cách nhau 10 để chèn vai mới) |
 | Thêm vai mới | file mới trong `internal/roles/` (lệnh, thứ tự, lỗi riêng) + chữ trên thẻ ở `i18n/vi.go` + mục hướng dẫn ở `i18n/guide.go` + test + dòng trong `rules.md` và `protocol.md`. Ví dụ đầy đủ: `transport/ws/newrole_test.go` |

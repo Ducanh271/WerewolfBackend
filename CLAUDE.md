@@ -5,7 +5,7 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 ## Read before working
 - `docs/plan.md` — task list. Work on ONE task per session. Tick it when done.
 - `docs/architecture.md` — packages, dependency rules, core types. Follow it; propose changes before deviating.
-- `docs/rules.md` — game rules (Vietnamese). It is the spec. Read only the sections the task names.
+- `docs/rules.md` — game rules (Vietnamese). It is the spec and the only place in the repo where rules are written: other docs and code comments cite its section numbers (`rules §6 "Thám tử"`) instead of re-explaining. Read only the sections the task names.
 - If a rule is ambiguous or missing: STOP and ask. Never invent game rules.
 
 ## Stack
@@ -53,7 +53,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 | Bảo vệ | `Guard` |
 | Phù thủy | `Witch` (`HealPotion`, `PoisonPotion`) |
 | Thợ săn | `Hunter` |
-| Nguyệt Nữ | `Visitor` (blocks target's night ability) |
+| Nguyệt Nữ | `Visitor` |
 | Thám tử | `Detective` |
 | Hiệp sĩ kiếm gỉ | `RustyKnight` |
 | Cupid / cặp đôi | `Cupid` / `Lovers` |
