@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "wrong_phase",
+  "message": "command not allowed in this phase: cannot do this during ChiefElection"
+}

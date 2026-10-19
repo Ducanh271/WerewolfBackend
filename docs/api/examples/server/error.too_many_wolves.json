@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "too_many_wolves",
+  "message": "too many wolves for this number of players: 4 wolves (+0 to be cursed) at 12 players, allowed at most 3"
+}

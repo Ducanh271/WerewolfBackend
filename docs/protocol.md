@@ -1,6 +1,8 @@
 # Protocol
 
 JSON over one WebSocket per screen. Implemented by `internal/transport/ws`.
+Frontend developers: start with [`api/README.md`](api/README.md) (JSON
+Schema and real examples, generated from the server).
 Every message is an object with a `type` field. Field names are camelCase,
 durations are milliseconds, times are Unix milliseconds.
 

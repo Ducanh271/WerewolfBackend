@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "on": true
+  },
+  "name": "abortVote"
+}

@@ -9,7 +9,7 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - If a rule is ambiguous or missing: STOP and ask. Never invent game rules.
 
 ## Stack
-- Go 1.24+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only), `golang.org/x/text` (nickname NFC, pinned to a version that builds with Go 1.24). Ask before adding anything else.
+- Go 1.24+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only), `github.com/santhosh-tekuri/jsonschema/v6` (tests only: validates `docs/api` schemas and examples), `golang.org/x/text` (nickname NFC, pinned to a version that builds with Go 1.24). Ask before adding anything else.
 - No database in v1: in-memory store behind an interface.
 
 ## Commands
@@ -18,6 +18,7 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - `make lint` — `go vet` + `golangci-lint run`
 - `make fmt` — `gofmt` + `goimports`
 - `make run` — start the server
+- `make api-docs` — regenerate `docs/api/schema` and `docs/api/examples` after a wire change (the tests fail while they are stale)
 While iterating, run only the affected package (`go test ./internal/<pkg> -run <Name>`) or `make test-fast`. Before committing run `make fmt`, `make test-fast` and `make lint` locally (NOT the full `make test` — CI runs it on every push). After pushing, wait with `gh run watch`; if CI is red, fix it before anything else. Docs-only commits: no local tests. Run a bigger simulation (`SIM_GAMES=1000+`) only when the task asks for it.
 
 ## Architecture rules (hard)

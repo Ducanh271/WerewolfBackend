@@ -1,0 +1,8 @@
+{
+  "type": "WolfSeerChecked",
+  "data": {
+    "isSeer": true,
+    "target": "p7",
+    "wolfSeer": "p11"
+  }
+}

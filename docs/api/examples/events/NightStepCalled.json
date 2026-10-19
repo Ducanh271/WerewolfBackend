@@ -1,0 +1,8 @@
+{
+  "type": "NightStepCalled",
+  "data": {
+    "duration": 30000,
+    "role": "Cupid"
+  },
+  "say": "Cupid hãy mở mắt, thực hiện xong thì nhắm mắt lại."
+}

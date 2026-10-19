@@ -1,0 +1,6 @@
+{
+  "type": "NominationsLocking",
+  "data": {
+    "duration": 10000
+  }
+}

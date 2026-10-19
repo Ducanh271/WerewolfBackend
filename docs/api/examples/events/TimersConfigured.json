@@ -1,0 +1,19 @@
+{
+  "type": "TimersConfigured",
+  "data": {
+    "timers": {
+      "announce": 0,
+      "chiefElection": 0,
+      "chiefSuccession": 0,
+      "day": 300000,
+      "defense": 30000,
+      "hunterShot": 0,
+      "loversMeet": 0,
+      "nightStep": 0,
+      "nominationLock": 0,
+      "phoneCheck": 0,
+      "roleView": 0,
+      "verdict": 0
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "ChiefElectionStarted",
+  "data": {
+    "duration": 60000
+  },
+  "say": "Mời cả làng bầu Trưởng làng."
+}

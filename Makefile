@@ -1,4 +1,4 @@
-.PHONY: fmt test test-fast lint run demo demo-12
+.PHONY: fmt test test-fast lint run demo demo-12 api-docs
 
 fmt:
 	gofmt -w .
@@ -14,6 +14,12 @@ test:
 # for a single test.
 test-fast:
 	go test ./... -short
+
+# Rewrite docs/api/schema and docs/api/examples from the server (JSON Schema
+# from the Go types, examples from the example games). The same test without
+# -update runs in make test/test-fast and fails when they are stale.
+api-docs:
+	go test ./internal/transport/ws -run '^TestAPIDocs$$' -count=1 -update
 
 lint:
 	go vet ./...

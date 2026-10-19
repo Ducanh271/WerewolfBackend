@@ -1,0 +1,7 @@
+{
+  "type": "HunterShotStarted",
+  "data": {
+    "duration": 15000,
+    "hunter": "p8"
+  }
+}

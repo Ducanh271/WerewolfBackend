@@ -100,6 +100,7 @@ CI (GitHub Actions) chạy `make test` trên mọi lần push; ở máy local ch
 make test-fast                 # vòng lặp nhanh: không -race, bỏ simulation (dùng khi đang làm)
 make test                      # toàn bộ test (có -race, simulation); CI chạy lệnh này
 make lint                      # go vet + golangci-lint
+make api-docs                  # sinh lại docs/api/schema và docs/api/examples khi đổi tin trên wire (test báo lỗi khi chúng cũ)
 make fmt                       # định dạng code
 make run                       # chạy server (cổng :8080, đổi bằng ADDR=:9000)
 make demo                      # server + 5 bot chơi 1 ván, in lời dẫn tiếng Việt

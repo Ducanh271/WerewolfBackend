@@ -1,0 +1,6 @@
+{
+  "type": "PlayerDied",
+  "data": {
+    "player": "p8"
+  }
+}

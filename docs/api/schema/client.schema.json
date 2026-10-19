@@ -1,0 +1,1044 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ma Sói: client to server",
+  "description": "Every message a client may send on the game WebSocket (/ws). Unknown keys are refused.",
+  "$defs": {
+    "AbortVoteArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "on"
+      ]
+    },
+    "AbortVoteCommand": {
+      "description": "CastAbortVote is a living player's vote to call the game off before it has a winner (audit K1, rules §8b). A later vote by the same player replaces the earlier one, so Yes: false withdraws it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/AbortVoteArgs"
+        },
+        "name": {
+          "const": "abortVote"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "Command": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AbortVoteCommand"
+        },
+        {
+          "$ref": "#/$defs/ConfigureRolesCommand"
+        },
+        {
+          "$ref": "#/$defs/ConfigureSoundCommand"
+        },
+        {
+          "$ref": "#/$defs/ConfigureTimersCommand"
+        },
+        {
+          "$ref": "#/$defs/CupidPairCommand"
+        },
+        {
+          "$ref": "#/$defs/CursedWolfCurseCommand"
+        },
+        {
+          "$ref": "#/$defs/DealRolesCommand"
+        },
+        {
+          "$ref": "#/$defs/DetectiveCheckCommand"
+        },
+        {
+          "$ref": "#/$defs/GuardProtectCommand"
+        },
+        {
+          "$ref": "#/$defs/HunterShootCommand"
+        },
+        {
+          "$ref": "#/$defs/NameSuccessorCommand"
+        },
+        {
+          "$ref": "#/$defs/NewGameCommand"
+        },
+        {
+          "$ref": "#/$defs/NominateCommand"
+        },
+        {
+          "$ref": "#/$defs/SeerCheckCommand"
+        },
+        {
+          "$ref": "#/$defs/SetSeatsCommand"
+        },
+        {
+          "$ref": "#/$defs/SkipDayCommand"
+        },
+        {
+          "$ref": "#/$defs/VerdictCommand"
+        },
+        {
+          "$ref": "#/$defs/VisitorVisitCommand"
+        },
+        {
+          "$ref": "#/$defs/VoteChiefCommand"
+        },
+        {
+          "$ref": "#/$defs/WitchHealCommand"
+        },
+        {
+          "$ref": "#/$defs/WitchPoisonCommand"
+        },
+        {
+          "$ref": "#/$defs/WolfSeerCheckCommand"
+        },
+        {
+          "$ref": "#/$defs/WolfVoteCommand"
+        }
+      ]
+    },
+    "ConfigureRolesArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "roles"
+      ]
+    },
+    "ConfigureRolesCommand": {
+      "description": "ConfigureRoles picks the role list for the game: how many players get each role. Picking CursedWolf is what selects the \"Sói nguyền\" option of the rules §2 table.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/ConfigureRolesArgs"
+        },
+        "name": {
+          "const": "configureRoles"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "ConfigureSoundArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "allPhones",
+            "oneSpeaker"
+          ]
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "ConfigureSoundCommand": {
+      "description": "ConfigureSound picks the sound mode before the deal (rules §1, §2); the room checks that only the host may send it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/ConfigureSoundArgs"
+        },
+        "name": {
+          "const": "configureSound"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "ConfigureTimersArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timers": {
+          "description": "Milliseconds; only the timers to change. Allowed ranges: rules §2 \"Thời gian mặc định\".",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "announce": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "chiefElection": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "chiefSuccession": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "day": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "defense": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "hunterShot": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "loversMeet": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "nightStep": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "nominationLock": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "phoneCheck": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "roleView": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            },
+            "verdict": {
+              "type": "integer",
+              "maximum": 86400000,
+              "minimum": 0
+            }
+          },
+          "required": []
+        }
+      },
+      "required": [
+        "timers"
+      ]
+    },
+    "ConfigureTimersCommand": {
+      "description": "ConfigureTimers changes the phase times. Like the other setup commands it works only in the lobby; the room lets only the host send it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/ConfigureTimersArgs"
+        },
+        "name": {
+          "const": "configureTimers"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "CupidPairArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "b": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "a",
+        "b"
+      ]
+    },
+    "CupidPairCommand": {
+      "description": "CupidPair is Cupid's choice of the two players to make a couple.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/CupidPairArgs"
+        },
+        "name": {
+          "const": "cupidPair"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "CursedWolfCurseArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "CursedWolfCurseCommand": {
+      "description": "CursedWolfCurse is the Cursed wolf's choice of whom to curse.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/CursedWolfCurseArgs"
+        },
+        "name": {
+          "const": "cursedWolfCurse"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "DealRolesArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "DealRolesCommand": {
+      "description": "DealRoles shuffles the configured roles over the seated players. Seed must be generated by the room layer with crypto/rand and never taken from a client; the same seed, seats and roles always give the same deal.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/DealRolesArgs"
+        },
+        "name": {
+          "const": "dealRoles"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "DetectiveCheckArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "DetectiveCheckCommand": {
+      "description": "DetectiveCheck is the Detective's choice for tonight. Any living player may be checked, himself included.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/DetectiveCheckArgs"
+        },
+        "name": {
+          "const": "detectiveCheck"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "GuardProtectArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "GuardProtectCommand": {
+      "description": "GuardProtect is the Guard's choice for tonight.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/GuardProtectArgs"
+        },
+        "name": {
+          "const": "guardProtect"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "HunterShootArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "HunterShootCommand": {
+      "description": "HunterShoot is the dead Hunter's choice of a living player to take with him.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/HunterShootArgs"
+        },
+        "name": {
+          "const": "hunterShoot"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "Join": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "join"
+        },
+        "hostKey": {
+          "description": "Only the room's creator, on their own first join: the hostKey from POST /rooms.",
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        }
+      },
+      "required": [
+        "type",
+        "room",
+        "nickname"
+      ]
+    },
+    "Kick": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "kick"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "type",
+        "target"
+      ]
+    },
+    "Leave": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "leave"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "NameSuccessorArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "successor": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "successor"
+      ]
+    },
+    "NameSuccessorCommand": {
+      "description": "NameSuccessor is the dead Chief choosing who inherits the title.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/NameSuccessorArgs"
+        },
+        "name": {
+          "const": "nameSuccessor"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "NewGameArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "NewGameCommand": {
+      "description": "NewGame starts another game in the same room once the previous one ended, by a win or by an abort vote (audit K3, rules §8c). The room layer checks that the sender is the host; the engine only checks the phase.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/NewGameArgs"
+        },
+        "name": {
+          "const": "newGame"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "NominateArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "NominateCommand": {
+      "description": "Nominate is a public vote to put Target on the trial stand, or, with an empty Target, for \"no one\". A voter may change the choice until nominations close.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/NominateArgs"
+        },
+        "name": {
+          "const": "nominate"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "PlayerID": {
+      "description": "Public id of a player in the room, e.g. \"p3\". Not a secret, not a credential.",
+      "type": "string"
+    },
+    "RejoinWithPIN": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "rejoin"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "pin": {
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        }
+      },
+      "required": [
+        "type",
+        "room",
+        "nickname",
+        "pin"
+      ]
+    },
+    "RejoinWithToken": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "rejoin"
+        },
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        },
+        "token": {
+          "description": "The token from welcome (same phone).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "room",
+        "token"
+      ]
+    },
+    "SeerCheckArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "SeerCheckCommand": {
+      "description": "SeerCheck is the Seer's choice for tonight.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/SeerCheckArgs"
+        },
+        "name": {
+          "const": "seerCheck"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "SetSeatsArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": [
+        "order"
+      ]
+    },
+    "SetSeatsCommand": {
+      "description": "SetSeats fixes the seating circle, clockwise. Order must list every player in the lobby exactly once. \"Left\" is the next seat, index+1, wrapping (rules §6).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/SetSeatsArgs"
+        },
+        "name": {
+          "const": "setSeats"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "SkipDayArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "on"
+      ]
+    },
+    "SkipDayCommand": {
+      "description": "SkipDay presses (On) or releases the skip button. Skips count one per person; the Chief is not doubled.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/SkipDayArgs"
+        },
+        "name": {
+          "const": "skipDay"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "TransferHost": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "transferHost"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "type",
+        "target"
+      ]
+    },
+    "VerdictArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kill": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kill"
+      ]
+    },
+    "VerdictCommand": {
+      "description": "CastVerdict is a public vote to kill (Kill) or spare the player on trial. It may be changed until the vote closes. The player on trial cannot vote.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/VerdictArgs"
+        },
+        "name": {
+          "const": "verdict"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "VisitorVisitArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "VisitorVisitCommand": {
+      "description": "VisitorVisit is the Visitor's choice for tonight.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/VisitorVisitArgs"
+        },
+        "name": {
+          "const": "visitorVisit"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "VoteChiefArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "candidate"
+      ]
+    },
+    "VoteChiefCommand": {
+      "description": "VoteChief is a player's public vote in the Chief election. A voter may vote for themselves and may change the vote until time is up.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/VoteChiefArgs"
+        },
+        "name": {
+          "const": "voteChief"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "WitchHealArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "WitchHealCommand": {
+      "description": "WitchHeal saves the player the pack is biting tonight. It has no target: she can only heal the one she is shown.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/WitchHealArgs"
+        },
+        "name": {
+          "const": "witchHeal"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "WitchPoisonArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "WitchPoisonCommand": {
+      "description": "WitchPoison kills any living player, herself included, at dawn.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/WitchPoisonArgs"
+        },
+        "name": {
+          "const": "witchPoison"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "WolfSeerCheckArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "WolfSeerCheckCommand": {
+      "description": "WolfSeerCheck is the Wolf seer's choice for tonight. Any living player may be checked, wolves and the Wolf seer himself included.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/WolfSeerCheckArgs"
+        },
+        "name": {
+          "const": "wolfSeerCheck"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "WolfVoteArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "WolfVoteCommand": {
+      "description": "WolfVote sets a wolf's bite choice for tonight; sending it again changes the vote. An empty Target (engine.NoBite) is the vote \"Không cắn ai\".",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/WolfVoteArgs"
+        },
+        "name": {
+          "const": "wolfVote"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Join"
+    },
+    {
+      "$ref": "#/$defs/RejoinWithToken"
+    },
+    {
+      "$ref": "#/$defs/RejoinWithPIN"
+    },
+    {
+      "$ref": "#/$defs/Leave"
+    },
+    {
+      "$ref": "#/$defs/Kick"
+    },
+    {
+      "$ref": "#/$defs/TransferHost"
+    },
+    {
+      "$ref": "#/$defs/Command"
+    }
+  ]
+}

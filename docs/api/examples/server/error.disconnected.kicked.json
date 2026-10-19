@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "disconnected",
+  "message": "removed from the lobby by the host"
+}

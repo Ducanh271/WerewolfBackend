@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "timer_out_of_range",
+  "message": "timer out of range: Verdict is 1s, allowed 5s to 10m0s"
+}

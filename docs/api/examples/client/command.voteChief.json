@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "candidate": "p8"
+  },
+  "name": "voteChief"
+}

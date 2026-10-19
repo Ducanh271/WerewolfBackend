@@ -1,0 +1,7 @@
+{
+  "type": "VerdictCast",
+  "data": {
+    "kill": true,
+    "voter": "p1"
+  }
+}

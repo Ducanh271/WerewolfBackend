@@ -1,0 +1,8 @@
+{
+  "type": "command",
+  "args": {
+    "a": "p2",
+    "b": "p5"
+  },
+  "name": "cupidPair"
+}

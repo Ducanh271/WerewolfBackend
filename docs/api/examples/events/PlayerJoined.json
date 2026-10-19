@@ -1,0 +1,7 @@
+{
+  "type": "PlayerJoined",
+  "data": {
+    "nickname": "An",
+    "player": "p1"
+  }
+}

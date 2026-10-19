@@ -1,0 +1,7 @@
+{
+  "type": "TeamChanged",
+  "data": {
+    "player": "p12",
+    "team": "Wolves"
+  }
+}

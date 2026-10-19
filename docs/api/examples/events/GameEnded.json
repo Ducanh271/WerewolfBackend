@@ -1,0 +1,22 @@
+{
+  "type": "GameEnded",
+  "data": {
+    "outcome": {
+      "aborted": false,
+      "draw": false,
+      "winner": "Village",
+      "winners": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p10"
+      ]
+    }
+  },
+  "say": "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt."
+}

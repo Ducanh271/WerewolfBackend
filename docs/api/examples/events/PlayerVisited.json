@@ -1,0 +1,8 @@
+{
+  "type": "PlayerVisited",
+  "data": {
+    "night": 1,
+    "target": "p7",
+    "visitor": "p4"
+  }
+}

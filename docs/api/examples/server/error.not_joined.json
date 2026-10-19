@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "not_joined",
+  "message": "join a room first"
+}

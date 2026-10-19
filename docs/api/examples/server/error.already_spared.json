@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "already_spared",
+  "message": "this player was already spared today: p11"
+}

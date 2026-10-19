@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "roles_not_configured",
+  "message": "roles are not configured"
+}

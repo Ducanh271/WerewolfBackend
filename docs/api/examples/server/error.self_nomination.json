@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "self_nomination",
+  "message": "a player cannot nominate themselves"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "RoleViewStarted",
+  "data": {
+    "duration": 30000
+  },
+  "say": "Mời mọi người xem vai của mình. Nhớ che màn hình nhé."
+}

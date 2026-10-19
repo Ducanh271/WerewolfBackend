@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "unknown_type",
+  "message": "unknown message type \"hello\""
+}

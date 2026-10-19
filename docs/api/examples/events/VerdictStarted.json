@@ -1,0 +1,7 @@
+{
+  "type": "VerdictStarted",
+  "data": {
+    "duration": 30000
+  },
+  "say": "Hết giờ bào chữa. Cả làng bỏ phiếu: treo hay tha."
+}

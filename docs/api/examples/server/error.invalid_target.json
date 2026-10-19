@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "invalid_target",
+  "message": "invalid target: a couple needs two different players"
+}

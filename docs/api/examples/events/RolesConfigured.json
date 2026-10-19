@@ -1,0 +1,18 @@
+{
+  "type": "RolesConfigured",
+  "data": {
+    "roles": {
+      "Cupid": 1,
+      "CursedWolf": 1,
+      "Detective": 1,
+      "Guard": 1,
+      "Hunter": 1,
+      "RustyKnight": 1,
+      "Seer": 1,
+      "Villager": 2,
+      "Visitor": 1,
+      "Witch": 1,
+      "WolfSeer": 1
+    }
+  }
+}

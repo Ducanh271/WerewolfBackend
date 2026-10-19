@@ -1,0 +1,7 @@
+{
+  "type": "WolfVoted",
+  "data": {
+    "target": "p1",
+    "wolf": "p9"
+  }
+}

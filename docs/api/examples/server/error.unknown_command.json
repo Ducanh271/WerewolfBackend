@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "unknown_command",
+  "message": "unknown command \"fly\""
+}

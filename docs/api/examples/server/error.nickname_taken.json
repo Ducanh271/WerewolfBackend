@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "nickname_taken",
+  "message": "nickname already taken: \"an\""
+}

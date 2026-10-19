@@ -1,0 +1,7 @@
+{
+  "type": "DayStarted",
+  "data": {
+    "duration": 300000
+  },
+  "say": "Cả làng bắt đầu thảo luận và đề cử."
+}

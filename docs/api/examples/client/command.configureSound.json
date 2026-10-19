@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "mode": "oneSpeaker"
+  },
+  "name": "configureSound"
+}

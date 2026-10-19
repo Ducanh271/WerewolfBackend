@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "ability_used",
+  "message": "this once-a-game ability is already used"
+}

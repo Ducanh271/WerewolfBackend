@@ -1,0 +1,6 @@
+{
+  "type": "PlayerKicked",
+  "data": {
+    "player": "p14"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "PhoneChecked",
+  "data": {
+    "cursed": false,
+    "love": {
+      "colour": "",
+      "inLove": false,
+      "partner": "",
+      "partnerRole": ""
+    },
+    "player": "p1"
+  }
+}

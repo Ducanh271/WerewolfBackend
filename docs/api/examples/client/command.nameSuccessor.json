@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "successor": "p3"
+  },
+  "name": "nameSuccessor"
+}

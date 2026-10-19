@@ -1,0 +1,246 @@
+{
+  "type": "view",
+  "people": [
+    {
+      "connected": true,
+      "id": "p1",
+      "isHost": true,
+      "nickname": "An"
+    },
+    {
+      "connected": true,
+      "id": "p2",
+      "isHost": false,
+      "nickname": "Bình"
+    },
+    {
+      "connected": true,
+      "id": "p3",
+      "isHost": false,
+      "nickname": "Chi"
+    },
+    {
+      "connected": true,
+      "id": "p4",
+      "isHost": false,
+      "nickname": "Dũng"
+    },
+    {
+      "connected": true,
+      "id": "p5",
+      "isHost": false,
+      "nickname": "Giang"
+    },
+    {
+      "connected": true,
+      "id": "p6",
+      "isHost": false,
+      "nickname": "Hà"
+    },
+    {
+      "connected": true,
+      "id": "p7",
+      "isHost": false,
+      "nickname": "Khoa"
+    },
+    {
+      "connected": true,
+      "id": "p8",
+      "isHost": false,
+      "nickname": "Lan"
+    },
+    {
+      "connected": true,
+      "id": "p9",
+      "isHost": false,
+      "nickname": "Minh"
+    },
+    {
+      "connected": true,
+      "id": "p10",
+      "isHost": false,
+      "nickname": "Nga"
+    },
+    {
+      "connected": true,
+      "id": "p11",
+      "isHost": false,
+      "nickname": "Phúc"
+    },
+    {
+      "connected": true,
+      "id": "p12",
+      "isHost": false,
+      "nickname": "Quân"
+    }
+  ],
+  "speaker": true,
+  "view": {
+    "draw": false,
+    "full": false,
+    "me": {
+      "alive": true,
+      "canShoot": false,
+      "cursed": false,
+      "id": "p1"
+    },
+    "night": 0,
+    "phase": "Lobby",
+    "players": [
+      {
+        "alive": true,
+        "id": "p1",
+        "nickname": "An",
+        "seat": 1
+      },
+      {
+        "alive": true,
+        "id": "p2",
+        "nickname": "Bình",
+        "seat": 2
+      },
+      {
+        "alive": true,
+        "id": "p3",
+        "nickname": "Chi",
+        "seat": 3
+      },
+      {
+        "alive": true,
+        "id": "p4",
+        "nickname": "Dũng",
+        "seat": 4
+      },
+      {
+        "alive": true,
+        "id": "p5",
+        "nickname": "Giang",
+        "seat": 5
+      },
+      {
+        "alive": true,
+        "id": "p6",
+        "nickname": "Hà",
+        "seat": 6
+      },
+      {
+        "alive": true,
+        "id": "p7",
+        "nickname": "Khoa",
+        "seat": 7
+      },
+      {
+        "alive": true,
+        "id": "p8",
+        "nickname": "Lan",
+        "seat": 8
+      },
+      {
+        "alive": true,
+        "id": "p9",
+        "nickname": "Minh",
+        "seat": 9
+      },
+      {
+        "alive": true,
+        "id": "p10",
+        "nickname": "Nga",
+        "seat": 10
+      },
+      {
+        "alive": true,
+        "id": "p11",
+        "nickname": "Phúc",
+        "seat": 11
+      },
+      {
+        "alive": true,
+        "id": "p12",
+        "nickname": "Quân",
+        "seat": 12
+      }
+    ],
+    "roleCards": [
+      {
+        "description": "Trong 3 đêm đầu, được nguyền một người biến thành Sói (một lần duy nhất). Vẫn cắn cùng bầy.",
+        "name": "Sói nguyền",
+        "role": "CursedWolf",
+        "team": "Sói"
+      },
+      {
+        "description": "Mỗi đêm soi một người xem có phải Tiên tri không; cả bầy biết kết quả. Vẫn cắn cùng bầy.",
+        "name": "Sói tiên tri",
+        "role": "WolfSeer",
+        "team": "Sói"
+      },
+      {
+        "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+        "name": "Dân làng",
+        "role": "Villager",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm soi một người, biết người đó là Sói hay không.",
+        "name": "Tiên tri",
+        "role": "Seer",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm che một người khỏi bị Sói cắn. Được che chính mình, không che một người hai đêm liền.",
+        "name": "Bảo vệ",
+        "role": "Guard",
+        "team": "Dân"
+      },
+      {
+        "description": "Có 1 bình cứu và 1 bình độc cho cả ván. Khi còn bình cứu, bạn biết ai bị cắn và có thể cứu. Bình độc giết một người bất kỳ.",
+        "name": "Phù thủy",
+        "role": "Witch",
+        "team": "Dân"
+      },
+      {
+        "description": "Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống.",
+        "name": "Thợ săn",
+        "role": "Hunter",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm bắt buộc ghé một người; người đó mất chức năng đêm đó. Không ghé một người hai đêm liền.",
+        "name": "Nguyệt Nữ",
+        "role": "Visitor",
+        "team": "Dân"
+      },
+      {
+        "description": "Một lần duy nhất: chọn một người, biết trong vùng gồm người đó và hai người sống ngồi cạnh có Sói hay không.",
+        "name": "Thám tử",
+        "role": "Detective",
+        "team": "Dân"
+      },
+      {
+        "description": "Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau.",
+        "name": "Hiệp sĩ kiếm gỉ",
+        "role": "RustyKnight",
+        "team": "Dân"
+      },
+      {
+        "description": "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo.",
+        "name": "Cupid",
+        "role": "Cupid",
+        "team": "Dân"
+      }
+    ],
+    "roles": {
+      "Cupid": 1,
+      "CursedWolf": 1,
+      "Detective": 1,
+      "Guard": 1,
+      "Hunter": 1,
+      "RustyKnight": 1,
+      "Seer": 1,
+      "Villager": 2,
+      "Visitor": 1,
+      "Witch": 1,
+      "WolfSeer": 1
+    },
+    "seq": 0
+  }
+}

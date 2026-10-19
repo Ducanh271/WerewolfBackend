@@ -1,0 +1,8 @@
+{
+  "type": "DetectiveChecked",
+  "data": {
+    "detective": "p12",
+    "hasWolf": false,
+    "target": "p6"
+  }
+}

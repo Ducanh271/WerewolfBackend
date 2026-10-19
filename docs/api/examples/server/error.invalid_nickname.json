@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "invalid_nickname",
+  "message": "invalid nickname: must be 1-20 characters, Vietnamese/Latin letters, digits and spaces only"
+}

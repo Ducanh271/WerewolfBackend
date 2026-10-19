@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "kill": false
+  },
+  "name": "verdict"
+}

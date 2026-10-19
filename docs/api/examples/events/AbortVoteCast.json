@@ -1,0 +1,7 @@
+{
+  "type": "AbortVoteCast",
+  "data": {
+    "voter": "p2",
+    "yes": true
+  }
+}

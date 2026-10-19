@@ -1,0 +1,321 @@
+{
+  "type": "view",
+  "deadline": 1792095525000,
+  "view": {
+    "chief": "p3",
+    "draw": false,
+    "full": true,
+    "me": {
+      "alive": false,
+      "canShoot": false,
+      "cursed": false,
+      "id": "p8",
+      "role": "Hunter",
+      "roleCard": {
+        "description": "Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống.",
+        "goal": "Dân thắng khi không còn con Sói nào.",
+        "name": "Thợ săn",
+        "team": "Dân"
+      },
+      "team": "Village"
+    },
+    "night": 3,
+    "nightCall": {
+      "duration": 30000,
+      "role": "Visitor"
+    },
+    "pack": {
+      "members": [
+        "p9",
+        "p11",
+        "p12"
+      ]
+    },
+    "phase": "Night",
+    "players": [
+      {
+        "alive": true,
+        "card": {
+          "description": "Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Hiệp sĩ kiếm gỉ",
+          "team": "Dân"
+        },
+        "id": "p1",
+        "nickname": "An",
+        "role": "RustyKnight",
+        "seat": 1,
+        "team": "Village"
+      },
+      {
+        "alive": false,
+        "card": {
+          "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Dân làng",
+          "team": "Dân"
+        },
+        "id": "p2",
+        "nickname": "Bình",
+        "role": "Villager",
+        "seat": 2,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Mỗi đêm che một người khỏi bị Sói cắn. Được che chính mình, không che một người hai đêm liền.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Bảo vệ",
+          "team": "Dân"
+        },
+        "id": "p3",
+        "nickname": "Chi",
+        "role": "Guard",
+        "seat": 3,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Mỗi đêm bắt buộc ghé một người; người đó mất chức năng đêm đó. Không ghé một người hai đêm liền.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Nguyệt Nữ",
+          "team": "Dân"
+        },
+        "id": "p4",
+        "nickname": "Dũng",
+        "role": "Visitor",
+        "seat": 4,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Dân làng",
+          "team": "Dân"
+        },
+        "id": "p5",
+        "nickname": "Giang",
+        "role": "Villager",
+        "seat": 5,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Có 1 bình cứu và 1 bình độc cho cả ván. Khi còn bình cứu, bạn biết ai bị cắn và có thể cứu. Bình độc giết một người bất kỳ.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Phù thủy",
+          "team": "Dân"
+        },
+        "id": "p6",
+        "nickname": "Hà",
+        "role": "Witch",
+        "seat": 6,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Mỗi đêm soi một người, biết người đó là Sói hay không.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Tiên tri",
+          "team": "Dân"
+        },
+        "id": "p7",
+        "nickname": "Khoa",
+        "role": "Seer",
+        "seat": 7,
+        "team": "Village"
+      },
+      {
+        "alive": false,
+        "card": {
+          "description": "Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Thợ săn",
+          "team": "Dân"
+        },
+        "id": "p8",
+        "nickname": "Lan",
+        "role": "Hunter",
+        "seat": 8,
+        "team": "Village"
+      },
+      {
+        "alive": false,
+        "card": {
+          "description": "Trong 3 đêm đầu, được nguyền một người biến thành Sói (một lần duy nhất). Vẫn cắn cùng bầy.",
+          "goal": "Sói thắng khi số Sói ≥ số Dân.",
+          "name": "Sói nguyền",
+          "team": "Sói"
+        },
+        "id": "p9",
+        "nickname": "Minh",
+        "role": "CursedWolf",
+        "seat": 9,
+        "team": "Wolves"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Cupid",
+          "team": "Dân"
+        },
+        "id": "p10",
+        "nickname": "Nga",
+        "role": "Cupid",
+        "seat": 10,
+        "team": "Village"
+      },
+      {
+        "alive": false,
+        "card": {
+          "description": "Mỗi đêm soi một người xem có phải Tiên tri không; cả bầy biết kết quả. Vẫn cắn cùng bầy.",
+          "goal": "Sói thắng khi số Sói ≥ số Dân.",
+          "name": "Sói tiên tri",
+          "team": "Sói"
+        },
+        "id": "p11",
+        "nickname": "Phúc",
+        "role": "WolfSeer",
+        "seat": 11,
+        "team": "Wolves"
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Một lần duy nhất: chọn một người, biết trong vùng gồm người đó và hai người sống ngồi cạnh có Sói hay không.",
+          "goal": "Sói thắng khi số Sói ≥ số Dân.",
+          "name": "Thám tử",
+          "team": "Sói"
+        },
+        "id": "p12",
+        "nickname": "Quân",
+        "role": "Detective",
+        "seat": 12,
+        "team": "Wolves"
+      }
+    ],
+    "roleCards": [
+      {
+        "description": "Trong 3 đêm đầu, được nguyền một người biến thành Sói (một lần duy nhất). Vẫn cắn cùng bầy.",
+        "name": "Sói nguyền",
+        "role": "CursedWolf",
+        "team": "Sói"
+      },
+      {
+        "description": "Mỗi đêm soi một người xem có phải Tiên tri không; cả bầy biết kết quả. Vẫn cắn cùng bầy.",
+        "name": "Sói tiên tri",
+        "role": "WolfSeer",
+        "team": "Sói"
+      },
+      {
+        "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+        "name": "Dân làng",
+        "role": "Villager",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm soi một người, biết người đó là Sói hay không.",
+        "name": "Tiên tri",
+        "role": "Seer",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm che một người khỏi bị Sói cắn. Được che chính mình, không che một người hai đêm liền.",
+        "name": "Bảo vệ",
+        "role": "Guard",
+        "team": "Dân"
+      },
+      {
+        "description": "Có 1 bình cứu và 1 bình độc cho cả ván. Khi còn bình cứu, bạn biết ai bị cắn và có thể cứu. Bình độc giết một người bất kỳ.",
+        "name": "Phù thủy",
+        "role": "Witch",
+        "team": "Dân"
+      },
+      {
+        "description": "Khi chết vì bất kỳ lý do gì, bạn lộ vai và bắt buộc bắn một người còn sống.",
+        "name": "Thợ săn",
+        "role": "Hunter",
+        "team": "Dân"
+      },
+      {
+        "description": "Mỗi đêm bắt buộc ghé một người; người đó mất chức năng đêm đó. Không ghé một người hai đêm liền.",
+        "name": "Nguyệt Nữ",
+        "role": "Visitor",
+        "team": "Dân"
+      },
+      {
+        "description": "Một lần duy nhất: chọn một người, biết trong vùng gồm người đó và hai người sống ngồi cạnh có Sói hay không.",
+        "name": "Thám tử",
+        "role": "Detective",
+        "team": "Dân"
+      },
+      {
+        "description": "Nếu bị Sói cắn chết, con Sói còn sống gần nhất bên trái bạn trúng độc và chết vào đêm sau.",
+        "name": "Hiệp sĩ kiếm gỉ",
+        "role": "RustyKnight",
+        "team": "Dân"
+      },
+      {
+        "description": "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo.",
+        "name": "Cupid",
+        "role": "Cupid",
+        "team": "Dân"
+      }
+    ],
+    "roles": {
+      "Cupid": 1,
+      "CursedWolf": 1,
+      "Detective": 1,
+      "Guard": 1,
+      "Hunter": 1,
+      "RustyKnight": 1,
+      "Seer": 1,
+      "Villager": 2,
+      "Visitor": 1,
+      "Witch": 1,
+      "WolfSeer": 1
+    },
+    "secrets": {
+      "lovers": {
+        "a": "p2",
+        "b": "p5",
+        "thirdTeam": false
+      },
+      "pending": {
+        "healed": false
+      }
+    },
+    "seq": 58,
+    "votes": {
+      "nominations": {
+        "p1": "p2",
+        "p10": "p2",
+        "p12": "p2",
+        "p2": "p12",
+        "p3": "p2",
+        "p4": "p2",
+        "p5": "p2",
+        "p6": "p2",
+        "p7": "p2"
+      },
+      "verdicts": {
+        "p1": true,
+        "p10": true,
+        "p12": true,
+        "p3": true,
+        "p4": true,
+        "p5": true,
+        "p6": true,
+        "p7": true
+      }
+    }
+  }
+}

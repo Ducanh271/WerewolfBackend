@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "same_guard_target",
+  "message": "the guard cannot protect the same player two nights in a row: p6"
+}

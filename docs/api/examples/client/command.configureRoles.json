@@ -1,0 +1,10 @@
+{
+  "type": "command",
+  "args": {
+    "roles": {
+      "Villager": 8,
+      "Werewolf": 4
+    }
+  },
+  "name": "configureRoles"
+}

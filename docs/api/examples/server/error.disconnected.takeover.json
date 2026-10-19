@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "disconnected",
+  "message": "someone joined with your PIN"
+}

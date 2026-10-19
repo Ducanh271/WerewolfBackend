@@ -1,0 +1,10 @@
+{
+  "type": "command",
+  "args": {
+    "timers": {
+      "day": 300000,
+      "defense": 30000
+    }
+  },
+  "name": "configureTimers"
+}

@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "already_acted",
+  "message": "already acted this night"
+}

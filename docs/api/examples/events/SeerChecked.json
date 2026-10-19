@@ -1,0 +1,8 @@
+{
+  "type": "SeerChecked",
+  "data": {
+    "isWolf": true,
+    "seer": "p7",
+    "target": "p12"
+  }
+}

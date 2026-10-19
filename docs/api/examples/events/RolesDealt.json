@@ -1,0 +1,19 @@
+{
+  "type": "RolesDealt",
+  "data": {
+    "assignments": {
+      "p1": "RustyKnight",
+      "p10": "Cupid",
+      "p11": "WolfSeer",
+      "p12": "Detective",
+      "p2": "Villager",
+      "p3": "Guard",
+      "p4": "Visitor",
+      "p5": "Villager",
+      "p6": "Witch",
+      "p7": "Seer",
+      "p8": "Hunter",
+      "p9": "CursedWolf"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "TrialStarted",
+  "data": {
+    "defendant": "p11",
+    "duration": 30000
+  },
+  "say": "Phúc lên giàn bào chữa."
+}

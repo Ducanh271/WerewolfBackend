@@ -1,0 +1,21 @@
+{
+  "type": "events",
+  "events": [
+    {
+      "type": "PlayerJoined",
+      "data": {
+        "nickname": "An",
+        "player": "p1"
+      }
+    },
+    {
+      "type": "PlayerJoined",
+      "data": {
+        "nickname": "Bình",
+        "player": "p2"
+      }
+    }
+  ],
+  "from": 0,
+  "reset": true
+}

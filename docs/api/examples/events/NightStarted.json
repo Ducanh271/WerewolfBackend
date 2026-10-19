@@ -1,0 +1,7 @@
+{
+  "type": "NightStarted",
+  "data": {
+    "night": 1
+  },
+  "say": "Trời đã tối, tất cả nhắm mắt lại."
+}

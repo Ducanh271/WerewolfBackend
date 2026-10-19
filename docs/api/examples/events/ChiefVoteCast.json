@@ -1,0 +1,7 @@
+{
+  "type": "ChiefVoteCast",
+  "data": {
+    "candidate": "p8",
+    "voter": "p1"
+  }
+}

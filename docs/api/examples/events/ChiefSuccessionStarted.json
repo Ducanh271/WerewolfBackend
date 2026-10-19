@@ -1,0 +1,7 @@
+{
+  "type": "ChiefSuccessionStarted",
+  "data": {
+    "duration": 15000,
+    "former": "p8"
+  }
+}

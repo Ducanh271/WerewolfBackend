@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ma Sói: HTTP bodies",
+  "description": "Request and reply bodies of POST /rooms, GET /join/{code} and GET /guide.",
+  "$defs": {
+    "CreateRoomReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hostKey": {
+          "description": "Secret: only this phone ever sees it; send it in its own first join.",
+          "type": "string"
+        },
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        }
+      },
+      "required": [
+        "room",
+        "hostKey"
+      ]
+    },
+    "CreateRoomRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "description": "Optional, default inPerson. online is refused (mode_unsupported).",
+          "type": "string",
+          "enum": [
+            "inPerson",
+            "online"
+          ]
+        }
+      },
+      "required": []
+    },
+    "GuideEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "gotcha": {
+          "type": "string"
+        },
+        "howTo": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "onTimeout": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "whenCalled": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "title",
+        "whenCalled",
+        "howTo",
+        "onTimeout",
+        "gotcha"
+      ]
+    },
+    "GuideReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "firstTime": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "quickRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GuideEntry"
+          }
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GuideEntry"
+          }
+        },
+        "tips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "quickRules",
+        "roles",
+        "statuses",
+        "firstTime",
+        "tips"
+      ]
+    },
+    "HTTPError": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "error"
+        },
+        "code": {
+          "description": "Stable snake_case code; see docs/api/errors.md. Unknown codes must be handled.",
+          "type": "string"
+        },
+        "message": {
+          "description": "English detail for logs. Never show it to players.",
+          "type": "string"
+        },
+        "retryAfter": {
+          "description": "Milliseconds; only with pin_locked.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "type",
+        "code",
+        "message"
+      ]
+    },
+    "JoinRoomReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        }
+      },
+      "required": [
+        "room"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/$defs/CreateRoomRequest"
+    },
+    {
+      "$ref": "#/$defs/CreateRoomReply"
+    },
+    {
+      "$ref": "#/$defs/JoinRoomReply"
+    },
+    {
+      "$ref": "#/$defs/GuideReply"
+    },
+    {
+      "$ref": "#/$defs/HTTPError"
+    }
+  ]
+}

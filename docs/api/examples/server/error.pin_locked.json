@@ -1,0 +1,6 @@
+{
+  "type": "error",
+  "code": "pin_locked",
+  "message": "pin rejoin is locked",
+  "retryAfter": 60000
+}

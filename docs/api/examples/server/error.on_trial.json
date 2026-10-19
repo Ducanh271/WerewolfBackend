@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "on_trial",
+  "message": "the player on trial cannot vote"
+}

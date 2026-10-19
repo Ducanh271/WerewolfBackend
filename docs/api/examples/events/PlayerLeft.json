@@ -1,0 +1,6 @@
+{
+  "type": "PlayerLeft",
+  "data": {
+    "player": "p13"
+  }
+}

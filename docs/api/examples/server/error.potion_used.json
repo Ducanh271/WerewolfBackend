@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "potion_used",
+  "message": "this potion is already used up: heal"
+}

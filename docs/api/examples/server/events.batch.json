@@ -1,0 +1,14 @@
+{
+  "type": "events",
+  "events": [
+    {
+      "type": "PlayerJoined",
+      "data": {
+        "nickname": "Vy",
+        "player": "p14"
+      }
+    }
+  ],
+  "from": 13,
+  "reset": false
+}

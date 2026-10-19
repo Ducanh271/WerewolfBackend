@@ -1,0 +1,7 @@
+{
+  "type": "HunterTimedOut",
+  "data": {
+    "hunter": "p6"
+  },
+  "say": "Hết giờ, Hà không bắn ai."
+}

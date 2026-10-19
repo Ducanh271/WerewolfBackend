@@ -1,0 +1,2866 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ma Sói: server to client",
+  "description": "Every message the server sends on the game WebSocket (/ws).",
+  "$defs": {
+    "AbortVoteCast": {
+      "description": "AbortVoteCast records one player's current abort vote.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "voter": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "yes": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "yes"
+      ]
+    },
+    "AbortVoteCastEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "AbortVoteCast"
+        },
+        "data": {
+          "$ref": "#/$defs/AbortVoteCast"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "ChiefElected": {
+      "description": "ChiefElected ends the election.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chief": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "ChiefElectedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefElected"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefElected"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "ChiefElectionStarted": {
+      "description": "ChiefElectionStarted opens the election phase.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "ChiefElectionStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefElectionStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefElectionStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "ChiefLost": {
+      "description": "ChiefLost means the Chief did not name anybody in time: the title is gone.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "former": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "ChiefLostEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefLost"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefLost"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "ChiefSucceeded": {
+      "description": "ChiefSucceeded passes the title on.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "to": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "ChiefSucceededEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefSucceeded"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefSucceeded"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "ChiefSuccessionStarted": {
+      "description": "ChiefSuccessionStarted opens the time in which the dead Chief names a successor (rules §7b, Settings.ChiefSuccession). The title is empty meanwhile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "former": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "ChiefSuccessionStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefSuccessionStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefSuccessionStarted"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "ChiefVoteCast": {
+      "description": "ChiefVoteCast is a public vote; a later one by the same voter replaces it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "voter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "ChiefVoteCastEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChiefVoteCast"
+        },
+        "data": {
+          "$ref": "#/$defs/ChiefVoteCast"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "DawnAnnounced": {
+      "description": "DawnAnnounced is the morning announcement for the narrator.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dead": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "kind": {
+          "$ref": "#/$defs/DawnKind"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "DawnAnnouncedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DawnAnnounced"
+        },
+        "data": {
+          "$ref": "#/$defs/DawnAnnounced"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "DawnKind": {
+      "description": "Which morning announcement was read (rules §4 \"Thông báo buổi sáng\").",
+      "type": "string",
+      "enum": [
+        "deaths",
+        "protected",
+        "nobodyDied"
+      ]
+    },
+    "DawnStarted": {
+      "description": "DawnStarted opens the morning, right after the night's last step ran out and before the narrator says who died (rules §4).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "DawnStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DawnStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/DawnStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "DayClockExpired": {
+      "description": "DayClockExpired records that the day clock ran out while somebody was nominated: that player's trial is the last step of the day (rules §4 step 6).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "DayClockExpiredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DayClockExpired"
+        },
+        "data": {
+          "$ref": "#/$defs/DayClockExpired"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "DayEnded": {
+      "description": "DayEnded closes a day nobody was hanged in; the game waits at dusk.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "DayEndedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DayEnded"
+        },
+        "data": {
+          "$ref": "#/$defs/DayEnded"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "DayStarted": {
+      "description": "DayStarted opens the day after the dawn announcement.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "DayStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DayStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/DayStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "DetectiveChecked": {
+      "description": "DetectiveChecked is the Detective's private result: only whether the zone holds a wolf, never how many or who. A cursed player counts as a wolf.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "detective": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "hasWolf": {
+          "type": "boolean"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "hasWolf"
+      ]
+    },
+    "DetectiveCheckedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DetectiveChecked"
+        },
+        "data": {
+          "$ref": "#/$defs/DetectiveChecked"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "ErrorMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "error"
+        },
+        "code": {
+          "description": "Stable snake_case code; see docs/api/errors.md. Unknown codes must be handled.",
+          "type": "string"
+        },
+        "message": {
+          "description": "English detail for logs. Never show it to players.",
+          "type": "string"
+        },
+        "retryAfter": {
+          "description": "Milliseconds; only with pin_locked.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "type",
+        "code",
+        "message"
+      ]
+    },
+    "Event": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AbortVoteCastEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefElectedEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefElectionStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefLostEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefSucceededEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefSuccessionStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/ChiefVoteCastEvent"
+        },
+        {
+          "$ref": "#/$defs/DawnAnnouncedEvent"
+        },
+        {
+          "$ref": "#/$defs/DawnStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/DayClockExpiredEvent"
+        },
+        {
+          "$ref": "#/$defs/DayEndedEvent"
+        },
+        {
+          "$ref": "#/$defs/DayStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/DetectiveCheckedEvent"
+        },
+        {
+          "$ref": "#/$defs/GameEndedEvent"
+        },
+        {
+          "$ref": "#/$defs/HangedEvent"
+        },
+        {
+          "$ref": "#/$defs/HunterChainNotedEvent"
+        },
+        {
+          "$ref": "#/$defs/HunterRevealedEvent"
+        },
+        {
+          "$ref": "#/$defs/HunterShotEvent"
+        },
+        {
+          "$ref": "#/$defs/HunterShotStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/HunterTimedOutEvent"
+        },
+        {
+          "$ref": "#/$defs/LoverGrievingEvent"
+        },
+        {
+          "$ref": "#/$defs/LoversMeetAnnouncedEvent"
+        },
+        {
+          "$ref": "#/$defs/LoversPairedEvent"
+        },
+        {
+          "$ref": "#/$defs/NewGameStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/NightEndedEvent"
+        },
+        {
+          "$ref": "#/$defs/NightStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/NightStepCalledEvent"
+        },
+        {
+          "$ref": "#/$defs/NominationCastEvent"
+        },
+        {
+          "$ref": "#/$defs/NominationsLockingEvent"
+        },
+        {
+          "$ref": "#/$defs/NominationsReopenedEvent"
+        },
+        {
+          "$ref": "#/$defs/PhoneCheckAnnouncedEvent"
+        },
+        {
+          "$ref": "#/$defs/PhoneCheckedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerCursedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerDiedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerJoinedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerKickedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerLeftEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerProtectedEvent"
+        },
+        {
+          "$ref": "#/$defs/PlayerVisitedEvent"
+        },
+        {
+          "$ref": "#/$defs/RoleViewStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/RolesConfiguredEvent"
+        },
+        {
+          "$ref": "#/$defs/RolesDealtEvent"
+        },
+        {
+          "$ref": "#/$defs/SeatsSetEvent"
+        },
+        {
+          "$ref": "#/$defs/SeerCheckedEvent"
+        },
+        {
+          "$ref": "#/$defs/SkipSetEvent"
+        },
+        {
+          "$ref": "#/$defs/SoundConfiguredEvent"
+        },
+        {
+          "$ref": "#/$defs/SparedEvent"
+        },
+        {
+          "$ref": "#/$defs/TeamChangedEvent"
+        },
+        {
+          "$ref": "#/$defs/TimersConfiguredEvent"
+        },
+        {
+          "$ref": "#/$defs/TrialStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/VerdictCastEvent"
+        },
+        {
+          "$ref": "#/$defs/VerdictStartedEvent"
+        },
+        {
+          "$ref": "#/$defs/WitchHealedEvent"
+        },
+        {
+          "$ref": "#/$defs/WitchPoisonedEvent"
+        },
+        {
+          "$ref": "#/$defs/WolfPoisonedEvent"
+        },
+        {
+          "$ref": "#/$defs/WolfSeerCheckedEvent"
+        },
+        {
+          "$ref": "#/$defs/WolfVotedEvent"
+        }
+      ]
+    },
+    "EventsMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "events"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Event"
+          }
+        },
+        "from": {
+          "description": "Index of the first event in the phone's list.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "reset": {
+          "description": "True: events is the whole list and replaces the one the phone holds (never append it).",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "reset",
+        "from",
+        "events"
+      ]
+    },
+    "GameEnded": {
+      "description": "GameEnded closes the game. A draw has no winner.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "$ref": "#/$defs/Outcome"
+        }
+      },
+      "required": [
+        "outcome"
+      ]
+    },
+    "GameEndedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "GameEnded"
+        },
+        "data": {
+          "$ref": "#/$defs/GameEnded"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "Hanged": {
+      "description": "Hanged is the execution; PlayerDied comes with it. The role is not named.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "HangedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Hanged"
+        },
+        "data": {
+          "$ref": "#/$defs/Hanged"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "HunterChainNoted": {
+      "description": "HunterChainNoted comes right before HunterShotStarted and keeps what the shooting needs to go on: Queue, the other dead Hunters still to shoot, and Dead, everybody who died in this chain. Dead is in the order the pipeline killed them, which would tell bitten from poisoned (rules §4), so the event has no audience: only full views get it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dead": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "queue": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": []
+    },
+    "HunterChainNotedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "HunterChainNoted"
+        },
+        "data": {
+          "$ref": "#/$defs/HunterChainNoted"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "HunterRevealed": {
+      "description": "HunterRevealed makes the dead Hunter's role public.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hunter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "HunterRevealedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "HunterRevealed"
+        },
+        "data": {
+          "$ref": "#/$defs/HunterRevealed"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "HunterShot": {
+      "description": "HunterShot is the Hunter's shot. The target dies right after it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hunter": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "HunterShotEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "HunterShot"
+        },
+        "data": {
+          "$ref": "#/$defs/HunterShot"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "HunterShotStarted": {
+      "description": "HunterShotStarted opens the pause in which the Hunter chooses. It is public, so it carries nothing but the Hunter and the time: the chain of deaths is in HunterChainNoted, which the living never see.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "hunter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "HunterShotStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "HunterShotStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/HunterShotStarted"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "HunterTimedOut": {
+      "description": "HunterTimedOut means the Hunter did not choose in time: nobody is shot.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hunter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "HunterTimedOutEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "HunterTimedOut"
+        },
+        "data": {
+          "$ref": "#/$defs/HunterTimedOut"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "LoveNotice": {
+      "description": "LoveNotice is the love part of the notice. Outside the pair InLove is false and the other fields are empty.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "colour": {
+          "type": "string",
+          "enum": [
+            "white",
+            "black",
+            "striped",
+            ""
+          ]
+        },
+        "inLove": {
+          "type": "boolean"
+        },
+        "partner": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "partnerRole": {
+          "$ref": "#/$defs/RoleID"
+        }
+      },
+      "required": [
+        "inLove",
+        "partner",
+        "partnerRole",
+        "colour"
+      ]
+    },
+    "LoverGrieving": {
+      "description": "LoverGrieving records that the partner of a lover who died by day will die in the next night (rules §7). Nobody is told: the survivor already knows their lover is dead, and the others see them alive until the morning announcement.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "night": {
+          "type": "integer"
+        },
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "night"
+      ]
+    },
+    "LoverGrievingEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "LoverGrieving"
+        },
+        "data": {
+          "$ref": "#/$defs/LoverGrieving"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "LoverView": {
+      "description": "LoverView is what a lover's phone shows about the pair.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "colour": {
+          "type": "string",
+          "enum": [
+            "white",
+            "black",
+            "striped"
+          ]
+        },
+        "partner": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "partnerRole": {
+          "$ref": "#/$defs/RoleID"
+        }
+      },
+      "required": []
+    },
+    "LoversLink": {
+      "description": "LoversLink is the pair created by Cupid.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "b": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "thirdTeam": {
+          "description": "ThirdTeam is set when the first lover dies while the couple is one wolf and one villager: both stay on the third team for good, so neither can win with their own team (rules §8).",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "thirdTeam"
+      ]
+    },
+    "LoversMeetAnnounced": {
+      "description": "LoversMeetAnnounced is the voice line that opens the step, read aloud by the speaker phone. Public: it is the same on every phone.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "LoversMeetAnnouncedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "LoversMeetAnnounced"
+        },
+        "data": {
+          "$ref": "#/$defs/LoversMeetAnnounced"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "LoversPaired": {
+      "description": "LoversPaired records the couple. Only Cupid gets it, as the answer to his choice; the lovers are told at the phone check.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "b": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "cupid": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "LoversPairedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "LoversPaired"
+        },
+        "data": {
+          "$ref": "#/$defs/LoversPaired"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "MyView": {
+      "description": "MyView is the viewer's own card.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alive": {
+          "type": "boolean"
+        },
+        "canShoot": {
+          "description": "CanShoot is set only for the dead Hunter while he chooses his target.",
+          "type": "boolean"
+        },
+        "cursed": {
+          "description": "on the wolf team though the role is not a wolf role; known from the phone check on",
+          "type": "boolean"
+        },
+        "id": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "phoneCheck": {
+          "description": "PhoneCheck is set while the phone check step runs, for every living player.",
+          "$ref": "#/$defs/PhoneCheckView"
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        },
+        "roleCard": {
+          "description": "RoleCard is the card of the viewer's own role (rules §9b); StatusCards the extra cards they hold now (cursed, lovers, Chief).",
+          "$ref": "#/$defs/RoleCard"
+        },
+        "statusCards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StatusCard"
+          }
+        },
+        "team": {
+          "$ref": "#/$defs/Team"
+        },
+        "turn": {
+          "description": "set while the viewer is being called at night",
+          "$ref": "#/$defs/TurnView"
+        }
+      },
+      "required": [
+        "id",
+        "alive",
+        "cursed",
+        "canShoot"
+      ]
+    },
+    "NewGameStarted": {
+      "description": "NewGameStarted resets the match while keeping the room: the players, their seats and the configured role list survive; everything about the game that just ended (who is alive, who holds which role, the night/day state, the winner) is cleared so the host can deal again with a fresh seed.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "NewGameStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NewGameStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/NewGameStarted"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "NightActions": {
+      "description": "NightActions holds the choices collected during one night; they are only resolved at dawn. Each role's own events fill in its part, and the night start clears it. More fields arrive with the later night roles.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blocked": {
+          "description": "players who lose their night ability tonight -> the role that blocked them (engine-internal, never in a view)",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/RoleID"
+          }
+        },
+        "healed": {
+          "description": "the Witch used the heal potion on the bitten player",
+          "type": "boolean"
+        },
+        "poisoned": {
+          "description": "the Witch's poison target, empty if none",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "protected": {
+          "description": "the Guard's choice, empty if none",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "seerTarget": {
+          "description": "whom the Seer checked, empty if nobody",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "wolfSeerTarget": {
+          "description": "whom the Wolf seer checked, empty if nobody",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "wolfVotes": {
+          "description": "each wolf's current bite choice",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": [
+        "healed"
+      ]
+    },
+    "NightCallView": {
+      "description": "NightCallView is the cue shown on every phone. It has no real/fake flag on purpose.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        }
+      },
+      "required": [
+        "role",
+        "duration"
+      ]
+    },
+    "NightEnded": {
+      "description": "NightEnded records that the last step ran out and the night is over.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "NightEndedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NightEnded"
+        },
+        "data": {
+          "$ref": "#/$defs/NightEnded"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "NightStarted": {
+      "description": "NightStarted records the start of a night.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "night": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "night"
+      ]
+    },
+    "NightStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NightStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/NightStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "NightStepCalled": {
+      "description": "NightStepCalled is the public cue: call this role now and wait Duration. It is the same for a living role and for a dead or absent one (rules §3, \"gọi giả\"); nothing in it says which, and the step always lasts the full Duration. Every phone gets it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "NightStepCalledEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NightStepCalled"
+        },
+        "data": {
+          "$ref": "#/$defs/NightStepCalled"
+        },
+        "say": {
+          "description": "The role being called, read aloud. Absent for the phone check and the lovers' step, which read their own line.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "NominationCast": {
+      "description": "NominationCast records a voter's choice; a later one replaces it. A real target cancels the voter's own skip.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "voter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "NominationCastEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NominationCast"
+        },
+        "data": {
+          "$ref": "#/$defs/NominationCast"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "NominationsLocking": {
+      "description": "NominationsLocking starts (or restarts) the countdown after every living player has chosen. Anyone may still change their choice until it runs out.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "NominationsLockingEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NominationsLocking"
+        },
+        "data": {
+          "$ref": "#/$defs/NominationsLocking"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "NominationsReopened": {
+      "description": "NominationsReopened ends a countdown whose last change left nobody nominated: the day clock goes on and discussion continues.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "NominationsReopenedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "NominationsReopened"
+        },
+        "data": {
+          "$ref": "#/$defs/NominationsReopened"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "Outcome": {
+      "description": "Outcome is how a finished game ended (rules §8).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "aborted": {
+          "description": "Aborted is set when the game ended by an abort vote rather than by everybody dying (audit K1, rules §8b); it is always a Draw too.",
+          "type": "boolean"
+        },
+        "draw": {
+          "type": "boolean"
+        },
+        "winner": {
+          "description": "TeamNone when Draw",
+          "$ref": "#/$defs/Team"
+        },
+        "winners": {
+          "description": "the players who win, dead or alive, in seating order; empty on a draw",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": [
+        "draw",
+        "aborted"
+      ]
+    },
+    "PackView": {
+      "description": "PackView is the wolf pack as its members see it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "doomed": {
+          "description": "Doomed lists the wolves that can no longer vote tonight because the Rusty knight's poison killed them as the pack step started.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "doomedNotices": {
+          "description": "DoomedNotices is the text the pack is shown, one line per wolf in Doomed, in the same order (i18n).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "members": {
+          "description": "wolf team, in seating order, dead ones too",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "votes": {
+          "description": "wolf -> bite target, live during the night",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": []
+    },
+    "Person": {
+      "description": "Person is one player in the room as the lobby and end screens list them. None of it is secret: the table sees who is there and who holds the phone that runs the game.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "connected": {
+          "type": "boolean"
+        },
+        "id": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "isHost": {
+          "type": "boolean"
+        },
+        "nickname": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "nickname",
+        "connected",
+        "isHost"
+      ]
+    },
+    "Phase": {
+      "description": "Phase of the game.",
+      "type": "string",
+      "enum": [
+        "Lobby",
+        "RoleView",
+        "Night",
+        "Dawn",
+        "Day",
+        "Trial",
+        "Verdict",
+        "HunterShot",
+        "Ended",
+        "ChiefElection",
+        "ChiefSuccession",
+        "Dusk",
+        "NominationLock"
+      ]
+    },
+    "PhoneCheckAnnounced": {
+      "description": "PhoneCheckAnnounced is the voice line that opens the step, read aloud by the speaker phone. Public: it is the same on every phone.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "PhoneCheckAnnouncedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PhoneCheckAnnounced"
+        },
+        "data": {
+          "$ref": "#/$defs/PhoneCheckAnnounced"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "PhoneCheckView": {
+      "description": "PhoneCheckView is that notice as the phone shows it, while the step runs. CursedText and LoveText are its two lines (i18n), each set only when the public role list has the role it is about (phoneCheckView): nil, not \"\", so the line is left out of the message, the same way for every phone.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cursed": {
+          "type": "boolean"
+        },
+        "cursedText": {
+          "type": "string"
+        },
+        "love": {
+          "$ref": "#/$defs/LoveNotice"
+        },
+        "loveText": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "cursed",
+        "love"
+      ]
+    },
+    "PhoneChecked": {
+      "description": "PhoneChecked is the notice one living player gets at the phone check (rules §3). It combines the curse status and the love status, and every notice has this exact shape whatever the answer: only the values differ. A client shows the curse part when the (public) role list has a Cursed wolf and the love part when it has Cupid.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cursed": {
+          "type": "boolean"
+        },
+        "love": {
+          "$ref": "#/$defs/LoveNotice"
+        },
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "player",
+        "cursed",
+        "love"
+      ]
+    },
+    "PhoneCheckedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PhoneChecked"
+        },
+        "data": {
+          "$ref": "#/$defs/PhoneChecked"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerCursed": {
+      "description": "PlayerCursed records the curse. Only the Cursed wolf is told at once; the target learns at the phone check.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "wolf": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "PlayerCursedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerCursed"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerCursed"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerDied": {
+      "description": "PlayerDied records a death. The role is not part of the announcement.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "PlayerDiedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerDied"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerDied"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerID": {
+      "description": "Public id of a player in the room, e.g. \"p3\". Not a secret, not a credential.",
+      "type": "string"
+    },
+    "PlayerJoined": {
+      "description": "PlayerJoined records a player entering the lobby. Nickname is already trimmed and validated.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nickname": {
+          "type": "string"
+        },
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "PlayerJoinedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerJoined"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerJoined"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerKicked": {
+      "description": "PlayerKicked records the host removing a player from the lobby (audit K2). Handled exactly like PlayerLeft.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "PlayerKickedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerKicked"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerKicked"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerLeft": {
+      "description": "PlayerLeft records a player leaving the lobby. Only their own seat is freed (the rest keep theirs); the chosen role list is untouched. DealRoles re-checks the role list against the new player count before dealing.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "PlayerLeftEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerLeft"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerLeft"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerProtected": {
+      "description": "PlayerProtected records the Guard's choice.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "guard": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "night": {
+          "type": "integer"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "night"
+      ]
+    },
+    "PlayerProtectedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerProtected"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerProtected"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PlayerView": {
+      "description": "PlayerView is one seat as the viewer may see it. Role and Team are empty unless the viewer may know them.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alive": {
+          "type": "boolean"
+        },
+        "card": {
+          "description": "the card of Role, set exactly when Role is (see fillCards for its side)",
+          "$ref": "#/$defs/RoleCard"
+        },
+        "id": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        },
+        "seat": {
+          "description": "1-based, clockwise",
+          "type": "integer"
+        },
+        "team": {
+          "$ref": "#/$defs/Team"
+        }
+      },
+      "required": [
+        "id",
+        "nickname",
+        "seat",
+        "alive"
+      ]
+    },
+    "PlayerVisited": {
+      "description": "PlayerVisited records the visit. The target is blocked from it on; only the Visitor is told whom she visited.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "night": {
+          "type": "integer"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "visitor": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "night"
+      ]
+    },
+    "PlayerVisitedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PlayerVisited"
+        },
+        "data": {
+          "$ref": "#/$defs/PlayerVisited"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "PublicVotes": {
+      "description": "PublicVotes are the votes everybody sees (rules §4, §7b).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "abortVotes": {
+          "description": "voter -> true for \"abort\" (audit K1)",
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "chief": {
+          "description": "voter -> candidate, in the election",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "defendant": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "nominations": {
+          "description": "voter -> nominee; \"\" is \"no one\"",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "skips": {
+          "description": "in seating order",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "spared": {
+          "description": "spared today, in seating order",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        },
+        "verdicts": {
+          "description": "voter -> true for kill",
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      },
+      "required": []
+    },
+    "RoleCard": {
+      "description": "RoleCard is a player's card as a phone shows it (rules §9b): the role's name and description, with the team and goal of the player's CURRENT side (a cursed Seer shows the wolves, a lover of a cross-team couple the third team). The text comes from i18n, the one source of truth. Every card has these four fields, all set, so no card can be told from another by its shape.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "team": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "team",
+        "goal",
+        "description"
+      ]
+    },
+    "RoleID": {
+      "description": "A role, e.g. \"Werewolf\"; as a night step also \"PhoneCheck\" or \"LoversMeet\".",
+      "type": "string"
+    },
+    "RoleListCard": {
+      "description": "RoleListCard is one role of the game's public role list, with its name and short description.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        },
+        "team": {
+          "description": "the role's own team, public from the rules",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "name",
+        "team",
+        "description"
+      ]
+    },
+    "RoleViewStarted": {
+      "description": "RoleViewStarted opens the role-view countdown right after the deal (rules §2 bước 5): every player looks at their own role before anything else.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "RoleViewStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "RoleViewStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/RoleViewStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "RolesConfigured": {
+      "description": "RolesConfigured records the chosen role list.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": []
+    },
+    "RolesConfiguredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "RolesConfigured"
+        },
+        "data": {
+          "$ref": "#/$defs/RolesConfigured"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "RolesDealt": {
+      "description": "RolesDealt records who got which role. Teams are derived from the role's BaseTeam when the event is applied.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assignments": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/RoleID"
+          }
+        }
+      },
+      "required": []
+    },
+    "RolesDealtEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "RolesDealt"
+        },
+        "data": {
+          "$ref": "#/$defs/RolesDealt"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "SeatsSet": {
+      "description": "SeatsSet records the seating circle.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": []
+    },
+    "SeatsSetEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "SeatsSet"
+        },
+        "data": {
+          "$ref": "#/$defs/SeatsSet"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "Secrets": {
+      "description": "Secrets is the hidden part of the state, for full views only.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lovers": {
+          "$ref": "#/$defs/LoversLink"
+        },
+        "pending": {
+          "$ref": "#/$defs/NightActions"
+        }
+      },
+      "required": [
+        "pending"
+      ]
+    },
+    "SeerChecked": {
+      "description": "SeerChecked is the Seer's private result. Anyone on the wolf team, including a cursed player, shows as a wolf.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isWolf": {
+          "type": "boolean"
+        },
+        "seer": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "isWolf"
+      ]
+    },
+    "SeerCheckedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "SeerChecked"
+        },
+        "data": {
+          "$ref": "#/$defs/SeerChecked"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "SkipSet": {
+      "description": "SkipSet records the skip button being pressed or released.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on": {
+          "type": "boolean"
+        },
+        "voter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "on"
+      ]
+    },
+    "SkipSetEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "SkipSet"
+        },
+        "data": {
+          "$ref": "#/$defs/SkipSet"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "SoundConfigured": {
+      "description": "SoundConfigured records the choice.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "SoundConfiguredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "SoundConfigured"
+        },
+        "data": {
+          "$ref": "#/$defs/SoundConfigured"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "Spared": {
+      "description": "Spared ends the trial without an execution. If the clock has not run out the day goes back to nominations; the spared player stays safe until the night.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "SparedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Spared"
+        },
+        "data": {
+          "$ref": "#/$defs/Spared"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "StatusCard": {
+      "description": "StatusCard is an extra card a player holds while the state applies (rules §9b \"Thẻ phụ\"): cursed, in love (same team or cross-team) or Chief.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "text"
+      ]
+    },
+    "Team": {
+      "description": "A team (side).",
+      "type": "string",
+      "enum": [
+        "Village",
+        "Wolves",
+        "Lovers"
+      ]
+    },
+    "TeamChanged": {
+      "description": "TeamChanged moves a player to another team, e.g. a villager cursed into the pack (rules §5 \"Sói nguyền\"). Only that player is told; the pack sees its new member in the view. A team changed during the night shows on the phones only at the phone check (FlagTeamHidden), and the win check (rules §8) runs by day, so a team change itself ends nothing.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "team": {
+          "$ref": "#/$defs/Team"
+        }
+      },
+      "required": []
+    },
+    "TeamChangedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "TeamChanged"
+        },
+        "data": {
+          "$ref": "#/$defs/TeamChanged"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "Timers": {
+      "description": "Timers are the phase times the host may change (rules §2). A zero field means \"leave as it is\"; anything else must lie within its limits.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "announce": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "chiefElection": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "chiefSuccession": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "day": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "defense": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "hunterShot": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "loversMeet": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "nightStep": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "nominationLock": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "phoneCheck": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "roleView": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "verdict": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "roleView",
+        "chiefElection",
+        "nightStep",
+        "phoneCheck",
+        "loversMeet",
+        "announce",
+        "day",
+        "nominationLock",
+        "defense",
+        "verdict",
+        "hunterShot",
+        "chiefSuccession"
+      ]
+    },
+    "TimersConfigured": {
+      "description": "TimersConfigured records the changed times.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timers": {
+          "$ref": "#/$defs/Timers"
+        }
+      },
+      "required": [
+        "timers"
+      ]
+    },
+    "TimersConfiguredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "TimersConfigured"
+        },
+        "data": {
+          "$ref": "#/$defs/TimersConfigured"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "TrialStarted": {
+      "description": "TrialStarted puts a player on the stand for their defense.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defendant": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "TrialStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "TrialStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/TrialStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "TurnView": {
+      "description": "TurnView is what the phone shows during the viewer's own night step.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "biteShown": {
+          "description": "BiteShown is set when the viewer is shown the bite information at all, so an empty Bitten then means \"nobody is bitten\".",
+          "type": "boolean"
+        },
+        "bitten": {
+          "description": "BiteWitness only: the pack's current target",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "blocked": {
+          "description": "the viewer cannot use their night ability tonight; never says who blocked them",
+          "type": "boolean"
+        },
+        "doomed": {
+          "description": "Doomed is set from the step where the viewer's death takes hold: a wolf poisoned by the Rusty knight (from the pack step on), or a lover whose partner died by day (from their first call). They are dead from now on, cannot act or vote (rules §6, §7). Grief says which of the two it is, for the viewer's own phone only.",
+          "type": "boolean"
+        },
+        "grief": {
+          "type": "boolean"
+        },
+        "notice": {
+          "description": "Notice is the text to show for Blocked, Doomed or Grief (i18n), \"\" when none is set.",
+          "type": "string"
+        },
+        "step": {
+          "description": "the step being called (the pack step for a wolf)",
+          "$ref": "#/$defs/RoleID"
+        }
+      },
+      "required": [
+        "step",
+        "blocked",
+        "doomed",
+        "grief",
+        "biteShown"
+      ]
+    },
+    "VerdictCast": {
+      "description": "VerdictCast records a public vote; a later one by the same voter replaces it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kill": {
+          "type": "boolean"
+        },
+        "voter": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "kill"
+      ]
+    },
+    "VerdictCastEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "VerdictCast"
+        },
+        "data": {
+          "$ref": "#/$defs/VerdictCast"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "VerdictStarted": {
+      "description": "VerdictStarted ends the defense and opens the kill or spare vote.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ]
+    },
+    "VerdictStartedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "VerdictStarted"
+        },
+        "data": {
+          "$ref": "#/$defs/VerdictStarted"
+        },
+        "say": {
+          "description": "Vietnamese line: the speaker phone reads it aloud, every phone shows it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "say"
+      ]
+    },
+    "View": {
+      "description": "View is one screen's projection of the game.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chief": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "draw": {
+          "description": "the game ended and nobody won",
+          "type": "boolean"
+        },
+        "full": {
+          "description": "Full is true when the viewer sees everything: a dead player, or anybody once the game is over. Then every PlayerView carries Role and Team and Secrets is set.",
+          "type": "boolean"
+        },
+        "lover": {
+          "description": "lovers only",
+          "$ref": "#/$defs/LoverView"
+        },
+        "me": {
+          "description": "player viewers only",
+          "$ref": "#/$defs/MyView"
+        },
+        "night": {
+          "type": "integer"
+        },
+        "nightCall": {
+          "description": "every phone: the call running now",
+          "$ref": "#/$defs/NightCallView"
+        },
+        "pack": {
+          "description": "living wolves, and full views",
+          "$ref": "#/$defs/PackView"
+        },
+        "phase": {
+          "$ref": "#/$defs/Phase"
+        },
+        "players": {
+          "description": "in seating order",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerView"
+          }
+        },
+        "roleCards": {
+          "description": "the same list with each role's name and short description (rules §9b)",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RoleListCard"
+          }
+        },
+        "roles": {
+          "description": "the public role list of the game",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "secrets": {
+          "$ref": "#/$defs/Secrets"
+        },
+        "seq": {
+          "type": "integer"
+        },
+        "shooter": {
+          "description": "the dead Hunter choosing whom to shoot, if any",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "succession": {
+          "description": "the dead Chief naming a successor, if any",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "summary": {
+          "description": "Summary narrates the game that just ended, one line per night and day plus the final outcome, Vietnamese text from i18n (audit K4). Set only once the game has ended, for everybody.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "votes": {
+          "$ref": "#/$defs/PublicVotes"
+        },
+        "winner": {
+          "description": "set when the game ended with a winner",
+          "$ref": "#/$defs/Team"
+        },
+        "winners": {
+          "description": "the players who win, in seating order (rules §8)",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlayerID"
+          }
+        }
+      },
+      "required": [
+        "phase",
+        "seq",
+        "night",
+        "draw",
+        "full"
+      ]
+    },
+    "ViewMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "view"
+        },
+        "deadline": {
+          "description": "Unix ms when the running phase or night step ends.",
+          "type": "integer"
+        },
+        "people": {
+          "description": "Everybody in the room, in join order. Only in the lobby and once the game has ended.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Person"
+          }
+        },
+        "speaker": {
+          "description": "Only on the phone(s) that read the announcements aloud.",
+          "const": true
+        },
+        "view": {
+          "$ref": "#/$defs/View"
+        }
+      },
+      "required": [
+        "type",
+        "view"
+      ]
+    },
+    "Welcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "welcome"
+        },
+        "pin": {
+          "description": "Secret: shown only on this player's screen. Sent on join.",
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        "player": {
+          "description": "This phone's player.",
+          "$ref": "#/$defs/PlayerID"
+        },
+        "protocolVersion": {
+          "description": "Goes up only on a change an older client cannot ignore.",
+          "const": 1
+        },
+        "token": {
+          "description": "Secret: kept by the phone to rejoin. Sent on join and on rejoin by nickname + PIN.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "protocolVersion",
+        "player"
+      ]
+    },
+    "WitchHealed": {
+      "description": "WitchHealed records the use of the heal potion.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "witch": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "WitchHealedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "WitchHealed"
+        },
+        "data": {
+          "$ref": "#/$defs/WitchHealed"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "WitchPoisoned": {
+      "description": "WitchPoisoned records the use of the poison potion.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "witch": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "WitchPoisonedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "WitchPoisoned"
+        },
+        "data": {
+          "$ref": "#/$defs/WitchPoisoned"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "WolfPoisoned": {
+      "description": "WolfPoisoned records the wolf poisoned by a bitten Rusty knight. Nobody sees it: the wolf learns of it when it dies (full views still see it).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "night": {
+          "type": "integer"
+        },
+        "wolf": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "night"
+      ]
+    },
+    "WolfPoisonedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "WolfPoisoned"
+        },
+        "data": {
+          "$ref": "#/$defs/WolfPoisoned"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "WolfSeerChecked": {
+      "description": "WolfSeerChecked is the result, shared with the pack. It is a role check, not a team check: a cursed Seer is still the Seer.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isSeer": {
+          "type": "boolean"
+        },
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "wolfSeer": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": [
+        "isSeer"
+      ]
+    },
+    "WolfSeerCheckedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "WolfSeerChecked"
+        },
+        "data": {
+          "$ref": "#/$defs/WolfSeerChecked"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "WolfVoted": {
+      "description": "WolfVoted records a wolf's current bite choice.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "wolf": {
+          "$ref": "#/$defs/PlayerID"
+        }
+      },
+      "required": []
+    },
+    "WolfVotedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "WolfVoted"
+        },
+        "data": {
+          "$ref": "#/$defs/WolfVoted"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Welcome"
+    },
+    {
+      "$ref": "#/$defs/ViewMessage"
+    },
+    {
+      "$ref": "#/$defs/EventsMessage"
+    },
+    {
+      "$ref": "#/$defs/ErrorMessage"
+    }
+  ]
+}

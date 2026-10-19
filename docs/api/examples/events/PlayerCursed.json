@@ -1,0 +1,7 @@
+{
+  "type": "PlayerCursed",
+  "data": {
+    "target": "p12",
+    "wolf": "p9"
+  }
+}

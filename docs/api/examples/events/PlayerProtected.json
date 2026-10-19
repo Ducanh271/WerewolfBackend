@@ -1,0 +1,8 @@
+{
+  "type": "PlayerProtected",
+  "data": {
+    "guard": "p3",
+    "night": 1,
+    "target": "p6"
+  }
+}

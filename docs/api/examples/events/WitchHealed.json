@@ -1,0 +1,7 @@
+{
+  "type": "WitchHealed",
+  "data": {
+    "target": "p1",
+    "witch": "p6"
+  }
+}
