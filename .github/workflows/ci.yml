@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      # Fast steps first: a format or vet error turns the run red before the slow tests.
+      - name: gofmt
+        run: |
+          out="$(gofmt -l .)"
+          if [ -n "$out" ]; then
+            echo "Not gofmt-formatted:"
+            echo "$out"
+            exit 1
+          fi
+      - name: go vet
+        run: go vet ./...
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6.5.2
+        with:
+          version: v1.64.8
+      - name: make test
+        run: make test
