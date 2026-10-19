@@ -121,7 +121,7 @@ func (s *session) dispatch(typ string, data []byte) error {
 		if s.client == nil {
 			return &protoError{codeNotJoined, "join a room first"}
 		}
-		build, err := buildCommand(m)
+		build, err := s.srv.commands.build(m)
 		if err != nil {
 			return err
 		}

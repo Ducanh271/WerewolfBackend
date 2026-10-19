@@ -86,7 +86,11 @@ func newEnv(t *testing.T, mod func(*Config)) *env {
 	if mod != nil {
 		mod(&cfg)
 	}
-	e.srv = httptest.NewServer(New(cfg))
+	handler, err := New(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.srv = httptest.NewServer(handler)
 	t.Cleanup(func() {
 		e.srv.Close()
 		e.rooms.Close()
@@ -183,14 +187,25 @@ func cmd(name string, args map[string]any) map[string]any {
 // player-free part: it returns the builder that fills in the sender.
 func wireCommand(t *testing.T, name string, args json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
 	t.Helper()
-	return buildCommand(commandMsg{Type: typeCommand, Name: name, Args: args})
+	return testCommands(t).build(commandMsg{Type: typeCommand, Name: name, Args: args})
+}
+
+// testCommands is the command table the server builds at start-up.
+func testCommands(t *testing.T) commandTable {
+	t.Helper()
+	table, err := newCommandTable(engine.Registry)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return table
 }
 
 // wireCommandNames lists every command name the server accepts.
 func wireCommandNames(t *testing.T) []string {
 	t.Helper()
-	names := make([]string, 0, len(commandTable))
-	for n := range commandTable {
+	table := testCommands(t)
+	names := make([]string, 0, len(table))
+	for n := range table {
 		names = append(names, n)
 	}
 	return names

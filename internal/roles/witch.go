@@ -73,6 +73,18 @@ func (witch) ID() engine.RoleID            { return Witch }
 func (witch) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (witch) NightCall() *engine.NightCall { return &engine.NightCall{Order: 6} }
 
+// Commands: the Witch's two potions on the wire.
+func (witch) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("witchHeal", func(_ noArgs, by engine.PlayerID) engine.Command {
+			return WitchHeal{By: by}
+		}),
+		engine.WireCommand("witchPoison", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return WitchPoison{By: by, Target: a.Target}
+		}),
+	}
+}
+
 // SeesBite: she is told whom the pack bites only while the heal potion is left.
 func (witch) SeesBite(holder *engine.Player) bool { return holder.Flags[flagHealUsed] == 0 }
 

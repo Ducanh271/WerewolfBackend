@@ -27,7 +27,12 @@ func main() {
 	cfg := ws.ConfigFromEnv(os.Getenv)
 	cfg.Rooms = rooms
 	cfg.Logger = logger
-	srv := &http.Server{Addr: addr, Handler: ws.New(cfg), ReadHeaderTimeout: 10 * time.Second}
+	handler, err := ws.New(cfg)
+	if err != nil {
+		logger.Error("server not started", "err", err)
+		os.Exit(1)
+	}
+	srv := &http.Server{Addr: addr, Handler: handler, ReadHeaderTimeout: 10 * time.Second}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

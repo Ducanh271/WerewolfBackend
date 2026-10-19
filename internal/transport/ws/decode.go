@@ -7,8 +7,6 @@ import (
 	"io"
 	"reflect"
 	"strings"
-
-	"masoi/internal/engine"
 )
 
 // Client message types (docs/protocol.md).
@@ -111,19 +109,4 @@ func messageType(data []byte) (string, error) {
 
 func unknownType(typ string) error {
 	return &protoError{codeUnknownType, fmt.Sprintf("unknown message type %q", typ)}
-}
-
-// buildCommand turns a `command` message into a function that builds the
-// engine command for the connection's player. The player never comes from the
-// message.
-func buildCommand(m commandMsg) (func(by engine.PlayerID) engine.Command, error) {
-	spec, ok := commandTable[m.Name]
-	if !ok {
-		return nil, &protoError{codeUnknownCommand, fmt.Sprintf("unknown command %q", m.Name)}
-	}
-	args := m.Args
-	if len(args) == 0 || string(args) == "null" {
-		args = json.RawMessage("{}")
-	}
-	return spec(args)
 }

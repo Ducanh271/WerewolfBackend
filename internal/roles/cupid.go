@@ -60,6 +60,15 @@ func (cupid) NightCall() *engine.NightCall {
 	return &engine.NightCall{Order: 0, Nights: []int{1}}
 }
 
+// Commands: Cupid's pair on the wire, the two players as "a" and "b".
+func (cupid) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("cupidPair", func(a pairArgs, by engine.PlayerID) engine.Command {
+			return CupidPair{By: by, A: a.A, B: a.B}
+		}),
+	}
+}
+
 func (cupid) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(CupidPair)
 	if !ok {

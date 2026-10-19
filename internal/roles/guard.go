@@ -53,6 +53,15 @@ func (guard) ID() engine.RoleID            { return Guard }
 func (guard) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (guard) NightCall() *engine.NightCall { return &engine.NightCall{Order: 2} }
 
+// Commands: the Guard's choice on the wire.
+func (guard) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("guardProtect", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return GuardProtect{By: by, Target: a.Target}
+		}),
+	}
+}
+
 func (guard) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(GuardProtect)
 	if !ok {

@@ -57,6 +57,15 @@ func (visitor) ID() engine.RoleID            { return Visitor }
 func (visitor) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (visitor) NightCall() *engine.NightCall { return &engine.NightCall{Order: 1} }
 
+// Commands: the Visitor's visit on the wire.
+func (visitor) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("visitorVisit", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return VisitorVisit{By: by, Target: a.Target}
+		}),
+	}
+}
+
 func (visitor) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(VisitorVisit)
 	if !ok {

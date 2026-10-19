@@ -60,7 +60,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := &http.Server{Handler: ws.New(ws.Config{Rooms: rooms, AllowAnyOrigin: true}), ReadHeaderTimeout: 10 * time.Second}
+	handler, err := ws.New(ws.Config{Rooms: rooms, AllowAnyOrigin: true})
+	if err != nil {
+		log.Fatal(err)
+	}
+	srv := &http.Server{Handler: handler, ReadHeaderTimeout: 10 * time.Second}
 	go func() { _ = srv.Serve(ln) }()
 	defer srv.Close()
 	base := ln.Addr().String()

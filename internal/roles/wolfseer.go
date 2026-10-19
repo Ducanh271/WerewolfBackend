@@ -52,6 +52,15 @@ func (wolfSeer) ID() engine.RoleID            { return WolfSeer }
 func (wolfSeer) BaseTeam() engine.Team        { return engine.TeamWolves }
 func (wolfSeer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 4} }
 
+// Commands: the Wolf seer's check on the wire.
+func (wolfSeer) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("wolfSeerCheck", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return WolfSeerCheck{By: by, Target: a.Target}
+		}),
+	}
+}
+
 func (wolfSeer) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(WolfSeerCheck)
 	if !ok {

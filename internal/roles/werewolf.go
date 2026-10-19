@@ -1,6 +1,7 @@
 package roles
 
 import (
+	"errors"
 	"fmt"
 
 	"masoi/internal/engine"
@@ -38,6 +39,28 @@ func (werewolf) BaseTeam() engine.Team        { return engine.TeamWolves }
 func (werewolf) AllowsMultipleCopies() bool   { return true }
 func (werewolf) AlwaysCalled() bool           { return true }
 func (werewolf) NightCall() *engine.NightCall { return &engine.NightCall{Order: 5} }
+
+// wolfVoteArgs keeps "no target field" apart from "target": "", the vote
+// "Không cắn ai": only the second is a vote.
+type wolfVoteArgs struct {
+	Target *engine.PlayerID `json:"target"`
+}
+
+func (a wolfVoteArgs) Validate() error {
+	if a.Target == nil {
+		return errors.New(`wolfVote needs "target" (use "" for no bite)`)
+	}
+	return nil
+}
+
+// Commands: every wolf's bite vote on the wire.
+func (werewolf) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("wolfVote", func(a wolfVoteArgs, by engine.PlayerID) engine.Command {
+			return WolfVote{By: by, Target: *a.Target}
+		}),
+	}
+}
 
 func (werewolf) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(WolfVote)

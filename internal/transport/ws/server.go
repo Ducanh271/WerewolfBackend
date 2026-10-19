@@ -23,6 +23,9 @@ type Server struct {
 	mux   *http.ServeMux
 	conns *connGuard
 	guide guideResponse
+	// commands is built once at start-up from the core commands and every
+	// registered role's.
+	commands commandTable
 }
 
 // New returns the handler serving:
@@ -31,18 +34,26 @@ type Server struct {
 //	GET  /join/{code}  does the room exist (the link behind the QR code)
 //	GET  /guide         the in-app rules guide and per-role how-to (T25); public, no room needed
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
-func New(cfg Config) http.Handler {
+//
+// It fails when the registered roles' commands clash (two with one name):
+// the server must not start then.
+func New(cfg Config) (http.Handler, error) {
 	cfg.setDefaults()
+	commands, err := newCommandTable(engine.Registry)
+	if err != nil {
+		return nil, err
+	}
 	s := &Server{
 		cfg: cfg, log: cfg.Logger, mux: http.NewServeMux(),
-		conns: newConnGuard(cfg.MaxConnections, cfg.MaxConnectionsPerIP, cfg.NewConnPerMinute, cfg.NewConnBurst, cfg.Now),
-		guide: buildGuide(),
+		conns:    newConnGuard(cfg.MaxConnections, cfg.MaxConnectionsPerIP, cfg.NewConnPerMinute, cfg.NewConnBurst, cfg.Now),
+		guide:    buildGuide(),
+		commands: commands,
 	}
 	s.mux.HandleFunc("POST /rooms", s.createRoom)
 	s.mux.HandleFunc("GET /join/{code}", s.checkRoom)
 	s.mux.HandleFunc("GET /guide", s.serveGuide)
 	s.mux.HandleFunc("GET /ws", s.serveWS)
-	return s.mux
+	return s.mux, nil
 }
 
 func (s *Server) createRoom(w http.ResponseWriter, r *http.Request) {

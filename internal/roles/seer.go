@@ -47,6 +47,15 @@ func (seer) ID() engine.RoleID            { return Seer }
 func (seer) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (seer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 7} }
 
+// Commands: the Seer's check on the wire.
+func (seer) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("seerCheck", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return SeerCheck{By: by, Target: a.Target}
+		}),
+	}
+}
+
 func (seer) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(SeerCheck)
 	if !ok {

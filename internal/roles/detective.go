@@ -53,6 +53,15 @@ func (detective) ID() engine.RoleID            { return Detective }
 func (detective) BaseTeam() engine.Team        { return engine.TeamVillage }
 func (detective) NightCall() *engine.NightCall { return &engine.NightCall{Order: 8} }
 
+// Commands: the Detective's check on the wire.
+func (detective) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("detectiveCheck", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return DetectiveCheck{By: by, Target: a.Target}
+		}),
+	}
+}
+
 // MinPlayers: the Detective needs a table of more than 8 (rules §2).
 func (detective) MinPlayers() int { return 9 }
 

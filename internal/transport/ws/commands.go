@@ -3,10 +3,10 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 
 	"masoi/internal/engine"
-	"masoi/internal/roles"
 )
 
 // A commandSpec decodes the args of one command name.
@@ -40,10 +40,6 @@ type (
 	}
 	successorAr struct {
 		Successor engine.PlayerID `json:"successor"`
-	}
-	pairArgs struct {
-		A engine.PlayerID `json:"a"`
-		B engine.PlayerID `json:"b"`
 	}
 	targetArgs struct {
 		Target engine.PlayerID `json:"target"`
@@ -106,9 +102,10 @@ func (t timerMillis) timers() (engine.Timers, error) {
 	return out, nil
 }
 
-// commandTable is the table of docs/protocol.md "Commands". A new role adds
-// its rows here.
-var commandTable = map[string]commandSpec{
+// coreCommands are the commands of the engine itself (docs/protocol.md
+// "Commands"). The roles' own commands come from engine.Registry: see
+// newCommandTable.
+var coreCommands = map[string]commandSpec{
 	"setSeats": spec(func(a orderArgs, _ engine.PlayerID) engine.Command {
 		return engine.SetSeats{Order: a.Order}
 	}),
@@ -141,55 +138,78 @@ var commandTable = map[string]commandSpec{
 	"newGame": spec(func(_ noArgs, _ engine.PlayerID) engine.Command {
 		return engine.NewGame{}
 	}),
-	"wolfVote": wolfVote,
-	"guardProtect": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.GuardProtect{By: by, Target: a.Target}
-	}),
-	"visitorVisit": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.VisitorVisit{By: by, Target: a.Target}
-	}),
-	"cupidPair": spec(func(a pairArgs, by engine.PlayerID) engine.Command {
-		return roles.CupidPair{By: by, A: a.A, B: a.B}
-	}),
 	"hunterShoot": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
 		return engine.HunterShoot{By: by, Target: a.Target}
 	}),
-	"witchHeal": spec(func(_ noArgs, by engine.PlayerID) engine.Command {
-		return roles.WitchHeal{By: by}
-	}),
-	"witchPoison": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.WitchPoison{By: by, Target: a.Target}
-	}),
-	"cursedWolfCurse": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.CursedWolfCurse{By: by, Target: a.Target}
-	}),
-	"wolfSeerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.WolfSeerCheck{By: by, Target: a.Target}
-	}),
-	"detectiveCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.DetectiveCheck{By: by, Target: a.Target}
-	}),
-	"seerCheck": spec(func(a targetArgs, by engine.PlayerID) engine.Command {
-		return roles.SeerCheck{By: by, Target: a.Target}
-	}),
 }
 
-// wolfVoteArgs keeps "no target field" apart from "target": "", the vote
-// "Không cắn ai": only the second is a vote.
-type wolfVoteArgs struct {
-	Target *engine.PlayerID `json:"target"`
+// commandTable maps every command name a client may send to its decoder.
+type commandTable map[string]commandSpec
+
+// newCommandTable joins the core commands and the commands each registered
+// role declares (engine.CommandRole). Two commands with one name are an
+// error, so a server with a clash does not start.
+func newCommandTable(registry map[engine.RoleID]engine.Role) (commandTable, error) {
+	t := commandTable{}
+	owner := map[string]string{}
+	for name, s := range coreCommands {
+		t[name] = s
+		owner[name] = "the engine"
+	}
+	ids := make([]engine.RoleID, 0, len(registry))
+	for id := range registry {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	for _, id := range ids {
+		cr, ok := registry[id].(engine.CommandRole)
+		if !ok {
+			continue
+		}
+		for _, c := range cr.Commands() {
+			if c.Name == "" || c.NewArgs == nil || c.Build == nil {
+				return nil, fmt.Errorf("role %s declares an incomplete command %q", id, c.Name)
+			}
+			if prev, dup := owner[c.Name]; dup {
+				return nil, fmt.Errorf("command %q is declared by both %s and role %s", c.Name, prev, id)
+			}
+			t[c.Name] = roleSpec(c)
+			owner[c.Name] = "role " + string(id)
+		}
+	}
+	return t, nil
 }
 
-func wolfVote(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
-	var a wolfVoteArgs
-	if err := decodeStrict(raw, &a); err != nil {
-		return nil, err
+// roleSpec makes a commandSpec from a role's declaration: the same strict
+// decoding as the core commands, then the args' own check if they have one.
+func roleSpec(c engine.CommandSpec) commandSpec {
+	return func(raw json.RawMessage) (func(engine.PlayerID) engine.Command, error) {
+		a := c.NewArgs()
+		if err := decodeStrict(raw, a); err != nil {
+			return nil, err
+		}
+		if v, ok := a.(engine.ArgsValidator); ok {
+			if err := v.Validate(); err != nil {
+				return nil, badMessage(err.Error())
+			}
+		}
+		return func(by engine.PlayerID) engine.Command { return c.Build(a, by) }, nil
 	}
-	if a.Target == nil {
-		return nil, badMessage(`wolfVote needs "target" (use "" for no bite)`)
+}
+
+// build turns a `command` message into a function that builds the engine
+// command for the connection's player. The player never comes from the
+// message.
+func (t commandTable) build(m commandMsg) (func(by engine.PlayerID) engine.Command, error) {
+	spec, ok := t[m.Name]
+	if !ok {
+		return nil, &protoError{codeUnknownCommand, fmt.Sprintf("unknown command %q", m.Name)}
 	}
-	target := *a.Target
-	return func(by engine.PlayerID) engine.Command { return roles.WolfVote{By: by, Target: target} }, nil
+	args := m.Args
+	if len(args) == 0 || string(args) == "null" {
+		args = json.RawMessage("{}")
+	}
+	return spec(args)
 }
 
 // soundModes maps the protocol's string to the engine's SoundMode.

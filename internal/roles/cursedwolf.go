@@ -57,6 +57,15 @@ func (cursedWolf) NightCall() *engine.NightCall {
 	return &engine.NightCall{Order: 3, Nights: []int{1, 2, 3}}
 }
 
+// Commands: the curse on the wire.
+func (cursedWolf) Commands() []engine.CommandSpec {
+	return []engine.CommandSpec{
+		engine.WireCommand("cursedWolfCurse", func(a targetArgs, by engine.PlayerID) engine.Command {
+			return CursedWolfCurse{By: by, Target: a.Target}
+		}),
+	}
+}
+
 func (cursedWolf) Decide(s engine.State, c engine.Command) ([]engine.Event, bool, error) {
 	cmd, ok := c.(CursedWolfCurse)
 	if !ok {
