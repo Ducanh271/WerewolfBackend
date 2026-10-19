@@ -14,7 +14,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Tầng | Thư mục | Việc của nó |
 |---|---|---|
 | engine | `internal/engine` | **Luật chơi thuần túy**: trạng thái, lệnh, sự kiện, đêm/ngày, kiểm tra thắng, "view" cho từng người. Không mạng, không giờ, không ngẫu nhiên. |
-| roles | `internal/roles` | Mỗi vai một file (Sói, Dân, Bảo vệ, Tiên tri...). Tự đăng ký vào engine. |
+| roles | `internal/roles` | Mỗi vai một file (Sói, Dân, Bảo vệ, Tiên tri...). Tự đăng ký vào engine, kèm lệnh gửi qua mạng (`Commands()`), thứ tự trong danh sách vai (`CardOrder()`) và lỗi riêng (`engine.NewError`). Không tầng nào khác import một vai cụ thể. |
 | room | `internal/room` | Một phòng = một goroutine: nhận lệnh lần lượt, hẹn giờ, phát view, vào lại phòng (token/PIN), chọn máy làm loa (`SpeakerPolicy`: `InPersonSpeaker` một máy, nhớ máy đang đọc; `AllPhones` mọi máy, chọn bằng lệnh `configureSound`). `Manager` tạo phòng theo mã và xoá phòng bỏ không 2 giờ. |
 | transport | `internal/transport/ws` | HTTP + WebSocket: đọc JSON, kiểm tra, đổi thành lệnh; đổi view thành JSON. Không có luật chơi. `wsclient/` là "điện thoại giả" cho test và demo. |
 | store | `internal/store` | Kho sự kiện trong RAM (sau này đổi sang database mà không sửa chỗ khác). |
@@ -47,7 +47,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 2. `session.go` → `run`: đọc từng tin, gọi `handle`.
 3. `handle.go` → `handle`: chặn nếu quá tốc độ (`ratelimit.go` → `allow`) hoặc quá 4 KB.
 4. `decode.go` → `messageType`, rồi `handle.go` → `dispatch`, `decodeStrict`: tin phải đúng mẫu, **thừa trường (như `seed`) là bị từ chối**.
-5. `decode.go` → `buildCommand` → `commands.go` → `commandTable["seerCheck"]`: tạo `roles.SeerCheck{By: <người gửi>, Target: "p1"}`.
+5. `handle.go` → `s.srv.commands.build` (`commands.go`): bảng lệnh được dựng một lần lúc server khởi động (`ws.New`) từ lệnh chung của engine (`coreCommands`) và lệnh mỗi vai tự khai báo (`Commands()` trong file vai, ở đây `roles/seer.go`). Hai lệnh trùng tên thì server không chạy. Dòng `seerCheck` tạo `roles.SeerCheck{By: <người gửi>, Target: "p1"}`.
 
 **B. Vào phòng (room)**
 6. `room/submit.go` → `Client.Submit`: chuyển việc cho goroutine của phòng qua `room.go` → `do`.
@@ -80,7 +80,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Chủ phòng/máy làm loa sai người | room | Chủ phòng là người giữ `hostKey` bí mật từ lúc tạo phòng (`room/manager.go` `randomHostKey`, `room/join.go` `Join`), không phải người vào trước; `room/speaker.go` (`InPersonSpeaker`, `AllPhones` — không ai làm loa khi chưa có chủ phòng, `Host == ""`), `room/join.go` (`passHost`, `armHostGrace`, `TransferHost` — chủ phòng tự chuyển chức bất cứ lúc nào) |
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
 | Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`, `reattach` gọi `Sink.Evict` khi vào lại cướp chỗ máy cũ, `KickPlayer` khi chủ phòng đá — chỉ trước khi chia vai, không tự đá mình, ghế/vai của người khác giữ nguyên), `transport/ws/session.go` (`finish`, `Evict`) |
-| Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`, mã lỗi ở `errors.go` |
+| Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`; mã lỗi: mỗi lỗi tự mang mã nơi khai báo (`engine.NewError`), đổi ra tin `error` ở `transport/ws/errors.go` (`toErrorMsg`) |
 | Lệnh nhận lỗi `internal`, log có "panic in room" | room | `room/room.go` (`safe`): lỗi lập trình trong engine/vai bị bắt lại, phòng chạy tiếp; xem `stack` trong log |
 | Bị ngắt kết nối bất ngờ | transport | `ratelimit.go` (flood), `session.go` (hàng đợi đầy = "too slow"; ping/pong không trả lời; quá N lần join/rejoin sai), `server.go` (Origin, `connguard.go` giới hạn kết nối theo IP/tổng) |
 | Lộ thông tin (thấy vai người khác, thấy phiếu sói) | engine view | `engine/view_project.go`, `engine/view_audience.go` (`Audience` của sự kiện), `roles/view_*_test.go`; sau đó `transport/ws/jsonenc.go` |
@@ -135,6 +135,8 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |
 | Thời gian chủ phòng được rớt mạng trước khi mất quyền (60s) | `internal/room/join.go` (`hostDisconnectGrace`) |
-| Thêm lệnh cho vai mới | `internal/transport/ws/commands.go` (`commandTable`) + `docs/protocol.md` |
+| Thêm lệnh cho vai mới | file của vai (`Commands()`, kiểu tham số dùng chung ở `roles/wire_args.go`) + một dòng trong `docs/protocol.md` |
+| Thứ tự vai trong danh sách vai (bảng §9b) | file của vai (`CardOrder()`, cách nhau 10 để chèn vai mới) |
+| Thêm vai mới | file mới trong `internal/roles/` (lệnh, thứ tự, lỗi riêng) + chữ trên thẻ ở `i18n/vi.go` + mục hướng dẫn ở `i18n/guide.go` + test + dòng trong `rules.md` và `protocol.md`. Ví dụ đầy đủ: `transport/ws/newrole_test.go` |
 
 Nhớ: luật chơi mới hay mơ hồ thì **hỏi trước**, không tự bịa (xem `CLAUDE.md`). Sau khi sửa, chạy `make fmt test lint`.

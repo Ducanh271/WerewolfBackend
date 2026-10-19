@@ -27,7 +27,9 @@ cmd/server ─► transport/ws ─► room ─► engine ◄─ roles
                                └► store ┘ (store only knows engine.Event)
 ```
 
-`engine` imports nothing from this repo except `i18n`.
+`engine` imports nothing from this repo except `i18n`. Nothing imports a
+specific role: `cmd/server` and `cmd/demo` blank-import `roles` so every role
+registers itself, and the other layers only read `engine.Registry`.
 
 ## Core model (engine)
 
@@ -103,7 +105,18 @@ type MinCopiesRole  interface{ MinCopies() int }             // Villager: at lea
 type CurseSource    interface{ CursesVillager() bool }      // reserves one wolf slot
 type LoveSource     interface{ CreatesLovers() bool }       // Cupid: the phone check also runs on the nights it is called
 type AlwaysCalled   interface{ AlwaysCalled() bool }        // called every night even if not in the role list: the Werewolf pack step
+
+// What a role brings to the wire and the screens, also from its own file (audit C1).
+type CommandRole    interface{ Commands() []CommandSpec }    // its wire commands: engine.WireCommand(name, func(args A, by PlayerID) Command)
+type CardRole       interface{ CardOrder() int }            // its rank in the rules §9b table (10, 20, …): orders the public role list
 ```
+
+A role's command args are a struct with json tags (`roles/wire_args.go` has the
+shared shapes); if it implements `ArgsValidator` the transport checks it after
+decoding (`wolfVote` needs `target`). A role's own errors are declared in its
+file with `engine.NewError(code, message)`: the error carries its wire code.
+The card text stays in `i18n/vi.go`, keyed by role ID, with the other
+user-facing strings.
 
 Game-wide rule limits (player count, wolf percentage, the cursed wolf's reserved slot) live in `internal/engine/limits.go`. Limits that belong to one role (minimum table size, number of copies) live in that role's own file.
 
@@ -155,9 +168,9 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 - Clock is injected (`room.Clock` interface) so timer tests run instantly.
 
 ## Transport
-JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The transport imports `roles` only to build the commands of the command table (one row per command); `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.
+JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The command table is built once by `ws.New` from the engine's core commands (`commands.go`) and every registered role's `Commands()`; `ws.New` returns an error, and the server does not start, when two commands share a name. Error codes come from the errors themselves (`engine.ErrorCode`); the transport keeps only its own codes (`bad_message`...) and the special cases (`pin_locked` with `retryAfter`, `bad_credentials` without detail). The transport never imports `roles`; `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.
 
 ## Extending later
 - Online play: `Settings.Mode` already has `InPerson | Online`, and a room created as `Online` fails with `ErrModeUnsupported` in v1. Adding the mode means a new `SpeakerPolicy` (every phone speaks, instead of one) in `room`, and chat/video in `transport`. The engine does not change.
 - Database: implement `store.EventStore` for Postgres.
-- New role: new file in `internal/roles/` + tests + row in rules.md.
+- New role: new file in `internal/roles/` (ID, team, night call, `Commands()`, `CardOrder()`, its own errors) + its card in `i18n/vi.go` and guide entry in `i18n/guide.go` (user-facing text) + tests (scenarios can use `Night.Act` before the role has verbs of its own) + a row in rules.md and in protocol.md. `transport/ws/newrole_test.go` shows a throwaway role doing exactly this.

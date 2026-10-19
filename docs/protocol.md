@@ -179,8 +179,13 @@ while not the host is `not_host`.
 | `witchHeal` | – | Witch step, heal potion left, someone bitten | `WitchHeal`; not blocked |
 | `witchPoison` | `target` (any living player, herself too) | Witch step, poison potion left | `WitchPoison`; not blocked |
 
-Later roles add their own rows. The server **rejects** any `seed` field and never
-accepts `PhaseTimeout` from a client: seeds and timeouts come from the room.
+The engine's own commands (setup, Chief, day, `newGame`, `hunterShoot`) are
+listed in `transport/ws/commands.go`; every other row is declared by its role
+in its own file (`Commands()`, see `docs/architecture.md` "Roles"). The server
+builds the full table at start-up and does not start if two commands share a
+name. A new role still adds its row here. The server **rejects** any `seed`
+field and never accepts `PhaseTimeout` from a client: seeds and timeouts come
+from the room.
 
 ## Server → client
 
@@ -272,7 +277,9 @@ The `view` object (`engine.View`); absent parts are omitted:
 {"type": "error", "code": "not_your_turn", "message": "…"}
 ```
 `code` is the snake_case name of the engine error (`ErrNotYourTurn` →
-`not_your_turn`). A rejected command changes nothing. Room errors use the same
+`not_your_turn`; one exception, `room.ErrClosed` → `room_closed`). Each error
+carries its code where it is declared (`engine.NewError`), so a role's own
+error needs no table elsewhere. A rejected command changes nothing. Room errors use the same
 scheme (`not_host`, `forbidden`, `disconnected`, `bad_credentials`,
 `pin_locked` with `retryAfter`, `room_not_found`), and so do the transport's own:
 `bad_message`, `unknown_type`, `unknown_command`, `message_too_large`,
