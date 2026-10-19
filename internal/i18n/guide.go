@@ -73,9 +73,9 @@ type GuideEntry struct {
 	Note       string
 }
 
-// RoleGuides is guide-text.md §2 for every role in CardOrder(). Adding a role
-// without adding its entry here fails TestGuide_EveryRegisteredRoleHasAnEntry
-// (internal/roles/guide_test.go).
+// RoleGuides is guide-text.md §2 for every role, in the order of the rules
+// §9b table (engine.CardOrder). Adding a role without adding its entry here
+// fails TestGuide_EveryRegisteredRoleHasAnEntry (internal/roles/guide_test.go).
 func RoleGuides(t GuideTimers) []GuideEntry {
 	return []GuideEntry{
 		{

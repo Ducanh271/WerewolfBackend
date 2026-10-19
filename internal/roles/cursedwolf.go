@@ -50,6 +50,7 @@ func (e PlayerCursed) Narrate(name func(engine.PlayerID) string) (int, string, e
 
 func (cursedWolf) ID() engine.RoleID     { return CursedWolf }
 func (cursedWolf) BaseTeam() engine.Team { return engine.TeamWolves }
+func (cursedWolf) CardOrder() int        { return 20 } // rank in the rules §9b table
 func (cursedWolf) CursesVillager() bool  { return true }
 
 // NightCall: before the Wolf seer and the pack, on the first three nights.

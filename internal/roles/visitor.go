@@ -55,6 +55,7 @@ func (e PlayerVisited) Narrate(name func(engine.PlayerID) string) (int, string, 
 
 func (visitor) ID() engine.RoleID            { return Visitor }
 func (visitor) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (visitor) CardOrder() int               { return 90 } // rank in the rules §9b table
 func (visitor) NightCall() *engine.NightCall { return &engine.NightCall{Order: 1} }
 
 // Commands: the Visitor's visit on the wire.

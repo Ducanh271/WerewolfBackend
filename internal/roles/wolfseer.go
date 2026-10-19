@@ -50,6 +50,7 @@ func (e WolfSeerChecked) Narrate(name func(engine.PlayerID) string) (int, string
 
 func (wolfSeer) ID() engine.RoleID            { return WolfSeer }
 func (wolfSeer) BaseTeam() engine.Team        { return engine.TeamWolves }
+func (wolfSeer) CardOrder() int               { return 30 } // rank in the rules §9b table
 func (wolfSeer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 4} }
 
 // Commands: the Wolf seer's check on the wire.

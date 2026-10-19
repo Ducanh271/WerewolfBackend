@@ -12,6 +12,7 @@ func init() { engine.Register(villager{}) }
 
 func (villager) ID() engine.RoleID                       { return Villager }
 func (villager) BaseTeam() engine.Team                   { return engine.TeamVillage }
+func (villager) CardOrder() int                          { return 40 } // rank in the rules §9b table
 func (villager) NightCall() *engine.NightCall            { return nil }
 func (villager) AllowsMultipleCopies() bool              { return true }
 func (villager) MinCopies() int                          { return 1 } // rules §2: "Dân làng: 1 trở lên"

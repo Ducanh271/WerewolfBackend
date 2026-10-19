@@ -52,6 +52,7 @@ func (e LoversPaired) Narrate(name func(engine.PlayerID) string) (int, string, e
 
 func (cupid) ID() engine.RoleID     { return Cupid }
 func (cupid) BaseTeam() engine.Team { return engine.TeamVillage }
+func (cupid) CardOrder() int        { return 120 } // rank in the rules §9b table
 func (cupid) MinPlayers() int       { return cupidMinPlayers }
 func (cupid) CreatesLovers() bool   { return true }
 

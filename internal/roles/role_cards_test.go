@@ -33,6 +33,28 @@ func TestRoleCards_EveryRoleHasAFullCard_OnItsOwnTeam(t *testing.T) {
 	}
 }
 
+// Rules §9b: the roles are listed in the order of the table, and each role
+// has its own rank there.
+func TestRoleCards_OrderOfTheRulesTable(t *testing.T) {
+	want := []engine.RoleID{Werewolf, CursedWolf, WolfSeer, Villager, Seer, Guard, Witch,
+		Hunter, Visitor, Detective, RustyKnight, Cupid}
+	if got := engine.CardOrder(); !reflect.DeepEqual(got, want) {
+		t.Fatalf("card order %v, want %v", got, want)
+	}
+	ranks := map[int]engine.RoleID{}
+	for id, role := range engine.Registry {
+		r, ok := role.(engine.CardRole)
+		if !ok {
+			t.Errorf("%s has no rank in the rules §9b table", id)
+			continue
+		}
+		if other, dup := ranks[r.CardOrder()]; dup {
+			t.Errorf("%s and %s share the rank %d", id, other, r.CardOrder())
+		}
+		ranks[r.CardOrder()] = id
+	}
+}
+
 // Secrecy: the card on every phone has the same shape, whatever the role: the
 // same fields, all of them set. Before any curse or pair it shows the role's
 // own side.

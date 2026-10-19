@@ -51,6 +51,7 @@ func (e PlayerProtected) Narrate(name func(engine.PlayerID) string) (int, string
 
 func (guard) ID() engine.RoleID            { return Guard }
 func (guard) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (guard) CardOrder() int               { return 60 } // rank in the rules §9b table
 func (guard) NightCall() *engine.NightCall { return &engine.NightCall{Order: 2} }
 
 // Commands: the Guard's choice on the wire.

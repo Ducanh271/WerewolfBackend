@@ -20,6 +20,7 @@ func init() { engine.Register(rustyKnight{}) }
 
 func (rustyKnight) ID() engine.RoleID                       { return RustyKnight }
 func (rustyKnight) BaseTeam() engine.Team                   { return engine.TeamVillage }
+func (rustyKnight) CardOrder() int                          { return 110 } // rank in the rules §9b table
 func (rustyKnight) NightCall() *engine.NightCall            { return nil }
 func (rustyKnight) Evolve(*engine.State, engine.Event) bool { return false }
 func (rustyKnight) Decide(engine.State, engine.Command) ([]engine.Event, bool, error) {

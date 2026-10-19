@@ -45,6 +45,7 @@ func (e SeerChecked) Narrate(name func(engine.PlayerID) string) (int, string, en
 
 func (seer) ID() engine.RoleID            { return Seer }
 func (seer) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (seer) CardOrder() int               { return 50 } // rank in the rules §9b table
 func (seer) NightCall() *engine.NightCall { return &engine.NightCall{Order: 7} }
 
 // Commands: the Seer's check on the wire.

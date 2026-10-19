@@ -71,6 +71,7 @@ func (e WitchPoisoned) Narrate(name func(engine.PlayerID) string) (int, string, 
 
 func (witch) ID() engine.RoleID            { return Witch }
 func (witch) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (witch) CardOrder() int               { return 70 } // rank in the rules §9b table
 func (witch) NightCall() *engine.NightCall { return &engine.NightCall{Order: 6} }
 
 // Commands: the Witch's two potions on the wire.

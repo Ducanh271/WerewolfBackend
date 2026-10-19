@@ -144,13 +144,8 @@ func Side(side string) (team, goal string) {
 	return side, side
 }
 
-// roleCardOrder is the order of the rules §9b table; the public role list of a
-// game follows it. Keys are the role IDs.
-var roleCardOrder = []string{
-	"Werewolf", "CursedWolf", "WolfSeer", "Villager", "Seer", "Guard", "Witch",
-	"Hunter", "Visitor", "Detective", "RustyKnight", "Cupid",
-}
-
+// roleCards is the card text of each role, keyed by role ID. The order of the
+// rules §9b table is the role's own (engine.CardOrder).
 var roleCards = map[string]RoleCard{
 	"Werewolf": {Name: "Sói", Team: teamWolves, Goal: goalWolves,
 		Description: "Mỗi đêm cùng bầy chọn một người để cắn, hoặc chọn không cắn ai. Ban ngày giả làm dân lành."},
@@ -183,9 +178,6 @@ func Card(role string) (RoleCard, bool) {
 	c, ok := roleCards[role]
 	return c, ok
 }
-
-// CardOrder lists the role IDs in the order of the rules §9b table.
-func CardOrder() []string { return append([]string(nil), roleCardOrder...) }
 
 // Kinds of the extra cards (rules §9b "Thẻ phụ").
 const (

@@ -1,10 +1,6 @@
 package engine
 
-import (
-	"sort"
-
-	"masoi/internal/i18n"
-)
+import "masoi/internal/i18n"
 
 // RoleCard is a player's card as a phone shows it (rules §9b): the role's name
 // and description, with the team and goal of the player's CURRENT side (a
@@ -103,30 +99,15 @@ func crossTeamNow(s State) bool {
 }
 
 // roleListCards is the public role list of the game, in the order of the
-// rules §9b table (roles without text last, by ID).
+// rules §9b table (see CardOrder).
 func roleListCards(s State) []RoleListCard {
-	rank := map[RoleID]int{}
-	for i, id := range i18n.CardOrder() {
-		rank[RoleID(id)] = i + 1
-	}
 	var ids []RoleID
 	for id, n := range s.Settings.Roles {
 		if n > 0 {
 			ids = append(ids, id)
 		}
 	}
-	order := func(id RoleID) int {
-		if r, ok := rank[id]; ok {
-			return r
-		}
-		return len(rank) + 1
-	}
-	sort.Slice(ids, func(i, j int) bool {
-		if oi, oj := order(ids[i]), order(ids[j]); oi != oj {
-			return oi < oj
-		}
-		return ids[i] < ids[j]
-	})
+	sortByCard(ids)
 	out := make([]RoleListCard, 0, len(ids))
 	for _, id := range ids {
 		c := roleCard(id, "")

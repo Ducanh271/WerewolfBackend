@@ -15,6 +15,7 @@ func init() { engine.Register(hunter{}) }
 
 func (hunter) ID() engine.RoleID            { return Hunter }
 func (hunter) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (hunter) CardOrder() int               { return 80 } // rank in the rules §9b table
 func (hunter) NightCall() *engine.NightCall { return nil }
 func (hunter) ShootsOnDeath() bool          { return true }
 

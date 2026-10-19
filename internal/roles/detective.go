@@ -51,6 +51,7 @@ func (e DetectiveChecked) Narrate(name func(engine.PlayerID) string) (int, strin
 
 func (detective) ID() engine.RoleID            { return Detective }
 func (detective) BaseTeam() engine.Team        { return engine.TeamVillage }
+func (detective) CardOrder() int               { return 100 } // rank in the rules §9b table
 func (detective) NightCall() *engine.NightCall { return &engine.NightCall{Order: 8} }
 
 // Commands: the Detective's check on the wire.

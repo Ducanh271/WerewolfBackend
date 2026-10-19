@@ -36,6 +36,7 @@ func (WolfVoted) Audience(engine.State) engine.Audience { return engine.Audience
 
 func (werewolf) ID() engine.RoleID            { return Werewolf }
 func (werewolf) BaseTeam() engine.Team        { return engine.TeamWolves }
+func (werewolf) CardOrder() int               { return 10 } // rank in the rules §9b table
 func (werewolf) AllowsMultipleCopies() bool   { return true }
 func (werewolf) AlwaysCalled() bool           { return true }
 func (werewolf) NightCall() *engine.NightCall { return &engine.NightCall{Order: 5} }
