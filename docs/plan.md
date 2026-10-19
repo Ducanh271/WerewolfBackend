@@ -92,6 +92,11 @@ IDs in brackets refer to docs/audit.md.
     - [T2], independent of [R5]: if checking every night is slow only because of the simulation, `checkEvents` runs on every night under `make test` (full) and keeps one night in three under `make test-fast` (`testing.Short()`).
     - Packages: `internal/room` (benchmark), `internal/roles` (sim_test.go); `internal/engine` only if the incremental view is needed.
     - Proof: benchmark numbers in the commit message; `make test` with every-night checks still passes at default `SIM_GAMES=300`.
+    - [x] Step 1 done: `BenchmarkBroadcast` in `internal/room/broadcast_bench_test.go` (`go test ./internal/room -run '^$' -bench Broadcast`). Bot game with 4 rounds of nomination changes per day; measured at a day-1 nomination, the nomination nearest the middle of the log, and the last one. Ryzen 5 5500U, ms per broadcast (ms per view):
+      - 13 players (548 events): start 5.3–5.6 (0.42), middle 15–21 (1.2–1.6), end 9.9–10.1 (0.77).
+      - 30 players (2080 events): start 37–39 (1.2–1.3), middle 251–255 (8.4–8.5), end 162–163 (5.4).
+      - Profile (13p middle): ~95% in `engine.Visible` replaying the log (`State.clone` per event). 13 players is over the 5 ms line, so [R5] stays: step 2 (incremental view) is the next session.
+    - [x] [T2] done: `checkEvents` on every night under `make test`, one night in three under `-short`. Simulation (300 games, `-race`) 42 s → 81 s.
 - [ ] T30e Server sends the text of the notices that today are only flags (`me.turn` blocked / doomed / grief, `me.phoneCheck` cursed / love, the pack's doomed-wolf notice) from i18n, like `roleCard`, so no frontend rewrites them. New fields only, old fields unchanged; update `docs/protocol.md` + golden test. The keys exist (`NightBlocked`, `NightWolfDoomed`, `NightGrief`, `NightPackDoomed`, `Notice*` in `i18n/keys.go`).
   - Also: view ở sảnh có danh sách người trong phòng (id, nickname, đang kết nối hay không, ai là chủ phòng), để màn hình tự đủ thông tin khi vào lại phòng — không bắt frontend gom từ sự kiện PlayerJoined. (Today `players` is empty in the lobby until `setSeats`, see `docs/protocol.md`.)
   - Also: khi ván đã Ended, luật 60 giây mất kết nối áp dụng lại cho chủ phòng (để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới). Rule already in rules §2 "Chủ phòng", marked not built.

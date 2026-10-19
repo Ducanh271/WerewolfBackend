@@ -111,7 +111,9 @@ func playSimGame(seed uint64, used map[string]int) (outcome string, err error) {
 			return "", err
 		}
 		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn {
-			if g.s.Night%3 == 1 { // replaying the log per viewer is costly
+			// Every night under make test; one night in three under -short,
+			// since replaying the log per viewer is costly (audit R5, T2).
+			if !testing.Short() || g.s.Night%3 == 1 {
 				g.checkEvents()
 			} else if living := g.living(); len(living) > 0 { // one viewer each other night, in turn
 				g.checkEventsOf(living[g.s.Night%len(living)])
