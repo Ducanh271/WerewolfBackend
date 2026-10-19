@@ -11,7 +11,10 @@ import (
 type EventStore interface {
 	// Append adds events to the room's log, all or none.
 	Append(room string, events ...engine.Event) error
-	// Load returns a copy of the room's log.
+	// Load returns a copy of the room's log. Nothing calls it in v1 (rooms
+	// live in memory and die with the process); it is the read side for a
+	// persistent store and replay later (docs/architecture.md), and tests read
+	// what the room wrote with it.
 	Load(room string) ([]engine.Event, error)
 }
 

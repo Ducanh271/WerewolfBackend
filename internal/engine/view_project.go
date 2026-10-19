@@ -124,7 +124,9 @@ func publicVotes(s State) PublicVotes {
 func secrets(s State) *Secrets {
 	pending := s.Pending
 	pending.WolfVotes = copyMap(s.Pending.WolfVotes)
-	pending.Blocked = nil // who blocked whom stays inside the engine
+	// Blocked is engine bookkeeping keyed by the blocking role, not a secret
+	// from full viewers: they already see PlayerVisited in the log.
+	pending.Blocked = nil
 	out := &Secrets{Pending: pending}
 	if s.Lovers != nil {
 		lovers := *s.Lovers

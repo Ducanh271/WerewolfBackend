@@ -121,7 +121,11 @@ const (
 	SummaryAborted = "summary.aborted"
 )
 
-// Night notices, shown as text on one player's phone (rules §3).
+// Night notices, shown as text on one player's phone (rules §3). The server
+// does not send the text of NightBlocked, NightWolfDoomed, NightGrief,
+// NightPackDoomed and the Notice* keys yet: the view carries a flag
+// (me.turn, me.phoneCheck in docs/protocol.md) and these are the approved
+// wordings for it, kept here so no client writes its own (plan T30e).
 const (
 	// NightBlocked: the player cannot use their night ability. It never names
 	// who blocked them.

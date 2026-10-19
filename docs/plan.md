@@ -96,6 +96,7 @@ IDs in brackets refer to docs/audit.md.
     - [T2], independent of [R5]: if checking every night is slow only because of the simulation, `checkEvents` runs on every night under `make test` (full) and keeps one night in three under `make test-fast` (`testing.Short()`).
     - Packages: `internal/room` (benchmark), `internal/roles` (sim_test.go); `internal/engine` only if the incremental view is needed.
     - Proof: benchmark numbers in the commit message; `make test` with every-night checks still passes at default `SIM_GAMES=300`.
+- [ ] T30e Server sends the text of the notices that today are only flags (`me.turn` blocked / doomed / grief, `me.phoneCheck` cursed / love, the pack's doomed-wolf notice) from i18n, like `roleCard`, so no frontend rewrites them. New fields only, old fields unchanged; update `docs/protocol.md` + golden test. The keys exist (`NightBlocked`, `NightWolfDoomed`, `NightGrief`, `NightPackDoomed`, `Notice*` in `i18n/keys.go`).
 - [ ] T21 Frontend guide docs/frontend (Opus) — after T23–T30
 - [ ] F1… Phone UI (planned separately), following the secrecy checklist
 - [ ] P1 Playtest with friends, collect feedback, rebalance
