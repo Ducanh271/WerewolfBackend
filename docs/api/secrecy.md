@@ -79,16 +79,42 @@ Rules [§3](../rules.md#3-ban-đêm) "Kiểm tra điện thoại", §7: at this 
 ## Dead players
 
 Rules [§4](../rules.md#4-ban-ngày): a dead player sees every role and
-everything that happens, live.
+everything that happens, live, while the living still sit next to them.
 
-- **At night a dead player's phone stays dark until its owner taps it.**
-  It keeps getting messages while others act (`view.full`, the pack's live
-  votes, every choice), so a screen that changes or lights up beside a
-  sleeping neighbour would show that someone is acting, and when.
-- This holds for the speaker phone too when its player is dead: it still
-  reads the `say` texts aloud, with the screen dark.
-- By day, keep the full view (other players' roles) behind a tap as well:
-  the living sit next to it.
+- **MUST: a dead player's phone shows game information only while its
+  owner presses and holds**, for the whole game, by day and by night;
+  letting go covers it again, like a role card. This is a requirement, not
+  advice: a glance at the phone of a dead neighbour must show nothing.
+  - Game information is everything on the screen that comes from the
+    game: every seat's `role`, `team` and `card` (`view.full`),
+    `view.secrets`, `view.pack` and its live votes, the votes, the night
+    calls, the events list and the announcements' text.
+  - The cover is one plain screen that stays the same whatever arrives:
+    the phone keeps getting messages while others act (the pack's live
+    votes, every choice), so a cover that changes, lights up or animates
+    beside a sleeping neighbour would show that someone is acting, and
+    when. At night it stays dark.
+  - The speaker phone follows the same rule when its player is dead: it
+    still reads the `say` texts aloud, with the screen covered.
+  - It ends with the game: once the phase is `Ended` everybody sees
+    everything ([end](screens/end.md)), so the cover goes away.
+- **Two pickers are shown openly**, without holding: the dead Hunter's shot
+  (`view.me.canShoot`, [hunter](screens/hunter.md)) and the dead Chief
+  naming a successor (`view.succession` is this player,
+  [Chief](screens/chief.md)). The whole table waits on them, so they must be
+  usable without a held finger. The picker shows only the names (and
+  seats) of the players to choose from: no role, team, card or anything
+  else from the full view. The rest of the screen stays behind the hold.
+- **The picker's list MUST be the public "alive" list**: the seats with
+  `alive: true` in `view.players`, the same seats every living phone shows
+  as alive. A player already dead by the rules but not yet announced (for
+  example a wolf the Rusty knight's poison killed, rules §6 "Hiệp sĩ kiếm
+  gỉ", listed in `view.pack.doomed`) shows as alive and stays in the list.
+  Never filter or mark it with what only the dead phone's full view holds
+  (`view.secrets`, `view.pack`, other seats' `role`, hidden events): the
+  whole table is looking at this screen, and a missing or greyed name
+  would tell them who is dead or what role someone holds. The server
+  checks the target itself (`invalid_target`).
 
 ## Announcements
 

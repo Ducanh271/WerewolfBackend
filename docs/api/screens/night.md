@@ -293,7 +293,9 @@ send. Every other phone shows the same night screen as for any step.
 ## Dead players
 
 A dead player sees everything, live (rules §4), so their phone keeps getting
-messages while others act. At night it stays dark until its owner taps it
+messages while others act. It MUST show it only while its owner presses
+and holds, day and night; the rest of the time a plain cover that never
+changes when a message arrives, dark at night
 ([secrecy](../secrecy.md#dead-players)).
 
 <!-- example: server/view.night.dead.json view.phase view.nightCall view.me view.full view.pack -->

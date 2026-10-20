@@ -17,7 +17,9 @@ dead [Hunter](hunter.md) shoots, the win check runs (rules §8; the game may
 
 Deaths are named in seat order, never with cause or role (rules §4). A
 dead player now gets the full view and an `events` message with
-`reset: true`: replace the list, never append it (`../README.md`).
+`reset: true`: replace the list, never append it (`../README.md`). From
+here their phone shows game information only while held
+([secrecy](../secrecy.md#dead-players)).
 
 <!-- example: server/view.dawn.json type deadline view.phase view.night view.chief -->
 ```json

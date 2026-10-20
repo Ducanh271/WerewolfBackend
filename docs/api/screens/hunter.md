@@ -16,9 +16,12 @@ check (rules §8).
 | `deadline` | every phone | end of the choice |
 | `view.players[]` | every phone | the Hunter's seat now carries `role` `Hunter` and his printed `card` (never `team`) |
 
-The Hunter is dead, so his phone has the full view
-([secrecy](../secrecy.md#dead-players)). Every other phone waits in
-silence (rules §6).
+The Hunter is dead, so his phone has the full view, shown only while held
+([secrecy](../secrecy.md#dead-players)). The target picker is the
+exception: it shows openly, with only the names of the seats that have
+`alive: true` in `view.players` (the public list, never filtered with the
+full view) and no roles, because the whole table is watching. Every other
+phone waits in silence (rules §6).
 
 <!-- example: server/view.hunterShot.json type deadline view.phase view.shooter -->
 ```json

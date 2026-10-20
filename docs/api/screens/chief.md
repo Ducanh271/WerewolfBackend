@@ -76,7 +76,10 @@ Events: `ChiefSuccessionStarted` (`former`, `duration`), then
 out.
 
 The dead Chief's phone has the full view (rules §4: the dead see
-everything), so the picker sits on a screen that also shows every role:
+everything), shown only while held. The successor picker is the
+exception: it shows openly, with only the names of the seats that have
+`alive: true` in `view.players` (the public list, never filtered with the
+full view) and no roles, because the whole table is watching:
 [secrecy](../secrecy.md#dead-players).
 
 <!-- example: server/view.chiefSuccession.json type deadline view.phase view.succession -->
