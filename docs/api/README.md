@@ -163,6 +163,14 @@ other refusal. The schemas describe the current server exactly
 (`additionalProperties: false`), so generate types from them, but do not
 use them to reject the server's messages at run time.
 
+## Changes
+
+Changes to the wire within version 1, newest last. The ones made before
+any client existed did not raise `protocolVersion`.
+
+- `SoundConfigured.data.mode` is the mode's name, `"oneSpeaker"` or
+  `"allPhones"` (the strings `configureSound` takes); it was a number.
+
 ## Keeping this folder true
 
 `make api-docs` rewrites `schema/` and `examples/` from the server, and the

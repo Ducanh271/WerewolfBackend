@@ -16,6 +16,7 @@ var (
 	phaseType    = reflect.TypeOf(engine.Phase(0))
 	teamType     = reflect.TypeOf(engine.Team(0))
 	dawnKindType = reflect.TypeOf(engine.DawnKind(0))
+	soundType    = reflect.TypeOf(engine.SoundMode(0))
 
 	// fixedShape lists the types whose fields are all sent, empty ones too:
 	// the phone check notice must have the same keys for everybody, so the
@@ -37,11 +38,11 @@ var (
 // engine.ViewFor and engine.Visible.
 //
 // Field names become camelCase. Durations are milliseconds, times Unix
-// milliseconds, phases and teams their names. Absent parts are omitted: nil
-// pointers, empty maps, lists and strings, empty objects, a zero time, no
-// team. Booleans and numbers always stay, and so do the entries inside a map
-// or list (a nomination of "" means no one). The types in fixedShape keep
-// every field.
+// milliseconds, phases, teams and sound modes their names. Absent parts are
+// omitted: nil pointers, empty maps, lists and strings, empty objects, a zero
+// time, no team. Booleans and numbers always stay, and so do the entries
+// inside a map or list (a nomination of "" means no one). The types in
+// fixedShape keep every field.
 func toTree(v any) any {
 	out, _ := encodeValue(reflect.ValueOf(v), false)
 	return out
@@ -61,6 +62,8 @@ func encodeValue(v reflect.Value, keepEmpty bool) (any, bool) {
 		return engine.Phase(v.Int()).String(), true
 	case dawnKindType:
 		return dawnKindName(engine.DawnKind(v.Int())), true
+	case soundType:
+		return soundModeName(engine.SoundMode(v.Int())), true
 	case teamType:
 		t := engine.Team(v.Int())
 		return t.String(), t != engine.TeamNone
@@ -148,4 +151,14 @@ func dawnKindName(k engine.DawnKind) string {
 	default:
 		return "nobodyDied"
 	}
+}
+
+// soundModeName is the protocol's string for m, the one configureSound takes.
+func soundModeName(m engine.SoundMode) string {
+	for name, mode := range soundModes {
+		if mode == m {
+			return name
+		}
+	}
+	return soundModeName(engine.OneSpeaker)
 }

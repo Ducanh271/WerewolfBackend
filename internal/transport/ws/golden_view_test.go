@@ -122,3 +122,18 @@ func TestGolden_ViewPhoneCheck_NoTextLinesWhenTheRolesAreNotInTheGame(t *testing
 	b, _ := json.Marshal(tree)
 	assertJSON(t, "phoneCheck", b, `{"cursed": false, "love": {"inLove": false, "partner": "", "partnerRole": "", "colour": ""}}`)
 }
+
+// SoundConfigured names the mode with the string configureSound takes.
+func TestGolden_SoundConfigured_ModeIsItsName(t *testing.T) {
+	tests := []struct {
+		mode engine.SoundMode
+		want string
+	}{
+		{engine.OneSpeaker, `{"mode": "oneSpeaker"}`},
+		{engine.AllPhonesSpeak, `{"mode": "allPhones"}`},
+	}
+	for _, tc := range tests {
+		b, _ := json.Marshal(toTree(engine.SoundConfigured{Mode: tc.mode}))
+		assertJSON(t, tc.mode.String(), b, tc.want)
+	}
+}

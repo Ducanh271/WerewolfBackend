@@ -2153,7 +2153,7 @@
       "additionalProperties": false,
       "properties": {
         "mode": {
-          "type": "integer"
+          "$ref": "#/$defs/SoundMode"
         }
       },
       "required": [
@@ -2174,6 +2174,14 @@
       "required": [
         "type",
         "data"
+      ]
+    },
+    "SoundMode": {
+      "description": "Who reads the announcements aloud (rules §1 \"Âm thanh\").",
+      "type": "string",
+      "enum": [
+        "oneSpeaker",
+        "allPhones"
       ]
     },
     "Spared": {

@@ -83,6 +83,8 @@ func (g *schemaGen) treeSchema(t reflect.Type, keepEmpty bool) map[string]any {
 	case dawnKindType:
 		return g.enumDef("DawnKind", t, []string{dawnKindName(engine.DawnDeaths), dawnKindName(engine.DawnProtected), dawnKindName(engine.DawnNobodyDied)},
 			"Which morning announcement was read (rules §4 \"Thông báo buổi sáng\").")
+	case soundType:
+		return g.enumDef("SoundMode", t, soundModeNames(), "Who reads the announcements aloud (rules §1 \"Âm thanh\").")
 	case teamType:
 		return g.enumDef("Team", t, teamNames(), "A team (side).")
 	case playerIDType:
@@ -153,7 +155,7 @@ func (g *schemaGen) structSchema(t reflect.Type) map[string]any {
 // "keep" result of encodeValue for every value), given keepEmpty.
 func alwaysSent(t reflect.Type, keepEmpty bool) bool {
 	switch t {
-	case durationType, phaseType, dawnKindType:
+	case durationType, phaseType, dawnKindType, soundType:
 		return true
 	case timeType, teamType:
 		return false
@@ -197,6 +199,10 @@ func phaseNames() []string {
 		out = append(out, p.String())
 	}
 	return out
+}
+
+func soundModeNames() []string {
+	return []string{soundModeName(engine.OneSpeaker), soundModeName(engine.AllPhonesSpeak)}
 }
 
 func teamNames() []string {

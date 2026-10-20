@@ -1,6 +1,6 @@
 {
   "type": "SoundConfigured",
   "data": {
-    "mode": 0
+    "mode": "oneSpeaker"
   }
 }

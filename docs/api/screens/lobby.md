@@ -209,4 +209,5 @@ The host's setup errors say what to fix: `roles_not_configured`,
 ## Events
 
 `PlayerJoined`, `PlayerLeft`, `PlayerKicked`, `SeatsSet`, `RolesConfigured`,
-`TimersConfigured`, `SoundConfigured`. None has `say`.
+`TimersConfigured`, `SoundConfigured` (`mode`: `oneSpeaker` or `allPhones`).
+None has `say`.
