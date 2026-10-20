@@ -15,10 +15,12 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
-// docs/api/schema and docs/api/examples are generated: `make api-docs` runs
-// TestAPIDocs with -update to rewrite them; without it the test compares and
-// fails on any difference, so the docs cannot drift from the server.
-var updateAPIDocs = flag.Bool("update", false, "rewrite docs/api/schema and docs/api/examples")
+// docs/api/schema and docs/api/examples are generated, and so are the marked
+// regions of the Markdown files in docs/api (apidocs_markdown_test.go):
+// `make api-docs` runs TestAPIDocs with -update to rewrite them; without it
+// the test compares and fails on any difference, so the docs cannot drift
+// from the server.
+var updateAPIDocs = flag.Bool("update", false, "rewrite docs/api/schema, docs/api/examples and the generated regions of docs/api/*.md")
 
 const apiDocsDir = "../../../docs/api"
 
@@ -54,6 +56,7 @@ func TestAPIDocs(t *testing.T) {
 		files["examples/"+name] = b
 	}
 	syncAPIDocs(t, files)
+	syncMarkdown(t, files)
 }
 
 // The events in the source are the events with a schema.

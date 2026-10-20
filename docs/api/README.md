@@ -12,6 +12,7 @@ cites their section numbers.
 | `schema/http.schema.json` | the bodies of the HTTP endpoints | generated from the Go types |
 | `examples/` | real messages from two example games | captured from the real server |
 | this README | connecting, the message envelope, versioning | written by hand |
+| [`errors.md`](errors.md) | every error code, when it comes, the sentence to show | by hand; its tables generated from the server's codes and `internal/i18n` |
 
 The schemas are standard JSON Schema **draft 2020-12**, so the usual tools
 can generate client types from them (`json-schema-to-typescript`, `quicktype`,
@@ -132,7 +133,8 @@ the next `view`/`events`.
   the `speaker` phone reads it aloud, every phone shows it as text.
 - **`error`**: `code` is stable snake_case, `message` is an English detail
   for logs, never for players. `retryAfter` (ms) only with `pin_locked`.
-  Handle codes you do not know.
+  Handle codes you do not know. Every code and the sentence to show:
+  [`errors.md`](errors.md).
 
 ## Limits
 

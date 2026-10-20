@@ -284,6 +284,8 @@ The `view` object (`engine.View`); absent parts are omitted:
 ```json
 {"type": "error", "code": "not_your_turn", "message": "…"}
 ```
+Every code, when it comes and the Vietnamese text a phone shows for it
+(`internal/i18n/errors.go`): `docs/api/errors.md`.
 `code` is the snake_case name of the engine error (`ErrNotYourTurn` →
 `not_your_turn`; one exception, `room.ErrClosed` → `room_closed`). Each error
 carries its code where it is declared (`engine.NewError`), so a role's own
