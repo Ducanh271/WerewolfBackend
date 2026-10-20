@@ -49,6 +49,12 @@ type View struct {
 	// plus the final outcome, Vietnamese text from i18n (audit K4). Set only
 	// once the game has ended, for everybody.
 	Summary []string
+	// Timers is every current phase time (rules §2). Set only in the lobby
+	// and once the game has ended, like Sound, so a phone that comes back
+	// draws the host's setup from the view alone.
+	Timers *Timers
+	// Sound is the current sound mode (rules §1 "Âm thanh"); lobby and end only.
+	Sound *SoundMode
 
 	// Full is true when the viewer sees everything: a dead player, or anybody
 	// once the game is over. Then every PlayerView carries Role and Team and

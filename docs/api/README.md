@@ -170,6 +170,9 @@ any client existed did not raise `protocolVersion`.
 
 - `SoundConfigured.data.mode` is the mode's name, `"oneSpeaker"` or
   `"allPhones"` (the strings `configureSound` takes); it was a number.
+- The lobby and `Ended` views carry `timers` (every phase time now, in ms)
+  and `sound` (the mode), so a phone that comes back draws the host's
+  settings from the view alone.
 
 ## Keeping this folder true
 

@@ -376,6 +376,7 @@
       }
     },
     "seq": 68,
+    "sound": "oneSpeaker",
     "summary": [
       "Lan được bầu làm Trưởng làng.",
       "Đêm 1: Cupid ghép đôi Bình và Giang. Nguyệt Nữ chặn Khoa, Sói tiên tri soi Khoa: Tiên tri. Bảo vệ che chở Hà, Thám tử dò Hà: không có Sói. Sói nguyền nguyền Quân. Sói cắn An, Phù thủy cứu An. Hiệp sĩ kiếm gỉ đầu độc Minh. → Không ai chết.",
@@ -385,6 +386,20 @@
       "Đêm 3: Nguyệt Nữ chặn Nga. Phù thủy đầu độc Quân. → Giang, Quân chết.",
       "Phe Dân chiến thắng, tất cả bầy sói đã bị diệt."
     ],
+    "timers": {
+      "announce": 10000,
+      "chiefElection": 60000,
+      "chiefSuccession": 15000,
+      "day": 300000,
+      "defense": 30000,
+      "hunterShot": 15000,
+      "loversMeet": 10000,
+      "nightStep": 30000,
+      "nominationLock": 10000,
+      "phoneCheck": 5000,
+      "roleView": 30000,
+      "verdict": 30000
+    },
     "votes": {
       "nominations": {
         "p1": "p2",

@@ -24,6 +24,10 @@ func project(s State, v Viewer, summary func() []string) View {
 		Votes:      publicVotes(s),
 		Full:       full,
 	}
+	if s.Phase == PhaseLobby || s.Phase == PhaseEnded {
+		timers, sound := currentTimers(s.Settings), s.Settings.Sound
+		out.Timers, out.Sound = &timers, &sound
+	}
 	if s.Phase == PhaseEnded {
 		out.Winner, out.Draw = copyWinner(s.Winner), s.Winner == nil
 		out.Winners = append([]PlayerID(nil), s.Winners...)

@@ -15,6 +15,7 @@ role, every night's choices, the lovers (rules §4).
 | `view.players[]` | every seat with `role`, `team` and `card` |
 | `view.full`, `view.secrets` | the hidden facts, for a detailed view |
 | `people` (next to `view`) | everybody in the room, who is host, who is connected (for "Ván mới") |
+| `view.timers`, `view.sound` | the settings the next game keeps (`newGame`), as in the [lobby](lobby.md) |
 
 `GameEnded` comes with `say` (the outcome) and `outcome.aborted` tells a
 called-off game from a draw. The events list arrives again with

@@ -93,3 +93,12 @@ func applyTimers(set Settings, t Timers) Settings {
 	}
 	return set
 }
+
+// currentTimers is every phase time of the settings, for the view.
+func currentTimers(set Settings) Timers {
+	var t Timers
+	for _, f := range t.fields(&set) {
+		*f.asked = *f.slot
+	}
+	return t
+}

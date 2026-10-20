@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"masoi/internal/engine"
 	"masoi/internal/room"
@@ -136,4 +137,24 @@ func TestGolden_SoundConfigured_ModeIsItsName(t *testing.T) {
 		b, _ := json.Marshal(toTree(engine.SoundConfigured{Mode: tc.mode}))
 		assertJSON(t, tc.mode.String(), b, tc.want)
 	}
+}
+
+// The lobby (and end) view carries every timer in ms and the sound mode.
+func TestGolden_ViewTimersAndSound(t *testing.T) {
+	timers, sound := engine.Timers{
+		RoleView: 15 * time.Second, ChiefElection: 60 * time.Second, NightStep: 20 * time.Second,
+		PhoneCheck: 10 * time.Second, LoversMeet: 10 * time.Second, Announce: 10 * time.Second,
+		Day: 7 * time.Minute, NominationLock: 10 * time.Second, Defense: 60 * time.Second,
+		Verdict: 20 * time.Second, HunterShot: 15 * time.Second, ChiefSuccession: 20 * time.Second,
+	}, engine.AllPhonesSpeak
+	msg := viewFrame(t, room.Message{View: &room.ViewMsg{View: engine.View{Phase: engine.PhaseLobby, Timers: &timers, Sound: &sound}}})
+	var view map[string]json.RawMessage
+	if err := json.Unmarshal(msg["view"], &view); err != nil {
+		t.Fatal(err)
+	}
+
+	assertJSON(t, "timers", view["timers"], `{"roleView": 15000, "chiefElection": 60000, "nightStep": 20000,
+		"phoneCheck": 10000, "loversMeet": 10000, "announce": 10000, "day": 420000, "nominationLock": 10000,
+		"defense": 60000, "verdict": 20000, "hunterShot": 15000, "chiefSuccession": 20000}`)
+	assertJSON(t, "sound", view["sound"], `"allPhones"`)
 }

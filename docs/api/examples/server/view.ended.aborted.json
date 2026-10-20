@@ -362,12 +362,27 @@
       }
     },
     "seq": 95,
+    "sound": "allPhones",
     "summary": [
       "Hà được bầu làm Trưởng làng.",
       "Đêm 1: Cupid ghép đôi Quân và Nga. Nguyệt Nữ chặn Phúc. → Không ai chết.",
       "Ngày 1: Hà đã bị treo. Hà là Thợ săn. Trưởng làng không kịp chọn người kế nhiệm, danh hiệu đã mất.",
       "Bàn bỏ phiếu huỷ ván. Không có phe thắng."
     ],
+    "timers": {
+      "announce": 10000,
+      "chiefElection": 60000,
+      "chiefSuccession": 15000,
+      "day": 300000,
+      "defense": 30000,
+      "hunterShot": 15000,
+      "loversMeet": 10000,
+      "nightStep": 30000,
+      "nominationLock": 10000,
+      "phoneCheck": 5000,
+      "roleView": 30000,
+      "verdict": 30000
+    },
     "votes": {
       "abortVotes": {
         "p1": true,

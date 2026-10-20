@@ -241,6 +241,21 @@
       "Witch": 1,
       "WolfSeer": 1
     },
-    "seq": 0
+    "seq": 0,
+    "sound": "oneSpeaker",
+    "timers": {
+      "announce": 10000,
+      "chiefElection": 60000,
+      "chiefSuccession": 15000,
+      "day": 300000,
+      "defense": 30000,
+      "hunterShot": 15000,
+      "loversMeet": 10000,
+      "nightStep": 30000,
+      "nominationLock": 10000,
+      "phoneCheck": 5000,
+      "roleView": 30000,
+      "verdict": 30000
+    }
   }
 }

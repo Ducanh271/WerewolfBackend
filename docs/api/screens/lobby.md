@@ -49,13 +49,14 @@ Errors: `room_not_found`, `invalid_nickname`, `nickname_taken`,
 | `view.me.id` | this player; compare with `people[].isHost` to show the host's controls |
 | `view.players` | empty until the host sends `setSeats`, then the seating order (`seat` 1..n, clockwise) |
 | `view.roles`, `view.roleCards` | the public role list once the host configured it, with each role's name, team and description (rules §2 step 3, §9b) |
+| `view.timers` | every phase time now, in ms (the defaults of rules §2 "Thời gian mặc định" until the host changes one): what the host's settings screen shows |
+| `view.sound` | `oneSpeaker` or `allPhones` (rules §1 "Âm thanh") |
 
-The current timers and sound mode are not in the view: the host's screen
-starts from the defaults of rules §2 "Thời gian mặc định" and §1 "Âm thanh"
-and follows `TimersConfigured` (only the times changed, `0` = unchanged)
-and `SoundConfigured` in `events`.
+Draw the settings from `view.timers` and `view.sound` alone, never from
+the defaults plus `TimersConfigured`/`SoundConfigured`: a phone that comes
+back gets the current values in its first `view`.
 
-<!-- example: server/view.lobby.host.json type speaker people[:3] view.phase view.me view.players -->
+<!-- example: server/view.lobby.host.json type speaker people[:3] view.phase view.me view.players view.sound view.timers -->
 ```json
 {
   "type": "view",
@@ -161,7 +162,22 @@ and `SoundConfigured` in `events`.
         "nickname": "Quân",
         "seat": 12
       }
-    ]
+    ],
+    "sound": "oneSpeaker",
+    "timers": {
+      "announce": 10000,
+      "chiefElection": 60000,
+      "chiefSuccession": 15000,
+      "day": 300000,
+      "defense": 30000,
+      "hunterShot": 15000,
+      "loversMeet": 10000,
+      "nightStep": 30000,
+      "nominationLock": 10000,
+      "phoneCheck": 5000,
+      "roleView": 30000,
+      "verdict": 30000
+    }
   }
 }
 ```

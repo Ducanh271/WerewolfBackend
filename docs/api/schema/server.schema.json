@@ -2603,6 +2603,10 @@
           "description": "the dead Hunter choosing whom to shoot, if any",
           "$ref": "#/$defs/PlayerID"
         },
+        "sound": {
+          "description": "Sound is the current sound mode (rules §1 \"Âm thanh\"); lobby and end only.",
+          "$ref": "#/$defs/SoundMode"
+        },
         "succession": {
           "description": "the dead Chief naming a successor, if any",
           "$ref": "#/$defs/PlayerID"
@@ -2613,6 +2617,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "timers": {
+          "description": "Timers is every current phase time (rules §2). Set only in the lobby and once the game has ended, like Sound, so a phone that comes back draws the host's setup from the view alone.",
+          "$ref": "#/$defs/Timers"
         },
         "votes": {
           "$ref": "#/$defs/PublicVotes"
