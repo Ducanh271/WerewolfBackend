@@ -12,7 +12,9 @@ cites their section numbers.
 | `schema/http.schema.json` | the bodies of the HTTP endpoints | generated from the Go types |
 | `examples/` | real messages from two example games | captured from the real server |
 | this README | connecting, the message envelope, versioning | written by hand |
+| [`screens/`](screens/lobby.md) | one guide per screen: the view fields that drive it, the commands it may send, its errors, real messages | by hand; the JSON blocks generated from `examples/` |
 | [`errors.md`](errors.md) | every error code, when it comes, the sentence to show | by hand; its tables generated from the server's codes and `internal/i18n` |
+| [`secrecy.md`](secrecy.md) | what the app must never show, sound, vibrate or animate differently | by hand |
 
 The schemas are standard JSON Schema **draft 2020-12**, so the usual tools
 can generate client types from them (`json-schema-to-typescript`, `quicktype`,
@@ -34,9 +36,13 @@ the table voting to call it off.
 - `examples/events/<Type>.json`: one item of an `events` list per event type.
 - `examples/http/`: request and reply bodies.
 
-Per-screen guides (which fields drive which screen, which commands each phase
-allows), the error code table and the secrecy rules for clients come in a
-later task (T21a-2 in [`../plan.md`](../plan.md)).
+Screens, in the order of a game: [join and lobby](screens/lobby.md),
+[role view](screens/role-view.md), [Chief](screens/chief.md),
+[night](screens/night.md), [phone check](screens/phone-check.md),
+[dawn](screens/dawn.md), [day](screens/day.md),
+[Hunter's shot](screens/hunter.md), [end](screens/end.md), and the
+[rules guide](screens/guide.md). Read [secrecy.md](secrecy.md) before
+designing any of them.
 
 ## Connecting
 
@@ -159,7 +165,9 @@ use them to reject the server's messages at run time.
 
 ## Keeping this folder true
 
-`make api-docs` rewrites `schema/` and `examples/` from the server. The same
+`make api-docs` rewrites `schema/` and `examples/` from the server, and the
+marked regions of the Markdown files here (`<!-- example: ... -->`,
+`<!-- generated: ... -->`): edit around them, never inside. The same
 test runs in `make test` and `make test-fast` without rewriting anything and
 fails when a file here is stale, so a server change cannot leave this folder
 behind. It also checks that the schemas are valid draft 2020-12, that every

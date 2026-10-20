@@ -9,8 +9,10 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
+	"unicode"
 )
 
 // The hand-written Markdown of docs/api holds generated regions, which
@@ -21,7 +23,8 @@ import (
 //	<!-- /example -->
 //
 // is that example file as a JSON block, cut down to the listed paths when
-// there are any (dot separated, from the top of the file), and
+// there are any (dot separated, from the top of the file; a last segment
+// "people[:2]" keeps the first two items of that list), and
 //
 //	<!-- generated: errors -->
 //	...
@@ -116,8 +119,21 @@ func exampleBlock(files map[string][]byte, name string, paths []string) (string,
 	return "```json\n" + string(b) + "```\n", nil
 }
 
+var firstItems = regexp.MustCompile(`^(.+)\[:(\d+)\]$`)
+
 // copyPath copies from[path] into to, creating the objects on the way.
 func copyPath(to, from map[string]any, path []string) error {
+	if len(path) == 1 {
+		if m := firstItems.FindStringSubmatch(path[0]); m != nil {
+			list, ok := from[m[1]].([]any)
+			if !ok {
+				return fmt.Errorf("%q is not a list", m[1])
+			}
+			n, _ := strconv.Atoi(m[2])
+			to[m[1]] = list[:min(n, len(list))]
+			return nil
+		}
+	}
 	v, ok := from[path[0]]
 	if !ok {
 		return fmt.Errorf("no field %q", path[0])
@@ -136,4 +152,66 @@ func copyPath(to, from map[string]any, path []string) error {
 		to[path[0]] = next
 	}
 	return copyPath(next, sub, path[1:])
+}
+
+var (
+	mdLink    = regexp.MustCompile(`\]\(([^)\s#]*\.md)?(#[^)\s]*)?\)`)
+	mdHeading = regexp.MustCompile(`(?m)^#{1,6} (.+)$`)
+)
+
+// Every relative link in docs/api leads to a file that exists, and an
+// anchor to one of its headings (GitHub's slugs).
+func TestAPIDocs_MarkdownLinks(t *testing.T) {
+	_ = filepath.WalkDir(apiDocsDir, func(path string, e fs.DirEntry, err error) error {
+		if err != nil || e.IsDir() || !strings.HasSuffix(path, ".md") {
+			return nil
+		}
+		src, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, m := range mdLink.FindAllStringSubmatch(string(src), -1) {
+			file, anchor := m[1], strings.TrimPrefix(m[2], "#")
+			if file == "" && anchor == "" {
+				continue
+			}
+			target := path
+			if file != "" {
+				target = filepath.Join(filepath.Dir(path), file)
+			}
+			b, err := os.ReadFile(target)
+			if err != nil {
+				t.Errorf("%s: link to missing %s", path, file)
+				continue
+			}
+			if anchor != "" && !hasHeading(b, anchor) {
+				t.Errorf("%s: no heading #%s in %s", path, anchor, target)
+			}
+		}
+		return nil
+	})
+}
+
+func hasHeading(md []byte, anchor string) bool {
+	for _, h := range mdHeading.FindAllStringSubmatch(string(md), -1) {
+		if slug(h[1]) == anchor {
+			return true
+		}
+	}
+	return false
+}
+
+// slug is GitHub's heading anchor: lower case, punctuation dropped, spaces
+// to dashes.
+func slug(heading string) string {
+	var b strings.Builder
+	for _, r := range strings.ToLower(heading) {
+		switch {
+		case r == ' ':
+			b.WriteRune('-')
+		case r == '-' || r == '_' || unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.Is(unicode.Mn, r):
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }

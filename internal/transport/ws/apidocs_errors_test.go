@@ -68,7 +68,7 @@ var errorRows = []errorRow{
 	{"wrong_phase", "", groupGame, "a command the current phase does not take, usually a tap that lands just after the phase or step ended"},
 	{"not_your_turn", "", groupGame, "a night command outside the sender's own step, usually a tap just after it ended. Every player who does not hold the step gets exactly this, whatever their role or state ([secrecy](secrecy.md))"},
 	{"blocked", "", groupGame, "a night command while `me.turn.blocked` (rules §6 \"Nguyệt Nữ\"); the text is `me.turn.notice`'s and never says who"},
-	{"already_acted", "", groupGame, "a second choice where the first is final: Wolf seer, Cupid, Cursed wolf (double tap)"},
+	{"already_acted", "", groupGame, "a second choice on the same step: every night choice is final except the pack's vote (double tap)"},
 	{"ability_used", "", groupGame, "`detectiveCheck` a second time in the game (rules §6 \"Thám tử\")"},
 	{"potion_used", "", groupGame, "`witchHeal` or `witchPoison` with that potion already used (rules §6 \"Phù thủy\")"},
 	{"nothing_to_heal", "", groupGame, "`witchHeal` when nobody is bitten tonight"},

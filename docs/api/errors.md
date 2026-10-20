@@ -81,7 +81,7 @@ Real error frames: `examples/server/error.<code>.json`.
 | `wrong_phase` |  | a command the current phase does not take, usually a tap that lands just after the phase or step ended | Bước này đã qua rồi, bạn không làm được nữa. |
 | `not_your_turn` |  | a night command outside the sender's own step, usually a tap just after it ended. Every player who does not hold the step gets exactly this, whatever their role or state ([secrecy](secrecy.md)) | Chưa tới lượt bạn. |
 | `blocked` |  | a night command while `me.turn.blocked` (rules §6 "Nguyệt Nữ"); the text is `me.turn.notice`'s and never says who | Bạn không thể sử dụng chức năng đêm nay. |
-| `already_acted` |  | a second choice where the first is final: Wolf seer, Cupid, Cursed wolf (double tap) | Bạn đã chọn rồi, không đổi được nữa. |
+| `already_acted` |  | a second choice on the same step: every night choice is final except the pack's vote (double tap) | Bạn đã chọn rồi, không đổi được nữa. |
 | `ability_used` |  | `detectiveCheck` a second time in the game (rules §6 "Thám tử") | Bạn đã dùng chức năng này rồi, mỗi ván chỉ được một lần. |
 | `potion_used` |  | `witchHeal` or `witchPoison` with that potion already used (rules §6 "Phù thủy") | Bình thuốc này đã dùng hết rồi. |
 | `nothing_to_heal` |  | `witchHeal` when nobody is bitten tonight | Đêm nay không có ai bị cắn để cứu. |
