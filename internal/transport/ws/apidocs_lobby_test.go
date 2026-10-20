@@ -100,7 +100,7 @@ func (g *exGame) lobby() {
 	g.send(binh.c, "", map[string]any{"type": "kick", "target": vy.id})
 	g.expectError(binh.c, n, "not_host", "error.not_host")
 	g.send(an.c, "kick", map[string]any{"type": "kick", "target": vy.id})
-	g.expectError(vy.c, len(vy.c.Snapshot().Errors), "disconnected", "error.disconnected.kicked")
+	g.expectError(vy.c, len(vy.c.Snapshot().Errors), "kicked_by_host", "error.kicked_by_host")
 	g.drop(vy)
 	g.sync()
 
@@ -166,7 +166,7 @@ func (g *exGame) rejoins() {
 	g.send(c, "rejoin.pin", map[string]any{"type": "rejoin", "room": exampleRoom, "nickname": "Dũng", "pin": dung.pin})
 	waitWelcome(t, c)
 	g.x.put("server/welcome.rejoin-pin.json", c.Snapshot().Welcome)
-	g.expectError(old, nOld, "disconnected", "error.disconnected.takeover")
+	g.expectError(old, nOld, "replaced_by_other_device", "error.replaced_by_other_device")
 	dung.c, dung.token = c, c.Snapshot().Welcome.Str("token")
 
 	giang := g.phone("Giang")

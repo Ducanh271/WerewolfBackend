@@ -1,5 +1,5 @@
 {
   "type": "error",
-  "code": "disconnected",
+  "code": "replaced_by_other_device",
   "message": "someone joined with your PIN"
 }

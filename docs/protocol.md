@@ -86,9 +86,11 @@ for every caller:
 - A dropped connection never removes the player; reconnect with `rejoin`. A
   rejoin from another phone — by token (another tab, a reload racing the old
   one) or by nickname + PIN — tells the old socket why and closes it right
-  away, without waiting for it to send anything: `error` `disconnected`,
-  message `"disconnected: joined from another device"` for a token takeover,
-  `"someone joined with your PIN"` for a PIN takeover.
+  away, without waiting for it to send anything: `error`
+  `replaced_by_other_device` (message `"disconnected: joined from another
+  device"` for a token takeover, `"someone joined with your PIN"` for a PIN
+  takeover). A message that still reaches the room from a replaced
+  connection is refused with `disconnected`.
 - `welcome` always comes first, before the first `view`.
 
 The secrecy rule: the server never sends `engine.State`. Every outgoing game
@@ -136,8 +138,8 @@ already used in the room is `nickname_taken`.
 place. Creating a room in `Online` mode is refused with `mode_unsupported`.
 
 `kick` (rules §2 "Nickname, rời phòng và đá người") revokes the target's
-token and PIN; their connection, if any, gets `error` `disconnected`, message
-"removed from the lobby by the host", and is closed. Kicking yourself is
+token and PIN; their connection, if any, gets `error` `kicked_by_host`
+(rules §2: the kicked player is told why), and is closed. Kicking yourself is
 `forbidden`; kicking after the deal is `wrong_phase`; a non-host is
 `not_host`. After a `leave` or `kick`, `dealRoles` refuses with the usual
 error if the role list no longer fits the player count.
@@ -286,7 +288,8 @@ The `view` object (`engine.View`); absent parts are omitted:
 `not_your_turn`; one exception, `room.ErrClosed` → `room_closed`). Each error
 carries its code where it is declared (`engine.NewError`), so a role's own
 error needs no table elsewhere. A rejected command changes nothing. Room errors use the same
-scheme (`not_host`, `forbidden`, `disconnected`, `bad_credentials`,
+scheme (`not_host`, `forbidden`, `disconnected`, `replaced_by_other_device`,
+`kicked_by_host`, `bad_credentials`,
 `pin_locked` with `retryAfter`, `room_not_found`), and so do the transport's own:
 `bad_message`, `unknown_type`, `unknown_command`, `message_too_large`,
 `rate_limited`, `not_joined`, `already_joined`, `too_many_connections`. An

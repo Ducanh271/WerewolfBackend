@@ -1,5 +1,5 @@
 {
   "type": "error",
-  "code": "disconnected",
+  "code": "kicked_by_host",
   "message": "removed from the lobby by the host"
 }

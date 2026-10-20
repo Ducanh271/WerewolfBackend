@@ -25,30 +25,28 @@ var (
 )
 
 // disconnectReason is an error passed to Sink.Evict: it matches
-// ErrDisconnected (same error code to the client) but carries a message that
-// says why, for the phone being replaced.
-type disconnectReason struct{ msg string }
+// ErrDisconnected (the connection is closed after it) but has its own wire
+// code and a message that says why, for the phone being replaced or kicked
+// (rules §2: the kicked player is told why).
+type disconnectReason struct{ code, msg string }
 
 func (e disconnectReason) Error() string        { return e.msg }
 func (e disconnectReason) Is(target error) bool { return target == ErrDisconnected }
 
-// Code is ErrDisconnected's wire code.
-func (e disconnectReason) Code() string {
-	code, _ := engine.ErrorCode(ErrDisconnected)
-	return code
-}
+// Code is the reason's wire code.
+func (e disconnectReason) Code() string { return e.code }
 
-// Reasons a connection is evicted by a later rejoin (rules §2).
+// Reasons a connection is evicted (rules §2).
 var (
 	// ReasonAnotherDevice is for a rejoin by token: the same player's secret
 	// code was used from a different connection (two tabs, a reload racing
 	// an old tab, a borrowed phone).
-	ReasonAnotherDevice error = disconnectReason{"disconnected: joined from another device"}
+	ReasonAnotherDevice error = disconnectReason{"replaced_by_other_device", "disconnected: joined from another device"}
 	// ReasonPINTakenOver is for a rejoin by nickname + PIN: another phone
 	// just proved it has the PIN and took the seat.
-	ReasonPINTakenOver error = disconnectReason{"someone joined with your PIN"}
+	ReasonPINTakenOver error = disconnectReason{"replaced_by_other_device", "someone joined with your PIN"}
 	// ReasonKicked is for a player the host removed from the lobby (audit K2).
-	ReasonKicked error = disconnectReason{"removed from the lobby by the host"}
+	ReasonKicked error = disconnectReason{"kicked_by_host", "removed from the lobby by the host"}
 )
 
 // Config wires a room. Only Code is required; the rest default to the real

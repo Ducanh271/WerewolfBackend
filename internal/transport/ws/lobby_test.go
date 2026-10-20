@@ -47,8 +47,8 @@ func TestLobby_KickPlayer(t *testing.T) {
 	if !stranger.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.Closed }) {
 		t.Fatalf("the kicked phone was never closed: %v", stranger.Snapshot())
 	}
-	if got := stranger.Snapshot().Errors[len(stranger.Snapshot().Errors)-1].Str("code"); got != "disconnected" {
-		t.Fatalf("code = %q, want disconnected", got)
+	if got := stranger.Snapshot().Errors[len(stranger.Snapshot().Errors)-1].Str("code"); got != "kicked_by_host" {
+		t.Fatalf("code = %q, want kicked_by_host", got)
 	}
 }
 

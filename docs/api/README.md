@@ -77,9 +77,11 @@ seconds of opening it.
 reconnect and `rejoin` with the token, with a growing delay between tries.
 Stop reconnecting and show the join screen when:
 
-- the socket got `error` `disconnected` before closing: another phone took
-  this player over (`examples/server/error.disconnected.takeover.json`) or
-  the host kicked them from the lobby (`error.disconnected.kicked.json`);
+- the socket got `error` `replaced_by_other_device` before closing: another
+  phone took this player over
+  (`examples/server/error.replaced_by_other_device.json`);
+- the socket got `error` `kicked_by_host`: the host removed them from the
+  lobby (`error.kicked_by_host.json`);
 - a token `rejoin` gets `bad_credentials` (the token was replaced or
   revoked) or `room_not_found` (the room expired).
 

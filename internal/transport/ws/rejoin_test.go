@@ -59,10 +59,10 @@ func TestRejoin_OtherPhoneWithNicknameAndPINGetsANewTokenAndTheOldPhoneIsOut(t *
 		t.Fatalf("new token = %q, old %q", nw.Str("token"), w.Str("token"))
 	}
 
-	// The old phone can no longer act, and is closed.
+	// The old phone is told why, can no longer act, and is closed.
 	e.send(old, cmd("nominate", map[string]any{"target": "p2"}))
-	if got := e.waitError(old, 1); got != "disconnected" {
-		t.Fatalf("old phone: code = %q, want disconnected", got)
+	if got := e.waitError(old, 1); got != "replaced_by_other_device" {
+		t.Fatalf("old phone: code = %q, want replaced_by_other_device", got)
 	}
 	select {
 	case <-old.Done():
@@ -113,8 +113,8 @@ func TestRejoin_TokenFromAnotherTabClosesTheOldOneWithoutItSendingAnything(t *te
 	if !tab1.Wait(ctx(t), func(s wsclient.Snapshot) bool { return len(s.Errors) >= 1 }) {
 		t.Fatalf("old tab got no error: %v", tab1.Snapshot().Frames)
 	}
-	if got := tab1.Snapshot().Errors[0].Str("code"); got != "disconnected" {
-		t.Fatalf("old tab: code = %q, want disconnected", got)
+	if got := tab1.Snapshot().Errors[0].Str("code"); got != "replaced_by_other_device" {
+		t.Fatalf("old tab: code = %q, want replaced_by_other_device", got)
 	}
 	if got := tab1.Snapshot().Errors[0].Str("message"); got != "disconnected: joined from another device" {
 		t.Fatalf("old tab: message = %q", got)

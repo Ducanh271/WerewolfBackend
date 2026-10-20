@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"errors"
 	"testing"
 
 	"masoi/internal/engine"
@@ -34,12 +35,22 @@ func TestErrors_RoomPanic_IsInternal(t *testing.T) {
 	}
 }
 
-// A phone replaced by a later rejoin, or kicked, is told "disconnected" with
-// the reason as the message.
-func TestErrors_DisconnectReasonsKeepTheDisconnectedCode(t *testing.T) {
-	for _, reason := range []error{room.ReasonAnotherDevice, room.ReasonPINTakenOver, room.ReasonKicked} {
-		if m := toErrorMsg(reason); m.Code != "disconnected" || m.Message != reason.Error() {
-			t.Errorf("%v: got %+v, want code disconnected and the reason", reason, m)
+// A phone replaced by a later rejoin, or kicked, is told why with its own
+// code, and the reason still closes the connection like ErrDisconnected.
+func TestErrors_DisconnectReasonsHaveTheirOwnCodes(t *testing.T) {
+	for _, tc := range []struct {
+		reason error
+		code   string
+	}{
+		{room.ReasonAnotherDevice, "replaced_by_other_device"},
+		{room.ReasonPINTakenOver, "replaced_by_other_device"},
+		{room.ReasonKicked, "kicked_by_host"},
+	} {
+		if m := toErrorMsg(tc.reason); m.Code != tc.code || m.Message != tc.reason.Error() {
+			t.Errorf("%v: got %+v, want code %s and the reason", tc.reason, m, tc.code)
+		}
+		if !errors.Is(tc.reason, room.ErrDisconnected) {
+			t.Errorf("%v: must still match ErrDisconnected", tc.reason)
 		}
 	}
 }
