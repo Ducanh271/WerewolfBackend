@@ -195,7 +195,7 @@ Ngoài nói chuyện trực tiếp, phòng có **một kênh nhắn tin chung**;
 - **Chỉ người trên giàn** được nhắn lúc bào chữa.
 - **Không ai** được nhắn lúc vote giết/tha, Thợ săn bắn, Trưởng làng đã chết chọn người kế nhiệm, thông báo buổi sáng, chờ sang đêm và ban đêm; cả ở sảnh chờ, lúc xem vai và sau khi hết ván.
 - **Người chết** đọc được nhưng không nhắn được. Hết ván, ai cũng đọc được toàn bộ.
-- Mỗi tin tối đa **200 ký tự**, đếm sau khi đã chuẩn hoá. Mỗi người **1 tin/2 giây**, dồn tối đa 5 tin.
+- Mỗi tin tối đa **200 ký tự**, đếm sau khi đã chuẩn hoá. Mỗi người **1 tin/2 giây**, dồn tối đa 5 tin. Mỗi ván tối đa **2000 tin**; đủ rồi thì không ai nhắn thêm được cho đến ván sau.
 - Xuống dòng được đổi thành một dấu cách; ký tự vô hình bị bỏ, emoji vẫn giữ. Tin không còn gì nhìn thấy được thì bị từ chối.
 
 ## 5. Vai phe Sói
