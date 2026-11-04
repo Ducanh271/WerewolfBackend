@@ -8,8 +8,8 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 
 ```
 điện thoại ──WebSocket──► transport/ws ──► room ──► engine ◄── roles
-                              │              │         │
-                              │              └► store  └► i18n (câu tiếng Việt)
+                                             ▲│         │
+                              bot ───────────┘└► store  └► i18n (câu tiếng Việt)
                          cmd/server, cmd/demo (khởi động, nối dây)
 ```
 
@@ -19,6 +19,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | roles | `internal/roles` | Mỗi vai một file (Sói, Dân, Bảo vệ, Tiên tri...). Tự đăng ký vào engine, kèm lệnh gửi qua mạng (`Commands()`), thứ tự trong danh sách vai (`CardOrder()`) và lỗi riêng (`engine.NewError`). Không tầng nào khác import một vai cụ thể. |
 | room | `internal/room` | Một phòng = một goroutine: nhận lệnh lần lượt, hẹn giờ, phát view, vào lại phòng (token/PIN), chọn máy làm loa (`SpeakerPolicy`: `InPersonSpeaker` một máy, nhớ máy đang đọc; `AllPhones` mọi máy, chọn bằng lệnh `configureSound`). `Manager` tạo phòng theo mã và xoá phòng bỏ không 2 giờ. |
 | transport | `internal/transport/ws` | HTTP + WebSocket: đọc JSON, kiểm tra, đổi thành lệnh; đổi view thành JSON. Không có luật chơi. `wsclient/` là "điện thoại giả" cho test và demo. |
+| bot | `internal/bot` (có từ T32b) | Bot lấp ghế trống (rules §2 "Bot"). Chỉ thấy đúng view của ghế mình, gửi lệnh như một điện thoại. `room` không import `bot`: `cmd/server` truyền vào một interface để tạo bot. |
 | store | `internal/store` | Kho sự kiện trong RAM (sau này đổi sang database mà không sửa chỗ khác). |
 | i18n | `internal/i18n` | Câu đọc tiếng Việt (`vi.go`) và mã câu (`keys.go`). |
 | cmd | `cmd/server`, `cmd/demo` | `main`: ghép các tầng lại. |
@@ -141,6 +142,8 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Số ký tự mã phòng, bảng chữ, thời gian phòng bỏ không | `internal/room/manager.go` (`CodeLength`, `CodeAlphabet`, `IdleTimeout`) |
 | Giới hạn tin nhắn (4 KB, 10 tin/giây, dồn 20, flood 3s, chờ tin đầu 10s, tối đa 8 lần join/rejoin sai) | `internal/transport/ws/config.go` (các hằng `Default...`) |
 | Giới hạn nhắn tin (200 ký tự; 1 tin/2 giây, dồn 5; 2000 tin mỗi ván; luật: rules §4 "Nhắn tin") | `internal/engine/chat.go` (`MaxChatLen`), `internal/room/chat_limit.go` (`ChatInterval`, `ChatBurst`, `ChatMaxPerGame`) |
+| Tỉ lệ bot so với người thật (mặc định 1 bot mỗi người thật; luật: rules §2 "Bot") | `internal/room` (`MaxBotsPerHuman`, có từ T32c) |
+| Khoảng chờ của bot, hạn chờ của sói bot (2–8 giây, tối đa 1/3 thời gian còn lại; 60%; luật: rules §2 "Bot") | `internal/bot` (`ActionDelayMin`, `ActionDelayMax`, `PackWaitPercent`, có từ T32b) |
 | Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |

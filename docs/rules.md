@@ -7,7 +7,7 @@ File này là bản gốc duy nhất của luật chơi. Tài liệu khác và c
 App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi. **Không có thiết bị quản trò riêng**: mỗi người chỉ dùng điện thoại của mình.
 
 - **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày. Mọi điện thoại đều hiện phần công khai (lượt gọi đêm, đếm giờ, lời công bố, phiếu ban ngày) bằng chữ.
-- **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa: máy đang đọc giữ vai loa cho tới khi chính máy đó mất kết nối; chủ phòng quay lại giữa lúc máy khác đang đọc **không** lấy lại vai loa ngay, chỉ chuyển tiếp khi máy đang đọc mất kết nối.
+- **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa: máy đang đọc giữ vai loa cho tới khi chính máy đó mất kết nối; chủ phòng quay lại giữa lúc máy khác đang đọc **không** lấy lại vai loa ngay, chỉ chuyển tiếp khi máy đang đọc mất kết nối. Bot không bao giờ làm loa (§2 "Bot").
 - **Âm thanh**: chủ phòng chọn trước khi chia vai, một trong hai: **Một máy làm loa** (mặc định, chơi trực tiếp — như mô tả trên) hoặc **Mọi máy cùng phát** (mọi điện thoại đều đọc; dành cho chơi online sau này). Thông báo công khai luôn được gửi dạng chữ cho mọi máy ở cả hai chế độ; tuỳ chọn chỉ quyết định máy nào phát thêm bằng giọng nói.
 - **Ban ngày** mọi người nói chuyện trực tiếp; app lo đếm giờ, đếm phiếu, công bố và có thêm một kênh nhắn tin chung (mục 4 "Nhắn tin").
 
@@ -23,7 +23,7 @@ Nguyên tắc chung: **không lật vai khi chết**. Ngoại lệ duy nhất l�
 
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước dưới; chủ phòng cũng là người chơi (xem "Chủ phòng"). Các nút thiết lập (xếp chỗ, chọn vai, chỉnh giờ, chọn âm thanh, chia vai, đá người) **chỉ có đến hết bước chia vai**. Từ lúc chia vai, chủ phòng chơi như mọi người, chỉ còn quyền chuyển chức (bất cứ lúc nào) và bắt đầu ván mới khi ván đã kết thúc (§8c). Máy làm loa chọn theo §1, không đổi khi chuyển chức. Các bước:
+Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước dưới; chủ phòng cũng là người chơi (xem "Chủ phòng"). Các nút thiết lập (xếp chỗ, chọn vai, chỉnh giờ, chọn âm thanh, chia vai, đá người, thêm hoặc bớt bot) **chỉ có đến hết bước chia vai**. Từ lúc chia vai, chủ phòng chơi như mọi người, chỉ còn quyền chuyển chức (bất cứ lúc nào) và bắt đầu ván mới khi ván đã kết thúc (§8c). Máy làm loa chọn theo §1, không đổi khi chuyển chức. Các bước:
 
 1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
 2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
@@ -34,8 +34,8 @@ Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước
 ### Chủ phòng
 
 - Người **tạo phòng** là chủ phòng. Lúc tạo phòng, điện thoại đó nhận một **mã chủ phòng** bí mật; lần vào phòng đầu tiên của người tạo mang mã này để nhận chức. Mã chỉ có tác dụng **một lần**: dùng lại sau đó, kể cả khi chức đã sang người khác, không được gì.
-- Chủ phòng **chuyển chức** được cho bất kỳ ai đang ở trong phòng, bất cứ lúc nào, **kể cả giữa ván**, không cần bỏ phiếu và không cần người nhận đồng ý, để bàn xếp sẵn ai điều khiển ván sau. Không chuyển cho chính mình được.
-- **Trước khi chia vai**, chủ phòng mất chức khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối ngắn hơn rồi vào lại thì không đổi gì. Khi đó chức chuyển cho người **vào phòng sớm nhất** trong số người còn kết nối; không còn ai kết nối thì người kết nối lại đầu tiên nhận chức. **Từ lúc chia vai đến khi ván kết thúc**, mất kết nối không làm mất chức.
+- Chủ phòng **chuyển chức** được cho bất kỳ ai đang ở trong phòng (trừ bot), bất cứ lúc nào, **kể cả giữa ván**, không cần bỏ phiếu và không cần người nhận đồng ý, để bàn xếp sẵn ai điều khiển ván sau. Không chuyển cho chính mình được.
+- **Trước khi chia vai**, chủ phòng mất chức khi bấm rời phòng, hoặc khi mất kết nối liên tục quá **60 giây**; mất kết nối ngắn hơn rồi vào lại thì không đổi gì. Khi đó chức chuyển cho người **vào phòng sớm nhất** trong số người còn kết nối (không tính bot); không còn ai kết nối thì người kết nối lại đầu tiên nhận chức. **Từ lúc chia vai đến khi ván kết thúc**, mất kết nối không làm mất chức.
 - Khi ván đã kết thúc, luật 60 giây mất kết nối ở trên áp dụng lại cho chủ phòng, để bàn không bị kẹt nếu điện thoại chủ phòng chết giữa ván và không ai bấm được Ván mới. 60 giây tính từ **lúc mất kết nối**, không phải từ lúc ván kết thúc: chủ phòng đã mất kết nối quá 60 giây thì ván vừa kết thúc là chức chuyển ngay; mất kết nối 10 giây trước khi ván kết thúc thì còn 50 giây để vào lại.
 - Người đã mất chức (do chuyển chức hay do tự chuyển ở trên) quay lại phòng **không lấy lại chức**. Chỉ chủ phòng hiện tại chuyển lại cho họ được.
 
@@ -114,6 +114,46 @@ Có hai cách vào lại:
 
 Nhập sai PIN **5 lần** thì việc vào lại bằng PIN cho nickname đó bị **khoá 1 phút**. Cách vào lại cùng máy bằng mã bí mật không bị khoá. Chỉ gõ nickname mà không có mã bí mật hay PIN thì không vào lại được.
 
+### Bot
+
+Bot lấp ghế trống để bàn đủ người. Bot chơi đúng bằng những gì điện thoại của một người chơi được thấy và những lệnh người chơi được gửi, không biết gì hơn. Có hai loại: **bot luật cố định** và **bot LLM** (T32d).
+
+**Thêm và bớt**
+
+- Chỉ **chủ phòng** thêm hoặc bớt bot, và chỉ **ở sảnh chờ** (trước khi chia vai, kể cả khi chia lại cho ván mới, §8c).
+- Bớt bot giống đá người: chỉ bỏ ghế của bot đó, các ghế khác giữ thứ tự, danh sách vai giữ nguyên.
+- Bot tính như một người ở mọi giới hạn: 5–30 người, giới hạn số sói, số người tối thiểu của Thám tử và Cupid.
+- **Số bot không vượt quá số người thật** (mỗi người thật 1 bot; bàn 5 người cần ít nhất 3 người thật). Kiểm tra lúc chia vai: sai thì app không cho chia và nói lý do, như khi danh sách vai không hợp. Tỉ lệ này là một hằng số dễ đổi (`docs/huong-dan-du-an.md` mục 6).
+
+**Hiển thị**
+
+- **Mọi máy** thấy ghế đó là bot, suốt ván. Tên tự đặt là "Bot 1", "Bot 2"…; số nào đã có người dùng thì nhảy sang số sau. Chủ phòng xếp ghế cho bot như mọi người.
+- Chủ phòng không xem được vai của bot và không điều khiển được bot.
+- Bot chỉ đọc **tin nhắn gõ** (§4 "Nhắn tin"), không nghe được cả bàn nói. Bot luật cố định không nhắn tin.
+
+**Chức và kết nối**
+
+- Bot không có mã bí mật hay PIN. Bot không bao giờ là chủ phòng hay máy làm loa, không ai chuyển chức cho bot được, và khi chức hay vai loa tự chuyển thì bot không được tính là người còn kết nối.
+- **Không còn người thật nào trong phòng** (đã rời hoặc bị đá hết): phòng bị xoá ngay.
+- **Mọi người thật đều mất kết nối**: phòng vẫn giữ như thường, nhưng lệnh của bot không tính là hoạt động, nên phòng vẫn hết hạn theo thời gian bỏ không.
+
+**Mọi bot đều phải theo**
+
+- **Bỏ qua ban ngày**: bot bấm khi **hơn 66% người thật còn sống** đã bấm, và bỏ bấm khi tỉ lệ đó tụt xuống. Không còn người thật nào sống thì bot bấm ngay để ván tự chạy đến hết.
+- **Huỷ ván** (§8b): bot đồng ý khi **từ 2/3 người thật còn sống** đã đồng ý, và rút khi tỉ lệ đó tụt xuống.
+- **Đề cử**: bot luôn có lựa chọn, để đếm ngược chốt chạy được, và không đổi phiếu liên tục làm đếm ngược chạy lại mãi.
+- **Khoảng chờ**: trước mỗi lệnh, bot chờ ngẫu nhiên **2–8 giây**, nhưng không quá **1/3 thời gian còn lại** của bước đó. Khoảng chờ giống nhau ở mọi vai, để thời điểm bấm không lộ vai.
+
+**Riêng bot luật cố định** (bot LLM được tự quyết các việc này)
+
+- **Bầu Trưởng làng**: bot chỉ bầu cho người thật. Bot vẫn làm Trưởng làng được (do người bầu hoặc do bốc ngẫu nhiên, §7b), phiếu x2 như thường.
+- **Kế nhiệm**: bot Trưởng làng chết thì chọn ngẫu nhiên một người thật còn sống; hết người thật mới chọn bot.
+- **Đề cử**: bot chọn “không ai” từ đầu ngày và không đổi trong lúc đếm ngược chốt.
+- **Bầy có sói người được vote**: bot bầu theo mục tiêu nhiều phiếu nhất trong phiếu của sói người (“Không cắn ai” cũng là một mục tiêu); hoà thì theo mục tiêu được chọn sớm nhất. Sói người đổi phiếu thì bot đổi theo.
+- **Hạn chờ**: hết **60% thời gian** lượt bầy mà chưa sói người nào bầu, bot chọn như khi cả bầy là bot. Sói người bầu sau đó thì bot vẫn đổi theo. Lượt đêm luôn kết thúc khi hết giờ nên không bao giờ kẹt; hạn chờ chỉ để bầy không mất lượt cắn khi sói người vắng mặt hoặc bị chặn.
+- **Bầy toàn bot**: bot bầu đầu tiên chọn ngẫu nhiên một người còn sống không thuộc bầy; các bot khác theo phiếu đến sớm nhất đó.
+- Luật "quá nửa số phiếu" (§5) không đổi: bầy 1 người + 1 bot mà người không bầu thì một phiếu của bot chưa đủ, đêm đó không ai bị cắn.
+
 ## 3. Ban đêm
 
 Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện thoại cũng hiện chữ); vai được gọi mở mắt, thao tác trên điện thoại của mình rồi nhắm lại. App gom mọi lựa chọn và **chỉ tính kết quả lúc trời sáng**.
@@ -173,7 +213,7 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 ### Thảo luận và xử trảm
 
 1. **Thảo luận và đề cử** dùng chung đồng hồ ban ngày **7 phút**. Đồng hồ chỉ dừng trong lúc bào chữa và vote giết hay tha.
-    - **Nút bỏ qua**: mỗi người bấm một phiếu (Trưởng làng **không** x2), bật tắt được. Nếu số người bấm **lớn hơn 66%** số người còn sống thì phần thời gian còn lại bị bỏ, chuyển sang đêm. Chỉ khi đề cử **một người** thì bỏ qua của người đó mới tự huỷ; chọn “không ai” thì giữ nguyên.
+    - **Nút bỏ qua**: mỗi người bấm một phiếu (Trưởng làng **không** x2), bật tắt được. Nếu số người bấm **lớn hơn 66%** số người còn sống thì phần thời gian còn lại bị bỏ, chuyển sang đêm. Chỉ khi đề cử **một người** thì bỏ qua của người đó mới tự huỷ; chọn “không ai” thì giữ nguyên. Bot bấm theo người thật (§2 "Bot").
 2. **Đề cử**: mỗi người còn sống chọn một người khác để đưa lên giàn (không được tự đề cử mình), hoặc chọn “không ai”. Mọi người được đổi lựa chọn cho đến khi đề cử đóng.
     - Khi **mọi người còn sống** đã chọn một người hoặc “không ai” và có ít nhất một người được đề cử, bắt đầu **đếm ngược chốt 10 giây**. Trong lúc đếm, ai cũng đổi được lựa chọn, và **mỗi lần có người đổi thì đếm lại từ đầu**. Hết 10 giây không ai đổi thì chốt: người nhiều phiếu nhất lên giàn, kể cả khi số người không đề cử nhiều hơn. Đồng hồ ban ngày **không dừng** trong lúc đếm ngược (nếu không, đổi phiếu liên tục sẽ kéo dài ban ngày mãi); nếu nó hết giữa chừng thì người dẫn đầu lên giàn ngay theo luật hết giờ (bước 6). Nút bỏ qua vẫn bấm được.
     - Nếu mọi người đều chọn “không ai” (hoặc ai đổi khiến không còn ai được đề cử) thì không đếm ngược, thảo luận tiếp. Về sau có người đổi sang đề cử một người thì đếm ngược chốt bắt đầu.
@@ -320,6 +360,7 @@ Trong cặp khác phe, con sói **vẫn dậy cắn cùng bầy** như thường
 - Nếu **không ai bầu**, server chọn ngẫu nhiên **một người trong tất cả người chơi**, giống trường hợp hòa: lệnh nhận `Seed`, tầng room sinh bằng `crypto/rand`, không bao giờ lấy từ client.
 - Phiếu của Trưởng làng tính **x2** ở cả đề cử ban ngày lẫn vote giết/tha (cả phiếu giết lẫn phiếu tha). Trưởng làng đang bị xử trảm mất quyền vote như mọi người.
 - Khi Trưởng làng chết (vì bất kỳ lý do gì), họ có **15 giây** chọn một người còn sống kế nhiệm, thông báo công khai. Hết giờ thì danh hiệu mất. Nếu Thợ săn chết cùng lúc, Thợ săn bắn trước, rồi Trưởng làng chuyển danh hiệu.
+- Bot bầu, giữ và truyền danh hiệu theo §2 "Bot".
 
 ## 8. Điều kiện thắng
 
@@ -354,7 +395,7 @@ Làm rõ:
 
 Chỉ người chơi **còn sống** mới được bỏ phiếu huỷ ván, và chỉ vào **ban ngày** (lúc thảo luận, đề cử, bào chữa, giết-tha, hoặc lúc trời vừa quyết xong chờ sang đêm) — không được vào lúc ban đêm, lúc xem vai, hay lúc bầu Trưởng làng, để việc bỏ phiếu không lộ ra ai đang thức. Chủ phòng không có quyền huỷ một mình, và không ai có quyền huỷ riêng ngoài phiếu này.
 
-Phiếu huỷ qua khi số phiếu đồng ý đạt **từ 2/3 số người còn sống** trở lên, tính theo số nguyên: `đồng ý × 3 ≥ số người còn sống × 2` (3 người sống → cần 2; 4 → 3; 5 → 4; 6 → 4; 9 → 6). Mỗi lần có phiếu mới, hoặc có người chết trong ngày đó (bị treo, bị Thợ săn bắn), tỷ lệ được tính lại trên số người còn sống **lúc đó**: có người chết cũng có thể khiến phiếu đủ mà không cần ai bỏ phiếu thêm. Phiếu huỷ bị xoá khi sang đêm (không giữ qua ngày sau).
+Phiếu huỷ qua khi số phiếu đồng ý đạt **từ 2/3 số người còn sống** trở lên, tính theo số nguyên: `đồng ý × 3 ≥ số người còn sống × 2` (3 người sống → cần 2; 4 → 3; 5 → 4; 6 → 4; 9 → 6). Mỗi lần có phiếu mới, hoặc có người chết trong ngày đó (bị treo, bị Thợ săn bắn), tỷ lệ được tính lại trên số người còn sống **lúc đó**: có người chết cũng có thể khiến phiếu đủ mà không cần ai bỏ phiếu thêm. Phiếu huỷ bị xoá khi sang đêm (không giữ qua ngày sau). Bot đồng ý theo người thật (§2 "Bot").
 
 Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng hồ hay bước đang chạy, ai vẫn phải thao tác đúng lượt của mình trong khi phiếu đang diễn ra. Khi phiếu qua, ván kết thúc ngay (không có phe thắng), giống lúc ván kết thúc bình thường (mục 4): **mọi người xem được toàn bộ vai và diễn biến**. Bàn chỉ trở về sảnh chờ khi chủ phòng bấm bắt đầu ván mới (mục 8c), lúc đó ghế và danh sách vai được giữ nguyên.
 
@@ -362,7 +403,7 @@ Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng h�
 
 ## 8c. Ván mới trong cùng phòng
 
-Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu. Khung nhắn tin của ván mới trống: tin của ván cũ không hiện lại.
+Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu. Khung nhắn tin của ván mới trống: tin của ván cũ không hiện lại. Bot cũng ở lại, và chủ phòng thêm hoặc bớt được trước khi chia lại.
 
 (Cài đặt ở T27b; mục này chỉ chốt luật.)
 
@@ -431,7 +472,7 @@ Mục tiêu theo phe: Dân thắng khi không còn con Sói nào. Sói thắng k
 ## 10. Ngoài phạm vi bản đầu
 
 - **Chơi online hoàn toàn**: ghép phòng, xử lý rớt mạng, server kiểm soát toàn bộ thông tin bí mật.
-- **Bot chơi thay** người rời ván giữa chừng.
+- **Bot chơi thay** người rời ván giữa chừng. Bot lấp ghế trống từ sảnh thì có (§2 "Bot").
 - **Luật lật vai khi chết**: sẽ cải tiến sau.
 - **Điểm cân bằng và bộ vai gợi ý** theo số người, cảnh báo khi ván lệch phe.
 - **AI qua camera** phát hiện mở mắt ban đêm; cần sự đồng ý rõ ràng của người chơi.

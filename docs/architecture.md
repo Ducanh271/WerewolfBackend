@@ -17,14 +17,15 @@ internal/i18n/         Vietnamese announcement strings
 internal/room/         room lifecycle: join/rejoin, timers, command queue per room, broadcasting views
 internal/store/        EventStore interface + in-memory implementation
 internal/transport/ws/ WebSocket handler, message encoding (see docs/protocol.md)
+internal/bot/          bots that fill empty seats (from T32b; rules §2 "Bot"), one file per role
 ```
 
 Dependency direction (arrows = "imports"):
 
 ```
 cmd/server ─► transport/ws ─► room ─► engine ◄─ roles
-                               │        ▲
-                               └► store ┘ (store only knows engine.Event)
+     │                         ▲│        ▲
+     └───────► bot ────────────┘└► store ┘ (store only knows engine.Event)
 ```
 
 `engine` imports nothing from this repo except `i18n`. Nothing imports a
@@ -170,6 +171,15 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 - Dawn and dusk wait `Settings.Announce` (rules §2) so the speaker can read before the game moves on.
 - `ConfigureTimers` (host only, lobby only) changes the phase times; a zero field is left alone and every other value must be within its limits (`internal/engine/timers_config.go`).
 - Clock is injected (`room.Clock` interface) so timer tests run instantly.
+
+## Bots (`internal/bot`, from T32b; rules §2 "Bot")
+- A bot sits beside `transport`: `bot → room → engine`. It joins through the same `Client` as a phone, reads only what its `room.Sink` is given (`ViewFor`/`Visible`) and acts only through `Client.Submit`. It never reads `State`, so it has no other way to learn a secret.
+- `room` never imports `bot`. `cmd/server` gives `room.Manager` a small interface that starts a bot, so a room is told how to start one without knowing what it is. `transport` does not know bots either; it only carries the host's add and remove commands.
+- `Sink.Deliver` runs on the room goroutine, and `Submit` queues a job for that same goroutine. A bot must keep its own goroutine and mailbox (latest view only) and never call `Submit` from `Deliver`, or the room deadlocks. The goroutine ends with `Room.Done`.
+- `Brain` turns a player's view, and the public list of which seats are bots, into at most one legal action. The rule-based brain is the fallback of the LLM brain.
+- Every wait (the delay before an action, the pack's wait) uses the injected `room.Clock`, and randomness comes from a source given to the bot, so tests run instantly and repeat.
+- A dead bot gets a dead player's full view. It ignores it except for the Hunter's shot and the Chief's successor, and that view is never sent to an LLM.
+- Bot commands are not activity, and host, speaker and room-alive checks count people only.
 
 ## Transport
 JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The command table is built once by `ws.New` from the engine's core commands (`commands.go`) and every registered role's `Commands()`; `ws.New` returns an error, and the server does not start, when two commands share a name. Error codes come from the errors themselves (`engine.ErrorCode`); the transport keeps only its own codes (`bad_message`...) and the special cases (`pin_locked` with `retryAfter`, `bad_credentials` without detail). The transport never imports `roles`; `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.

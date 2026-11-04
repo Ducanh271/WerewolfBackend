@@ -23,7 +23,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 
 ## Architecture rules (hard)
 1. `internal/engine` is pure: no I/O, no goroutines, no `time.Now()`, no global `rand`, no logging. Time and randomness come in through commands/arguments.
-2. Dependencies point inward only: `transport → room → engine`, `roles → engine`. The engine never imports room/transport/store.
+2. Dependencies point inward only: `transport → room → engine`, `bot → room → engine`, `roles → engine`. The engine never imports room/transport/store.
 3. Each role lives in its own file in `internal/roles/` and registers itself. Adding a role must not require editing other roles.
 4. The server never sends full game state to a client. Every outgoing message goes through a view projection (`engine.ViewFor`). Secret info leaks are the #1 bug class.
 5. State changes only through events: `Decide(state, cmd) → ([]Event, error)` then `Evolve(state, event) → state`.
@@ -61,6 +61,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 | Phe Dân / Sói / thứ ba | `TeamVillage` / `TeamWolves` / `TeamLovers` |
 | Lời dẫn của quản trò | voice lines (announcements) played by the speaker phone |
 | Chủ phòng | `Host` |
+| Bot | `Bot` (`internal/bot`) |
 | Máy làm loa | `Speaker` |
 | Đề cử / giàn / bào chữa / giết-tha | `Nominate` / `Trial` / `Defense` / `Verdict` |
 
