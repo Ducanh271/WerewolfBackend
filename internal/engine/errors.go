@@ -64,6 +64,11 @@ var (
 	ErrSelfNomination = NewError("self_nomination", "a player cannot nominate themselves")
 	ErrAlreadySpared  = NewError("already_spared", "this player was already spared today")
 	ErrOnTrial        = NewError("on_trial", "the player on trial cannot vote")
+
+	// Chat (rules §4 "Nhắn tin").
+	ErrChatClosed  = NewError("chat_closed", "this player cannot write in the chat now")
+	ErrChatEmpty   = NewError("chat_empty", "the message is empty")
+	ErrChatTooLong = NewError("chat_too_long", "the message is too long")
 )
 
 // codedError is an error with its wire code.

@@ -39,6 +39,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideCastVerdict(s, cmd)
 	case CastAbortVote:
 		return decideCastAbortVote(s, cmd)
+	case SendChat:
+		return decideSendChat(s, cmd)
 	case NewGame:
 		return decideNewGame(s, cmd)
 	case PhaseTimeout:

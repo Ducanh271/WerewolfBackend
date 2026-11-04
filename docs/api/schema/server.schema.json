@@ -35,6 +35,36 @@
         "data"
       ]
     },
+    "ChatSent": {
+      "description": "ChatSent is one message on the public channel. Text is normalized but still untrusted: it is what a player typed. The speaker never reads it aloud.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "ChatSentEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ChatSent"
+        },
+        "data": {
+          "$ref": "#/$defs/ChatSent"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
     "ChiefElected": {
       "description": "ChiefElected ends the election.",
       "type": "object",
@@ -464,6 +494,9 @@
       "oneOf": [
         {
           "$ref": "#/$defs/AbortVoteCastEvent"
+        },
+        {
+          "$ref": "#/$defs/ChatSentEvent"
         },
         {
           "$ref": "#/$defs/ChiefElectedEvent"

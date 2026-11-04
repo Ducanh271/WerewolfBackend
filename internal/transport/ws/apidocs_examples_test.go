@@ -95,6 +95,11 @@ func (x *exampleSet) clean(b []byte) []byte {
 	return b
 }
 
+// eventsWithoutExample are the events no example game can send yet.
+var eventsWithoutExample = map[string]bool{
+	"ChatSent": true, // no phone can write before the sendChat message of T31b, which removes this entry
+}
+
 // validate checks every message of the games against the schemas, and adds
 // one example per event type from what the phones received.
 func (x *exampleSet) validate(t *testing.T, v *validator) {
@@ -144,7 +149,7 @@ func (x *exampleSet) validate(t *testing.T, v *validator) {
 	for _, ev := range eventTypes {
 		name := fmt.Sprintf("%T", ev)
 		name = name[strings.LastIndex(name, ".")+1:]
-		if !seen[name] {
+		if !seen[name] && !eventsWithoutExample[name] {
 			t.Errorf("no example game sends the event %s", name)
 		}
 	}

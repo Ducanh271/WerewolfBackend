@@ -33,7 +33,7 @@ func TestErrorText(t *testing.T) {
 	}
 }
 
-// not_your_turn and wrong_phase reach any player at night, whatever their
+// not_your_turn, wrong_phase and chat_closed reach any player at night, whatever their
 // role and state (rules §3): they never name a role or say who is alive.
 func TestErrorText_SentToAnybodyTellsNothing(t *testing.T) {
 	banned := []string{"chết", "sống", "chặn", "ghé", "cắn", "bầy"}
@@ -43,7 +43,7 @@ func TestErrorText_SentToAnybodyTellsNothing(t *testing.T) {
 	for _, name := range nightCallNames {
 		banned = append(banned, strings.ToLower(name))
 	}
-	for _, code := range []string{"not_your_turn", "wrong_phase"} {
+	for _, code := range []string{"not_your_turn", "wrong_phase", "chat_closed"} {
 		text, _ := ErrorText(code, "")
 		low := strings.ToLower(text)
 		for _, b := range banned {

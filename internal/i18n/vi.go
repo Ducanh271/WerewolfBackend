@@ -99,6 +99,9 @@ var vi = map[string]string{
 	"error.same_guard_target":        "Bạn không được bảo vệ cùng một người hai đêm liền.",
 	"error.same_visitor_target":      "Bạn không được ghé cùng một người hai đêm liền.",
 	"error.invalid_target":           "Không chọn được người này, bạn chọn người khác nhé.",
+	"error.chat_closed":              "Lúc này bạn không nhắn tin được.",
+	"error.chat_empty":               "Bạn chưa nhập nội dung tin nhắn.",
+	"error.chat_too_long":            "Tin nhắn dài quá, tối đa 200 ký tự.",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.

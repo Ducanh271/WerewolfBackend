@@ -187,6 +187,9 @@ var goldenErrors = []struct {
 	{engine.ErrSelfNomination, "self_nomination", "a player cannot nominate themselves"},
 	{engine.ErrAlreadySpared, "already_spared", "this player was already spared today"},
 	{engine.ErrOnTrial, "on_trial", "the player on trial cannot vote"},
+	{engine.ErrChatClosed, "chat_closed", "this player cannot write in the chat now"},
+	{engine.ErrChatEmpty, "chat_empty", "the message is empty"},
+	{engine.ErrChatTooLong, "chat_too_long", "the message is too long"},
 
 	{room.ErrNotHost, "not_host", "only the host can do this"},
 	{room.ErrForbidden, "forbidden", "command not allowed from a player"},

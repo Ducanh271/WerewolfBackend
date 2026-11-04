@@ -69,7 +69,7 @@ func audienceOf(s State, e Event) Audience {
 		TrialStarted, VerdictStarted, VerdictCast, Spared, Hanged,
 		HunterRevealed, HunterShotStarted, HunterShot, HunterTimedOut,
 		GameEnded, NightStepCalled, PhoneCheckAnnounced, LoversMeetAnnounced,
-		AbortVoteCast, NewGameStarted:
+		AbortVoteCast, NewGameStarted, ChatSent:
 		return Audience{Everyone: true}
 	case PhoneChecked:
 		return Audience{Players: []PlayerID{ev.Player}}

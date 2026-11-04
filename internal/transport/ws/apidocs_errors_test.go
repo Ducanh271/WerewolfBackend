@@ -75,6 +75,9 @@ var errorRows = []errorRow{
 	{"same_guard_target", "", groupGame, "`guardProtect` on last night's player (rules §6 \"Bảo vệ\")"},
 	{"same_visitor_target", "", groupGame, "`visitorVisit` on last night's player (rules §6 \"Nguyệt Nữ\")"},
 	{"invalid_target", "", groupGame, "a target the role may not pick: a dead player, a wolf for the curse, oneself where not allowed, the same player twice for Cupid"},
+	{"chat_closed", "", groupGame, "a chat message when the chat is closed, or during the defense from anyone but the player on trial, usually a message sent just as the phase changed (rules §4 \"Nhắn tin\"). Every player gets exactly this at night, whatever their role or state"},
+	{"chat_empty", "", groupGame, "a chat message with nothing visible in it"},
+	{"chat_too_long", "", groupGame, "a chat message over 200 characters, counted after the server normalizes it"},
 
 	{"bad_message", "", groupBug, "malformed JSON, an unknown or wrongly typed field, wrong capitals, a `seed`"},
 	{"unknown_type", "", groupBug, "a message `type` the server does not know"},
@@ -97,7 +100,7 @@ var errorRows = []errorRow{
 	{"self_nomination", "", groupBug, "`nominate` oneself"},
 	{"already_spared", "", groupBug, "`nominate` someone in `votes.spared`"},
 	{"on_trial", "", groupBug, "`verdict` from `votes.defendant`"},
-	{"not_alive", "", groupBug, "a vote or night command from a dead player"},
+	{"not_alive", "", groupBug, "a vote, chat message or night command from a dead player"},
 	{"internal", "", groupBug, "a bug in the server; the message changed nothing"},
 }
 

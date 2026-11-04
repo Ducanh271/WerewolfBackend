@@ -55,6 +55,9 @@ func Evolve(s State, e Event) State {
 		out.Phase = PhaseRoleView
 		out.Seq++
 		return out
+
+	case ChatSent:
+		return s // it lives only in the log: no timer, vote or countdown moves (rules §4)
 	}
 
 	if out, ok := evolvePhoneCheck(s, e); ok {

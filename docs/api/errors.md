@@ -88,6 +88,9 @@ Real error frames: `examples/server/error.<code>.json`.
 | `same_guard_target` |  | `guardProtect` on last night's player (rules §6 "Bảo vệ") | Bạn không được bảo vệ cùng một người hai đêm liền. |
 | `same_visitor_target` |  | `visitorVisit` on last night's player (rules §6 "Nguyệt Nữ") | Bạn không được ghé cùng một người hai đêm liền. |
 | `invalid_target` |  | a target the role may not pick: a dead player, a wolf for the curse, oneself where not allowed, the same player twice for Cupid | Không chọn được người này, bạn chọn người khác nhé. |
+| `chat_closed` |  | a chat message when the chat is closed, or during the defense from anyone but the player on trial, usually a message sent just as the phase changed (rules §4 "Nhắn tin"). Every player gets exactly this at night, whatever their role or state | Lúc này bạn không nhắn tin được. |
+| `chat_empty` |  | a chat message with nothing visible in it | Bạn chưa nhập nội dung tin nhắn. |
+| `chat_too_long` |  | a chat message over 200 characters, counted after the server normalizes it | Tin nhắn dài quá, tối đa 200 ký tự. |
 
 ### Only a buggy client or a server bug
 
@@ -118,7 +121,7 @@ All of these, and any code the app does not know, show:
 | `self_nomination` | `nominate` oneself |
 | `already_spared` | `nominate` someone in `votes.spared` |
 | `on_trial` | `verdict` from `votes.defendant` |
-| `not_alive` | a vote or night command from a dead player |
+| `not_alive` | a vote, chat message or night command from a dead player |
 | `internal` | a bug in the server; the message changed nothing |
 
 <!-- /generated -->

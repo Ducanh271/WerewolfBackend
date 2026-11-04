@@ -16,7 +16,7 @@ const schemaDraft = "https://json-schema.org/draft/2020-12/schema"
 // screen see them all). TestAPIDocs_EveryEventInTheSource checks it against
 // the source, so a new event cannot miss its schema.
 var eventTypes = []engine.Event{
-	engine.AbortVoteCast{}, engine.ChiefElected{}, engine.ChiefElectionStarted{}, engine.ChiefLost{},
+	engine.AbortVoteCast{}, engine.ChatSent{}, engine.ChiefElected{}, engine.ChiefElectionStarted{}, engine.ChiefLost{},
 	engine.ChiefSucceeded{}, engine.ChiefSuccessionStarted{}, engine.ChiefVoteCast{}, engine.DawnAnnounced{},
 	engine.DawnStarted{}, engine.DayClockExpired{}, engine.DayEnded{}, engine.DayStarted{}, engine.GameEnded{},
 	engine.Hanged{}, engine.HunterChainNoted{}, engine.HunterRevealed{}, engine.HunterShot{},
