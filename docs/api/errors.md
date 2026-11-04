@@ -91,6 +91,8 @@ Real error frames: `examples/server/error.<code>.json`.
 | `chat_closed` |  | a chat message when the chat is closed, or during the defense from anyone but the player on trial, usually a message sent just as the phase changed (rules §4 "Nhắn tin"). Every player gets exactly this at night, whatever their role or state | Lúc này bạn không nhắn tin được. |
 | `chat_empty` |  | a chat message with nothing visible in it | Bạn chưa nhập nội dung tin nhắn. |
 | `chat_too_long` |  | a chat message over 200 characters, counted after the server normalizes it | Tin nhắn dài quá, tối đa 200 ký tự. |
+| `chat_too_fast` |  | a chat message over the player's limit: 1 per 2 seconds, up to 5 at once (rules §4 "Nhắn tin"). Coming back on a new socket does not reset it | Bạn nhắn nhanh quá, chờ một chút nhé. |
+| `chat_full` |  | a chat message once the game holds 2000 (rules §4 "Nhắn tin"); it stays so until the next game. Hide the input | Ván này đã đủ số tin nhắn tối đa, không gửi thêm được nữa. |
 
 ### Only a buggy client or a server bug
 

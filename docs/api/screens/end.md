@@ -124,6 +124,9 @@ called-off game from a draw. The events list arrives again with
 ```
 <!-- /example -->
 
+The chat stays readable, for everybody, and nobody can write in it any more:
+[chat](day.md#chat).
+
 ## What the phone may send
 
 | send | who | notes |

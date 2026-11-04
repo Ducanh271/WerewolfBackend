@@ -39,7 +39,7 @@ var coreArgs = map[string]any{
 	"setSeats": orderArgs{}, "configureRoles": rolesArgs{}, "configureTimers": timersArgs{},
 	"configureSound": soundModeArgs{}, "dealRoles": noArgs{}, "voteChief": candidateAr{},
 	"nameSuccessor": successorAr{}, "nominate": targetArgs{}, "skipDay": onArgs{}, "verdict": killArgs{},
-	"abortVote": onArgs{}, "newGame": noArgs{}, "hunterShoot": targetArgs{},
+	"abortVote": onArgs{}, "sendChat": chatArgs{}, "newGame": noArgs{}, "hunterShoot": targetArgs{},
 }
 
 // commandArgs maps every wire command name to its args type.

@@ -97,6 +97,8 @@ the verdict (rules §4 step 6).
 | `skipDay` `{on}` | `Day`, `NominationLock` | living players | toggle; passes over 66% of the living (rules §4) |
 | `verdict` `{kill}` | `Verdict` | living players but the defendant | `true` kill, `false` spare |
 | `abortVote` `{on}` | `Day`, `NominationLock`, `Trial`, `Verdict`, `Dusk` | living players | toggle; passes at 2/3 of the living (rules §8b) |
+| `sendChat` `{text}` | `Day`, `NominationLock` | living players | see [Chat](#chat) |
+| `sendChat` `{text}` | `Trial` | the defendant only | see [Chat](#chat) |
 
 Hide the controls a player may not use (dead, the defendant, oneself and
 spared players in the nominee list), so the errors below stay for races.
@@ -105,13 +107,15 @@ spared players in the nominee list), so the errors below stay for races.
 
 `wrong_phase` (a tap after the phase moved on), `rate_limited`. A correct
 app never gets `self_nomination`, `already_spared`, `on_trial`, `not_alive`.
+Chat has its own: see [Chat](#chat).
 
 ## Events and announcements
 
 With `say`: `DayStarted`, `TrialStarted` (names the defendant),
 `VerdictStarted`, `Hanged`, `Spared`, `DayEnded` ("Không ai bị treo.").
 Without: `NominationCast`, `SkipSet`, `NominationsLocking`,
-`NominationsReopened`, `VerdictCast`, `DayClockExpired`, `AbortVoteCast`.
+`NominationsReopened`, `VerdictCast`, `DayClockExpired`, `AbortVoteCast`,
+`ChatSent`.
 A passed abort vote ends the game: [end](end.md).
 
 <!-- example: events/TrialStarted.json -->
@@ -126,3 +130,56 @@ A passed abort vote ends the game: [end](end.md).
 }
 ```
 <!-- /example -->
+
+## Chat
+
+One public channel for the whole room, typed, next to what the table says
+aloud (rules §4 "Nhắn tin"). There is no private channel for the wolves or
+the lovers. A message moves no timer, vote or countdown, and the speaker never
+reads it.
+
+**Who may write.** Show the input only then, and hide it otherwise:
+
+| phase | who |
+|---|---|
+| `ChiefElection`, `Day`, `NominationLock` | every living player |
+| `Trial` | the player in `view.votes.defendant` |
+| any other | nobody, the dead included |
+
+**Reading.** Every phone reads the chat at any time, the dead too. Build it
+from the `events` messages: each `ChatSent` is one line, `data.by` is the
+player and `data.text` the message, in the order of the list. An `events`
+message with `reset: true` replaces the whole list, so rebuild the chat from
+it. That list keeps the earlier games of the room: **show only what follows the
+latest `NewGameStarted`**, because a new game's chat starts empty (rules §8c).
+
+Show `data.text`, not what the player typed: the server normalizes it (a line
+break becomes a space, invisible characters go). It is what a player typed all
+the same, so render it as plain text: [secrecy](../secrecy.md#everywhere).
+
+<!-- example: events/ChatSent.json -->
+```json
+{
+  "type": "ChatSent",
+  "data": {
+    "by": "p2",
+    "text": "Tôi nghi Phúc."
+  }
+}
+```
+<!-- /example -->
+
+**Limits.** 200 characters a message; 1 message per 2 seconds for each player,
+up to 5 at once after a silence; 2000 messages a game. Coming back on a new
+socket does not reset them.
+
+| error | what to do |
+|---|---|
+| `chat_closed` | a message sent just as the phase changed: show the text, hide the input. At night every player gets exactly this |
+| `chat_empty` | keep the send button off until there is something to send |
+| `chat_too_long` | count the characters in the input, and keep what was typed so it can be cut |
+| `chat_too_fast` | show the text, and keep what was typed so it can be sent again |
+| `chat_full` | show the text and hide the input until the next game |
+
+A correct app never gets `not_alive` here. A message over the 4 KB limit gets
+`message_too_large` and the socket stays open; 200 characters always fit.

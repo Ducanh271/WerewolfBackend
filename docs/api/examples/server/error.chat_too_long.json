@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "chat_too_long",
+  "message": "the message is too long: 201 characters"
+}

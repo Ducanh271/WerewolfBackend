@@ -91,6 +91,7 @@ type Room struct {
 	speaker    engine.PlayerID // who is reading announcements aloud now, "" before the first choice (rules §1)
 	conns      map[engine.PlayerID]*connection
 	day        dayClock
+	chat       chatLimiter
 	armedFor   armKey
 	phaseT     Timer
 	dayT       Timer
@@ -132,6 +133,7 @@ func New(cfg Config) (*Room, error) {
 		done:  make(chan struct{}),
 		state: engine.NewState(),
 		conns: map[engine.PlayerID]*connection{},
+		chat:  chatLimiter{credits: map[engine.PlayerID]*chatCredit{}},
 
 		offSince: map[engine.PlayerID]time.Time{},
 	}
@@ -244,6 +246,7 @@ func (r *Room) apply(c engine.Command) error {
 		if started, ok := e.(engine.DayStarted); ok {
 			r.day.reset(started.Duration, r.clock.Now())
 		}
+		r.chat.count(e)
 		if sound, ok := e.(engine.SoundConfigured); ok {
 			r.setSoundPolicy(sound.Mode)
 		}

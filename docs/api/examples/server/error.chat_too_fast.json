@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "chat_too_fast",
+  "message": "too many chat messages, slow down"
+}

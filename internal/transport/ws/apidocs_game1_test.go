@@ -100,6 +100,7 @@ func (g *exGame) firstGame() {
 	g.ok(binh, "skipDay", map[string]any{"on": true})
 	g.ok(binh, "abortVote", map[string]any{"on": true})
 	g.ok(binh, "abortVote", map[string]any{"on": false})
+	g.chatExamples(binh)
 	g.nominateAll(func(p *exPhone) *exPhone {
 		if p == chi {
 			return phuc
@@ -122,6 +123,8 @@ func (g *exGame) firstGame() {
 	g.shot(binh, "nominationLock")
 	g.toDeadline()
 	g.expectPhase("Trial")
+	g.ok(phuc, "sendChat", map[string]any{"text": "Tôi là dân, đừng treo tôi."})
+	g.fails(chi, "chat_closed", "sendChat", map[string]any{"text": "Không tin."})
 	g.shot(binh, "trial")
 	g.toDeadline()
 	g.expectPhase("Verdict")

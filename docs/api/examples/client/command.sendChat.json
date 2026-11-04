@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "text": "Tôi nghi Phúc."
+  },
+  "name": "sendChat"
+}

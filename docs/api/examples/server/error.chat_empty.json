@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "chat_empty",
+  "message": "the message is empty"
+}

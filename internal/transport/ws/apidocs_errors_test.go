@@ -78,6 +78,8 @@ var errorRows = []errorRow{
 	{"chat_closed", "", groupGame, "a chat message when the chat is closed, or during the defense from anyone but the player on trial, usually a message sent just as the phase changed (rules §4 \"Nhắn tin\"). Every player gets exactly this at night, whatever their role or state"},
 	{"chat_empty", "", groupGame, "a chat message with nothing visible in it"},
 	{"chat_too_long", "", groupGame, "a chat message over 200 characters, counted after the server normalizes it"},
+	{"chat_too_fast", "", groupGame, "a chat message over the player's limit: 1 per 2 seconds, up to 5 at once (rules §4 \"Nhắn tin\"). Coming back on a new socket does not reset it"},
+	{"chat_full", "", groupGame, "a chat message once the game holds 2000 (rules §4 \"Nhắn tin\"); it stays so until the next game. Hide the input"},
 
 	{"bad_message", "", groupBug, "malformed JSON, an unknown or wrongly typed field, wrong capitals, a `seed`"},
 	{"unknown_type", "", groupBug, "a message `type` the server does not know"},

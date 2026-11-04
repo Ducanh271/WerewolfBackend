@@ -81,6 +81,9 @@
           "$ref": "#/$defs/SeerCheckCommand"
         },
         {
+          "$ref": "#/$defs/SendChatCommand"
+        },
+        {
           "$ref": "#/$defs/SetSeatsCommand"
         },
         {
@@ -700,6 +703,39 @@
         },
         "name": {
           "const": "seerCheck"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
+      ]
+    },
+    "SendChatArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ]
+    },
+    "SendChatCommand": {
+      "description": "SendChat is a player's message on the room's one public channel (rules §4 \"Nhắn tin\"). How often a player may send is the room's limit, not the engine's: it takes a clock.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/SendChatArgs"
+        },
+        "name": {
+          "const": "sendChat"
         }
       },
       "required": [

@@ -173,6 +173,9 @@ any client existed did not raise `protocolVersion`.
 - The lobby and `Ended` views carry `timers` (every phase time now, in ms)
   and `sound` (the mode), so a phone that comes back draws the host's
   settings from the view alone.
+- New: the `sendChat` command and the `ChatSent` event, with the errors
+  `chat_closed`, `chat_empty`, `chat_too_long`, `chat_too_fast` and
+  `chat_full` ([chat](screens/day.md#chat)).
 
 ## Keeping this folder true
 

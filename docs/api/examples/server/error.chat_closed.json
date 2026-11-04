@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "chat_closed",
+  "message": "this player cannot write in the chat now: only the player on trial writes now"
+}

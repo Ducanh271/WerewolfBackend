@@ -82,6 +82,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | Lệnh bị báo `wrong_phase` / `not_your_turn` | engine | `engine/decide.go`, `engine/night_actor.go`, `engine/day_nominate.go` |
 | Hết giờ mà không sang pha | room | `room/timers.go` (`rearm`, `fire`), `room/dayclock.go`; rồi `engine/day.go`, `engine/night.go` (timeout cũ bị bỏ qua nếu `Phase`/`Seq` lệch) |
 | Chủ phòng/máy làm loa sai người | room | Chủ phòng là người giữ `hostKey` bí mật từ lúc tạo phòng (`room/manager.go` `randomHostKey`, `room/join.go` `Join`), không phải người vào trước; `room/speaker.go` (`InPersonSpeaker`, `AllPhones` — không ai làm loa khi chưa có chủ phòng, `Host == ""`), `room/host.go` (`watchHost` hẹn giờ chuyển chức khi chủ phòng rớt mạng, trước khi chia vai hoặc khi ván đã kết thúc; `passHost`), `room/join.go` (`TransferHost` — chủ phòng tự chuyển chức bất cứ lúc nào) |
+| Tin nhắn bị từ chối (`chat_closed`, `chat_empty`, `chat_too_long`) hoặc giới hạn gửi (`chat_too_fast`, `chat_full`) | engine / room | `engine/chat.go` (ai được nhắn, chuẩn hoá nội dung); `room/chat_limit.go`, `room/submit.go` (giới hạn theo người chơi và theo ván) |
 | Vào lại phòng lỗi (`bad_credentials`, `pin_locked`) | room | `room/identity.go`, `room/join.go` (`RejoinToken`, `RejoinPIN`); `transport/ws/handle.go` → `rejoin` |
 | Rớt mạng rồi mất chỗ / bị đá | room + transport | `room/join.go` (`Disconnect`, `reattach` gọi `Sink.Evict` khi vào lại cướp chỗ máy cũ, `KickPlayer` khi chủ phòng đá — chỉ trước khi chia vai, không tự đá mình, ghế/vai của người khác giữ nguyên), `transport/ws/session.go` (`finish`, `Evict`) |
 | Tin nhắn bị từ chối (`bad_message`, `unknown_type`...) | transport | `transport/ws/decode.go`, `commands.go`; mã lỗi: mỗi lỗi tự mang mã nơi khai báo (`engine.NewError`), đổi ra tin `error` ở `transport/ws/errors.go` (`toErrorMsg`) |
@@ -139,6 +140,7 @@ Cách làm: (1) đặt tên test theo luật bị sai; (2) dựng bàn bằng `n
 | Câu đọc tiếng Việt | `internal/i18n/vi.go` (mã câu ở `keys.go`) |
 | Số ký tự mã phòng, bảng chữ, thời gian phòng bỏ không | `internal/room/manager.go` (`CodeLength`, `CodeAlphabet`, `IdleTimeout`) |
 | Giới hạn tin nhắn (4 KB, 10 tin/giây, dồn 20, flood 3s, chờ tin đầu 10s, tối đa 8 lần join/rejoin sai) | `internal/transport/ws/config.go` (các hằng `Default...`) |
+| Giới hạn nhắn tin (200 ký tự; 1 tin/2 giây, dồn 5; 2000 tin mỗi ván; luật: rules §4 "Nhắn tin") | `internal/engine/chat.go` (`MaxChatLen`), `internal/room/chat_limit.go` (`ChatInterval`, `ChatBurst`, `ChatMaxPerGame`) |
 | Ping/pong (chu kỳ 12s, chờ pong 10s) | `internal/transport/ws/config.go` (`DefaultPingInterval`, `DefaultPongTimeout`), `session.go` (`sendPing`) |
 | Giới hạn kết nối (tổng 2000, mỗi IP 100, kết nối mới mỗi IP 30/phút) | `internal/transport/ws/config.go`, `connguard.go` |
 | Số lần sai PIN, thời gian khoá, cỡ bảng `fails` | `internal/room/identity.go` (`maxPINFailures`, `pinLockTime`, `maxPINFailEntries`) |

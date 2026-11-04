@@ -25,6 +25,11 @@ is a bug of the same weight as a server leak.
 - **Time comes from the server.** A step ends at `deadline` on every phone,
   never earlier on the phone of a player who already chose; a real call and
   a fake call last the same.
+- **Chat text is untrusted.** `ChatSent.data.text` is what a player typed.
+  Show it as plain text, never as HTML or Markdown, and never make a link
+  of it. Like every game message, it brings no sound, vibration or
+  notification. The input is shown by phase alone
+  ([chat](screens/day.md#chat)): at night it is hidden on every phone.
 - **Errors look alike.** Every refusal is shown the same way, with its text
   from [errors.md](errors.md). `not_your_turn` is sent to every player who
   does not hold the step being called, blocked, dead, or any other role

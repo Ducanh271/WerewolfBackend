@@ -53,6 +53,9 @@ type (
 	killArgs struct {
 		Kill bool `json:"kill"`
 	}
+	chatArgs struct {
+		Text string `json:"text"`
+	}
 )
 
 // timerMillis are the phase times in milliseconds, only the ones to change.
@@ -134,6 +137,9 @@ var coreCommands = map[string]commandSpec{
 	}),
 	"abortVote": spec(func(a onArgs, by engine.PlayerID) engine.Command {
 		return engine.CastAbortVote{Voter: by, Yes: a.On}
+	}),
+	"sendChat": spec(func(a chatArgs, by engine.PlayerID) engine.Command {
+		return engine.SendChat{By: by, Text: a.Text}
 	}),
 	"newGame": spec(func(_ noArgs, _ engine.PlayerID) engine.Command {
 		return engine.NewGame{}

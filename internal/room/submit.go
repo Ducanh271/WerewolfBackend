@@ -43,6 +43,15 @@ func (c *Client) Submit(build PlayerCommand) error {
 			if c.player != r.host {
 				return ErrNotHost
 			}
+		case engine.SendChat:
+			// Only a message the engine would take counts against the limit,
+			// and a refusal stays the same whatever the player sent before.
+			if _, err := engine.Decide(r.state, cmd); err != nil {
+				return err
+			}
+			if err := r.chat.take(c.player, r.clock.Now()); err != nil {
+				return err
+			}
 		}
 		return r.execute(cmd)
 	})

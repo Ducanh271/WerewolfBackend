@@ -1,5 +1,25 @@
 package ws
 
+import (
+	"strings"
+
+	"masoi/internal/engine"
+	"masoi/internal/room"
+)
+
+// chatExamples has p write until the limit refuses them, with the refusals of
+// a message on the way.
+func (g *exGame) chatExamples(p *exPhone) {
+	g.t.Helper()
+	g.ok(p, "sendChat", map[string]any{"text": "Tôi nghi Phúc."})
+	g.fails(p, "chat_empty", "sendChat", map[string]any{"text": "  "})
+	g.fails(p, "chat_too_long", "sendChat", map[string]any{"text": strings.Repeat("a", engine.MaxChatLen+1)})
+	for range room.ChatBurst - 1 {
+		g.ok(p, "sendChat", map[string]any{"text": "Phúc là sói!"})
+	}
+	g.fails(p, "chat_too_fast", "sendChat", map[string]any{"text": "Phúc là sói!"})
+}
+
 // secondGame: a new game in the same room, every phone reading aloud. The
 // Hunter, elected Chief, is hanged on day 1 and lets both his shot and his
 // succession run out; then the table votes to call the game off.

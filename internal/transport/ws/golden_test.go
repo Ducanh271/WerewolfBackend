@@ -44,6 +44,7 @@ var goldenCommands = []struct {
 	{"skipDay", `{"on":true}`, engine.SkipDay{Voter: "p9", On: true}},
 	{"verdict", `{"kill":true}`, engine.CastVerdict{Voter: "p9", Kill: true}},
 	{"abortVote", `{"on":true}`, engine.CastAbortVote{Voter: "p9", Yes: true}},
+	{"sendChat", `{"text":"chào"}`, engine.SendChat{By: "p9", Text: "chào"}},
 	{"newGame", `{}`, engine.NewGame{}},
 	{"wolfVote", `{"target":"p1"}`, roles.WolfVote{By: "p9", Target: "p1"}},
 	{"guardProtect", `{"target":"p1"}`, roles.GuardProtect{By: "p9", Target: "p1"}},
@@ -193,6 +194,8 @@ var goldenErrors = []struct {
 
 	{room.ErrNotHost, "not_host", "only the host can do this"},
 	{room.ErrForbidden, "forbidden", "command not allowed from a player"},
+	{room.ErrChatTooFast, "chat_too_fast", "too many chat messages, slow down"},
+	{room.ErrChatFull, "chat_full", "this game has reached its chat limit"},
 	{room.ErrDisconnected, "disconnected", "this connection is no longer the player's"},
 	{room.ReasonAnotherDevice, "replaced_by_other_device", "disconnected: joined from another device"},
 	{room.ReasonPINTakenOver, "replaced_by_other_device", "someone joined with your PIN"},

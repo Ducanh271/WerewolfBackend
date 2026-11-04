@@ -20,6 +20,7 @@ The Chief is a public title, not a role (rules §7b). Two phases:
 | send | who | notes |
 |---|---|---|
 | `voteChief` `{candidate}` | every player | a living player, oneself allowed; sending again changes the vote |
+| `sendChat` `{text}` | every player | the chat opens here, not during the succession: [chat](day.md#chat) |
 
 Errors: `wrong_phase` after the deadline; `invalid_target` for a dead or
 unknown candidate (a correct app offers only the living).

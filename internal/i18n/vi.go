@@ -102,6 +102,8 @@ var vi = map[string]string{
 	"error.chat_closed":              "Lúc này bạn không nhắn tin được.",
 	"error.chat_empty":               "Bạn chưa nhập nội dung tin nhắn.",
 	"error.chat_too_long":            "Tin nhắn dài quá, tối đa 200 ký tự.",
+	"error.chat_too_fast":            "Bạn nhắn nhanh quá, chờ một chút nhé.",
+	"error.chat_full":                "Ván này đã đủ số tin nhắn tối đa, không gửi thêm được nữa.",
 }
 
 // Vi returns the Vietnamese text for key with names joined in the order given.

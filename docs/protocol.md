@@ -166,6 +166,7 @@ sending it while not the host is `not_host`.
 | `skipDay` | `on: bool` | day (rules §4) | `SkipDay` |
 | `verdict` | `kill: bool` | verdict (rules §4) | `CastVerdict` |
 | `abortVote` | `on: bool` (true = vote to abort, false = withdraw) | `Day`, `NominationLock`, `Trial`, `Verdict`, `Dusk`; living players only (rules §8b) | `CastAbortVote`; when the vote passes (rules §8b) the game ends with `draw: true` and no `winner` |
+| `sendChat` | `text` (1–200 characters once normalized) | `ChiefElection`, `Day`, `NominationLock`: every living player; `Trial`: the player on trial only (rules §4 "Nhắn tin") | `SendChat`; the room also limits how fast a player writes and how much a game holds |
 | `newGame` | – | `Ended`, host only (rules §8c) | `NewGame`; back to the lobby with the same players, seats and role list; the host deals again with a fresh seed |
 | `wolfVote` | `target` (required: `""` = "Không cắn ai"; a missing or `null` target → `bad_message`) | pack step (rules §5 "Sói") | `WolfVote`; `""` is a choice like any target (rules §5 "Sói"). The pack sees it in `view.pack.votes` as `""` for that wolf |
 | `visitorVisit` | `target` (a living player, not herself, not last night's) | Visitor step (rules §6 "Nguyệt Nữ") | `VisitorVisit`; a missing choice is made by the server when the step ends |
@@ -272,7 +273,7 @@ The `view` object (`engine.View`); absent parts are omitted:
 - Event types a living player can get: public ones (joins, seating, role
   list, Chief election and votes, `NightStarted`, `NightEnded`,
   `DawnAnnounced`, day votes and trial, `Spared`, `Hanged`, `HunterRevealed`,
-  `HunterShotStarted` (`hunter`, `duration` only), `HunterShot`, `HunterTimedOut`, `GameEnded` (its `say` tells a normal win/draw from an abort, see `votes.abortVotes`), `AbortVoteCast`, `NewGameStarted`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
+  `HunterShotStarted` (`hunter`, `duration` only), `HunterShot`, `HunterTimedOut`, `GameEnded` (its `say` tells a normal win/draw from an abort, see `votes.abortVotes`), `AbortVoteCast`, `ChatSent` (`by`, `text`; no `say`, the speaker never reads it), `NewGameStarted`, `PhoneCheckAnnounced` (has `say`: "Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại."), `LoversMeetAnnounced` (has `say`: "Cặp đôi hãy mở mắt nhìn nhau.")); own
   results (`SeerChecked` for the Seer, `PlayerProtected` for the Guard,
   `PlayerCursed` for the Cursed wolf, `PhoneChecked` for each living player: their own notice, `LoversPaired` for Cupid); `WolfVoted` and `WolfSeerChecked` for the pack, from the moment
   the player is in it.
