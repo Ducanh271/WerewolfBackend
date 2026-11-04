@@ -9,7 +9,7 @@ App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đờ
 - **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày. Mọi điện thoại đều hiện phần công khai (lượt gọi đêm, đếm giờ, lời công bố, phiếu ban ngày) bằng chữ.
 - **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa: máy đang đọc giữ vai loa cho tới khi chính máy đó mất kết nối; chủ phòng quay lại giữa lúc máy khác đang đọc **không** lấy lại vai loa ngay, chỉ chuyển tiếp khi máy đang đọc mất kết nối.
 - **Âm thanh**: chủ phòng chọn trước khi chia vai, một trong hai: **Một máy làm loa** (mặc định, chơi trực tiếp — như mô tả trên) hoặc **Mọi máy cùng phát** (mọi điện thoại đều đọc; dành cho chơi online sau này). Thông báo công khai luôn được gửi dạng chữ cho mọi máy ở cả hai chế độ; tuỳ chọn chỉ quyết định máy nào phát thêm bằng giọng nói.
-- **Ban ngày** mọi người nói chuyện trực tiếp; app chỉ lo đếm giờ, đếm phiếu và công bố.
+- **Ban ngày** mọi người nói chuyện trực tiếp; app lo đếm giờ, đếm phiếu, công bố và có thêm một kênh nhắn tin chung (mục 4 "Nhắn tin").
 
 Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
 
@@ -154,7 +154,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 
 Mỗi ngày treo **tối đa 1 người**. Mọi phiếu ban ngày đều **công khai**: mọi điện thoại hiện rõ ai vote ai.
 
-Người đã chết không được nói, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết. Khi chơi online sau này, người chết bị cấm chat và video call.
+Người đã chết không được nói, không được nhắn tin, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết. Khi chơi online sau này, người chết cũng bị cấm video call.
 
 Khi **ván kết thúc**, mọi người (cả người còn sống) được xem toàn bộ vai và diễn biến.
 
@@ -186,6 +186,17 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 6. **Hết đồng hồ ban ngày**:
     - Nếu có người được đề cử thì người nhiều phiếu nhất vẫn bào chữa 1 phút và bị vote giết/tha; xong sang đêm dù kết quả thế nào.
     - Nếu không ai được đề cử thì sang đêm ngay.
+
+### Nhắn tin
+
+Ngoài nói chuyện trực tiếp, phòng có **một kênh nhắn tin chung**; không có kênh riêng cho sói hay cặp đôi. Loa không đọc tin nhắn, và tin nhắn không ảnh hưởng tới đồng hồ, phiếu hay đếm ngược.
+
+- **Mọi người còn sống** được nhắn lúc bầu Trưởng làng, thảo luận và đề cử, đếm ngược chốt.
+- **Chỉ người trên giàn** được nhắn lúc bào chữa.
+- **Không ai** được nhắn lúc vote giết/tha, Thợ săn bắn, Trưởng làng đã chết chọn người kế nhiệm, thông báo buổi sáng, chờ sang đêm và ban đêm; cả ở sảnh chờ, lúc xem vai và sau khi hết ván.
+- **Người chết** đọc được nhưng không nhắn được. Hết ván, ai cũng đọc được toàn bộ.
+- Mỗi tin tối đa **200 ký tự**, đếm sau khi đã chuẩn hoá. Mỗi người **1 tin/2 giây**, dồn tối đa 5 tin.
+- Xuống dòng được đổi thành một dấu cách; ký tự vô hình bị bỏ, emoji vẫn giữ. Tin không còn gì nhìn thấy được thì bị từ chối.
 
 ## 5. Vai phe Sói
 
@@ -351,7 +362,7 @@ Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng h�
 
 ## 8c. Ván mới trong cùng phòng
 
-Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu.
+Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu. Khung nhắn tin của ván mới trống: tin của ván cũ không hiện lại.
 
 (Cài đặt ở T27b; mục này chỉ chốt luật.)
 
@@ -419,7 +430,7 @@ Mục tiêu theo phe: Dân thắng khi không còn con Sói nào. Sói thắng k
 
 ## 10. Ngoài phạm vi bản đầu
 
-- **Chơi online hoàn toàn**: chat, ghép phòng, xử lý rớt mạng, server kiểm soát toàn bộ thông tin bí mật.
+- **Chơi online hoàn toàn**: ghép phòng, xử lý rớt mạng, server kiểm soát toàn bộ thông tin bí mật.
 - **Bot chơi thay** người rời ván giữa chừng.
 - **Luật lật vai khi chết**: sẽ cải tiến sau.
 - **Điểm cân bằng và bộ vai gợi ý** theo số người, cảnh báo khi ván lệch phe.
