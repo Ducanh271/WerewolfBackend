@@ -263,6 +263,10 @@ is `LoversMeet` (10 s by default). The two lovers' phones have `me.turn.step`
 `LoversMeet`: they open their eyes and look at each other, with nothing to
 send. Every other phone shows the same night screen as for any step.
 
+Online (rules §1b) the step follows Cupid directly and is only for the two to
+confirm they are a couple, on their own screens. The lovers already know
+([phone check](phone-check.md#online)).
+
 <!-- example: server/view.night.loversMeet.json view.nightCall view.me.turn view.lover -->
 ```json
 {

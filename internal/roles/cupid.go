@@ -28,7 +28,8 @@ type CupidPair struct {
 }
 
 // LoversPaired records the couple. Only Cupid gets it, as the answer to his
-// choice; the lovers are told at the phone check.
+// choice (it names him, so the lovers never do); they are told at the phone
+// check, or at once in an online room (rules §1b).
 type LoversPaired struct {
 	engine.EventMarker
 	Cupid engine.PlayerID

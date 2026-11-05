@@ -30,6 +30,36 @@
       "id": "p5",
       "isHost": false,
       "nickname": "Giang"
+    },
+    {
+      "connected": true,
+      "id": "p6",
+      "isHost": false,
+      "nickname": "Hà"
+    },
+    {
+      "connected": true,
+      "id": "p7",
+      "isHost": false,
+      "nickname": "Khoa"
+    },
+    {
+      "connected": true,
+      "id": "p8",
+      "isHost": false,
+      "nickname": "Lan"
+    },
+    {
+      "connected": true,
+      "id": "p9",
+      "isHost": false,
+      "nickname": "Minh"
+    },
+    {
+      "connected": true,
+      "id": "p10",
+      "isHost": false,
+      "nickname": "Nga"
     }
   ],
   "speaker": true,
@@ -57,10 +87,17 @@
         "name": "Dân làng",
         "role": "Villager",
         "team": "Dân"
+      },
+      {
+        "description": "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo.",
+        "name": "Cupid",
+        "role": "Cupid",
+        "team": "Dân"
       }
     ],
     "roles": {
-      "Villager": 4,
+      "Cupid": 1,
+      "Villager": 8,
       "Werewolf": 1
     },
     "seq": 0,

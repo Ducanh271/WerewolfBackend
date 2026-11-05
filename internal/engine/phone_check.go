@@ -26,7 +26,7 @@ type PhoneCheckAnnounced struct {
 func (PhoneCheckAnnounced) AnnouncementKey() string { return i18n.NightPhoneCheck }
 
 // PhoneChecked is the notice one living player gets at the phone check
-// (rules §3). It
+// (rules §3), or at once in an online room (rules §1b, onlineNotices). It
 // combines the curse status and the love status, and every notice has this
 // exact shape whatever the answer: only the values differ. A client shows the
 // curse part when the (public) role list has a Cursed wolf and the love part
@@ -107,19 +107,24 @@ func phoneCheckNotices(s State) []Event {
 //     lovers' step (StepLoversMeet).
 //
 // They depend on the role list and the night only, so they run whether or not
-// the curse was used, the Cursed wolf is dead or blocked: nothing leaks.
+// the curse was used, the Cursed wolf is dead or blocked: nothing leaks. An
+// online room has no phone check (rules §1b, onlineNotices).
 func engineSlots(s State, night int) []nightSlot {
 	var out []nightSlot
+	phoneCheck := s.Settings.Mode != Online
 	for id, role := range Registry {
 		call := role.NightCall()
 		if call == nil || s.Settings.Roles[id] < 1 || !call.CalledOn(night) {
 			continue
 		}
-		if curse, ok := role.(CurseSource); ok && curse.CursesVillager() {
+		if curse, ok := role.(CurseSource); ok && curse.CursesVillager() && phoneCheck {
 			out = append(out, nightSlot{StepPhoneCheck, call.Order, 1})
 		}
 		if love, ok := role.(LoveSource); ok && love.CreatesLovers() {
-			out = append(out, nightSlot{StepPhoneCheck, call.Order, 1}, nightSlot{StepLoversMeet, call.Order, 2})
+			if phoneCheck {
+				out = append(out, nightSlot{StepPhoneCheck, call.Order, 1})
+			}
+			out = append(out, nightSlot{StepLoversMeet, call.Order, 2})
 		}
 	}
 	return out

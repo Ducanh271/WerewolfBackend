@@ -19,6 +19,13 @@ type setup struct {
 	errs   []string
 
 	allViewers bool // CheckEveryViewer
+	online     bool // Online
+}
+
+// Online plays the scenario as an online room (rules §1b). So that it reads
+// like any other, Seats still gives the circle, standing in for the draw.
+func Online() Option {
+	return func(s *setup) { s.online = true }
 }
 
 // Seats lists the players clockwise. A name is both the player's ID and

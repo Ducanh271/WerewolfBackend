@@ -1070,7 +1070,7 @@
       ]
     },
     "LoversPaired": {
-      "description": "LoversPaired records the couple. Only Cupid gets it, as the answer to his choice; the lovers are told at the phone check.",
+      "description": "LoversPaired records the couple. Only Cupid gets it, as the answer to his choice (it names him, so the lovers never do); they are told at the phone check, or at once in an online room (rules §1b).",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -1152,7 +1152,7 @@
           "type": "boolean"
         },
         "cursed": {
-          "description": "on the wolf team though the role is not a wolf role; known from the phone check on",
+          "description": "on the wolf team though the role is not a wolf role; known from the phone check on, or at once online (rules §1b)",
           "type": "boolean"
         },
         "id": {
@@ -1616,7 +1616,7 @@
       ]
     },
     "PhoneChecked": {
-      "description": "PhoneChecked is the notice one living player gets at the phone check (rules §3). It combines the curse status and the love status, and every notice has this exact shape whatever the answer: only the values differ. A client shows the curse part when the (public) role list has a Cursed wolf and the love part when it has Cupid.",
+      "description": "PhoneChecked is the notice one living player gets at the phone check (rules §3), or at once in an online room (rules §1b, onlineNotices). It combines the curse status and the love status, and every notice has this exact shape whatever the answer: only the values differ. A client shows the curse part when the (public) role list has a Cursed wolf and the love part when it has Cupid.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -1653,7 +1653,7 @@
       ]
     },
     "PlayerCursed": {
-      "description": "PlayerCursed records the curse. Only the Cursed wolf is told at once; the target learns at the phone check.",
+      "description": "PlayerCursed records the curse. Only the Cursed wolf gets it; the target learns from engine.PhoneChecked.",
       "type": "object",
       "additionalProperties": false,
       "properties": {

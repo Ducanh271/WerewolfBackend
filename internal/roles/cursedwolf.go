@@ -9,8 +9,8 @@ import (
 
 // CursedWolf curses one living non-wolf, once per game (rules §5 "Sói
 // nguyền"). The team changes at once in State; the screens only show it from
-// the phone check (engine.StepPhoneCheck, engine.FlagTeamHidden). It does not
-// pass through the bite, so the Guard never sees it.
+// the phone check (engine.StepPhoneCheck, engine.FlagTeamHidden), or at once
+// in an online room (rules §1b). It does not pass through the bite, so the Guard never sees it.
 type cursedWolf struct{}
 
 // CursedWolf is the ID of the Cursed wolf.
@@ -26,8 +26,8 @@ type CursedWolfCurse struct {
 	Target engine.PlayerID
 }
 
-// PlayerCursed records the curse. Only the Cursed wolf is told at once; the
-// target learns at the phone check.
+// PlayerCursed records the curse. Only the Cursed wolf gets it; the target
+// learns from engine.PhoneChecked.
 type PlayerCursed struct {
 	engine.EventMarker
 	Wolf   engine.PlayerID

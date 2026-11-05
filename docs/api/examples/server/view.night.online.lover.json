@@ -1,0 +1,146 @@
+{
+  "type": "view",
+  "deadline": 1792094520000,
+  "speaker": true,
+  "view": {
+    "chief": "p8",
+    "draw": false,
+    "full": false,
+    "lover": {
+      "colour": "white",
+      "partner": "p2",
+      "partnerRole": "Villager"
+    },
+    "me": {
+      "alive": true,
+      "canShoot": false,
+      "cursed": false,
+      "id": "p1",
+      "role": "Villager",
+      "roleCard": {
+        "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+        "goal": "Dân thắng khi không còn con Sói nào.",
+        "name": "Dân làng",
+        "team": "Dân"
+      },
+      "statusCards": [
+        {
+          "kind": "lovers",
+          "name": "Cặp đôi cùng phe",
+          "text": "Bạn và Bình yêu nhau. Một người chết thì người kia chết theo. Vẫn chơi cho phe của mình."
+        }
+      ],
+      "team": "Village"
+    },
+    "mode": "online",
+    "night": 1,
+    "nightCall": {
+      "duration": 30000,
+      "role": "Cupid"
+    },
+    "phase": "Night",
+    "players": [
+      {
+        "alive": true,
+        "id": "p10",
+        "nickname": "Nga",
+        "seat": 1
+      },
+      {
+        "alive": true,
+        "id": "p7",
+        "nickname": "Khoa",
+        "seat": 2
+      },
+      {
+        "alive": true,
+        "id": "p4",
+        "nickname": "Dũng",
+        "seat": 3
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Dân làng",
+          "team": "Dân"
+        },
+        "id": "p1",
+        "nickname": "An",
+        "role": "Villager",
+        "seat": 4,
+        "team": "Village"
+      },
+      {
+        "alive": true,
+        "id": "p9",
+        "nickname": "Minh",
+        "seat": 5
+      },
+      {
+        "alive": true,
+        "card": {
+          "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+          "goal": "Dân thắng khi không còn con Sói nào.",
+          "name": "Dân làng",
+          "team": "Dân"
+        },
+        "id": "p2",
+        "nickname": "Bình",
+        "role": "Villager",
+        "seat": 6
+      },
+      {
+        "alive": true,
+        "id": "p3",
+        "nickname": "Chi",
+        "seat": 7
+      },
+      {
+        "alive": true,
+        "id": "p5",
+        "nickname": "Giang",
+        "seat": 8
+      },
+      {
+        "alive": true,
+        "id": "p8",
+        "nickname": "Lan",
+        "seat": 9
+      },
+      {
+        "alive": true,
+        "id": "p6",
+        "nickname": "Hà",
+        "seat": 10
+      }
+    ],
+    "roleCards": [
+      {
+        "description": "Mỗi đêm cùng bầy chọn một người để cắn, hoặc chọn không cắn ai. Ban ngày giả làm dân lành.",
+        "name": "Sói",
+        "role": "Werewolf",
+        "team": "Sói"
+      },
+      {
+        "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+        "name": "Dân làng",
+        "role": "Villager",
+        "team": "Dân"
+      },
+      {
+        "description": "Đêm đầu ghép đôi hai người (được chọn chính mình). Một người chết thì người kia chết theo.",
+        "name": "Cupid",
+        "role": "Cupid",
+        "team": "Dân"
+      }
+    ],
+    "roles": {
+      "Cupid": 1,
+      "Villager": 8,
+      "Werewolf": 1
+    },
+    "seq": 4
+  }
+}

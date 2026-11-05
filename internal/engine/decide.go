@@ -8,6 +8,14 @@ import (
 // Decide validates a command against the current state and returns the events
 // it produces. It has no side effects and never panics on player input.
 func Decide(s State, c Command) ([]Event, error) {
+	evs, err := decideCommand(s, c)
+	if err != nil || len(evs) == 0 || s.Settings.Mode != Online || s.Phase != PhaseNight {
+		return evs, err
+	}
+	return append(evs, onlineNotices(Fold(s, evs...))...), nil
+}
+
+func decideCommand(s State, c Command) ([]Event, error) {
 	switch cmd := c.(type) {
 	case JoinRoom:
 		return decideJoinRoom(s, cmd)

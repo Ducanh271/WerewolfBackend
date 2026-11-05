@@ -1,5 +1,7 @@
 # Phone check
 
+`inPerson` only: an online room never has this step ([below](#online)).
+
 A night step (`view.nightCall.role` `PhoneCheck`, 5 s by default) when
 **everybody** opens their eyes and reads their phone (rules §3 "Kiểm tra
 điện thoại"). It runs on a fixed schedule set by the public role list:
@@ -113,3 +115,51 @@ Nothing. Errors: any night command is `not_your_turn`.
 `PhoneCheckAnnounced` with `say` ("Mọi người mở mắt xem điện thoại, rồi
 nhắm mắt lại."), read by the speaker; `PhoneChecked` to each living player,
 their own notice as data.
+
+## Online
+
+`view.mode` `online` (rules §1b): `nightCall.role` is never `PhoneCheck` and
+`me.phoneCheck` never comes. Only the players with something new are told, on
+their own phone, at the moment it happens:
+
+| what happens | who | what changes |
+|---|---|---|
+| Cupid shoots, or his step runs out and the server pairs two | both lovers | `view.lover`, the `lovers` or `lovers_cross` card in `me.statusCards` |
+| the Cursed wolf curses | the cursed player | `me.cursed`, `me.team`, the `cursed` card in `me.statusCards` |
+| the Cursed wolf curses | the pack | the new member in `view.pack` |
+| the cursed player is a lover | both lovers | `view.lover.colour` |
+
+Each lover and each cursed player also gets one `PhoneChecked` event, the same
+event an in-person phone check sends; use it to play the moment, and the `view`
+to draw what it says, since a phone that comes back gets the same `view`. The
+pack gets no event, only the `view`. The
+`phoneCheck` timer does nothing in this mode, so hide it from the host's
+settings. `LoversPaired` still goes to Cupid alone: it names him.
+
+<!-- example: server/view.night.online.lover.json view.mode view.nightCall view.lover view.me.statusCards -->
+```json
+{
+  "view": {
+    "lover": {
+      "colour": "white",
+      "partner": "p2",
+      "partnerRole": "Villager"
+    },
+    "me": {
+      "statusCards": [
+        {
+          "kind": "lovers",
+          "name": "Cặp đôi cùng phe",
+          "text": "Bạn và Bình yêu nhau. Một người chết thì người kia chết theo. Vẫn chơi cho phe của mình."
+        }
+      ]
+    },
+    "mode": "online",
+    "nightCall": {
+      "duration": 30000,
+      "role": "Cupid"
+    }
+  }
+}
+```
+<!-- /example -->

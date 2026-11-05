@@ -31,13 +31,17 @@ Phòng có một trong hai chế độ. **Cả phòng theo một chế độ**, 
 | Âm thanh mặc định (§1) | Một máy làm loa | Mọi máy cùng phát |
 | Trao đổi ban ngày | nói trực tiếp và kênh nhắn tin chung (§4) | chỉ kênh nhắn tin chung (§4) |
 | Xếp chỗ (§2) | chủ phòng xếp theo chỗ ngồi thật | không có bước này: app bốc ngẫu nhiên vòng tròn lúc chia vai |
+| Kiểm tra điện thoại (§3) | theo lịch ở §3 | không có bước này: người liên quan được báo ngay trên máy của mình |
 
 - **Chọn và đổi**: chủ phòng chọn khi tạo phòng, đổi được trong sảnh cho tới khi chia vai. Từ lúc chia vai không đổi được nữa.
-- **Luật chơi như nhau**: vai, phe, thứ tự gọi, đồng hồ, gọi giả, phiếu, luật nhắn tin và điều kiện thắng không phụ thuộc chế độ. Lời dẫn cũng giữ nguyên, kể cả các câu "nhắm mắt", "mở mắt". Ngoài bảng trên, chế độ chỉ đổi hình và tiếng trên app.
+- **Luật chơi như nhau**: vai, phe, thứ tự gọi các vai, đồng hồ, gọi giả, phiếu, luật nhắn tin và điều kiện thắng không phụ thuộc chế độ. Lời dẫn của các bước còn lại cũng giữ nguyên, kể cả các câu "nhắm mắt", "mở mắt". Ngoài những điều ghi trong mục này, chế độ chỉ đổi hình và tiếng trên app.
 - **Khi đổi chế độ**: âm thanh về mặc định của chế độ mới, chủ phòng vẫn chọn lại được; chỗ đã xếp bị bỏ. Chọn lại đúng chế độ đang dùng thì không có gì thay đổi.
 - **Vòng tròn khi chơi online**: có từ lúc chia vai, công khai như chỗ ngồi và dùng như chỗ ngồi cho mọi luật (Thám tử, Hiệp sĩ kiếm gỉ, đọc tên người chết). Chủ phòng không xếp được.
 - **Ván mới** (§8c): giữ chế độ. Khi chơi online, vòng tròn được bốc lại ở lần chia vai mới.
-- **Cặp đôi khi chơi online**: bước "Cặp đôi mở mắt nhìn nhau" (§3) vẫn chạy đủ giờ; hai người yêu nhìn nhau qua hình trên điện thoại của mình thay vì nhìn thật.
+- **Báo tin khi chơi online**: thay cho Kiểm tra điện thoại, chỉ người có tin mới mới nhận thông báo, ngay trên máy của mình:
+  - **Cupid bắn xong**: hai người bị bắn thấy ngay mình yêu ai, vai của người đó và màu liên kết (§7), ngay trong lượt Cupid. Cupid không chọn thì app ghép ngẫu nhiên lúc hết giờ (§7), và họ được báo lúc đó. Thông báo không nói ai là Cupid.
+  - **Sói nguyền nguyền xong**: người bị nguyền thấy ngay mình đã bị nguyền, bầy thấy ngay đồng bọn mới. Người đó đang trong cặp đôi thì cả hai thấy ngay màu mới.
+- **Cặp đôi khi chơi online**: bước "Cặp đôi mở mắt nhìn nhau" (§3) vẫn chạy đủ giờ, ngay sau lượt Cupid, nhưng chỉ để hai người xác nhận mình là một cặp: máy của họ hiện hình hai người với trái tim thay vì nhìn nhau thật.
 
 ## 2. Chuẩn bị ván
 
@@ -104,7 +108,7 @@ chốt là tối đa 1.
 | Xem vai | 30 giây |
 | Bầu Trưởng làng | 1 phút |
 | Mỗi vai ban đêm | 30 giây |
-| Kiểm tra điện thoại (đêm 1–3 khi có Sói nguyền; đêm 1 khi có Cupid) | 5 giây |
+| Kiểm tra điện thoại (đêm 1–3 khi có Sói nguyền; đêm 1 khi có Cupid; chỉ khi chơi quanh bàn, §1b) | 5 giây |
 | Cặp đôi mở mắt nhìn nhau (đêm 1 khi có Cupid) | 10 giây |
 | Thông báo sáng / hoàng hôn | 10 giây |
 | Ban ngày (thảo luận và đề cử) | 7 phút, có thể vote bỏ qua |
@@ -179,12 +183,12 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 | Thứ tự | Vai | Khi nào gọi |
 | --- | --- | --- |
 | 0 | Cupid | Chỉ đêm đầu |
-| 0b | Kiểm tra điện thoại (tình yêu) | Đêm 1 khi danh sách vai có Cupid |
+| 0b | Kiểm tra điện thoại (tình yêu) | Đêm 1 khi danh sách vai có Cupid; chỉ khi chơi quanh bàn (§1b) |
 | 0c | Cặp đôi mở mắt nhìn nhau | Đêm 1 khi danh sách vai có Cupid |
 | 1 | Nguyệt Nữ | Mỗi đêm |
 | 2 | Bảo vệ | Mỗi đêm |
 | 3 | Sói nguyền | Chỉ 3 đêm đầu |
-| 3b | Kiểm tra điện thoại (nguyền) | Đêm 1–3 khi danh sách vai có Sói nguyền (xem dưới) |
+| 3b | Kiểm tra điện thoại (nguyền) | Đêm 1–3 khi danh sách vai có Sói nguyền (xem dưới); chỉ khi chơi quanh bàn (§1b) |
 | 4 | Sói tiên tri | Mỗi đêm |
 | 5 | Bầy sói | Mỗi đêm, kể cả đêm đầu |
 | 6 | Phù thủy | Mỗi đêm |
@@ -196,7 +200,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 - **Gọi giả**: vai có trong ván nhưng người giữ đã chết vẫn được gọi với thời gian như thường, để không ai suy ra vai nào còn hay mất.
 - **Mỗi lượt gọi chạy đủ thời gian**, thật hay giả. Lượt chỉ kết thúc khi hết giờ, không kết thúc sớm khi vai đã chọn xong (nếu không, lượt thật ngắn hơn lượt giả sẽ lộ vai còn sống). Mọi điện thoại (kể cả máy làm loa) chỉ biết vai được gọi và thời lượng, không biết lượt đó thật hay giả.
 - **Hết giờ mà chưa chọn**: coi như không thực hiện. Ví dụ Bảo vệ không chọn thì đêm đó không che ai.
-- **Kiểm tra điện thoại** (5 giây) có thể chạy ở hai chỗ, mỗi chỗ theo lịch cố định khi vai tương ứng có trong danh sách vai (dù vai đó đã dùng chức năng, đã chết hay bị Nguyệt Nữ chặn), nên không lộ gì:
+- **Kiểm tra điện thoại** (5 giây; chỉ khi chơi quanh bàn, chơi online xem §1b) có thể chạy ở hai chỗ, mỗi chỗ theo lịch cố định khi vai tương ứng có trong danh sách vai (dù vai đó đã dùng chức năng, đã chết hay bị Nguyệt Nữ chặn), nên không lộ gì:
   - **Sau lượt Cupid (0b)**, chỉ **đêm 1**, khi danh sách vai có Cupid.
   - **Sau lượt Sói nguyền (3b)**, **luôn luôn** trong 3 đêm đầu khi danh sách vai có Sói nguyền.
   - Có cả Cupid lẫn Sói nguyền thì đêm 1 có **hai** lần kiểm tra: một sau Cupid, một sau Sói nguyền.
@@ -271,7 +275,7 @@ Mọi vai phe sói (sói thường, Sói nguyền, Sói tiên tri) đều **dậ
 
 - Được gọi riêng **trước bầy sói**, chỉ trong **3 đêm đầu**. Nguyền **1 lần duy nhất** trong game.
 - Vẫn được gọi (giả) đủ cả 3 đêm đầu dù đã nguyền xong từ trước (xem §3): ngừng gọi sớm sẽ lộ là đã dùng, giống cách Thám tử vẫn được gọi giả sau khi dùng.
-- Việc nguyền có hiệu lực **ngay lập tức** về phe: người bị nguyền thành sói, ngay đêm đó được gọi dậy cắn cùng bầy và được vote cắn. Điện thoại của người bị nguyền và của bầy sói **chỉ hiện thay đổi ở bước Kiểm tra điện thoại** (§3): người bị nguyền thấy “Bạn đã bị nguyền”, bầy thấy đồng bọn mới. Mọi người khác thấy “Bạn không bị nguyền”, nên không ai biết Sói nguyền có nguyền hay không.
+- Việc nguyền có hiệu lực **ngay lập tức** về phe: người bị nguyền thành sói, ngay đêm đó được gọi dậy cắn cùng bầy và được vote cắn. Điện thoại của người bị nguyền và của bầy sói **chỉ hiện thay đổi ở bước Kiểm tra điện thoại** (§3; chơi online thì hiện ngay, §1b): người bị nguyền thấy “Bạn đã bị nguyền”, bầy thấy đồng bọn mới. Mọi người khác thấy “Bạn không bị nguyền”, nên không ai biết Sói nguyền có nguyền hay không.
 - Người bị nguyền chuyển sang phe sói và **giữ nguyên năng lực** của vai cũ (Tiên tri, Bảo vệ, Thợ săn…).
 - Bầy vẫn cắn được người vừa bị nguyền như mọi người sống khác (xem “Sói”).
 - Bảo vệ **không chặn được** việc nguyền. Tiên tri và Thám tử soi người bị nguyền ra sói.
@@ -352,8 +356,8 @@ Mỗi đêm soi 1 người, biết người đó **là sói** hay **không phả
 
 - Chỉ có trong ván **từ 10 người**. Cupid thuộc phe Dân nếu không tự ghép mình.
 - Chỉ gọi **đêm đầu** (thứ tự 0, đầu tiên trong đêm). Cupid chọn 2 người sống **khác nhau** (được chọn cả chính mình) thành cặp đôi. Hết giờ mà chưa chọn: server ghép **2 người sống ngẫu nhiên** (seed do tầng room sinh bằng `crypto/rand`).
-- Hai người yêu biết người kia và vai của họ ở bước **Kiểm tra điện thoại** ngay sau lượt Cupid ở đêm 1 (§3), không phải lúc Cupid chọn. Ngay sau đó là bước **Cặp đôi mở mắt nhìn nhau** (10 giây): chỉ hai người yêu mở mắt nhìn nhau. Bầy sói **không** biết một con của mình đang yêu.
-- **Phe cá nhân không đổi**: sói trong cặp khác phe vẫn là Phe Sói, vẫn cắn cùng bầy. Phe của cặp đôi được tính ở cấp cặp và **tính lại mỗi khi có người trong cặp đổi phe** (bị nguyền): hai người yêu thấy màu mới ở lần Kiểm tra điện thoại kế tiếp.
+- Hai người yêu biết người kia và vai của họ ở bước **Kiểm tra điện thoại** ngay sau lượt Cupid ở đêm 1 (§3), không phải lúc Cupid chọn; chơi online thì biết ngay lúc Cupid bắn (§1b). Ngay sau đó là bước **Cặp đôi mở mắt nhìn nhau** (10 giây): chỉ hai người yêu mở mắt nhìn nhau. Bầy sói **không** biết một con của mình đang yêu.
+- **Phe cá nhân không đổi**: sói trong cặp khác phe vẫn là Phe Sói, vẫn cắn cùng bầy. Phe của cặp đôi được tính ở cấp cặp và **tính lại mỗi khi có người trong cặp đổi phe** (bị nguyền): hai người yêu thấy màu mới ở lần Kiểm tra điện thoại kế tiếp (chơi online thì thấy ngay, §1b).
 - Điện thoại cặp đôi hiện **liên kết** giữa hai người (người kia, vai của họ, màu theo phe hiện tại của cặp, bảng dưới). Cupid không thấy liên kết và không biết phe của cặp.
 - Một người trong cặp chết thì người kia **chết theo**, vì bất kỳ lý do gì, nhưng thời điểm phụ thuộc lúc người đầu tiên chết:
   - **Chết ban đêm** (cắn, thuốc độc, độc Hiệp sĩ): người kia chết **cùng đêm đó**, ở bước 7 của §9.

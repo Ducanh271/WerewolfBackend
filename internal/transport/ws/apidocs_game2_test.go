@@ -59,9 +59,10 @@ func chatFullExample(t *testing.T, x *exampleSet) {
 	x.files["server/error.chat_full.json"] = g.x.files["server/error.chat_full.json"]
 }
 
-// onlineExample plays the lobby of an online room up to the deal, on a table of
-// its own (rules §1b). It adds the online request and lobby view, the mode
-// command and its event; the lobby of the first game stays in person.
+// onlineExample plays an online room from its lobby until Cupid has shot, on a
+// table of its own (rules §1b). It adds the online request and lobby view, the
+// mode command and its event, and what a lover's phone shows at once. The first
+// game stays in person.
 func onlineExample(t *testing.T, x *exampleSet) {
 	t.Helper()
 	g := &exGame{t: t, e: newExampleEnv(t), x: newExampleSet(t)}
@@ -70,7 +71,8 @@ func onlineExample(t *testing.T, x *exampleSet) {
 	g.recordHTTP("create-room.online.request", "CreateRoomRequest", request)
 	var created struct{ HostKey string }
 	mustUnmarshal(t, body, &created)
-	for i, nick := range exampleTable[:engine.MinPlayers] {
+	table := exampleTable[:10] // the smallest table with Cupid (rules §2)
+	for i, nick := range table {
 		msg := map[string]any{"type": "join", "room": exampleRoom, "nickname": nick}
 		if i == 0 {
 			msg["hostKey"] = created.HostKey
@@ -80,12 +82,25 @@ func onlineExample(t *testing.T, x *exampleSet) {
 	host := g.host()
 	g.ok(host, "configureMode", map[string]any{"mode": "inPerson"})
 	g.ok(host, "configureMode", map[string]any{"mode": "online"})
-	g.ok(host, "configureRoles", map[string]any{"roles": map[string]any{"Werewolf": 1, "Villager": engine.MinPlayers - 1}})
+	g.ok(host, "configureRoles", map[string]any{"roles": map[string]any{"Werewolf": 1, "Cupid": 1, "Villager": len(table) - 2}})
 	g.shot(host, "lobby.online")
 	g.fails(host, "wrong_phase", "setSeats", map[string]any{"order": []any{}})
 	g.ok(host, "dealRoles", nil)
 	g.expectPhase("RoleView")
-	for _, name := range []string{"http/create-room.online.request.json", "client/command.configureMode.json", "server/view.lobby.online.json"} {
+	for _, p := range g.phones {
+		p.role = p.view().Str("view", "me", "role")
+	}
+	g.untilPhase("Night")
+	cupid := g.byRole("Cupid")
+	var lovers []*exPhone
+	for _, p := range g.phones {
+		if p != cupid && len(lovers) < 2 {
+			lovers = append(lovers, p)
+		}
+	}
+	g.ok(cupid, "cupidPair", map[string]any{"a": lovers[0].id, "b": lovers[1].id})
+	g.shot(lovers[0], "night.online.lover")
+	for _, name := range []string{"http/create-room.online.request.json", "client/command.configureMode.json", "server/view.lobby.online.json", "server/view.night.online.lover.json"} {
 		x.files[name] = g.x.files[name]
 	}
 	x.sent = append(x.sent, g.x.sent...)

@@ -2,7 +2,7 @@
 
 Tài liệu này nói **giao diện trông thế nào và chạy theo dữ liệu server ra sao**. Luật và dữ liệu là của backend: `docs/rules.md`, `docs/api/` (README, `screens/*.md`, `secrecy.md`, `errors.md`, `schema/*.json`). Khi tài liệu này và `docs/api/` vênh nhau, **`docs/api/` đúng**.
 
-**Chờ backend:** `view.mode`, lệnh đổi chế độ, thẻ úp ở góc và link `/j/{code}` là quyết định đã chốt nhưng chưa có trong `docs/api/`; xem các việc B1–B4 trong `ke-hoach.md`. Chưa xong việc nào thì chưa code phần phụ thuộc vào nó.
+**Chờ backend:** thẻ úp ở góc và link `/j/{code}` là quyết định đã chốt nhưng chưa có trong `docs/api/`; xem các việc B1–B4 trong `ke-hoach.md`. Chưa xong việc nào thì chưa code phần phụ thuộc vào nó.
 
 Bản chạy thử tham khảo: `web/prototype/ban-3d.html` (không nằm trong git; tạo bằng `python3 web/prototype/build.py`, rồi mở thẳng bằng trình duyệt). Mã nguồn dễ đọc: `web/prototype/ban-3d.template.html`, `web/prototype/villager.js`. Bản chạy thử dùng dữ liệu giả; app thật lấy mọi thứ từ `view` và `events`.
 
@@ -48,12 +48,12 @@ Bản chạy thử tham khảo: `web/prototype/ban-3d.html` (không nằm trong 
 | `view.phase` (+ trường) | Cảnh | Ai làm gì |
 |---|---|---|
 | Trước khi vào phòng | 2D: trang đầu, tạo phòng (có ô chọn chế độ), vào phòng, PIN | `POST /rooms {mode}`, `join`, `rejoin` |
-| `Lobby` | **Sảnh 3D** trên quảng trường, hiện chế độ phòng (mục 10). Các bảng cài đặt (xếp chỗ, chọn vai, giờ & âm thanh) là 2D chồng lên | xem `screens/lobby.md` |
+| `Lobby` | **Sảnh 3D** trên quảng trường, hiện chế độ phòng (mục 10). Các bảng cài đặt (xếp chỗ, chỉ `inPerson`; chọn vai; giờ & âm thanh) là 2D chồng lên | xem `screens/lobby.md` |
 | `RoleView` | Quảng trường ban ngày, thẻ vai ngửa ở giữa | chạm = úp/ngửa, chạm đúp = cách chơi |
 | `ChiefElection` | Ban ngày, chạm người để bầu | `voteChief` |
 | `Night` + `nightCall.role` | Ban đêm, nhà | xem mục 4 |
-| `Night` + `nightCall.role = PhoneCheck` (`me.phoneCheck`) | Ban đêm, hộp thông báo **nhấn giữ mới hiện** | `phone-check.md` |
-| `Night` + `nightCall.role = LoversMeet` | Ban đêm như mọi bước; máy cặp đôi có `me.turn.step = LoversMeet`, không gửi gì | `night.md` |
+| `Night` + `nightCall.role = PhoneCheck` (`me.phoneCheck`), chỉ `inPerson` | Ban đêm, hộp thông báo **nhấn giữ mới hiện** | `phone-check.md` |
+| `Night` + `nightCall.role = LoversMeet` | Ban đêm như mọi bước; máy cặp đôi có `me.turn.step = LoversMeet`, không gửi gì. `online`: máy cặp đôi hiện hình xác nhận (mục 12) | `night.md` |
 | `Dawn` | Chuyển đêm → ngày; đọc `DawnAnnounced`; ghế người chết chuyển đầu lâu | — |
 | `Day` | Ban ngày: đề cử, trò chuyện | `nominate`, `skipDay`, `abortVote` |
 | `NominationLock` | Ban ngày, đếm ngược chốt đề cử | — |
@@ -113,7 +113,7 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 ## 8. Bí mật (đọc `docs/api/secrecy.md` trước khi làm)
 
 - **Người chết**: màn hình là **lớp che phẳng tối** không đổi khi có tin nhắn; **nhấn giữ** mới thấy cảnh. Ngoại lệ: bộ chọn của Thợ săn chết và Trưởng làng chết hiện công khai, chỉ có tên người còn sống theo `view.players[].alive`.
-- Bước Kiểm tra điện thoại: hộp thông báo cùng cỡ, cùng màu cho mọi câu trả lời, nhấn giữ mới hiện.
+- Bước Kiểm tra điện thoại (chỉ `inPerson`): hộp thông báo cùng cỡ, cùng màu cho mọi câu trả lời, nhấn giữ mới hiện.
 - Đồng hồ luôn theo `deadline` server, không kết thúc sớm khi đã chọn.
 - Không có gì trên màn hình máy khác cho biết ai vừa chọn (chỉ máy người chọn, và bầy sói thấy phiếu của nhau).
 - Cái gì áp dụng cho chế độ nào: bảng ở mục 16.
@@ -126,7 +126,7 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 ## 10. Sảnh chờ → chia vai → xem vai
 
 - **Trước sảnh** (2D, DOM): trang đầu, tạo phòng (có ô chọn **Chơi quanh bàn / Chơi online**), vào phòng, PIN. Dựng từ `screens/lobby.md` và token ở `ban-giao-frontend.md` mục 2–4.
-- **Sảnh (`Lobby`)**: 3D, quảng trường lúc chiều, lửa chưa đốt. Mỗi người vào phòng (`people`, sự kiện `PlayerJoined`) hiện ra trên gốc cây của mình kèm làn bụi và tiếng "bụp"; ghế trống không có ai. Khung trái: **mã phòng** lớn + **mã QR** (mở thẳng app, ví dụ `https://<tên-miền>/j/K7QP`; dựng từ `location.origin`, không ghi cứng tên miền) + số người + **chế độ phòng**. Khung phải: các vai trong ván (thẻ nhỏ × số lượng, từ cấu hình vai), nút Xếp chỗ / Chọn vai / Giờ & âm thanh / đổi chế độ (chủ phòng, các bảng này là 2D), nút **Chia vai** sáng nhấp nháy khi đủ điều kiện (`dealRoles`). Người không phải chủ phòng thấy "Chờ chủ phòng chia vai".
+- **Sảnh (`Lobby`)**: 3D, quảng trường lúc chiều, lửa chưa đốt. Mỗi người vào phòng (`people`, sự kiện `PlayerJoined`) hiện ra trên gốc cây của mình kèm làn bụi và tiếng "bụp"; ghế trống không có ai. Khung trái: **mã phòng** lớn + **mã QR** (mở thẳng app, ví dụ `https://<tên-miền>/j/K7QP`; dựng từ `location.origin`, không ghi cứng tên miền) + số người + **chế độ phòng**. Khung phải: các vai trong ván (thẻ nhỏ × số lượng, từ cấu hình vai), nút Xếp chỗ (chỉ `inPerson`) / Chọn vai / Giờ & âm thanh (`online` không hiện giờ `phoneCheck`) / đổi chế độ (`configureMode`) (chủ phòng, các bảng này là 2D), nút **Chia vai** sáng nhấp nháy khi đủ điều kiện (`dealRoles`). Người không phải chủ phòng thấy "Chờ chủ phòng chia vai".
 - **Chia vai**: khi pha đổi `Lobby → RoleView`, lửa bùng lên, lá bài úp bay từ đống lửa tới từng người (lệch nhau 90 ms, tiếng sột soạt).
 - **Xem vai (`RoleView`)**, cả hai chế độ: thẻ của mình lật ngửa giữa màn, bên phải: tên vai, phe, mô tả, mục tiêu (từ `me.roleCard`). Chạm thẻ = úp/ngửa, chạm đúp = cách chơi. Hết `deadline` (hoặc bấm "Tôi đã xem"): thẻ úp lại, thu nhỏ, bay vào **góc trái trên** thành thẻ nhỏ.
 
@@ -162,6 +162,17 @@ Chỉ hiện trên **máy người dùng chức năng** (và cả bầy với ph
 - Kết quả hiện chữ lớn giữa màn (xanh = an toàn, đỏ = Sói) và ghi vào **Ghi chép của bạn**. Ở `inPerson` chữ không được làm cả màn sáng lên.
 - Kết quả **chỉ lấy từ sự kiện server**, không tự suy ra.
 
+**Tin riêng khi chơi `online`** (`phone-check.md` mục Online). Không có bước Kiểm tra điện thoại, nên:
+
+| Lúc nào | Máy nào | Hiện gì | Lấy từ |
+|---|---|---|---|
+| Cupid vừa bắn | máy Cupid | mũi tên như bảng trên | `LoversPaired` |
+| Cupid vừa bắn, hoặc hết giờ server tự ghép | máy hai người bị bắn | hiệu ứng trúng tên, kèm chữ của thẻ phụ. **Chờ thiết kế của chủ dự án** | sự kiện `PhoneChecked`, rồi `view.lover`, `me.statusCards` |
+| Bước `LoversMeet` | máy hai người yêu | hình hai người với trái tim, để xác nhận là một cặp. **Chờ thiết kế của chủ dự án** | `me.turn.step`, `view.lover` |
+| Sói nguyền vừa nguyền | máy người bị nguyền | hiệu ứng bị nguyền, kèm chữ của thẻ phụ. **Chờ thiết kế của chủ dự án** | sự kiện `PhoneChecked`, rồi `me.cursed`, `me.statusCards` |
+
+Hình bầy sói thấy đồng bọn mới lấy từ `view.pack`, không có sự kiện riêng. Hai người bị bắn không được biết ai là Cupid.
+
 ## 13. Thông báo trời sáng / hoàng hôn
 
 - **Trời sáng (`Dawn` + `DawnAnnounced`)**: lớp nắng vàng dâng từ chân màn rồi tan, tiếng chim hót; **cuộn giấy da** mở từ trên xuống (tiêu đề "Trời đã sáng", câu `say` của server). Có người chết: chuông nhà thờ 2 tiếng, chữ tiêu đề đỏ sẫm, camera quay về chỗ người đó, gốc cây của họ hiện đầu lâu kèm làn bụi. Cuộn giấy tự cuộn lại sau ~4 giây.
@@ -187,11 +198,14 @@ Theo `docs/rules.md` §4 "Nhắn tin" và `docs/api/screens/day.md` mục Chat, 
 
 ## 16. Hai chế độ chơi
 
-Chủ phòng chọn khi tạo phòng (`POST /rooms {mode}`), đổi được trong sảnh trước khi chia vai. **Mọi máy theo chế độ của phòng, không có công tắc riêng từng máy.** Code rẽ nhánh theo `view.mode` (chờ B2), không theo cài đặt của máy.
+Chủ phòng chọn khi tạo phòng (`POST /rooms {mode}`), đổi được trong sảnh trước khi chia vai. **Mọi máy theo chế độ của phòng, không có công tắc riêng từng máy.** Code rẽ nhánh theo `view.mode`, không theo cài đặt của máy. Đổi chế độ bằng lệnh `configureMode {mode}`.
 
 | | Chơi quanh bàn (`inPerson`) | Chơi online (`online`) |
 |---|---|---|
 | Âm thanh mặc định của phòng | `oneSpeaker` | `allPhones` |
+| Xếp chỗ | chủ phòng xếp (`setSeats`) | không có nút; server bốc lúc chia vai (`view.players` trống trong sảnh) |
+| Kiểm tra điện thoại | có, theo lịch | không có bước này; người bị bắn, bị nguyền được báo ngay trên máy mình (mục 12) |
+| Trao đổi ban ngày | nói trực tiếp và nhắn tin | chỉ nhắn tin; gọi thoại làm sau |
 | Cảnh đêm, không tới lượt | cùng một cảnh làng tối mờ trên mọi máy còn sống | màn tối hẳn (che 93%), tay hạ xuống |
 | Cảnh đêm, tới lượt | cùng cảnh đó, chỉ thêm nhãn trên tay và tay bấm được; độ sáng không đổi | căn phòng sáng lên, tay trồi lên |
 | Tay của vai mình ban đêm | mọi máy đều thấy | chỉ rõ khi tới lượt |
@@ -206,9 +220,8 @@ Chủ phòng chọn khi tạo phòng (`POST /rooms {mode}`), đổi được tro
 - Server không gửi gì ngoài phần máy đó được biết.
 - Lớp che người chết và 2 bộ chọn công khai (mục 8).
 - Thẻ: `RoleView` ngửa, thẻ nhỏ trong ván luôn úp (mục 10, 14).
-- Bước Kiểm tra điện thoại: hộp giống nhau, nhấn giữ mới hiện (mục 8).
 - Luật nhắn tin (mục 15).
 
-**Đổi chế độ trong sảnh:** âm thanh của phòng về mặc định của chế độ mới; chủ phòng vẫn chỉnh lại được (`configureSound`).
+**Đổi chế độ trong sảnh:** âm thanh của phòng về mặc định của chế độ mới; chủ phòng vẫn chỉnh lại được (`configureSound`). Chỗ đã xếp bị bỏ.
 
-**Ván mới** (`newGame`): giữ chế độ, như giờ và âm thanh; chủ phòng đổi được ở sảnh.
+**Ván mới** (`newGame`): giữ chế độ, như giờ và âm thanh; chủ phòng đổi được ở sảnh. `online` thì vòng tròn được bốc lại lúc chia vai.

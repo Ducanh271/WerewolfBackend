@@ -181,8 +181,10 @@ any client existed did not raise `protocolVersion`.
   the `mode_unsupported` error is gone. New `configureMode` command and
   `ModeConfigured` event, and `view.mode` in every phase. An online room has
   no `setSeats` (`wrong_phase`); `dealRoles` draws the circle and sends
-  `SeatsSet`. `SoundConfigured` now reaches every phone; it used to reach
-  only the dead and the end screen.
+  `SeatsSet`. An online night has no `PhoneCheck` step: lovers and a cursed
+  player are told at once with `PhoneChecked`
+  ([phone check](screens/phone-check.md#online)). `SoundConfigured` now
+  reaches every phone; it used to reach only the dead and the end screen.
 
 ## Keeping this folder true
 

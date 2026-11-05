@@ -73,6 +73,9 @@ func NewGame(t testing.TB, opts ...Option) *Game {
 		g.Do(engine.DealRoles{Seed: cfg.seed})
 		g.stage = stageSetup
 	}
+	if cfg.online {
+		g.record(engine.ModeConfigured{Mode: engine.Online}, engine.SeatsSet{Order: order})
+	}
 	return g
 }
 

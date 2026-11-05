@@ -6,7 +6,8 @@ import "masoi/internal/i18n"
 // and look at each other (rules §3 "0c", §7). It belongs to no role: it follows
 // the phone check that comes right after Cupid's step, on the nights a
 // LoveSource is called, so it runs on a fixed schedule and tells nothing.
-// Nobody acts in it; only the lovers' phones show it as their turn.
+// Nobody acts in it; only the lovers' phones show it as their turn. An online
+// room has it too, with no phone check before it (rules §1b).
 const StepLoversMeet RoleID = "LoversMeet"
 
 // LoversMeetAnnounced is the voice line that opens the step, read aloud by the

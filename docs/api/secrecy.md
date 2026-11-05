@@ -16,9 +16,10 @@ own. In `online` nobody sits next to anybody, so what a neighbour could
 notice no longer matters:
 
 - [Around the table only](#around-the-table-only) binds `inPerson` alone.
+- [Phone check](#phone-check) binds `inPerson` alone too: `online` has no
+  such step.
 - Everything else on this page binds **both modes**: time from the server,
-  nothing leaked, the dead players' cover, and press and hold at the phone
-  check.
+  nothing leaked, the dead players' cover.
 
 The looks and sounds of each mode: `../frontend/giao-dien-3d.md` section 16.
 
@@ -68,12 +69,13 @@ called role's.
 
 In `online`, a called phone may look and sound different from the others
 (`../frontend/giao-dien-3d.md` section 16), going by `me.turn` alone. A real
-call and a fake call still last the same.
+call and a fake call still last the same. A lover or a cursed player is told
+at once, on their own phone only ([phone check](screens/phone-check.md#online)).
 
 ## Phone check
 
-Rules [§3](../rules.md#3-ban-đêm) "Kiểm tra điện thoại", §7: at this step
-**every eye is open**, so neighbours can see each other's phones.
+`inPerson` only. Rules [§3](../rules.md#3-ban-đêm) "Kiểm tra điện thoại", §7:
+at this step **every eye is open**, so neighbours can see each other's phones.
 
 - Every living phone shows one notice of the same size, layout, colours
   and timing, whatever it says: cursed or not, in love or not.

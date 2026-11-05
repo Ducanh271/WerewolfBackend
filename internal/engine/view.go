@@ -105,7 +105,7 @@ type MyView struct {
 	Role   RoleID
 	Team   Team
 	Alive  bool
-	Cursed bool // on the wolf team though the role is not a wolf role; known from the phone check on
+	Cursed bool // on the wolf team though the role is not a wolf role; known from the phone check on, or at once online (rules §1b)
 	// PhoneCheck is set while the phone check step runs, for every living player.
 	PhoneCheck *PhoneCheckView
 	// CanShoot is set only for the dead Hunter while he chooses his target.
