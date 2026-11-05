@@ -11,4 +11,5 @@ Làm **Bước $ARGUMENTS** trong `docs/frontend/ke-hoach.md`, đúng phạm vi 
    - Chỗ nào tài liệu thiếu hoặc mâu thuẫn (nếu có) và câu hỏi cần tôi trả lời.
    - Cách kiểm tra.
 3. Sau khi tôi duyệt: code, chạy `cd web && npm run check`, sửa tới khi qua. Không sửa file ngoài phạm vi; thấy việc khác cần làm thì ghi lại.
-4. Báo cáo theo mẫu trong `CLAUDE.md`.
+4. Tick bước này ở mục "Tiến độ" của `docs/frontend/ke-hoach.md`, chung commit với phần việc.
+5. Báo cáo theo mẫu trong `CLAUDE.md`.

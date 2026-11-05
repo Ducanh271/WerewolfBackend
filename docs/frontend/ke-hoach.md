@@ -6,14 +6,35 @@ Cấu trúc: frontend nằm ở `web/` **trong chính repo backend**, nên `docs
 
 ---
 
+## Tiến độ
+
+Làm xong việc nào thì tick ngay ở đây (việc backend B1–B4 tick ở mục dưới).
+
+- [ ] Bước 1 — Khung dự án + kiểu dữ liệu từ schema
+- [ ] Bước 2 — Kết nối server và kho trạng thái
+- [ ] Bước 3 — Các màn 2D ngoài ván
+- [ ] Bước 3b — Sảnh chờ 3D, chia vai, xem vai, thẻ của bạn
+- [ ] Bước 4 — Cảnh 3D quảng trường (chưa nối dữ liệu)
+- [ ] Bước 5 — Nối cảnh 3D với `view`
+- [ ] Bước 6 — Hai tay góc nhìn thứ nhất
+- [ ] Bước 6b — Trưởng làng, hiệu ứng chức năng đêm, trời sáng
+- [ ] Bước 7 — Trò chuyện ban ngày
+- [ ] Bước 8 — Cảnh lên giàn, bỏ phiếu, treo cổ
+- [ ] Bước 9 — Thợ săn, Trưởng làng chết, người chết, Kiểm tra điện thoại
+- [ ] Bước 10 — Màn kết thúc
+- [ ] Bước 11 — Âm thanh và cài đặt
+- [ ] Bước 12 — PWA, hiệu năng, kiểm tra cuối
+
+---
+
 ## Việc backend trước khi code frontend
 
 Chạy từng việc bằng `/tinh-nang`, theo thứ tự. B1, B2, B4 xong trước Bước 2; B3 xong trước Bước 3b.
 
-- **B1 — Ví dụ còn thiếu.** Ván mẫu sinh thêm `view.day`, `view.dusk`, `error.chat_full`; `make api-docs`.
-- **B2 — Hai chế độ chơi.** Luật `docs/rules.md` §1 + mục mới về chế độ, sửa §10. Server nhận `mode: online` (bỏ `mode_unsupported`); `view.mode` ở sảnh và trong ván; lệnh đổi chế độ trong sảnh cho chủ phòng; `online` mặc định `allPhones`. `secrecy.md` tách theo chế độ: luật hình/tiếng/độ sáng chỉ bắt buộc với `inPerson`; đồng hồ theo `deadline`, không lộ dữ liệu, lớp che người chết áp dụng cả hai; bước Kiểm tra điện thoại chỉ có ở `inPerson`. Đổi chế độ thì âm thanh về mặc định của chế độ mới, chủ phòng vẫn chỉnh lại được; `newGame` giữ chế độ.
-- **B3 — Thẻ vai.** `/tinh-nang docs/tasks/the-ngua.md`.
-- **B4 — Phục vụ app và mã QR.** Server Go phục vụ `web/dist`, link `/j/{code}` mở thẳng app; sửa `docs/api/README.md` và `docs/huong-dan-du-an.md`. Thư mục app đọc từ biến môi trường `WEB_DIR` (không nhúng vào binary, vì `web/dist` không nằm trong git). Server chấp nhận `Origin` trùng chính nó, để đổi tên miền không phải cấu hình lại `ALLOWED_ORIGINS`. Lúc phát triển dùng proxy của Vite.
+- [x] **B1 — Ví dụ còn thiếu.** Ván mẫu sinh thêm `view.day`, `view.dusk`, `error.chat_full`; `make api-docs`.
+- [x] **B2 — Hai chế độ chơi.** Luật `docs/rules.md` §1 + mục mới về chế độ, sửa §10. Server nhận `mode: online` (bỏ `mode_unsupported`); `view.mode` ở sảnh và trong ván; lệnh đổi chế độ trong sảnh cho chủ phòng; `online` mặc định `allPhones`. `secrecy.md` tách theo chế độ: luật hình/tiếng/độ sáng chỉ bắt buộc với `inPerson`; đồng hồ theo `deadline`, không lộ dữ liệu, lớp che người chết áp dụng cả hai; bước Kiểm tra điện thoại chỉ có ở `inPerson`. Đổi chế độ thì âm thanh về mặc định của chế độ mới, chủ phòng vẫn chỉnh lại được; `newGame` giữ chế độ.
+- [ ] **B3 — Thẻ vai.** `/tinh-nang docs/tasks/the-ngua.md`.
+- [ ] **B4 — Phục vụ app và mã QR.** Server Go phục vụ `web/dist`, link `/j/{code}` mở thẳng app; sửa `docs/api/README.md` và `docs/huong-dan-du-an.md`. Thư mục app đọc từ biến môi trường `WEB_DIR` (không nhúng vào binary, vì `web/dist` không nằm trong git). Server chấp nhận `Origin` trùng chính nó, để đổi tên miền không phải cấu hình lại `ALLOWED_ORIGINS`. Lúc phát triển dùng proxy của Vite.
   - Chưa deploy: tạm chạy `ngrok http 8080`, HTTPS do ngrok lo, tên miền có thể đổi. Qua ngrok mọi máy chung một IP (`clientIP`), nên chung giới hạn 100 kết nối và 30 kết nối mới/phút. Khi deploy thật mới tính reverse proxy và tin `X-Forwarded-For`.
 
 ---

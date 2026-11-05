@@ -19,3 +19,5 @@ Làm theo quy trình "hợp đồng trước" trong `docs/frontend/doi-chieu-bac
 - C. Cập nhật `docs/frontend/giao-dien-3d.md` (trông thế nào, lấy từ trường nào).
 - D. `cd web && npm run gen:types`, code `web/`.
 - E. `cd web && npm run check` phải qua. Báo cáo theo mẫu trong `CLAUDE.md`.
+
+Khi xong hẳn: nếu đây là một việc trong `docs/frontend/ke-hoach.md` (B1–B4) hoặc `docs/plan.md`, tick ô của nó ở đó, chung commit với phần việc.
