@@ -21,25 +21,24 @@ Câu hỏi kiểm tra cho mỗi chi tiết trên màn hình: **"Số liệu / ch
 | 2 | Không có nút **Bỏ qua ngày** và **Huỷ ván** | `skipDay {on}`, `abortVote {on}` ở các pha ngày (`day.md`) | Thêm hai nút vào lớp DOM ban ngày (cột phải như C7), hiện số phiếu từ `view.votes.skips`, `abortVotes`. |
 | 3 | Phiếu treo/tha là **số giả**, đếm 1 người 1 phiếu | `view.votes.verdicts` live; **Trưởng làng tính 2**; hoà thì tha; người bị xử không bỏ phiếu | Đếm từ `view.votes`, nhân đôi theo `view.chief`; máy người bị xử không hiện tay bấm. |
 | 4 | Không có **dải lời dẫn** | Mọi sự kiện có `say` là thông báo: máy loa đọc, **mọi máy hiện chữ** (`README.md`) | Thêm dải chữ lời dẫn ở đáy (như `.sy` trong wireframe), cả trong cảnh 3D. |
-| 5 | Ban đêm máy **không tới lượt bị che đen 93%**, máy tới lượt **sáng lên** | `secrecy.md`: độ sáng, hoạt ảnh, thời gian **giống nhau trên mọi máy** — người ngồi cạnh thấy máy sáng lên là biết ai đang dậy | **Cần cậu quyết** (mục 4). |
-| 6 | Hiệu ứng âm thanh khi chọn/xác nhận ban đêm | `secrecy.md`: không âm thanh phụ thuộc hành động | Chế độ chơi trực tiếp: tắt tiếng do mình bấm ban đêm (đã ghi trong đặc tả mục 7). |
-| 7 | Trò chuyện là tin giả, ai cũng nhắn được | Backend đã có phần nhắn tin nhưng **tài liệu chưa có trong `docs/api/`** | Viết tài liệu trò chuyện vào `docs/api/screens/` + `make api-docs` trước khi frontend làm (mục 3). |
+| 5 | Ban đêm máy **không tới lượt bị che đen 93%**, máy tới lượt **sáng lên** | `secrecy.md`: độ sáng, hoạt ảnh, thời gian **giống nhau trên mọi máy** — người ngồi cạnh thấy máy sáng lên là biết ai đang dậy | Đã quyết (mục 4): `inPerson` cùng một cảnh tối mờ; `online` giữ như bản chạy thử. Cần B2 tách `secrecy.md` theo chế độ. |
+| 6 | Hiệu ứng âm thanh khi chọn/xác nhận ban đêm | `secrecy.md`: không âm thanh phụ thuộc hành động | `inPerson`: ban đêm im hết, trừ máy loa đọc `say`. `online`: đủ tiếng. Không có nút "Im lặng ban đêm" (đặc tả mục 7, 16). |
+| 7 | Trò chuyện là tin giả, ai cũng nhắn được | `docs/api/screens/day.md` mục Chat; nhắn được ở `ChiefElection`, `Day`, `NominationLock`, riêng `Trial` chỉ người trên giàn; không nhắn ở sảnh và `Verdict` | Làm theo `day.md`, cả hai chế độ (đặc tả mục 15). |
 | 8 | Tạo hình dân làng ngẫu nhiên theo số thứ tự | Server không có trường tạo hình | Tạm thời: sinh từ **id người chơi** (`p1`…) để mọi máy giống nhau. Muốn người chơi tự chọn → tính năng backend mới. |
-| 9 | Treo cổ: hoạt ảnh ~6 giây | Pha `Dusk` có thời lượng theo `timers` (mặc định 10 giây) | Hoạt ảnh phải xong trước `deadline`; `view` mới đến thì cắt hoạt ảnh. |
-| 10 | Chưa có: chờ xem vai, bầu Trưởng làng, Kiểm tra điện thoại, Cặp đôi nhìn nhau, Thợ săn bắn, Trưởng làng chết, màn che người chết, sảnh | Có đủ trong `role-view.md`, `chief.md`, `phone-check.md`, `night.md` (LoversMeet), `hunter.md`, `secrecy.md` (người chết), `lobby.md` | Làm theo `ke-hoach-frontend.md` bước 3, 5, 9. |
+| 9 | Treo cổ: hoạt ảnh ~6 giây, gắn với `Dusk` | `Hanged` đến lúc `Verdict` kết thúc; pha kế có thể là `HunterShot`, `ChiefSuccession`, `Ended` hoặc `Dusk` (`day.md`). Sau `Spared` có thể quay lại `Day` | Chạy theo sự kiện `Hanged`. Pha kế không phải `Dusk` thì rút gọn còn cắt đen + chữ ~1 giây; là `Dusk` thì chạy đủ, xong trước `deadline`. |
+| 10 | Chưa có: chờ xem vai, bầu Trưởng làng, Kiểm tra điện thoại, Cặp đôi nhìn nhau, Thợ săn bắn, Trưởng làng chết, màn che người chết, sảnh | Có đủ trong `role-view.md`, `chief.md`, `phone-check.md`, `night.md` (LoversMeet), `hunter.md`, `secrecy.md` (người chết), `lobby.md` | Làm theo `ke-hoach.md` bước 3, 3b, 5, 9. |
 | 11 | Màn kết thúc chỉ có 3 kết cục | Còn **hoà** (`view.draw`) và **huỷ ván** (`GameEnded.outcome.aborted`) | Thêm hai biến thể: xám, không hiệu ứng, vẫn lật thẻ. |
+| 12 | Thẻ vai hiện ngửa suốt ván | Luật và API đang ghi nhấn giữ mới xem (`rules.md` §9b, `secrecy.md`, `role-view.md`) | Đã quyết: `RoleView` ngửa, thẻ nhỏ trong ván luôn úp. Chạy `/tinh-nang docs/tasks/the-ngua.md` (B3) trước Bước 3b. |
 | 13 | Bầu Trưởng làng xong thẻ bay tới người thắng; Trưởng làng chết thì thẻ bay sang người kế nhiệm | Luật §7b: người chết **chọn** kế nhiệm, hết giờ thì mất danh hiệu — không bầu lại | Giao diện theo luật (đặc tả mục 11). Muốn bầu lại thì sửa luật + backend trước. |
 | 14 | Bản chạy thử tự bịa người chết lúc trời sáng và kết quả soi | Lấy từ `DawnAnnounced` và sự kiện kết quả (`SeerChecked`…) | Không suy ra kết quả trên máy. |
-| 12 | Thẻ vai hiện ngửa (Q25) | Repo backend có thể chưa sửa câu "nhấn giữ để xem thẻ" | Chạy `docs/tasks/the-ngua.md` (lệnh `/tinh-nang`). |
 
 ## 3. Quy trình thêm một tính năng (có dữ liệu)
 
-1. **Viết phiếu tính năng** (mẫu bên dưới) — cậu tự viết hoặc nhờ Claude trong Project.
+1. **Viết phiếu tính năng** (mẫu bên dưới) — cậu tự viết hoặc nhờ Claude viết.
 2. **Luật**: nếu tính năng đổi cách chơi, sửa `docs/rules.md` trước (số mục rõ ràng).
-3. **Backend** (Claude Code trên repo backend): code + test + chạy `make api-docs` để sinh lại `schema/`, `examples/`; viết/sửa `docs/api/screens/<màn>.md` (trường nào, lệnh nào, lỗi nào, ai thấy) và `secrecy.md` nếu liên quan bí mật.
+3. **Backend**: code + test + chạy `make api-docs` để sinh lại `schema/`, `examples/`; viết/sửa `docs/api/screens/<màn>.md` (trường nào, lệnh nào, lỗi nào, ai thấy) và `secrecy.md` nếu liên quan bí mật.
 4. **Đặc tả giao diện**: thêm vào `docs/frontend/giao-dien-3d.md` (trông thế nào, lấy từ trường nào).
-5. **Frontend** (Claude Code trên repo frontend): `cd web && npm run gen:types` → code → test phát lại `examples/`.
-6. Chép lại các file `docs/` đã đổi vào Project để mọi phiên Claude cùng thấy.
+5. **Frontend**: `cd web && npm run gen:types` → code → test phát lại `examples/`.
 
 **Mẫu phiếu tính năng**
 
@@ -55,14 +54,14 @@ Bí mật: có làm máy này khác máy kia (hình, tiếng, thời gian) khôn
 Màn hình: mô tả + bản chạy thử nếu có
 ```
 
-## 4. Hai việc cần quyết
+## 4. Các việc đã quyết
 
-1. **Độ sáng ban đêm khi chơi trực tiếp** (dòng 5). Đề xuất: ở chế độ chơi trực tiếp, **mọi máy còn sống ban đêm cùng một cảnh làng tối mờ** (không che đen), mọi máy đều thấy tay của vai mình; máy tới lượt chỉ khác ở **nhãn trên tay và tay bấm được**, không sáng lên. Màn che đen chỉ dùng khi chơi online (mỗi người một nơi). Khi đó cần sửa đoạn "Night" trong `secrecy.md` cho khớp.
-2. **Luật trò chuyện** — *đã chốt 04/11*: chỉ ở sảnh và ban ngày, không nhắn ban đêm, không có kênh riêng (kể cả bầy sói). Còn cần ghi rõ trong `docs/api/screens/chat.md`: người chết có nhắn được không, giới hạn độ dài và tốc độ.
+1. **Hai chế độ chơi và độ sáng ban đêm** (dòng 5, 6). Phòng có `inPerson` và `online`; cả phòng theo một chế độ. Khác biệt đầy đủ: bảng ở `giao-dien-3d.md` mục 16. `secrecy.md` tách theo chế độ ở việc B2.
+2. **Luật trò chuyện**: theo `docs/rules.md` §4 "Nhắn tin" và `docs/api/screens/day.md` mục Chat, cả hai chế độ. Không nhắn ở sảnh và lúc `Verdict`; người chết chỉ đọc; không có kênh riêng. Quyết định cũ ngày 04/11 (nhắn được ở sảnh) đã bỏ.
 
 ## 5. Để máy tự bắt lệch (cài sẵn trong frontend)
 
 - **Kiểu sinh từ schema** (`cd web && npm run gen:types`): backend đổi tên trường → frontend **không build được**, lộ ngay chỗ lệch.
 - **`switch` đầy đủ** trên `view.phase` và `event.type` với nhánh `never`: backend thêm pha/sự kiện mới → TypeScript báo thiếu xử lý.
 - **Test phát lại `docs/api/examples/`**: mỗi file `view.*.json` dựng được một cảnh không lỗi; mỗi `command.*.json` khớp đúng lệnh app gửi.
-- **Kiểm tra trước khi gộp code**: `cd web && npm run gen:types && npm run build && npm test` chạy trên CI mỗi lần đẩy code, kể cả khi chỉ backend đổi.
+- **Kiểm tra trước khi gộp code**: `cd web && npm ci && npm run check` chạy trên CI mỗi lần đẩy code, kể cả khi chỉ backend đổi (thêm ở Bước 1).

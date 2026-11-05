@@ -1,11 +1,11 @@
 # Bàn giao giao diện cho frontend — Ma Sói
 
-Tài liệu này là nguồn chính để code giao diện. Hình mẫu từng màn nằm trên canvas thiết kế "Ma Sói — Wireframe" (tên bảng ghi trong ngoặc, ví dụ `C4`). Luật và dữ liệu: `docs/rules.md`, `docs/api/`. Bí mật: `docs/api/secrecy.md`.
+Tài liệu này ghi màu, chữ, nút, khung và tay. Khi vênh với `docs/frontend/giao-dien-3d.md` thì **đặc tả 3D thắng** (thứ tự nguồn ở `CLAUDE.md`). Không có bản vẽ wireframe: các mã như `C4`, `A1` chỉ còn là tên gọi; màn 2D dựng từ `docs/api/screens/lobby.md` và các mục token ở đây. Luật và dữ liệu: `docs/rules.md`, `docs/api/`. Bí mật: `docs/api/secrecy.md`.
 
 ## 1. Khung màn hình
 
 - Máy chuẩn iPhone 12 cầm ngang: **844 × 390**. Chỉ hỗ trợ ngang; máy dọc thì hiện lớp phủ "Xoay ngang điện thoại" (A1).
-- Lề an toàn: **47px trái/phải** (tai thỏ), **10px trên/dưới**. Nội dung chính nằm trong 750 × 370.
+- Lề an toàn cho màn 2D: **47px trái/phải** (tai thỏ), **10px trên/dưới**. Nội dung chính nằm trong 750 × 370. Cảnh 3D theo `giao-dien-3d.md` mục 1.
 - Khung chung của mọi màn trong ván, từ trên xuống:
   - Thanh trên cao 40px: nút menu 40×32, tiêu đề (Grenze 28px), dòng phụ, đồng hồ (VT323 34px, vàng).
   - Vùng giữa: cột trái 150px, bàn ghế ở giữa, cột phải 150px, cách nhau 8px.
@@ -81,9 +81,9 @@ Khi nhấn: dịch nút 2px xuống phải và bỏ bóng ngoài.
 
 - Mặt bàn: đêm `rgba(13,19,34,.55)` viền đứt `#3a4a5e`; ngày cỏ `#a9d18e` viền `#6d9566`. Giữa bàn có 3 dòng: nhãn nhỏ, chữ to (Grenze), dòng phụ.
 
-### Thẻ vai (hiện ngửa — rules §9b)
-- Tranh thẻ tỉ lệ 3:4. Trên màn lượt đêm thẻ cỡ **156×209**, đặt tại (47, 56). Màn Xem vai (C1) 200×268. Bóng `4px 4px 0 #05070d`.
-- Chạm 1 lần: úp thẻ (đổi sang `the/mat-sau.webp`). Chạm lần nữa: lật lại. Chạm đúp khi đang ngửa: mở trang hướng dẫn của vai (`GET /guide` → `roles[]`).
+### Thẻ vai (quyết định mới, chờ `rules.md` §9b sửa ở B3)
+- Tranh thẻ tỉ lệ 3:4. Màn Xem vai 200×268. Trong ván là thẻ nhỏ 46×62 ở góc, **luôn úp** (`giao-dien-3d.md` mục 14). Bóng `4px 4px 0 #05070d`.
+- Màn Xem vai và khung xem thẻ: chạm 1 lần: úp thẻ (đổi sang `the/mat-sau.webp`). Chạm lần nữa: lật lại. Chạm đúp khi đang ngửa: mở trang hướng dẫn của vai (`GET /guide` → `roles[]`).
 - Chữ trên thẻ do code in (tên, phe, mô tả, mục tiêu từ `me.roleCard`), không có chữ trong tranh.
 
 ### Hai tay (góc nhìn thứ nhất)
@@ -109,11 +109,13 @@ Quy tắc chung: **chạm một người trên bàn để chọn → chạm "tay
 | `Seer` (Tiên tri) | phải (cầu xanh) | `seerCheck {target}` | — |
 | `Detective` (Thám tử) | trái (kính lúp) | `detectiveCheck {target}` | cả hai tay `-da-dung`, giữ suốt ván |
 
-- Khi không tới lượt (C3): vẫn hiện thẻ và tay của vai mình nhưng tay không bấm được, không có nhãn.
+- Khi không tới lượt: `inPerson` vẫn hiện tay của vai mình (thẻ góc vẫn úp) nhưng tay không bấm được, không có nhãn. `online`: tay hạ xuống và tối đi (`giao-dien-3d.md` mục 16).
 - Bị chặn hay trúng độc: thông báo `me.turn.notice` thay vào khung thông tin bên phải, tay không bấm được.
 - Ngày: tay chung trong `web/assets/chung/`. Tay trái chỉ trỏ (`-da-vote` sau khi đề cử), tay phải cầm chĩa ba. Thợ săn (C12b) và Trưởng làng (C13) hiện tay riêng, chỉ để trang trí; việc chọn vẫn bằng lưới tên và nút chính.
 
 ## 6. Bố cục lượt đêm (thành phần `LuotDem`)
+
+Bố cục 2D cũ, chỉ để tham khảo cỡ khung. Cảnh đêm thật là 3D theo `giao-dien-3d.md` mục 2 và 4; thẻ ở đây thay bằng thẻ nhỏ úp ở góc.
 
 | Phần | Vị trí / cỡ |
 |---|---|

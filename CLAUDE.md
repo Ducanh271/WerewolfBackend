@@ -30,7 +30,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 6. Night resolution follows the ordered pipeline in `docs/rules.md` §9. Do not reorder steps.
 
 ## Conventions
-- Code, identifiers, comments: English. User-facing strings (announcements): Vietnamese, kept in `internal/i18n/vi.go`.
+- Code, identifiers, comments: English (`web/` too). User-facing strings (announcements): Vietnamese, kept in `internal/i18n/vi.go`; the app's own strings in `web/src/i18n/vi.ts`.
 - Mọi chữ người dùng thấy nằm trong i18n dưới dạng mẫu câu đầy đủ có placeholder; không ghép mảnh câu trong code (để sau thêm ngôn ngữ khác chỉ cần thêm 1 file).
 - Errors: return typed errors from `engine/errors.go` (e.g. `ErrNotYourTurn`); never panic on player input.
 - Tests: table-driven. Rule tests are scenario tests named after the rule, e.g. `TestNight_GuardAndWitchSaveSameTarget_AnnouncesProtected`. Every row of the table in `docs/rules.md` §9 must have a test.
@@ -41,7 +41,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 ## Talking to me
 - Reply to me in Vietnamese. Keep it short: what changed, test results, questions.
 - When you ask me a question, explain it in game terms (players, roles, what happens at the table), not code terms, and give your recommendation.
-- Code, identifiers, commit messages and docs stay in English.
+- Code, identifiers, commit messages and docs stay in English. Exceptions: `docs/frontend/`, `docs/tasks/` and the asset folder names under `web/assets/` stay in Vietnamese.
 
 ## Glossary (rules.md term → code name)
 | Vietnamese | Code |
@@ -68,7 +68,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 - When the architecture changes (layers, dependency rules, request flow, config), update `docs/huong-dan-du-an.md` (Vietnamese project guide) in the same change.
 
 ## Don't
-- Don't write frontend code. Don't touch files outside the task's scope.
+- Don't write frontend code outside `web/`. Don't touch files outside the task's scope.
 - Don't add features from `docs/rules.md` §10 (out of scope).
 - Don't read the whole repo; open only files the task needs.
 - Don't commit secrets or generated binaries.
@@ -91,9 +91,9 @@ Tài liệu đi kèm: `docs/frontend/ke-hoach.md` (các bước), `docs/frontend
 - **Không tự đổi luật hay thiết kế** để code cho dễ. Thấy tài liệu mâu thuẫn hoặc thiếu: dừng, nêu rõ chỗ mâu thuẫn (file:dòng), đề xuất cách sửa, chờ trả lời.
 - **Mỗi lần chỉ một việc** (một bước trong `ke-hoach.md` hoặc một tính năng). Không "tiện tay" sửa chỗ khác; ghi vào phần "Việc còn lại" trong báo cáo.
 - **Lập kế hoạch trước khi sửa**: liệt kê file sẽ sửa, trường API dùng (trích file:dòng), cách kiểm tra; với thay đổi chạm cả Go lẫn `web/` thì chờ duyệt rồi mới làm.
-- **Xong nghĩa là kiểm tra đã qua**: Go: `make test`; web: `cd web && npm run check`. Báo cáo kết quả lệnh thật, không viết "chắc là chạy được".
+- **Xong nghĩa là kiểm tra đã qua**: Go: `make fmt`, `make test-fast`, `make lint` ở máy, `make test` để CI chạy (mục Commands); web: `cd web && npm run check`. Báo cáo kết quả lệnh thật, không viết "chắc là chạy được".
 - Chữ hiển thị là tiếng Việt, lấy nguyên văn từ server khi server gửi (`say`, `notice`, `summary`, guide, câu lỗi trong `docs/api/errors.md`).
-- Bí mật (`docs/api/secrecy.md`) là lỗi nặng ngang lộ dữ liệu: hình, tiếng, thời gian không được khác nhau giữa các máy theo vai/hành động khi chơi trực tiếp.
+- Bí mật (`docs/api/secrecy.md`) là lỗi nặng ngang lộ dữ liệu. Phòng có hai chế độ, cả phòng theo một chế độ, không có công tắc riêng từng máy (`docs/frontend/giao-dien-3d.md` mục 16). `inPerson`: hình, tiếng, độ sáng không được khác nhau giữa các máy theo vai/hành động. Cả hai chế độ: đồng hồ theo `deadline`, không lộ dữ liệu, lớp che người chết.
 
 ### Báo cáo cuối mỗi việc (luôn theo mẫu)
 1. Đã làm (file chính).

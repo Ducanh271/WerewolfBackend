@@ -7,8 +7,10 @@
 - Mỗi `view` **thay hẳn** cái trước; dựng màn hình từ `view` mới nhất. `events` có `reset: true` thì thay cả danh sách.
 - `switch` trên `view.phase` và `event.type` phải đầy đủ, nhánh mặc định là `never` để TypeScript báo khi backend thêm pha/sự kiện.
 - Đồng hồ luôn theo `deadline`. Hoạt ảnh không được giữ màn hình cũ khi `view` mới đã tới.
+- Hình và tiếng ban đêm rẽ theo chế độ phòng (`view.mode`, bảng ở `../docs/frontend/giao-dien-3d.md` mục 16), không có công tắc riêng từng máy.
+- Chữ của app nằm ở `src/i18n/vi.ts`. Câu lỗi sinh từ `../docs/api/errors.md` (trong `gen:types`), không chép tay.
 - Ảnh lấy qua `assets/manifest.json`. Ảnh mới: `python3 tools/chuan_hoa_anh.py`.
 - Màn chuẩn 844 × 390 ngang, nút ≥ 44px, tôn trọng `prefers-reduced-motion`.
-- Bản chạy thử `prototype/ban-3d.html` chỉ để chép **hình ảnh**; dữ liệu và luồng lấy từ `../docs/api/`. Các chỗ nó lệch backend: `../docs/frontend/doi-chieu-backend.md`.
+- Bản chạy thử `prototype/ban-3d.html` (không nằm trong git, tạo bằng `python3 web/prototype/build.py`) chỉ để chép **hình ảnh**; dữ liệu và luồng lấy từ `../docs/api/`. Các chỗ nó lệch backend: `../docs/frontend/doi-chieu-backend.md`.
 
 Lệnh: `npm run dev` · `npm run check` (gen:types + tsc + test + build — phải qua trước khi báo xong) · `npm test` (phát lại `../docs/api/examples/`).

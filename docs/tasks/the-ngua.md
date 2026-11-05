@@ -1,29 +1,27 @@
-# Task cho agent backend: thẻ vai hiện ngửa (Q25) + hai tay (Q26)
+# Phiếu tính năng: thẻ vai ngửa ở màn Xem vai, úp trong ván
 
-Dán nguyên file này cho agent làm việc trên repo `WerewolfBackend`.
+Chạy bằng `/tinh-nang docs/tasks/the-ngua.md`. Repo này là bản đúng; mọi đoạn tài liệu tự soạn lại.
 
-## Bối cảnh
-Thiết kế giao diện đã chốt (claude/thiet-ke.md, Q25, Q26):
-- Thẻ vai **hiện ngửa** trên máy của chính người chơi suốt ván. Chạm 1 lần = úp thẻ, chạm lần nữa = lật lại. Chạm đúp khi thẻ ngửa = mở trang hướng dẫn của vai đó. App **không còn bắt nhấn giữ** để xem thẻ.
-- Ban đêm mỗi máy hiện thẻ của mình và hai bàn tay của vai (góc nhìn thứ nhất). Chỉ máy đang tới lượt có tay bấm được: chạm một người trên bàn để chọn, chạm tay để xác nhận.
+## Quyết định (áp dụng cả hai chế độ chơi)
+- **Màn `RoleView`**: thẻ hiện ngửa. Chạm 1 lần = úp, chạm lần nữa = lật lại. Chạm đúp khi đang ngửa = mở trang cách chơi của vai.
+- **Trong ván**: thẻ nhỏ ở góc màn **luôn úp**, mặt sau giống nhau cho mọi vai. Chỉ khi chạm mới lật và phóng to ra khung xem thẻ.
+- Ban đêm mỗi máy thấy hai bàn tay của vai mình; ở `inPerson` mọi máy thấy, ở `online` chỉ rõ khi tới lượt (`docs/frontend/giao-dien-3d.md` mục 16). Máy tới lượt chạm một người để chọn, chạm tay để xác nhận.
 
-**Không đổi:** màn che người chết (nhấn giữ mới xem), câu trả lời ở bước Kiểm tra điện thoại (nhấn giữ), không âm thanh/rung/nháy, lượt gọi chạy đủ giờ, lỗi giống nhau.
+**Không đổi:** màn che người chết (nhấn giữ mới xem), câu trả lời ở bước Kiểm tra điện thoại (nhấn giữ), lượt gọi chạy đủ giờ, lỗi giống nhau.
+
+Làm sau B2, vì B2 tách `docs/api/secrecy.md` theo chế độ.
 
 ## Việc cần làm
 
-1. **Tài liệu** — sửa đúng các chỗ sau (bản đã sửa sẵn nằm trong Project, cùng đường dẫn, có thể chép đè):
-   - `docs/rules.md` §9b, câu "Thẻ có kích thước cố định, che mặc định, nhấn giữ mới hiện."
-   - `docs/api/secrecy.md`: mục **Role cards**, mục **Night** (2 gạch đầu dòng đầu), mục **Guide**, câu "like a role card" ở mục Phone check.
+1. **Tài liệu**, tự soạn lại đúng các chỗ sau:
+   - `docs/rules.md` §9b: câu "Thẻ có kích thước cố định, che mặc định, nhấn giữ mới hiện."
+   - `docs/api/secrecy.md`: mục **Role cards**, mục **Guide**, câu "like a role card" ở mục Phone check.
    - `docs/api/screens/role-view.md`: đoạn "Show the card at a fixed size, covered…".
    - `docs/api/screens/guide.md`: đoạn "The guide is public, but…" và ví dụ `firstTime`.
    - `docs/api/screens/phone-check.md`: "behind press-and-hold like the role card".
-   - `docs/protocol.md`: dòng `me.roleCard`, "(fixed size, hidden until pressed)" → "(fixed size, face up; tap to turn face down, double tap for the role's guide page)".
+   - `docs/protocol.md`: dòng `me.roleCard`, cụm "(fixed size, hidden until pressed)".
    - `docs/guide-text.md` mục 3, gạch đầu dòng thứ hai.
 
-2. **Code** — chữ hướng dẫn do server sinh (`GET /guide`, mảng `firstTime`):
-   - Tìm chuỗi `Thẻ vai che mặc định; nhấn giữ để xem` trong code Go và thay bằng:
-     `Thẻ vai hiện ngửa trên máy bạn: chạm một lần để úp, chạm lần nữa để lật lại, chạm đúp khi thẻ đang ngửa để xem cách chơi. Chơi quanh bàn thì giữ màn hình của mình kín đáo, úp thẻ khi không cần xem.`
-   - Chạy lại bộ sinh ví dụ (các khối `<!-- example: http/guide.reply.json … -->`) để ví dụ trong `guide.md` khớp code.
-   - Chạy toàn bộ test; test so chữ guide (nếu có) cập nhật theo chuỗi mới.
+2. **Code**: chữ hướng dẫn do server sinh (`GET /guide`, mảng `firstTime`) ở `internal/i18n/guide.go`, câu "Thẻ vai che mặc định; nhấn giữ để xem, thả tay là ẩn lại ngay…". Soạn câu mới theo quyết định trên, đưa tôi duyệt ở điểm dừng 1. Chạy `make api-docs`; test so chữ guide (nếu có) cập nhật theo câu mới.
 
-3. **Kiểm tra cuối**: `grep -rn "nhấn giữ\|press-and-hold\|pressed" docs/` — mọi chỗ còn lại phải chỉ nói về người chết hoặc bước Kiểm tra điện thoại.
+3. **Kiểm tra cuối**: `grep -rn "nhấn giữ\|press-and-hold\|pressed" docs/ internal/i18n/`: mọi chỗ còn lại phải chỉ nói về người chết hoặc bước Kiểm tra điện thoại.
