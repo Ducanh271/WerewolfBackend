@@ -59,6 +59,40 @@ func chatFullExample(t *testing.T, x *exampleSet) {
 	x.files["server/error.chat_full.json"] = g.x.files["server/error.chat_full.json"]
 }
 
+// onlineExample plays the lobby of an online room up to the deal, on a table of
+// its own (rules §1b). It adds the online request and lobby view, the mode
+// command and its event; the lobby of the first game stays in person.
+func onlineExample(t *testing.T, x *exampleSet) {
+	t.Helper()
+	g := &exGame{t: t, e: newExampleEnv(t), x: newExampleSet(t)}
+	request := []byte(`{"mode":"online"}`)
+	_, body := g.httpJSON("POST", "/rooms", request)
+	g.recordHTTP("create-room.online.request", "CreateRoomRequest", request)
+	var created struct{ HostKey string }
+	mustUnmarshal(t, body, &created)
+	for i, nick := range exampleTable[:engine.MinPlayers] {
+		msg := map[string]any{"type": "join", "room": exampleRoom, "nickname": nick}
+		if i == 0 {
+			msg["hostKey"] = created.HostKey
+		}
+		g.join(nick, "", msg)
+	}
+	host := g.host()
+	g.ok(host, "configureMode", map[string]any{"mode": "inPerson"})
+	g.ok(host, "configureMode", map[string]any{"mode": "online"})
+	g.ok(host, "configureRoles", map[string]any{"roles": map[string]any{"Werewolf": 1, "Villager": engine.MinPlayers - 1}})
+	g.shot(host, "lobby.online")
+	g.fails(host, "wrong_phase", "setSeats", map[string]any{"order": []any{}})
+	g.ok(host, "dealRoles", nil)
+	g.expectPhase("RoleView")
+	for _, name := range []string{"http/create-room.online.request.json", "client/command.configureMode.json", "server/view.lobby.online.json"} {
+		x.files[name] = g.x.files[name]
+	}
+	x.sent = append(x.sent, g.x.sent...)
+	x.http = append(x.http, g.x.http...)
+	x.clients = append(x.clients, g.x.clients...)
+}
+
 // secondGame: a new game in the same room, every phone reading aloud. The
 // Hunter, elected Chief, is hanged on day 1 and lets both his shot and his
 // succession run out; then the table votes to call the game off.

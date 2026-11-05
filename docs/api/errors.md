@@ -63,7 +63,7 @@ Real error frames: `examples/server/error.<code>.json`.
 | `not_host` |  | a host-only message from a player who is not, or no longer, the host (e.g. right after `transferHost`) | Chỉ chủ phòng mới làm được việc này. |
 | `unknown_player` |  | `kick` or `transferHost` naming someone who just left the room | Người này không còn ở trong phòng. |
 | `seats_mismatch` |  | `setSeats` whose list no longer matches the room: someone joined or left meanwhile | Danh sách chỗ ngồi chưa khớp với người trong phòng, bạn xếp lại nhé. |
-| `seats_not_set` |  | `dealRoles` while someone has no seat (joined after `setSeats`) | Còn người chưa được xếp chỗ, bạn xếp chỗ trước khi chia vai nhé. |
+| `seats_not_set` |  | `dealRoles` while someone has no seat (joined after `setSeats`); `inPerson` only | Còn người chưa được xếp chỗ, bạn xếp chỗ trước khi chia vai nhé. |
 | `roles_not_configured` |  | `dealRoles` before any `configureRoles` | Bạn chưa chọn vai cho ván này. |
 | `timer_out_of_range` |  | `configureTimers` with a time outside its range (rules §2 "Thời gian mặc định") | Thời gian này nằm ngoài giới hạn cho phép, bạn chọn lại nhé. |
 | `too_few_players` |  | `configureRoles` or `dealRoles` with fewer than 5 players | Cần ít nhất 5 người mới chơi được. |
@@ -114,7 +114,7 @@ All of these, and any code the app does not know, show:
 | `forbidden` | `kick` or `transferHost` naming oneself |
 | `invalid_player_id` | never from the wire: the server makes player ids |
 | `duplicate_seat` | `setSeats` listing a player twice |
-| `mode_unsupported` | `POST /rooms` with `mode: "online"` (HTTP 400) |
+| `invalid_mode` | never from the wire: an unknown mode is `bad_message` first |
 | `invalid_sound_mode` | never from the wire: an unknown sound mode is `bad_message` first |
 | `unknown_role` | `configureRoles` with a role that does not exist |
 | `invalid_role_count` | `configureRoles` with a count below 1 |

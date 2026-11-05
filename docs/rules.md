@@ -1,15 +1,15 @@
-# Ma Sói — Đặc tả luật chơi (App quản trò offline, chỉ dùng điện thoại)
+# Ma Sói — Đặc tả luật chơi (App quản trò, chỉ dùng điện thoại)
 
 File này là bản gốc duy nhất của luật chơi. Tài liệu khác và chú thích trong code chỉ dẫn số mục ở đây, không chép lại luật.
 
 ## 1. Tổng quan
 
-App đóng vai **quản trò** cho ván Ma Sói chơi trực tiếp ngoài đời: không cần người quản trò, ai cũng được chơi. **Không có thiết bị quản trò riêng**: mỗi người chỉ dùng điện thoại của mình.
+App đóng vai **quản trò** cho ván Ma Sói, chơi quanh bàn ngoài đời hoặc chơi online (§1b): không cần người quản trò, ai cũng được chơi. **Không có thiết bị quản trò riêng**: mỗi người chỉ dùng điện thoại của mình.
 
 - **Điện thoại người chơi**: mỗi người vào phòng bằng mã, nhận vai bí mật, thực hiện hành động ban đêm và bỏ phiếu ban ngày. Mọi điện thoại đều hiện phần công khai (lượt gọi đêm, đếm giờ, lời công bố, phiếu ban ngày) bằng chữ.
 - **Máy làm loa**: điện thoại của **chủ phòng** phát giọng đọc lời dẫn và công bố kết quả; các máy khác im lặng, chỉ hiện chữ. Máy làm loa mất kết nối thì người kế tiếp theo thứ tự ghế (còn kết nối) tự động làm loa; trước khi xếp ghế thì theo thứ tự vào phòng. Phòng ghi nhớ ai đang làm loa: máy đang đọc giữ vai loa cho tới khi chính máy đó mất kết nối; chủ phòng quay lại giữa lúc máy khác đang đọc **không** lấy lại vai loa ngay, chỉ chuyển tiếp khi máy đang đọc mất kết nối. Bot không bao giờ làm loa (§2 "Bot").
-- **Âm thanh**: chủ phòng chọn trước khi chia vai, một trong hai: **Một máy làm loa** (mặc định, chơi trực tiếp — như mô tả trên) hoặc **Mọi máy cùng phát** (mọi điện thoại đều đọc; dành cho chơi online sau này). Thông báo công khai luôn được gửi dạng chữ cho mọi máy ở cả hai chế độ; tuỳ chọn chỉ quyết định máy nào phát thêm bằng giọng nói.
-- **Ban ngày** mọi người nói chuyện trực tiếp; app lo đếm giờ, đếm phiếu, công bố và có thêm một kênh nhắn tin chung (mục 4 "Nhắn tin").
+- **Âm thanh**: chủ phòng chọn trước khi chia vai, một trong hai: **Một máy làm loa** (như mô tả trên) hoặc **Mọi máy cùng phát** (mọi điện thoại đều đọc). Mặc định theo chế độ chơi (§1b). Thông báo công khai luôn được gửi dạng chữ cho mọi máy ở cả hai chế độ; tuỳ chọn chỉ quyết định máy nào phát thêm bằng giọng nói.
+- **Ban ngày** mọi người nói chuyện trực tiếp (chơi online thì chỉ nhắn tin, §1b); app lo đếm giờ, đếm phiếu, công bố và có thêm một kênh nhắn tin chung (mục 4 "Nhắn tin").
 
 Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
 
@@ -21,12 +21,30 @@ Game có hai phe chính, cộng một phe thứ ba có thể xuất hiện:
 
 Nguyên tắc chung: **không lật vai khi chết**. Ngoại lệ duy nhất là Thợ săn: vai của Thợ săn được công khai ngay khi anh ta chết, vì **bất kỳ nguyên nhân nào** (mục 6).
 
+## 1b. Hai chế độ chơi
+
+Phòng có một trong hai chế độ. **Cả phòng theo một chế độ**, không máy nào chọn riêng.
+
+| | **Chơi quanh bàn** (mặc định) | **Chơi online** |
+| --- | --- | --- |
+| Người chơi | ngồi cùng một chỗ | mỗi người một nơi |
+| Âm thanh mặc định (§1) | Một máy làm loa | Mọi máy cùng phát |
+| Trao đổi ban ngày | nói trực tiếp và kênh nhắn tin chung (§4) | chỉ kênh nhắn tin chung (§4) |
+| Xếp chỗ (§2) | chủ phòng xếp theo chỗ ngồi thật | không có bước này: app bốc ngẫu nhiên vòng tròn lúc chia vai |
+
+- **Chọn và đổi**: chủ phòng chọn khi tạo phòng, đổi được trong sảnh cho tới khi chia vai. Từ lúc chia vai không đổi được nữa.
+- **Luật chơi như nhau**: vai, phe, thứ tự gọi, đồng hồ, gọi giả, phiếu, luật nhắn tin và điều kiện thắng không phụ thuộc chế độ. Lời dẫn cũng giữ nguyên, kể cả các câu "nhắm mắt", "mở mắt". Ngoài bảng trên, chế độ chỉ đổi hình và tiếng trên app.
+- **Khi đổi chế độ**: âm thanh về mặc định của chế độ mới, chủ phòng vẫn chọn lại được; chỗ đã xếp bị bỏ. Chọn lại đúng chế độ đang dùng thì không có gì thay đổi.
+- **Vòng tròn khi chơi online**: có từ lúc chia vai, công khai như chỗ ngồi và dùng như chỗ ngồi cho mọi luật (Thám tử, Hiệp sĩ kiếm gỉ, đọc tên người chết). Chủ phòng không xếp được.
+- **Ván mới** (§8c): giữ chế độ. Khi chơi online, vòng tròn được bốc lại ở lần chia vai mới.
+- **Cặp đôi khi chơi online**: bước "Cặp đôi mở mắt nhìn nhau" (§3) vẫn chạy đủ giờ; hai người yêu nhìn nhau qua hình trên điện thoại của mình thay vì nhìn thật.
+
 ## 2. Chuẩn bị ván
 
-Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước dưới; chủ phòng cũng là người chơi (xem "Chủ phòng"). Các nút thiết lập (xếp chỗ, chọn vai, chỉnh giờ, chọn âm thanh, chia vai, đá người, thêm hoặc bớt bot) **chỉ có đến hết bước chia vai**. Từ lúc chia vai, chủ phòng chơi như mọi người, chỉ còn quyền chuyển chức (bất cứ lúc nào) và bắt đầu ván mới khi ván đã kết thúc (§8c). Máy làm loa chọn theo §1, không đổi khi chuyển chức. Các bước:
+Một ván có **5–30 người**. Chủ phòng thiết lập theo các bước dưới; chủ phòng cũng là người chơi (xem "Chủ phòng"). Các nút thiết lập (chọn chế độ, xếp chỗ, chọn vai, chỉnh giờ, chọn âm thanh, chia vai, đá người, thêm hoặc bớt bot) **chỉ có đến hết bước chia vai**. Từ lúc chia vai, chủ phòng chơi như mọi người, chỉ còn quyền chuyển chức (bất cứ lúc nào) và bắt đầu ván mới khi ván đã kết thúc (§8c). Máy làm loa chọn theo §1, không đổi khi chuyển chức. Các bước:
 
-1. **Tạo phòng**, người chơi vào bằng mã phòng và nhập nickname.
-2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ).
+1. **Tạo phòng** và chọn chế độ chơi (§1b), người chơi vào bằng mã phòng và nhập nickname.
+2. **Xếp chỗ**: sắp tên người chơi theo vòng tròn đúng vị trí ngồi ngoài bàn (cần cho Thám tử và Hiệp sĩ kiếm gỉ). Chơi online không có bước này (§1b).
 3. **Chọn vai** theo số người (bảng dưới), chọn phương án Sói nguyền hoặc sói thường. **Danh sách vai của ván là công khai**: mọi người xem được trước khi chia vai (chỉ biết có vai nào, không biết ai giữ).
 4. **Chỉnh thời gian** các pha nếu muốn.
 5. **Chia vai** ngẫu nhiên; mỗi người xem vai trên điện thoại của mình trong pha **xem vai** có đếm ngược. Hết giờ, ván tự sang bước tiếp (bầu Trưởng làng, rồi đêm 1).
@@ -184,7 +202,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
   - Có cả Cupid lẫn Sói nguyền thì đêm 1 có **hai** lần kiểm tra: một sau Cupid, một sau Sói nguyền.
 
   Loa đọc: “Mọi người mở mắt xem điện thoại, rồi nhắm mắt lại.” Ở mỗi lần kiểm tra, **mọi người còn sống** nhận **một** thông báo trên điện thoại, gộp hai phần: tình trạng nguyền (nếu có Sói nguyền): “Bạn không bị nguyền” hoặc “Bạn đã bị nguyền”; và tình trạng tình yêu (nếu có Cupid): “Bạn không ở trong cặp đôi” hoặc “Bạn yêu X, vai Y” kèm màu liên kết (§7). Mọi thông báo có hình dạng y hệt nhau (cùng loại, cùng trường), chỉ khác giá trị, nên không ai đoán được ai bị nguyền hay ai đang yêu từ cách hiển thị. Người đã bị nguyền từ đêm trước vẫn thấy “Bạn đã bị nguyền” ở các đêm còn lại trong 3 đêm đầu; phần tình yêu được nhắc lại ở các lần kiểm tra sau Sói nguyền, nên cặp đôi thấy màu liên kết mới ngay sau khi một người bị nguyền. Lúc kiểm tra điện thoại mọi người đều mở mắt, nên cặp đôi **không** được nhìn nhau lúc này.
-- **Cặp đôi mở mắt nhìn nhau** (10 giây, đêm 1 khi danh sách vai có Cupid) chạy ngay sau lần kiểm tra điện thoại sau Cupid. Loa đọc: “Cặp đôi hãy mở mắt nhìn nhau.” Chỉ hai người yêu mở mắt; mọi người khác nhắm mắt.
+- **Cặp đôi mở mắt nhìn nhau** (10 giây, đêm 1 khi danh sách vai có Cupid) chạy ngay sau lần kiểm tra điện thoại sau Cupid. Loa đọc: “Cặp đôi hãy mở mắt nhìn nhau.” Chỉ hai người yêu mở mắt; mọi người khác nhắm mắt. Khi chơi online xem §1b.
 - **Thám tử được gọi mỗi đêm, kể cả sau khi đã dùng năng lực**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật. Ngừng gọi sẽ báo cho cả bàn biết ông ta đã dùng.
 - **Sói nguyền được gọi đủ 3 đêm đầu, kể cả sau khi đã nguyền xong**: từ đó là lượt gọi giả, cùng thời lượng như lượt thật, giống Thám tử ở trên. Ngừng gọi sớm sẽ lộ là đã nguyền xong.
 - Bầy sói không cần ngẩng lên nhìn nhau: điện thoại hiện danh sách đồng bọn và phiếu của từng con theo thời gian thực.
@@ -194,7 +212,7 @@ Tất cả nhắm mắt. Loa gọi từng vai bằng giọng nói (mọi điện
 
 Mỗi ngày treo **tối đa 1 người**. Mọi phiếu ban ngày đều **công khai**: mọi điện thoại hiện rõ ai vote ai.
 
-Người đã chết không được nói, không được nhắn tin, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết. Khi chơi online sau này, người chết cũng bị cấm video call.
+Người đã chết không được nói, không được nhắn tin, không được vote, và **được xem toàn bộ vai và diễn biến** từ lúc chết.
 
 Khi **ván kết thúc**, mọi người (cả người còn sống) được xem toàn bộ vai và diễn biến.
 
@@ -229,7 +247,7 @@ Người chết ban đêm **không được trăng trối**. Nếu người ch�
 
 ### Nhắn tin
 
-Ngoài nói chuyện trực tiếp, phòng có **một kênh nhắn tin chung**; không có kênh riêng cho sói hay cặp đôi. Loa không đọc tin nhắn, và tin nhắn không ảnh hưởng tới đồng hồ, phiếu hay đếm ngược.
+Ngoài nói chuyện trực tiếp, phòng có **một kênh nhắn tin chung** (chơi online thì đây là cách trao đổi duy nhất, §1b); không có kênh riêng cho sói hay cặp đôi. Loa không đọc tin nhắn, và tin nhắn không ảnh hưởng tới đồng hồ, phiếu hay đếm ngược.
 
 - **Mọi người còn sống** được nhắn lúc bầu Trưởng làng, thảo luận và đề cử, đếm ngược chốt.
 - **Chỉ người trên giàn** được nhắn lúc bào chữa.
@@ -403,7 +421,7 @@ Không có việc **tạm dừng**: phiếu huỷ không làm dừng đồng h�
 
 ## 8c. Ván mới trong cùng phòng
 
-Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu. Khung nhắn tin của ván mới trống: tin của ván cũ không hiện lại. Bot cũng ở lại, và chủ phòng thêm hoặc bớt được trước khi chia lại.
+Khi ván đã kết thúc (thắng thua bình thường, hoặc huỷ theo mục 8b), chủ phòng bắt đầu được ván mới ngay trong phòng đó: mọi người, ghế và danh sách vai được giữ nguyên, ai cũng sống lại và chưa có vai; chủ phòng chia vai lại (bốc ngẫu nhiên lại từ đầu) như lúc chia vai lần đầu. Khi chơi online, vòng tròn được bốc lại lúc chia vai (§1b). Khung nhắn tin của ván mới trống: tin của ván cũ không hiện lại. Bot cũng ở lại, và chủ phòng thêm hoặc bớt được trước khi chia lại.
 
 (Cài đặt ở T27b; mục này chỉ chốt luật.)
 
@@ -471,7 +489,8 @@ Mục tiêu theo phe: Dân thắng khi không còn con Sói nào. Sói thắng k
 
 ## 10. Ngoài phạm vi bản đầu
 
-- **Chơi online hoàn toàn**: ghép phòng, xử lý rớt mạng, server kiểm soát toàn bộ thông tin bí mật.
+- **Gọi thoại và video khi chơi online**: làm sau. Khi có thì người chết cũng bị cấm gọi, như đã cấm nói và nhắn tin (§4).
+- **Ghép phòng với người lạ** khi chơi online.
 - **Bot chơi thay** người rời ván giữa chừng. Bot lấp ghế trống từ sảnh thì có (§2 "Bot").
 - **Luật lật vai khi chết**: sẽ cải tiến sau.
 - **Điểm cân bằng và bộ vai gợi ý** theo số người, cảnh báo khi ván lệch phe.

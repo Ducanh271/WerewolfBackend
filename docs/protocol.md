@@ -10,7 +10,7 @@ durations are milliseconds, times are Unix milliseconds.
 
 | request | reply |
 |---|---|
-| `POST /rooms` (body optional: `{"mode": "inPerson"}`) | `201 {"room": "K7QP", "hostKey": "…"}`; `mode: "online"` → `400` with `mode_unsupported`; `503` `too_many_rooms` |
+| `POST /rooms` (body optional: `{"mode": "inPerson"}` or `{"mode": "online"}`, rules §1b) | `201 {"room": "K7QP", "hostKey": "…"}`; `503` `too_many_rooms` |
 | `GET /join/{code}` | `200 {"room": "K7QP"}`, or `404` `room_not_found`. This is the link the QR code will carry (the UI is built later); case is ignored |
 | `GET /guide` | `200` the in-app rules guide (below). Public, same for everyone, needs no room: usable from the lobby before anyone has joined |
 | `GET /ws` | upgrades to the game socket |
@@ -135,7 +135,7 @@ letters, digits and spaces, rules §2) is `error` `invalid_nickname`; one
 already used in the room is `nickname_taken`.
 
 `leave` (lobby only) removes the player for good; a closed connection keeps their
-place. Creating a room in `Online` mode is refused with `mode_unsupported`.
+place.
 
 `kick` (rules §2 "Nickname, rời phòng và đá người") revokes the target's
 token and PIN; their connection, if any, gets `error` `kicked_by_host`
@@ -155,10 +155,11 @@ sending it while not the host is `not_host`.
 
 | name | args | when | engine command |
 |---|---|---|---|
-| `setSeats` | `order: [id]` | lobby, host (the room checks) | `SetSeats` |
+| `setSeats` | `order: [id]` | lobby, host (the room checks), `inPerson` only | `SetSeats` |
 | `configureRoles` | `roles: {role: n}` | lobby, host | `ConfigureRoles` |
 | `configureTimers` | `timers: {roleView, chiefElection, nightStep, phoneCheck, loversMeet, announce, day, nominationLock, defense, verdict, hunterShot, chiefSuccession}` in ms, only the ones to change | lobby, host | `ConfigureTimers`; out of range → `timer_out_of_range` |
 | `configureSound` | `mode: "oneSpeaker"` (default) or `"allPhones"` | lobby, host | `ConfigureSound`; unknown mode → `bad_message` |
+| `configureMode` | `mode: "inPerson"` (default) or `"online"` | lobby, host | `ConfigureMode`, rules §1b; unknown mode → `bad_message` |
 | `dealRoles` | – | lobby, host | `DealRoles` (seed from the room) |
 | `voteChief` | `candidate` | Chief election | `VoteChief` |
 | `nameSuccessor` | `successor` | `ChiefSuccession`, the dead Chief only (rules §7b) | `NameSuccessor` |
@@ -223,7 +224,8 @@ The `view` object (`engine.View`); absent parts are omitted:
 | `phase`, `seq`, `night` | all | phase name, change counter, night number |
 | `roles` | all | public role list `{role: count}` |
 | `roleCards` | all | the same roles in the order of rules §9b, each `{role, name, team, description}` (`team` is the role's own team; Vietnamese text from the server; no card text in the frontend) |
-| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`. Empty in the lobby until the host sends `setSeats` (who is in the room: `people` above); `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
+| `mode` | all | `inPerson` or `online` (rules §1b), every phase |
+| `players` | all | seats in order: `id`, `nickname`, `seat`, `alive`. Empty in the lobby until the host sends `setSeats`, or in an online room until the deal draws the circle (who is in the room: `people` above); `role`/`team` only when allowed (own seat, lover partner's role, full view); a dead Hunter's `role` (never `team`) is public; `card` `{name, team, goal, description}` exactly when `role` is set (dead players and the end screen: every seat) |
 | `chief`, `succession`, `shooter` | all | Chief id; the dead Chief naming a successor; the dead Hunter choosing a target |
 | `votes` | all | `chief {voter: candidate}`, `nominations {voter: target}`, `skips [id]`, `defendant`, `verdicts {voter: kill}`, `spared [id]`, `abortVotes {voter: yes}` |
 | `winner`, `draw`, `winners` | all, at the end | winning team, or a draw; `winners`: the ids of the players who win, dead or alive, in seat order (who wins: rules §8) |

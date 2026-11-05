@@ -62,10 +62,24 @@ func TestManager_CodeCollisionDrawsAnotherCode(t *testing.T) {
 	}
 }
 
-func TestManager_OnlineRoomsAreRefused(t *testing.T) {
+func TestManager_OnlineRoomStartsWithEveryPhoneSpeaking(t *testing.T) {
 	m, _ := newManager(t, ManagerConfig{})
-	if _, _, err := m.Create(engine.Online); !errors.Is(err, engine.ErrModeUnsupported) {
-		t.Fatalf("err = %v, want ErrModeUnsupported", err)
+	r, hostKey, err := m.Create(engine.Online)
+	if err != nil {
+		t.Fatal(err)
+	}
+	an, binh := &recSink{}, &recSink{}
+	if _, _, err := r.Join("An", hostKey, an); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := r.Join("Binh", "", binh); err != nil {
+		t.Fatal(err)
+	}
+	for name, sink := range map[string]*recSink{"An": an, "Binh": binh} {
+		got := sink.last().View
+		if got.View.Mode != engine.Online || *got.View.Sound != engine.AllPhonesSpeak || !got.Speaker {
+			t.Errorf("%s: mode %v, sound %v, speaker %v", name, got.View.Mode, *got.View.Sound, got.Speaker)
+		}
 	}
 }
 

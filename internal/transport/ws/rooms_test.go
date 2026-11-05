@@ -40,12 +40,10 @@ func TestRooms_CreateReturnsAFourCharacterCode(t *testing.T) {
 	}
 }
 
-func TestRooms_OnlineModeIsRefused(t *testing.T) {
+func TestRooms_UnknownModeIsRefused(t *testing.T) {
 	e := newEnv(t, nil)
-	status, body := e.do("POST", "/rooms", `{"mode":"online"}`)
-	if status != http.StatusBadRequest || body["code"] != "mode_unsupported" {
-		t.Fatalf("POST /rooms online = %d %v", status, body)
-	}
+	var status int
+	var body map[string]any
 	for _, bad := range []string{`{"mode":"cards"}`, `{"mode":"inPerson","seed":1}`, `nope`} {
 		if status, body = e.do("POST", "/rooms", bad); status != http.StatusBadRequest || body["code"] != "bad_message" {
 			t.Errorf("POST /rooms %s = %d %v", bad, status, body)
@@ -87,6 +85,50 @@ func TestRooms_OnlyTheHostPhoneIsTheSpeaker(t *testing.T) {
 	}
 	if !other.Wait(ctx(t), func(s wsclient.Snapshot) bool { _, has := s.View["speaker"]; return !has }) {
 		t.Fatalf("a non-host phone is told to speak: %v", other.Snapshot().View)
+	}
+}
+
+// rules §1b: an online room deals without anyone seating the table, and every
+// phone reads aloud.
+func TestRooms_OnlineRoom_DealsWithoutSeating(t *testing.T) {
+	e := newEnv(t, nil)
+	status, body := e.do("POST", "/rooms", `{"mode":"online"}`)
+	if status != http.StatusCreated {
+		t.Fatalf("POST /rooms online = %d %v", status, body)
+	}
+	code, hostKey := body["room"].(string), body["hostKey"].(string)
+	host := e.joinHost(code, hostKey, "An")
+	phones := []*wsclient.Client{host}
+	for _, nick := range []string{"Binh", "Chi", "Dung", "Em"} {
+		phones = append(phones, e.join(code, nick))
+	}
+	everyone := func(s wsclient.Snapshot) bool {
+		people, _ := s.View.Get("people").([]any)
+		return len(people) == 5
+	}
+	for _, p := range phones {
+		if !p.Wait(ctx(t), everyone) {
+			t.Fatalf("not everyone joined: %v", p.Snapshot().View)
+		}
+		if v := p.Snapshot().View; v.Str("view", "mode") != "online" || v.Str("view", "sound") != "allPhones" || v["speaker"] != true {
+			t.Errorf("lobby view = %v", v)
+		}
+	}
+
+	e.send(host, cmd("setSeats", map[string]any{"order": []string{"p1", "p2", "p3", "p4", "p5"}}))
+	if !host.Wait(ctx(t), func(s wsclient.Snapshot) bool { return len(s.Errors) == 1 }) || host.Snapshot().Errors[0].Str("code") != "wrong_phase" {
+		t.Fatalf("setSeats online: %+v", host.Snapshot().Errors)
+	}
+
+	e.send(host, cmd("configureRoles", map[string]any{"roles": map[string]any{"Werewolf": 1, "Villager": 4}}))
+	host.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.View.Get("view", "roles") != nil })
+	e.send(host, cmd("dealRoles", nil))
+	if !host.Wait(ctx(t), func(s wsclient.Snapshot) bool { return s.View.Str("view", "phase") == "RoleView" }) {
+		t.Fatalf("never dealt: %+v %v", host.Snapshot().Errors, host.Snapshot().View)
+	}
+	v := host.Snapshot().View
+	if players, _ := v.Get("view", "players").([]any); v.Str("view", "mode") != "online" || len(players) != 5 {
+		t.Fatalf("role view = %v", v)
 	}
 }
 

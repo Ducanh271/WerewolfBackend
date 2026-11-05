@@ -25,6 +25,7 @@ func playExampleGames(t *testing.T) *exampleSet {
 	g.firstGame()
 	g.secondGame()
 	chatFullExample(t, x)
+	onlineExample(t, x)
 	return x
 }
 

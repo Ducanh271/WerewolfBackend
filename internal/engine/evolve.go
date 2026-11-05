@@ -41,6 +41,12 @@ func Evolve(s State, e Event) State {
 		out.Settings.Sound = ev.Mode
 		return out
 
+	case ModeConfigured:
+		out := s.clone()
+		out.Settings.Mode = ev.Mode
+		out.Seats = nil
+		return out
+
 	case RolesDealt:
 		out := s.clone()
 		for id, role := range ev.Assignments {

@@ -52,7 +52,7 @@ Unix milliseconds.
 
 | request | reply |
 |---|---|
-| `POST /rooms`, body optional `{"mode": "inPerson"}` | `201` `{"room", "hostKey"}` (`http/create-room.reply.json`). Keep `hostKey` in memory: it makes this phone the host on its first `join`, and nobody else ever sees it. |
+| `POST /rooms`, body optional `{"mode": "inPerson"}` or `{"mode": "online"}` (rules §1b; default `inPerson`) | `201` `{"room", "hostKey"}` (`http/create-room.reply.json`). Keep `hostKey` in memory: it makes this phone the host on its first `join`, and nobody else ever sees it. |
 | `GET /join/{code}` | `200` `{"room"}` when the room exists (case ignored); `404` `room_not_found`. This is the link a QR code carries. |
 | `GET /guide` | `200` the rules guide and the "how to play your role" texts, in Vietnamese (`http/guide.reply.json`). Public, needs no room. |
 | `GET /ws` | the game WebSocket. **No query string** (`400` `secret_in_url`): secrets only travel inside messages. |
@@ -177,6 +177,12 @@ any client existed did not raise `protocolVersion`.
 - New: the `sendChat` command and the `ChatSent` event, with the errors
   `chat_closed`, `chat_empty`, `chat_too_long`, `chat_too_fast` and
   `chat_full` ([chat](screens/day.md#chat)).
+- New: the online mode (rules §1b). `POST /rooms` takes `mode: "online"`, and
+  the `mode_unsupported` error is gone. New `configureMode` command and
+  `ModeConfigured` event, and `view.mode` in every phase. An online room has
+  no `setSeats` (`wrong_phase`); `dealRoles` draws the circle and sends
+  `SeatsSet`. `SoundConfigured` now reaches every phone; it used to reach
+  only the dead and the end screen.
 
 ## Keeping this folder true
 

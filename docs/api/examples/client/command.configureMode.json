@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "args": {
+    "mode": "inPerson"
+  },
+  "name": "configureMode"
+}

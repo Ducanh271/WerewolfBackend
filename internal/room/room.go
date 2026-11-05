@@ -103,11 +103,8 @@ type Room struct {
 	active atomic.Int64 // unix nanoseconds of the last thing a player did
 }
 
-// New starts a room. Only InPerson is supported in v1.
+// New starts a room in the given mode.
 func New(cfg Config) (*Room, error) {
-	if cfg.Mode != engine.InPerson {
-		return nil, fmt.Errorf("%w: %s", engine.ErrModeUnsupported, cfg.Mode)
-	}
 	if cfg.Clock == nil {
 		cfg.Clock = RealClock{}
 	}
@@ -138,6 +135,11 @@ func New(cfg Config) (*Room, error) {
 		offSince: map[engine.PlayerID]time.Time{},
 	}
 	r.active.Store(cfg.Clock.Now().UnixNano())
+	// Through an event like any other change of state, so the log replays to
+	// the same room. No goroutine yet: nothing else can touch the room.
+	if err := r.apply(engine.ConfigureMode{Mode: cfg.Mode}); err != nil {
+		return nil, err
+	}
 	go r.loop()
 	return r, nil
 }

@@ -6,6 +6,13 @@ the phone may send, which [errors](../errors.md) can come back, and real
 messages from the example games (generated: see `../README.md` "Keeping
 this folder true").
 
+## Creating a room
+
+`POST /rooms` with `{"mode": "inPerson"}` or `{"mode": "online"}`
+(`../README.md` "Connecting"; rules §1b). No body means `inPerson`. An `online`
+room starts with the sound `allPhones`. A mode the server does not know is
+`bad_message`.
+
 ## Join screen
 
 Before a socket has joined, the app shows a form: room code (from the QR
@@ -47,7 +54,8 @@ Errors: `room_not_found`, `invalid_nickname`, `nickname_taken`,
 | `people` (next to `view`) | everybody in the room in join order: `id`, `nickname`, `connected`, `isHost`. The list to draw; it changes on join, leave, kick, drop, return and `transferHost` |
 | `speaker` | `true` on the phone that reads announcements aloud (rules §1 "Máy làm loa") |
 | `view.me.id` | this player; compare with `people[].isHost` to show the host's controls |
-| `view.players` | empty until the host sends `setSeats`, then the seating order (`seat` 1..n, clockwise) |
+| `view.mode` | `inPerson` or `online` (rules §1b): the whole room's mode, in every view of every phase |
+| `view.players` | `inPerson`: empty until the host sends `setSeats`, then the seating order (`seat` 1..n, clockwise). `online`: empty in the lobby; the server draws the circle at the deal |
 | `view.roles`, `view.roleCards` | the public role list once the host configured it, with each role's name, team and description (rules §2 step 3, §9b) |
 | `view.timers` | every phase time now, in ms (the defaults of rules §2 "Thời gian mặc định" until the host changes one): what the host's settings screen shows |
 | `view.sound` | `oneSpeaker` or `allPhones` (rules §1 "Âm thanh") |
@@ -56,7 +64,7 @@ Draw the settings from `view.timers` and `view.sound` alone, never from
 the defaults plus `TimersConfigured`/`SoundConfigured`: a phone that comes
 back gets the current values in its first `view`.
 
-<!-- example: server/view.lobby.host.json type speaker people[:3] view.phase view.me view.players view.sound view.timers -->
+<!-- example: server/view.lobby.host.json type speaker people[:3] view.phase view.me view.mode view.players view.sound view.timers -->
 ```json
 {
   "type": "view",
@@ -88,6 +96,7 @@ back gets the current values in its first `view`.
       "cursed": false,
       "id": "p1"
     },
+    "mode": "inPerson",
     "phase": "Lobby",
     "players": [
       {
@@ -190,10 +199,11 @@ back gets the current values in its first `view`.
 | `leave` | anybody | leaves the room for good; the server closes the socket |
 | `kick` `{target}` | host | not oneself; the target's phone gets `kicked_by_host` |
 | `transferHost` `{target}` | host | to anybody in the room, not oneself; also allowed during the game |
-| `setSeats` `{order}` | host | every player exactly once, in seating order |
+| `setSeats` `{order}` | host | every player exactly once, in seating order; `inPerson` only (`online`: `wrong_phase`, so hide the button) |
 | `configureRoles` `{roles}` | host | `{role: count}`, limits in rules §2 |
 | `configureTimers` `{timers}` | host | only the times to change, in ms; ranges in rules §2 |
 | `configureSound` `{mode}` | host | `oneSpeaker` or `allPhones` |
+| `configureMode` `{mode}` | host | `inPerson` or `online` (rules §1b). A real change also puts the sound back to the new mode's default and drops the seats; the current mode changes nothing and sends nothing |
 | `dealRoles` | host | starts the game (next: [role view](role-view.md)) |
 
 Once the roles are dealt, everything above except `transferHost` is
@@ -225,5 +235,8 @@ The host's setup errors say what to fix: `roles_not_configured`,
 ## Events
 
 `PlayerJoined`, `PlayerLeft`, `PlayerKicked`, `SeatsSet`, `RolesConfigured`,
-`TimersConfigured`, `SoundConfigured` (`mode`: `oneSpeaker` or `allPhones`).
-None has `say`.
+`TimersConfigured`, `SoundConfigured` (`mode`: `oneSpeaker` or `allPhones`),
+`ModeConfigured` (`mode`: `inPerson` or `online`; a change is followed by
+`SoundConfigured`). None has `say`. In an online room, `dealRoles` sends
+`SeatsSet` too, with the circle it drew. A new online room's log starts with
+`ModeConfigured` and `SoundConfigured`.

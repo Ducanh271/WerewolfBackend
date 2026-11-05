@@ -14,8 +14,8 @@ type Table struct {
 }
 
 // SpeakerPolicy chooses the phones that read announcements aloud. The others
-// only show text. Playing in person uses one phone; the online mode (and the
-// "Mọi máy cùng phát" room option, rules §1) uses AllPhones.
+// only show text. One phone by default; AllPhones is the "Mọi máy cùng phát"
+// option (rules §1), which the online mode starts with (rules §1b).
 type SpeakerPolicy interface {
 	Speakers(t Table) []engine.PlayerID
 }
@@ -65,8 +65,8 @@ func (r *Room) setSoundPolicy(mode engine.SoundMode) {
 	r.speaker = ""
 }
 
-// AllPhones is the "Mọi máy cùng phát" option (rules §1) and what the online
-// mode will use: every phone reads the announcements aloud, so every view
+// AllPhones is the "Mọi máy cùng phát" option (rules §1), the default of the
+// online mode: every phone reads the announcements aloud, so every view
 // carries speaker: true.
 type AllPhones struct{}
 

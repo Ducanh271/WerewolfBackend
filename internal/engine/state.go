@@ -66,7 +66,7 @@ type Settings struct {
 	// number of players.
 	Roles map[RoleID]int
 
-	// Mode is how the table plays. Only InPerson exists in v1.
+	// Mode is how the room plays (rules §1b); zero value is InPerson.
 	Mode Mode
 
 	// Sound picks who reads announcements aloud (rules §1 "Âm thanh");
@@ -86,23 +86,6 @@ type Settings struct {
 
 	ChiefElection   time.Duration // public vote for the Chief
 	ChiefSuccession time.Duration // the dead Chief names a successor
-}
-
-// Mode is how a game is played. Only InPerson is supported in v1; Online is
-// reserved so the rest of the design does not have to change later.
-type Mode int
-
-// Modes.
-const (
-	InPerson Mode = iota
-	Online
-)
-
-func (m Mode) String() string {
-	if m == Online {
-		return "Online"
-	}
-	return "InPerson"
 }
 
 // DefaultSettings returns the default timers from rules §2.

@@ -42,6 +42,9 @@
           "$ref": "#/$defs/AbortVoteCommand"
         },
         {
+          "$ref": "#/$defs/ConfigureModeCommand"
+        },
+        {
           "$ref": "#/$defs/ConfigureRolesCommand"
         },
         {
@@ -110,6 +113,43 @@
         {
           "$ref": "#/$defs/WolfVoteCommand"
         }
+      ]
+    },
+    "ConfigureModeArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "inPerson",
+            "online"
+          ]
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "ConfigureModeCommand": {
+      "description": "ConfigureMode picks the mode before the deal (rules §1b); the room checks that only the host may send it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "args": {
+          "$ref": "#/$defs/ConfigureModeArgs"
+        },
+        "name": {
+          "const": "configureMode"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "args"
       ]
     },
     "ConfigureRolesArgs": {

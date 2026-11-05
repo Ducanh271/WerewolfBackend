@@ -29,17 +29,39 @@ func decideDealRoles(s State, cmd DealRoles) ([]Event, error) {
 	if len(s.Settings.Roles) == 0 {
 		return nil, ErrRolesNotConfigured
 	}
-	if len(s.Seats) != len(s.Players) {
+	online := s.Settings.Mode == Online
+	if !online && len(s.Seats) != len(s.Players) {
 		return nil, fmt.Errorf("%w: %d seats for %d players", ErrSeatsNotSet, len(s.Seats), len(s.Players))
 	}
 	// Players may have joined after ConfigureRoles; the list must still fit.
 	if err := validateRoleConfig(len(s.Players), s.Settings.Roles); err != nil {
 		return nil, err
 	}
-	return []Event{
-		RolesDealt{Assignments: shuffleRoles(cmd.Seed, s.Seats, s.Settings.Roles)},
+	seats, seed := s.Seats, cmd.Seed
+	var evs []Event
+	if online {
+		seats, seed = drawSeats(cmd.Seed, s.Players)
+		evs = append(evs, SeatsSet{Order: seats})
+	}
+	return append(evs,
+		RolesDealt{Assignments: shuffleRoles(seed, seats, s.Settings.Roles)},
 		RoleViewStarted{Duration: s.Settings.RoleView},
-	}, nil
+	), nil
+}
+
+// drawSeats draws an online room's circle (rules §1b). It also returns the
+// seed for the role shuffle, taken from the same generator: shuffling seats
+// and roles with one seed would apply one permutation to both, and each
+// player's role would then follow from the order they joined in.
+func drawSeats(seed int64, players map[PlayerID]*Player) ([]PlayerID, int64) {
+	seats := make([]PlayerID, 0, len(players))
+	for id := range players {
+		seats = append(seats, id)
+	}
+	sort.Slice(seats, func(i, j int) bool { return seats[i] < seats[j] })
+	rng := rand.New(rand.NewSource(seed))
+	rng.Shuffle(len(seats), func(i, j int) { seats[i], seats[j] = seats[j], seats[i] })
+	return seats, rng.Int63()
 }
 
 // shuffleRoles deals roles to seats. The role list is expanded in ID order

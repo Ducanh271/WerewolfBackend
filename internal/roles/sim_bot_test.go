@@ -172,7 +172,7 @@ func (g *simGame) anyLiving() engine.PlayerID {
 var knownErrors = []error{
 	engine.ErrUnknownCommand, engine.ErrWrongPhase, engine.ErrInvalidPlayerID, engine.ErrInvalidNickname,
 	engine.ErrNicknameTaken, engine.ErrAlreadyJoined, engine.ErrRoomFull, engine.ErrUnknownPlayer,
-	engine.ErrSeatsMismatch, engine.ErrDuplicateSeat, engine.ErrTimerOutOfRange, engine.ErrModeUnsupported,
+	engine.ErrSeatsMismatch, engine.ErrDuplicateSeat, engine.ErrTimerOutOfRange, engine.ErrInvalidMode,
 	engine.ErrRolesNotConfigured, engine.ErrSeatsNotSet, engine.ErrAlreadyDealt, engine.ErrTooFewPlayers,
 	engine.ErrTooManyPlayers, engine.ErrUnknownRole, engine.ErrInvalidRoleCount, engine.ErrRoleMustBeUnique,
 	engine.ErrRoleCountMismatch, engine.ErrNoWolves, engine.ErrTooManyWolves, engine.ErrRoleNeedsMorePlayers,

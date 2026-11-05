@@ -69,6 +69,25 @@ func TestRoom_ConfigureSound_SwitchesToAllPhones(t *testing.T) {
 	onlySpeaker(t, g, "p1")
 }
 
+// Changing the mode puts the sound back to the new mode's default (rules §1b),
+// and only the host may do it.
+func TestRoom_ConfigureMode_ResetsSoundToTheModesDefault(t *testing.T) {
+	g := newGame(t, 3)
+	if err := g.cl["p2"].Submit(as(engine.ConfigureMode{Mode: engine.Online})); !errorsIs(err, ErrNotHost) {
+		t.Fatalf("p2 changing the mode: %v, want ErrNotHost", err)
+	}
+
+	g.must(g.cl["p1"].Submit(as(engine.ConfigureMode{Mode: engine.Online})))
+	for _, speaks := range speakerFlags(g) {
+		if !speaks {
+			t.Fatalf("speaker flags = %v, want everyone speaking", speakerFlags(g))
+		}
+	}
+
+	g.must(g.cl["p1"].Submit(as(engine.ConfigureMode{Mode: engine.InPerson})))
+	onlySpeaker(t, g, "p1")
+}
+
 func speakerFlags(g *game) map[engine.PlayerID]bool {
 	out := map[engine.PlayerID]bool{}
 	for id, sink := range g.sink {

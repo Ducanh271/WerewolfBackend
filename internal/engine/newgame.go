@@ -38,6 +38,9 @@ func evolveNewGame(s State, e Event) (State, bool) {
 	out.Winner = nil
 	out.Winners = nil
 	out.Chief = ""
+	if out.Settings.Mode == Online {
+		out.Seats = nil // drawn again at the next deal (rules §1b)
+	}
 	out.ChiefVotes = nil
 	out.Succession = Succession{}
 	out.Shot = Shot{}

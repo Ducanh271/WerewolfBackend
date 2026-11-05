@@ -37,6 +37,7 @@
       ],
       "team": "Wolves"
     },
+    "mode": "inPerson",
     "night": 1,
     "nightCall": {
       "duration": 5000,

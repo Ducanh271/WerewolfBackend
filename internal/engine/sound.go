@@ -10,7 +10,7 @@ type SoundMode int
 const (
 	// OneSpeaker (default): one phone speaks at a time, in person.
 	OneSpeaker SoundMode = iota
-	// AllPhonesSpeak: every phone speaks; what the online mode will use too.
+	// AllPhonesSpeak: every phone speaks; the default of the online mode.
 	AllPhonesSpeak
 )
 

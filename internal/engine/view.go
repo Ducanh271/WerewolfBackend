@@ -55,6 +55,8 @@ type View struct {
 	Timers *Timers
 	// Sound is the current sound mode (rules §1 "Âm thanh"); lobby and end only.
 	Sound *SoundMode
+	// Mode is how the room plays (rules §1b); every phase.
+	Mode Mode
 
 	// Full is true when the viewer sees everything: a dead player, or anybody
 	// once the game is over. Then every PlayerView carries Role and Team and

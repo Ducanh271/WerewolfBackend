@@ -27,6 +27,7 @@
         "step": "Seer"
       }
     },
+    "mode": "inPerson",
     "night": 1,
     "nightCall": {
       "duration": 30000,

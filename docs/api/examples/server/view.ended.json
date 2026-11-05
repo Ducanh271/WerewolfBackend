@@ -104,6 +104,7 @@
       ],
       "team": "Village"
     },
+    "mode": "inPerson",
     "night": 3,
     "pack": {
       "members": [

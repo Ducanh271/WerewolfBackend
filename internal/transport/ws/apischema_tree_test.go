@@ -85,6 +85,8 @@ func (g *schemaGen) treeSchema(t reflect.Type, keepEmpty bool) map[string]any {
 			"Which morning announcement was read (rules §4 \"Thông báo buổi sáng\").")
 	case soundType:
 		return g.enumDef("SoundMode", t, soundModeNames(), "Who reads the announcements aloud (rules §1 \"Âm thanh\").")
+	case modeType:
+		return g.enumDef("Mode", t, gameModeNames(), "How the room plays (rules §1b).")
 	case teamType:
 		return g.enumDef("Team", t, teamNames(), "A team (side).")
 	case playerIDType:
@@ -203,6 +205,10 @@ func phaseNames() []string {
 
 func soundModeNames() []string {
 	return []string{soundModeName(engine.OneSpeaker), soundModeName(engine.AllPhonesSpeak)}
+}
+
+func gameModeNames() []string {
+	return []string{gameModeName(engine.InPerson), gameModeName(engine.Online)}
 }
 
 func teamNames() []string {

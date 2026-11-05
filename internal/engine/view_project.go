@@ -23,6 +23,7 @@ func project(s State, v Viewer, summary func() []string) View {
 		Shooter:    shooter(s),
 		Votes:      publicVotes(s),
 		Full:       full,
+		Mode:       s.Settings.Mode,
 	}
 	if s.Phase == PhaseLobby || s.Phase == PhaseEnded {
 		timers, sound := currentTimers(s.Settings), s.Settings.Sound

@@ -21,6 +21,7 @@ var eventTypes = []engine.Event{
 	engine.DawnStarted{}, engine.DayClockExpired{}, engine.DayEnded{}, engine.DayStarted{}, engine.GameEnded{},
 	engine.Hanged{}, engine.HunterChainNoted{}, engine.HunterRevealed{}, engine.HunterShot{},
 	engine.HunterShotStarted{}, engine.HunterTimedOut{}, engine.LoverGrieving{}, engine.LoversMeetAnnounced{},
+	engine.ModeConfigured{},
 	engine.NewGameStarted{}, engine.NightEnded{}, engine.NightStarted{}, engine.NightStepCalled{},
 	engine.NominationCast{}, engine.NominationsLocking{}, engine.NominationsReopened{},
 	engine.PhoneCheckAnnounced{}, engine.PhoneChecked{}, engine.PlayerDied{}, engine.PlayerJoined{},
@@ -37,7 +38,7 @@ var eventTypes = []engine.Event{
 // checks it names every core command.
 var coreArgs = map[string]any{
 	"setSeats": orderArgs{}, "configureRoles": rolesArgs{}, "configureTimers": timersArgs{},
-	"configureSound": soundModeArgs{}, "dealRoles": noArgs{}, "voteChief": candidateAr{},
+	"configureSound": soundModeArgs{}, "configureMode": gameModeArgs{}, "dealRoles": noArgs{}, "voteChief": candidateAr{},
 	"nameSuccessor": successorAr{}, "nominate": targetArgs{}, "skipDay": onArgs{}, "verdict": killArgs{},
 	"abortVote": onArgs{}, "sendChat": chatArgs{}, "newGame": noArgs{}, "hunterShoot": targetArgs{},
 }
@@ -151,7 +152,7 @@ func errorSchema() map[string]any {
 func httpSchema(docs goDocs) (map[string]any, []error) {
 	g := newSchemaGen(docs)
 	g.defs["CreateRoomRequest"] = object(map[string]any{
-		"mode": map[string]any{"type": "string", "enum": []string{"inPerson", "online"}, "description": "Optional, default inPerson. online is refused (mode_unsupported)."},
+		"mode": map[string]any{"type": "string", "enum": []string{"inPerson", "online"}, "description": "Optional, default inPerson (rules §1b)."},
 	})
 	g.defs["CreateRoomReply"] = object(map[string]any{
 		"room":    roomCodeSchema(),

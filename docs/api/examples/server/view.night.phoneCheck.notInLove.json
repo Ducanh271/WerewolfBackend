@@ -30,6 +30,7 @@
       },
       "team": "Village"
     },
+    "mode": "inPerson",
     "night": 1,
     "nightCall": {
       "duration": 5000,

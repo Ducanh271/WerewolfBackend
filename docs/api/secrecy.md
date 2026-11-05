@@ -2,23 +2,28 @@
 
 The server never sends a phone what its player may not know
 (`README.md` "Server → client"; rules [§3](../rules.md#3-ban-đêm)). But
-the game is played around one table: a phone that lights up in the dark,
-buzzes, plays a sound, or shows a bigger card than its neighbour's tells
-the table what the server kept secret. These rules are for the app. Each
+around one table, a phone that lights up in the dark, buzzes, plays a sound,
+or shows a bigger card than its neighbour's tells the table what the server
+kept secret. These rules are for the app. Each
 one names the rule of [`rules.md`](../rules.md) it protects; breaking one
 is a bug of the same weight as a server leak.
 
+## Two modes
+
+The room has one mode for every phone, in `view.mode`
+(rules [§1b](../rules.md#1b-hai-chế-độ-chơi)); a phone never chooses its
+own. In `online` nobody sits next to anybody, so what a neighbour could
+notice no longer matters:
+
+- [Around the table only](#around-the-table-only) binds `inPerson` alone.
+- Everything else on this page binds **both modes**: time from the server,
+  nothing leaked, the dead players' cover, and press and hold at the phone
+  check.
+
+The looks and sounds of each mode: `../frontend/giao-dien-3d.md` section 16.
+
 ## Everywhere
 
-- **Same behaviour on every phone.** Nothing a phone does that others can
-  notice (sound, vibration, flash, screen turning on, brightness,
-  animation, a screen change, a notification) may depend on the player's
-  role, team, state, or choices, or on whether a night call is real or
-  fake (rules [§3](../rules.md#3-ban-đêm) "Gọi giả", "Mỗi lượt gọi chạy
-  đủ thời gian").
-- **No vibration, no sound, no notification for game messages.** The only
-  sound is the speaker phone reading `say` texts, which are the same
-  whoever is alive (rules [§1](../rules.md#1-tổng-quan) "Máy làm loa").
 - **Nothing secret outside the screen.** The page title, the app's
   notifications, the lock screen and share previews never show a role, a
   team or a night result.
@@ -56,17 +61,14 @@ held**; letting go hides it again.
 Rules [§3](../rules.md#3-ban-đêm): everybody's eyes are closed except the
 called role's.
 
-- Every living phone shows the same night screen: the role being called
-  (`nightCall.role`) and the countdown. Nothing else differs from one phone
-  to another that a neighbour could see in the dark.
-- The called player's phone shows its action on that same screen, with no
-  sound, vibration, flash or brightness change; a blocked or doomed
-  player's notice (`me.turn.notice`, never naming who) takes the same
-  place.
 - Nothing shows that someone has chosen ("done", a tick, a progress bar)
   on any phone but the actor's own (and the pack's, for the wolves' votes).
 - The step's screen stays until `deadline` whether the choice was made or
   not.
+
+In `online`, a called phone may look and sound different from the others
+(`../frontend/giao-dien-3d.md` section 16), going by `me.turn` alone. A real
+call and a fake call still last the same.
 
 ## Phone check
 
@@ -134,3 +136,24 @@ The rules guide (`GET /guide`) is public, but a phone showing the "how to
 play" page of one role tells whoever sees it which role the player holds.
 Open the guide on the list of every role in the game, never straight on
 the player's own role.
+
+## Around the table only
+
+`inPerson` only. The game is played around one table, so what a phone does
+can be seen and heard by the neighbours.
+
+- **Same behaviour on every phone.** Nothing a phone does that others can
+  notice (sound, vibration, flash, screen turning on, brightness,
+  animation, a screen change, a notification) may depend on the player's
+  role, team, state, or choices, or on whether a night call is real or
+  fake (rules [§3](../rules.md#3-ban-đêm) "Gọi giả", "Mỗi lượt gọi chạy
+  đủ thời gian").
+- **No vibration, no sound, no notification for game messages.** The only
+  sound is the speaker phone reading `say` texts, which are the same
+  whoever is alive (rules [§1](../rules.md#1-tổng-quan) "Máy làm loa").
+- **The same night screen.** Every living phone shows the role being called
+  (`nightCall.role`) and the countdown. Nothing else differs from one phone
+  to another that a neighbour could see in the dark.
+- **The called phone stays quiet.** It shows its action on that same screen,
+  with no sound, vibration, flash or brightness change; a blocked or doomed
+  player's notice (`me.turn.notice`, never naming who) takes the same place.

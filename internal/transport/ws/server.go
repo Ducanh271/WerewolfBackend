@@ -71,13 +71,12 @@ func (s *Server) createRoom(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, errorFrameMap(err))
 			return
 		}
-		switch body.Mode {
-		case "", "inPerson":
-		case "online":
-			mode = engine.Online
-		default:
-			writeJSON(w, http.StatusBadRequest, errorFrameMap(badMessage("unknown mode")))
-			return
+		if body.Mode != "" {
+			var ok bool
+			if mode, ok = gameModes[body.Mode]; !ok {
+				writeJSON(w, http.StatusBadRequest, errorFrameMap(badMessage("unknown mode")))
+				return
+			}
 		}
 	}
 	rm, hostKey, err := s.cfg.Rooms.Create(mode)
@@ -159,8 +158,6 @@ func statusOf(err error) int {
 		return http.StatusNotFound
 	case errors.Is(err, room.ErrTooManyRooms), errors.Is(err, room.ErrClosed):
 		return http.StatusServiceUnavailable
-	case errors.Is(err, engine.ErrModeUnsupported):
-		return http.StatusBadRequest
 	}
 	return http.StatusInternalServerError
 }

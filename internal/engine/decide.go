@@ -23,6 +23,8 @@ func Decide(s State, c Command) ([]Event, error) {
 		return decideConfigureRoles(s, cmd)
 	case ConfigureSound:
 		return decideConfigureSound(s, cmd)
+	case ConfigureMode:
+		return decideConfigureMode(s, cmd)
 	case DealRoles:
 		return decideDealRoles(s, cmd)
 	case VoteChief:
@@ -112,6 +114,9 @@ func decideKickPlayer(s State, cmd KickPlayer) ([]Event, error) {
 func decideSetSeats(s State, cmd SetSeats) ([]Event, error) {
 	if s.Phase != PhaseLobby {
 		return nil, fmt.Errorf("%w: cannot seat players during %s", ErrWrongPhase, s.Phase)
+	}
+	if s.Settings.Mode == Online {
+		return nil, fmt.Errorf("%w: online seats are drawn at the deal", ErrWrongPhase)
 	}
 	if len(cmd.Order) != len(s.Players) {
 		return nil, fmt.Errorf("%w: %d seats for %d players", ErrSeatsMismatch, len(cmd.Order), len(s.Players))

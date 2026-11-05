@@ -27,6 +27,7 @@
         "step": "Werewolf"
       }
     },
+    "mode": "inPerson",
     "night": 2,
     "nightCall": {
       "duration": 30000,

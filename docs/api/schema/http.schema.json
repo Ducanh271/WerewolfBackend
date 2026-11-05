@@ -27,7 +27,7 @@
       "additionalProperties": false,
       "properties": {
         "mode": {
-          "description": "Optional, default inPerson. online is refused (mode_unsupported).",
+          "description": "Optional, default inPerson (rules §1b).",
           "type": "string",
           "enum": [
             "inPerson",

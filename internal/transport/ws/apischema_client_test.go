@@ -70,6 +70,8 @@ func (g *schemaGen) argsSchema(name string, t reflect.Type) map[string]any {
 		}
 		sort.Strings(modes)
 		return object(map[string]any{"mode": map[string]any{"type": "string", "enum": modes}}, "mode")
+	case "configureMode":
+		return object(map[string]any{"mode": map[string]any{"type": "string", "enum": gameModeNames()}}, "mode")
 	case "configureTimers":
 		props := map[string]any{}
 		tm := reflect.TypeOf(timerMillis{})

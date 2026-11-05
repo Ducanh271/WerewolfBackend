@@ -84,6 +84,7 @@
       "cursed": false,
       "id": "p1"
     },
+    "mode": "inPerson",
     "night": 0,
     "phase": "Lobby",
     "players": [

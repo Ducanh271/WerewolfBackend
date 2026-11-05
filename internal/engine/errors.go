@@ -23,9 +23,8 @@ var (
 	ErrDuplicateSeat   = NewError("duplicate_seat", "player seated twice")
 	// ErrTimerOutOfRange means a phase time is outside its allowed range.
 	ErrTimerOutOfRange = NewError("timer_out_of_range", "timer out of range")
-	// ErrModeUnsupported means the game mode exists in the model but is not
-	// built yet (Online).
-	ErrModeUnsupported = NewError("mode_unsupported", "game mode not supported yet")
+	// ErrInvalidMode means ConfigureMode was sent an unknown mode.
+	ErrInvalidMode = NewError("invalid_mode", "invalid game mode")
 	// ErrInvalidSoundMode means ConfigureSound was sent an unknown mode.
 	ErrInvalidSoundMode = NewError("invalid_sound_mode", "invalid sound mode")
 

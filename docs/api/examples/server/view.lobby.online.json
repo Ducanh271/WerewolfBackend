@@ -1,0 +1,83 @@
+{
+  "type": "view",
+  "people": [
+    {
+      "connected": true,
+      "id": "p1",
+      "isHost": true,
+      "nickname": "An"
+    },
+    {
+      "connected": true,
+      "id": "p2",
+      "isHost": false,
+      "nickname": "Bình"
+    },
+    {
+      "connected": true,
+      "id": "p3",
+      "isHost": false,
+      "nickname": "Chi"
+    },
+    {
+      "connected": true,
+      "id": "p4",
+      "isHost": false,
+      "nickname": "Dũng"
+    },
+    {
+      "connected": true,
+      "id": "p5",
+      "isHost": false,
+      "nickname": "Giang"
+    }
+  ],
+  "speaker": true,
+  "view": {
+    "draw": false,
+    "full": false,
+    "me": {
+      "alive": true,
+      "canShoot": false,
+      "cursed": false,
+      "id": "p1"
+    },
+    "mode": "online",
+    "night": 0,
+    "phase": "Lobby",
+    "roleCards": [
+      {
+        "description": "Mỗi đêm cùng bầy chọn một người để cắn, hoặc chọn không cắn ai. Ban ngày giả làm dân lành.",
+        "name": "Sói",
+        "role": "Werewolf",
+        "team": "Sói"
+      },
+      {
+        "description": "Không có năng lực ban đêm. Vũ khí của bạn là lá phiếu và khả năng suy luận ban ngày.",
+        "name": "Dân làng",
+        "role": "Villager",
+        "team": "Dân"
+      }
+    ],
+    "roles": {
+      "Villager": 4,
+      "Werewolf": 1
+    },
+    "seq": 0,
+    "sound": "allPhones",
+    "timers": {
+      "announce": 10000,
+      "chiefElection": 60000,
+      "chiefSuccession": 15000,
+      "day": 420000,
+      "defense": 60000,
+      "hunterShot": 15000,
+      "loversMeet": 10000,
+      "nightStep": 30000,
+      "nominationLock": 10000,
+      "phoneCheck": 5000,
+      "roleView": 30000,
+      "verdict": 30000
+    }
+  }
+}

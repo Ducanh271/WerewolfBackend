@@ -69,10 +69,10 @@ func TestSetup_LobbyCommandsAreRejectedAfterTheDeal(t *testing.T) {
 	}
 }
 
-func TestRoom_OnlineModeIsNotSupportedYet(t *testing.T) {
-	r, err := New(Config{Code: "X", Mode: engine.Online})
-	if !errors.Is(err, engine.ErrModeUnsupported) || r != nil {
-		t.Fatalf("New(Online) = %v, %v, want ErrModeUnsupported", r, err)
+func TestRoom_UnknownModeIsRefused(t *testing.T) {
+	r, err := New(Config{Code: "X", Mode: engine.Mode(99)})
+	if !errors.Is(err, engine.ErrInvalidMode) || r != nil {
+		t.Fatalf("New(99) = %v, %v, want ErrInvalidMode", r, err)
 	}
 }
 

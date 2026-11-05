@@ -565,6 +565,9 @@
           "$ref": "#/$defs/LoversPairedEvent"
         },
         {
+          "$ref": "#/$defs/ModeConfiguredEvent"
+        },
+        {
           "$ref": "#/$defs/NewGameStartedEvent"
         },
         {
@@ -1092,6 +1095,43 @@
         },
         "data": {
           "$ref": "#/$defs/LoversPaired"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "Mode": {
+      "description": "How the room plays (rules §1b).",
+      "type": "string",
+      "enum": [
+        "inPerson",
+        "online"
+      ]
+    },
+    "ModeConfigured": {
+      "description": "ModeConfigured records the choice. Any seats set so far are gone: the two modes seat people differently (rules §1b).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/Mode"
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "ModeConfiguredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "ModeConfigured"
+        },
+        "data": {
+          "$ref": "#/$defs/ModeConfigured"
         }
       },
       "required": [
@@ -2591,6 +2631,10 @@
           "description": "player viewers only",
           "$ref": "#/$defs/MyView"
         },
+        "mode": {
+          "description": "Mode is how the room plays (rules §1b); every phase.",
+          "$ref": "#/$defs/Mode"
+        },
         "night": {
           "type": "integer"
         },
@@ -2675,6 +2719,7 @@
         "seq",
         "night",
         "draw",
+        "mode",
         "full"
       ]
     },

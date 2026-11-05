@@ -72,8 +72,7 @@ func NewManager(cfg ManagerConfig) *Manager {
 
 // Create opens a room in the given mode and returns it, along with the
 // secret hostKey for its creator (rules §2, audit S8): whoever's first
-// `join` message carries it becomes the host. Online rooms are refused
-// (engine.ErrModeUnsupported).
+// `join` message carries it becomes the host.
 func (m *Manager) Create(mode engine.Mode) (*Room, string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
