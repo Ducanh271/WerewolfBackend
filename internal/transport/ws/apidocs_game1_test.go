@@ -141,6 +141,7 @@ func (g *exGame) firstGame() {
 	g.expectPhase("Day")
 	g.fails(binh, "already_spared", "nominate", map[string]any{"target": phuc.id})
 	g.ok(binh, "nominate", map[string]any{"target": chi.id})
+	g.shot(binh, "day")
 	g.toDeadline()
 	g.expectPhase("Trial")
 	g.untilPhase("Night")
@@ -196,6 +197,8 @@ func (g *exGame) firstGame() {
 		}
 	}
 	g.sync()
+	g.expectPhase("Dusk")
+	g.shot(chi, "dusk")
 	g.toDeadline()
 
 	// Night 3: the Witch poisons Quân, the last wolf.

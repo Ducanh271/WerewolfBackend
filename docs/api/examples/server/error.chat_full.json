@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "chat_full",
+  "message": "this game has reached its chat limit"
+}

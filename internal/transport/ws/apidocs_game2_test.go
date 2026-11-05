@@ -2,6 +2,7 @@ package ws
 
 import (
 	"strings"
+	"testing"
 
 	"masoi/internal/engine"
 	"masoi/internal/room"
@@ -18,6 +19,44 @@ func (g *exGame) chatExamples(p *exPhone) {
 		g.ok(p, "sendChat", map[string]any{"text": "Phúc là sói!"})
 	}
 	g.fails(p, "chat_too_fast", "sendChat", map[string]any{"text": "Phúc là sói!"})
+}
+
+// chatFullExample gets server/error.chat_full.json from a table of its own,
+// where five players write until the game holds its last message. Only that
+// refusal joins x: the messages before it would add thousands of frames to
+// validate and say nothing new.
+func chatFullExample(t *testing.T, x *exampleSet) {
+	t.Helper()
+	g := &exGame{t: t, e: newExampleEnv(t), x: newExampleSet(t)}
+	_, body := g.httpJSON("POST", "/rooms", []byte(`{"mode":"inPerson"}`))
+	var created struct{ HostKey string }
+	mustUnmarshal(t, body, &created)
+	order := make([]any, 0, engine.MinPlayers)
+	for i, nick := range exampleTable[:engine.MinPlayers] {
+		msg := map[string]any{"type": "join", "room": exampleRoom, "nickname": nick}
+		if i == 0 {
+			msg["hostKey"] = created.HostKey
+		}
+		order = append(order, g.join(nick, "", msg).id)
+	}
+	host := g.host()
+	g.ok(host, "setSeats", map[string]any{"order": order})
+	g.ok(host, "configureRoles", map[string]any{"roles": map[string]any{"Werewolf": 1, "Villager": engine.MinPlayers - 1}})
+	g.ok(host, "configureTimers", map[string]any{"timers": map[string]any{"day": 1800000}})
+	g.ok(host, "dealRoles", nil)
+	g.untilPhase("Day")
+	for sent := 0; sent < room.ChatMaxPerGame; g.advance(room.ChatBurst * room.ChatInterval) {
+		for _, p := range g.phones {
+			for i := 0; i < room.ChatBurst && sent < room.ChatMaxPerGame; i++ {
+				g.do(p, "sendChat", map[string]any{"text": "Bàn tán."})
+				sent++
+			}
+		}
+		g.sync() // the room must take them before the clock moves, or the credit is off
+	}
+	g.expectPhase("Day")
+	g.fails(host, "chat_full", "sendChat", map[string]any{"text": "Bàn tán."})
+	x.files["server/error.chat_full.json"] = g.x.files["server/error.chat_full.json"]
 }
 
 // secondGame: a new game in the same room, every phone reading aloud. The

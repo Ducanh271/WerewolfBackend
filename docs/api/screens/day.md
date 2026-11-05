@@ -31,6 +31,30 @@ the verdict (rules §4 step 6).
 | `view.chief` | the Chief: their nomination and verdict count double |
 | `view.players[].alive` | who may vote |
 
+<!-- example: server/view.day.json type deadline view.phase view.votes view.chief -->
+```json
+{
+  "type": "view",
+  "deadline": 1792095120000,
+  "view": {
+    "chief": "p8",
+    "phase": "Day",
+    "votes": {
+      "abortVotes": {
+        "p2": false
+      },
+      "nominations": {
+        "p2": "p3"
+      },
+      "spared": [
+        "p11"
+      ]
+    }
+  }
+}
+```
+<!-- /example -->
+
 <!-- example: server/view.nominationLock.json type deadline view.phase view.votes -->
 ```json
 {
@@ -82,6 +106,42 @@ the verdict (rules §4 step 6).
         "p7": true,
         "p8": false,
         "p9": false
+      }
+    }
+  }
+}
+```
+<!-- /example -->
+
+<!-- example: server/view.dusk.json type deadline view.phase view.votes view.chief -->
+```json
+{
+  "type": "view",
+  "deadline": 1792095495000,
+  "view": {
+    "chief": "p3",
+    "phase": "Dusk",
+    "votes": {
+      "nominations": {
+        "p1": "p2",
+        "p10": "p2",
+        "p12": "p2",
+        "p2": "p12",
+        "p3": "p2",
+        "p4": "p2",
+        "p5": "p2",
+        "p6": "p2",
+        "p7": "p2"
+      },
+      "verdicts": {
+        "p1": true,
+        "p10": true,
+        "p12": true,
+        "p3": true,
+        "p4": true,
+        "p5": true,
+        "p6": true,
+        "p7": true
       }
     }
   }

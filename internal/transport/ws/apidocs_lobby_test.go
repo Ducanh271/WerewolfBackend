@@ -24,6 +24,7 @@ func playExampleGames(t *testing.T) *exampleSet {
 	g.lobby()
 	g.firstGame()
 	g.secondGame()
+	chatFullExample(t, x)
 	return x
 }
 

@@ -10,7 +10,7 @@ cites their section numbers.
 | `schema/server.schema.json` | every WebSocket message the server sends | generated from the Go types |
 | `schema/client.schema.json` | every WebSocket message a client may send | generated from the Go types |
 | `schema/http.schema.json` | the bodies of the HTTP endpoints | generated from the Go types |
-| `examples/` | real messages from two example games | captured from the real server |
+| `examples/` | real messages from the example games | captured from the real server |
 | this README | connecting, the message envelope, versioning | written by hand |
 | [`screens/`](screens/lobby.md) | one guide per screen: the view fields that drive it, the commands it may send, its errors, real messages | by hand; the JSON blocks generated from `examples/` |
 | [`errors.md`](errors.md) | every error code, when it comes, the sentence to show | by hand; its tables generated from the server's codes and `internal/i18n` |
@@ -26,7 +26,8 @@ The examples come from two games played in a test through the real server:
 room `K7QP`, players An, Bình, Chi, Dũng, Giang, Hà, Khoa, Lan, Minh, Nga,
 Phúc, Quân (plus Tú, who leaves, and Vy, who is kicked), every role in play.
 Game 1 runs to a village win; game 2 (a new game in the same room) ends with
-the table voting to call it off.
+the table voting to call it off. A third table of five plays one day just to
+fill the chat: only its `error.chat_full.json` is kept.
 
 - `examples/client/`: one file per client message and per command name
   (`command.<name>.json`).
