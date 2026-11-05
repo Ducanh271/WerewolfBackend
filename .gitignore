@@ -10,3 +10,9 @@ bin/
 *.pfx
 credentials.json
 secrets/
+
+# Frontend build output
+web/node_modules/
+web/dist/
+# Generated from web/prototype/ban-3d.template.html by build.py (images inlined)
+web/prototype/ban-3d.html

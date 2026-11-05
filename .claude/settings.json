@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(docs/api/schema/**)",
+      "Write(docs/api/schema/**)",
+      "Edit(docs/api/examples/**)",
+      "Write(docs/api/examples/**)",
+      "Edit(web/src/api/types.ts)",
+      "Write(web/src/api/types.ts)"
+    ]
+  }
+}

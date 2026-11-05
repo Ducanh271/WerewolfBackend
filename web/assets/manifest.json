@@ -1,0 +1,135 @@
+{
+  "ghiChu": "Đường dẫn tính từ thư mục assets/. Tay: không hậu tố = còn dùng được, \"-da-dung\" = đã dùng.",
+  "nen": {
+    "ngay": "nen/ngay.webp",
+    "dem": "nen/dem.webp"
+  },
+  "matSau": "the/mat-sau.webp",
+  "ui": {
+    "khung-lang-9": "ui/khung-lang-9.webp",
+    "khung-lang-goc": "ui/khung-lang-goc.webp",
+    "khung-soi-9": "ui/khung-soi-9.webp",
+    "khung-soi-goc": "ui/khung-soi-goc.webp",
+    "khung-xam-9": "ui/khung-xam-9.webp"
+  },
+  "tayNgay": {
+    "tay-ngay-phai-da-vote": "chung/tay-ngay-phai-da-vote.webp",
+    "tay-ngay-phai": "chung/tay-ngay-phai.webp",
+    "tay-ngay-trai-da-vote": "chung/tay-ngay-trai-da-vote.webp",
+    "tay-ngay-trai": "chung/tay-ngay-trai.webp"
+  },
+  "vai": {
+    "Villager": {
+      "thuMuc": "dan-lang",
+      "the": "vai/dan-lang/the.webp",
+      "tay": {
+        "tay-phai": "vai/dan-lang/tay-phai.webp",
+        "tay-trai": "vai/dan-lang/tay-trai.webp"
+      }
+    },
+    "Werewolf": {
+      "thuMuc": "soi",
+      "the": "vai/soi/the.webp",
+      "tay": {
+        "tay-phai": "vai/soi/tay-phai.webp",
+        "tay-trai": "vai/soi/tay-trai.webp"
+      }
+    },
+    "CursedWolf": {
+      "thuMuc": "soi-nguyen",
+      "the": "vai/soi-nguyen/the.webp",
+      "tay": {
+        "tay-phai": "vai/soi-nguyen/tay-phai.webp",
+        "tay-trai-da-dung": "vai/soi-nguyen/tay-trai-da-dung.webp",
+        "tay-trai": "vai/soi-nguyen/tay-trai.webp"
+      }
+    },
+    "WolfSeer": {
+      "thuMuc": "soi-tien-tri",
+      "the": "vai/soi-tien-tri/the.webp",
+      "tay": {
+        "tay-phai": "vai/soi-tien-tri/tay-phai.webp",
+        "tay-trai": "vai/soi-tien-tri/tay-trai.webp"
+      }
+    },
+    "Seer": {
+      "thuMuc": "tien-tri",
+      "the": "vai/tien-tri/the.webp",
+      "tay": {
+        "tay-phai": "vai/tien-tri/tay-phai.webp",
+        "tay-trai": "vai/tien-tri/tay-trai.webp"
+      }
+    },
+    "Witch": {
+      "thuMuc": "phu-thuy",
+      "the": "vai/phu-thuy/the.webp",
+      "tay": {
+        "tay-phai-da-dung": "vai/phu-thuy/tay-phai-da-dung.webp",
+        "tay-phai": "vai/phu-thuy/tay-phai.webp",
+        "tay-trai-da-dung": "vai/phu-thuy/tay-trai-da-dung.webp",
+        "tay-trai": "vai/phu-thuy/tay-trai.webp"
+      }
+    },
+    "Guard": {
+      "thuMuc": "bao-ve",
+      "the": "vai/bao-ve/the.webp",
+      "tay": {
+        "tay-phai": "vai/bao-ve/tay-phai.webp",
+        "tay-trai": "vai/bao-ve/tay-trai.webp"
+      }
+    },
+    "Visitor": {
+      "thuMuc": "nguyet-nu",
+      "the": "vai/nguyet-nu/the.webp",
+      "tay": {
+        "tay-phai": "vai/nguyet-nu/tay-phai.webp",
+        "tay-trai": "vai/nguyet-nu/tay-trai.webp"
+      }
+    },
+    "Detective": {
+      "thuMuc": "tham-tu",
+      "the": "vai/tham-tu/the.webp",
+      "tay": {
+        "tay-phai-da-dung": "vai/tham-tu/tay-phai-da-dung.webp",
+        "tay-phai": "vai/tham-tu/tay-phai.webp",
+        "tay-trai-da-dung": "vai/tham-tu/tay-trai-da-dung.webp",
+        "tay-trai": "vai/tham-tu/tay-trai.webp"
+      }
+    },
+    "Cupid": {
+      "thuMuc": "cupid",
+      "the": "vai/cupid/the.webp",
+      "tay": {
+        "tay-phai-da-dung": "vai/cupid/tay-phai-da-dung.webp",
+        "tay-phai": "vai/cupid/tay-phai.webp",
+        "tay-trai-da-dung": "vai/cupid/tay-trai-da-dung.webp",
+        "tay-trai": "vai/cupid/tay-trai.webp"
+      }
+    },
+    "Hunter": {
+      "thuMuc": "tho-san",
+      "the": "vai/tho-san/the.webp",
+      "tay": {
+        "hai-tay": "vai/tho-san/hai-tay.webp"
+      }
+    },
+    "RustyKnight": {
+      "thuMuc": "hiep-si",
+      "the": "vai/hiep-si/the.webp",
+      "tay": {
+        "tay-phai": "vai/hiep-si/tay-phai.webp",
+        "tay-trai": "vai/hiep-si/tay-trai.webp"
+      }
+    }
+  },
+  "danhHieu": {
+    "chief": {
+      "thuMuc": "truong-lang",
+      "the": "vai/truong-lang/the.webp",
+      "tay": {
+        "tay-phai": "vai/truong-lang/tay-phai.webp",
+        "tay-trai": "vai/truong-lang/tay-trai.webp"
+      }
+    }
+  }
+}

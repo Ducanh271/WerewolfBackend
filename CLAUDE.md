@@ -72,3 +72,31 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 - Don't add features from `docs/rules.md` §10 (out of scope).
 - Don't read the whole repo; open only files the task needs.
 - Don't commit secrets or generated binaries.
+
+## Frontend (`web/`) và quy tắc giữ backend–frontend–giao diện đồng nhất
+
+Repo này chứa cả server Go và app web (`web/`). Thứ tự nguồn sự thật, **cao thắng thấp**:
+
+1. `docs/rules.md` — luật chơi.
+2. `docs/api/` — hợp đồng server ↔ app (sinh từ code Go bằng `make api-docs`, kèm phần viết tay).
+3. `docs/frontend/giao-dien-3d.md` — giao diện trông thế nào, pha → cảnh, hiệu ứng, âm thanh.
+4. `web/prototype/` — bản chạy thử, chỉ để tham khảo hình ảnh; **không** là nguồn về dữ liệu hay luồng.
+
+Tài liệu đi kèm: `docs/frontend/ke-hoach.md` (các bước), `docs/frontend/doi-chieu-backend.md` (chỗ bản chạy thử lệch backend + quy trình thêm tính năng), `docs/frontend/ban-giao-frontend.md` (màu, chữ, nút, tay), `docs/api/secrecy.md` (bắt buộc).
+
+### Luật làm việc
+- **Hợp đồng trước, code sau.** Tính năng cần dữ liệu/lệnh mới: sửa `docs/rules.md` (nếu đổi luật) → code Go + test → `make api-docs` → sửa `docs/api/screens/*.md` → `docs/frontend/giao-dien-3d.md` → `cd web && npm run gen:types` → code `web/`. Không làm ngược.
+- **Frontend không bịa**: không dùng trường, lệnh, mã lỗi, pha nào không có trong `docs/api/schema/`. Thiếu thì dừng lại hỏi.
+- **Không sửa tay file sinh ra**: `docs/api/schema/**`, `docs/api/examples/**`, các vùng `<!-- example -->` / `<!-- generated -->`.
+- **Không tự đổi luật hay thiết kế** để code cho dễ. Thấy tài liệu mâu thuẫn hoặc thiếu: dừng, nêu rõ chỗ mâu thuẫn (file:dòng), đề xuất cách sửa, chờ trả lời.
+- **Mỗi lần chỉ một việc** (một bước trong `ke-hoach.md` hoặc một tính năng). Không "tiện tay" sửa chỗ khác; ghi vào phần "Việc còn lại" trong báo cáo.
+- **Lập kế hoạch trước khi sửa**: liệt kê file sẽ sửa, trường API dùng (trích file:dòng), cách kiểm tra; với thay đổi chạm cả Go lẫn `web/` thì chờ duyệt rồi mới làm.
+- **Xong nghĩa là kiểm tra đã qua**: Go: `make test`; web: `cd web && npm run check`. Báo cáo kết quả lệnh thật, không viết "chắc là chạy được".
+- Chữ hiển thị là tiếng Việt, lấy nguyên văn từ server khi server gửi (`say`, `notice`, `summary`, guide, câu lỗi trong `docs/api/errors.md`).
+- Bí mật (`docs/api/secrecy.md`) là lỗi nặng ngang lộ dữ liệu: hình, tiếng, thời gian không được khác nhau giữa các máy theo vai/hành động khi chơi trực tiếp.
+
+### Báo cáo cuối mỗi việc (luôn theo mẫu)
+1. Đã làm (file chính).
+2. Kiểm tra đã chạy + kết quả.
+3. Chỗ còn lệch so với `docs/frontend/giao-dien-3d.md` hoặc `docs/api/`.
+4. Việc còn lại / câu hỏi cần quyết.
