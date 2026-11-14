@@ -58,6 +58,7 @@ Màn hình: mô tả + bản chạy thử nếu có
 
 1. **Hai chế độ chơi và độ sáng ban đêm** (dòng 5, 6). Phòng có `inPerson` và `online`; cả phòng theo một chế độ. Khác biệt đầy đủ: bảng ở `giao-dien-3d.md` mục 16. `secrecy.md` đã tách theo chế độ.
 2. **Luật trò chuyện**: theo `docs/rules.md` §4 "Nhắn tin" và `docs/api/screens/day.md` mục Chat, cả hai chế độ. Không nhắn ở sảnh và lúc `Verdict`; người chết chỉ đọc; không có kênh riêng. Quyết định cũ ngày 04/11 (nhắn được ở sảnh) đã bỏ.
+3. **Đồng hồ theo giờ server** (14/11/2026). Đồng hồ điện thoại có thể lệch vài giây, máy nhanh sẽ hết giờ trước máy bên cạnh. Mọi `view` mang `serverTime` (giờ server lúc gửi, cùng đồng hồ với `deadline`); app giữ độ lệch lớn nhất trong một lần kết nối và đếm bằng `remaining()` (`web/src/state/clock.ts`). Chỉ gửi trong `view`, không trong `welcome` (sau `welcome` luôn có `view`). Thời gian trôi một mình không bao giờ gửi `view` (bí mật ban đêm, `secrecy.md` "Time comes from the server").
 
 ## 5. Để máy tự bắt lệch (cài sẵn trong frontend)
 
