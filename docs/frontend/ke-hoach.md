@@ -11,7 +11,7 @@ Cấu trúc: frontend nằm ở `web/` **trong chính repo backend**, nên `docs
 Làm xong việc nào thì tick ngay ở đây (việc backend B1–B4 tick ở mục dưới).
 
 - [x] Bước 1 — Khung dự án + kiểu dữ liệu từ schema
-- [ ] Bước 2 — Kết nối server và kho trạng thái
+- [x] Bước 2 — Kết nối server và kho trạng thái
 - [ ] Bước 3 — Các màn 2D ngoài ván
 - [ ] Bước 3b — Sảnh chờ 3D, chia vai, xem vai, thẻ của bạn
 - [ ] Bước 4 — Cảnh 3D quảng trường (chưa nối dữ liệu)

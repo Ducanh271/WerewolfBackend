@@ -1,5 +1,5 @@
 // The contract's real messages (../docs/api/examples/) all read back, each
-// with the `type` its folder allows. Bước 2 replays them through the store.
+// with the `type` its folder allows. store.test.ts replays them through the store.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
