@@ -60,7 +60,9 @@ for every caller:
   opens, not reset by later messages; a connection that fails to join or
   rejoin 8 times in a row is also closed (bogus tokens, PINs guessed across
   nicknames).
-- **Origin.** The `Origin` header must be one of the configured origins
+- **Origin.** The `Origin` header must name the server's own address (its
+  host and port, as the request's `Host`: the page the server serves itself,
+  whatever the domain is called) or one of the configured origins
   (`ALLOWED_ORIGINS`, comma separated, `scheme://host[:port]`). No `Origin` is
   refused too, unless `ALLOW_ANY_ORIGIN=1` (demo and tests), which allows
   everything. Refused → `403` `bad_origin`.

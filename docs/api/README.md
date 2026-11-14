@@ -57,11 +57,13 @@ Unix milliseconds.
 | `GET /join/{code}` | `200` `{"room"}` when the room exists (case ignored); `404` `room_not_found`. This is the link a QR code carries. |
 | `GET /guide` | `200` the rules guide and the "how to play your role" texts, in Vietnamese (`http/guide.reply.json`). Public, needs no room. |
 | `POST /history`, body `{"tokens": [...]}` (the rejoin tokens the phone kept) | `200` `{"games"}`: the finished games of those tokens, newest first, kept 90 days (`http/history.reply.json`, [history](screens/history.md)). |
+| `GET /`, `GET /j/{code}` | the web game itself, when the server runs with `WEB_DIR` (the built `web/dist`). `/j/{code}` is the link a QR code carries: it opens the same page, which reads the code from its own address and checks it with `GET /join/{code}`. Files under `/assets/` are cached for good, the page is never cached. |
 | `GET /ws` | the game WebSocket. **No query string** (`400` `secret_in_url`): secrets only travel inside messages. |
 
 An HTTP error has the same body as a WebSocket `error` message
-(`HTTPError` in `http.schema.json`). The browser must send an `Origin` the
-server is configured to accept (`403` `bad_origin` otherwise); too many
+(`HTTPError` in `http.schema.json`). The browser must send an `Origin` that
+is the server's own address (the page it serves) or one it is configured to
+accept (`403` `bad_origin` otherwise); too many
 sockets get `503` `too_many_connections`.
 
 ## Joining and rejoining
@@ -189,6 +191,8 @@ any client existed did not raise `protocolVersion`.
   reaches every phone; it used to reach only the dead and the end screen.
 - New: `POST /history` ([history](screens/history.md)) and the
   `history_unavailable` error.
+- New: the server serves the web game at `/` and the QR link `/j/{code}`
+  (`WEB_DIR`), and accepts its own address as `Origin` without configuration.
 
 ## Keeping this folder true
 

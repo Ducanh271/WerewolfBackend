@@ -55,8 +55,13 @@ type Config struct {
 	// AllowedOrigins are the origins (scheme://host[:port]) browsers may open
 	// a socket from. A request without an Origin header is refused unless
 	// AllowAnyOrigin is set (demo and tests).
+	// The server's own address is always allowed (originAllowed).
 	AllowedOrigins []string
 	AllowAnyOrigin bool
+
+	// WebDir is the built web app (web/dist) to serve at / and /j/{code};
+	// empty serves no page (development uses the Vite dev server).
+	WebDir string
 
 	MaxMessageBytes int           // per message, default 4 KB
 	RatePerSecond   float64       // messages per second per connection, default 10
@@ -98,6 +103,7 @@ func ConfigFromEnv(getenv func(string) string) Config {
 		}
 	}
 	cfg.AllowAnyOrigin = getenv("ALLOW_ANY_ORIGIN") == "1"
+	cfg.WebDir = strings.TrimSpace(getenv("WEB_DIR"))
 	return cfg
 }
 

@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/coder/websocket"
@@ -35,6 +36,7 @@ type Server struct {
 //	GET  /guide         the in-app rules guide and per-role how-to (T25); public, no room needed
 //	POST /history      the finished games of the tokens in the body (T33b)
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
+//	GET  /, /j/{code}  the web app, when Config.WebDir is set (B4)
 //
 // It fails when the registered roles' commands clash (two with one name):
 // the server must not start then.
@@ -55,6 +57,14 @@ func New(cfg Config) (http.Handler, error) {
 	s.mux.HandleFunc("GET /guide", s.serveGuide)
 	s.mux.HandleFunc("POST /history", s.history)
 	s.mux.HandleFunc("GET /ws", s.serveWS)
+	if cfg.WebDir != "" {
+		app, err := newWebApp(cfg.WebDir)
+		if err != nil {
+			return nil, err
+		}
+		s.mux.HandleFunc("GET /j/{code}", app.page)
+		s.mux.HandleFunc("GET /", app.file)
+	}
 	return s.mux, nil
 }
 
@@ -105,7 +115,7 @@ func (s *Server) serveWS(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, errorFrameMap(&protoError{codeSecretInURL, "send everything in messages, not in the URL"}))
 		return
 	}
-	if !s.originAllowed(r.Header.Get("Origin")) {
+	if !s.originAllowed(r.Header.Get("Origin"), r.Host) {
 		writeJSON(w, http.StatusForbidden, errorFrameMap(&protoError{codeBadOrigin, "origin not allowed"}))
 		return
 	}
@@ -139,12 +149,20 @@ func clientIP(r *http.Request) string {
 	return host
 }
 
-func (s *Server) originAllowed(origin string) bool {
+// originAllowed lets a browser open the socket from a listed origin, or from
+// the server's own address: the page the server itself serves (B4), whatever
+// the domain is called today (an ngrok name changes on every start). Tokens
+// live in the page's own storage, not in cookies, so a page of another site
+// has nothing of a player's to use even when it reaches the socket.
+func (s *Server) originAllowed(origin, host string) bool {
 	if s.cfg.AllowAnyOrigin {
 		return true
 	}
 	if origin == "" {
 		return false
+	}
+	if u, err := url.Parse(origin); err == nil && u.Host != "" && host != "" && strings.EqualFold(u.Host, host) {
+		return true
 	}
 	for _, o := range s.cfg.AllowedOrigins {
 		if strings.EqualFold(o, origin) {
