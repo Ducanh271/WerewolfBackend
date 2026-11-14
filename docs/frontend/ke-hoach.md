@@ -12,7 +12,7 @@ Làm xong việc nào thì tick ngay ở đây (việc backend B1–B4 tick ở 
 
 - [x] Bước 1 — Khung dự án + kiểu dữ liệu từ schema
 - [x] Bước 2 — Kết nối server và kho trạng thái
-- [ ] Bước 3 — Các màn 2D ngoài ván
+- [x] Bước 3 — Các màn 2D ngoài ván
 - [ ] Bước 3b — Sảnh chờ 3D, chia vai, xem vai, thẻ của bạn
 - [ ] Bước 4 — Cảnh 3D quảng trường (chưa nối dữ liệu)
 - [ ] Bước 5 — Nối cảnh 3D với `view`

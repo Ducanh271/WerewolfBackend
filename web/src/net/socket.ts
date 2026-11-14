@@ -118,7 +118,10 @@ export class GameSocket {
     this.stopped = false;
     this.pending = { ...entry, room };
     this.store.clearError();
-    if (this.ws && this.isOpen) this.sendEntry();
+    if (this.ws && this.isOpen) {
+      this.store.setConnection({ state: 'connecting' });
+      this.sendEntry();
+    }
     else if (!this.ws) this.connect();
   }
 
@@ -218,6 +221,11 @@ export class GameSocket {
         return this.stop('replaced');
       case 'kicked_by_host':
         return this.stop('kicked'); // the token still reads the games played before
+    }
+    if (answering && answering.kind !== 'token') {
+      // A refused join or PIN rejoin: the socket stays open for the next try.
+      this.store.setConnection({ state: 'idle' });
+      return;
     }
     if (answering?.kind !== 'token') return;
     if (msg.code === 'bad_credentials') {

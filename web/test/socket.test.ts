@@ -152,10 +152,12 @@ test('a refused join keeps the socket for another try, with the situation', () =
   t.last().receive(read('server/error.nickname_taken.json'));
   t.last().receive({ type: 'error', code: 'wrong_phase', message: 'x' });
   assert.equal(t.store.state.error?.situation, 'join');
+  assert.equal(t.store.state.connection.state, 'idle', 'the form is not left waiting');
   assert.equal(t.socket.send({ type: 'command', name: 'dealRoles' }), false, 'no commands before welcome');
   t.socket.enter({ kind: 'join', room: 'K7QP', nickname: 'An Nhiên' });
   assert.equal(t.sockets.length, 1);
   assert.equal(t.last().sent.length, 2);
+  assert.equal(t.store.state.connection.state, 'connecting');
   assert.equal(t.store.state.error, undefined);
 });
 
