@@ -48,7 +48,10 @@ type WitchPoisoned struct {
 	Target engine.PlayerID
 }
 
-func init() { engine.Register(witch{}) }
+func init() {
+	engine.Register(witch{})
+	engine.RegisterEvents(WitchHealed{}, WitchPoisoned{})
+}
 
 // Audience: only the Witch knows what she brewed.
 func (e WitchHealed) Audience(engine.State) engine.Audience {

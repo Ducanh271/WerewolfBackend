@@ -31,7 +31,10 @@ type WolfSeerChecked struct {
 	IsSeer   bool
 }
 
-func init() { engine.Register(wolfSeer{}) }
+func init() {
+	engine.Register(wolfSeer{})
+	engine.RegisterEvents(WolfSeerChecked{})
+}
 
 // Audience: the whole pack. A player cursed earlier tonight gets it from the
 // phone check on, like the rest of the pack screen (engine.VisibleTeam).

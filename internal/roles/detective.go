@@ -32,7 +32,10 @@ type DetectiveChecked struct {
 	HasWolf   bool
 }
 
-func init() { engine.Register(detective{}) }
+func init() {
+	engine.Register(detective{})
+	engine.RegisterEvents(DetectiveChecked{})
+}
 
 // Audience: the result is the Detective's alone.
 func (e DetectiveChecked) Audience(engine.State) engine.Audience {

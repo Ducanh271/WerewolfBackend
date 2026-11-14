@@ -9,8 +9,8 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - If a rule is ambiguous or missing: STOP and ask. Never invent game rules.
 
 ## Stack
-- Go 1.24+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only), `github.com/santhosh-tekuri/jsonschema/v6` (tests only: validates `docs/api` schemas and examples), `golang.org/x/text` (nickname NFC, pinned to a version that builds with Go 1.24). Ask before adding anything else.
-- No database in v1: in-memory store behind an interface.
+- Go 1.24+, standard library first. Allowed deps: `github.com/coder/websocket` (transport only), `github.com/stretchr/testify` (tests only), `github.com/santhosh-tekuri/jsonschema/v6` (tests only: validates `docs/api` schemas and examples), `golang.org/x/text` (nickname NFC, pinned to a version that builds with Go 1.24), `github.com/go-sql-driver/mysql` (`internal/store/mysql` only). Ask before adding anything else.
+- Storage behind `store.EventStore` / `store.GameArchive`: in memory by default, MySQL 8.4 when `MASOI_MYSQL_DSN` is set (`docs/database.md`). Migrations are numbered files, never edited once pushed. No player accounts (rules §10).
 
 ## Commands
 - `make test` — full check: all tests, race detector, simulation at its default `SIM_GAMES=300` (`go test ./... -race`)
@@ -18,6 +18,7 @@ Backend for a Werewolf (Ma Sói) game-master app for in-person play. Each player
 - `make lint` — `go vet` + `golangci-lint run`
 - `make fmt` — `gofmt` + `goimports`
 - `make run` — start the server
+- `make mysql-test-up` / `make test-mysql` / `make mysql-test-down` — a throwaway MySQL in Docker (port 3307) and the store tests against it. Without `MASOI_MYSQL_DSN` those tests skip; CI runs them against a MySQL service.
 - `make api-docs` — regenerate `docs/api/schema` and `docs/api/examples` after a wire change (the tests fail while they are stale)
 While iterating, run only the affected package (`go test ./internal/<pkg> -run <Name>`) or `make test-fast`. Before committing run `make fmt`, `make test-fast` and `make lint` locally (NOT the full `make test` — CI runs it on every push). After pushing, wait with `gh run watch`; if CI is red, fix it before anything else. Docs-only commits: no local tests. Run a bigger simulation (`SIM_GAMES=1000+`) only when the task asks for it.
 
@@ -66,6 +67,19 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 | Đề cử / giàn / bào chữa / giết-tha | `Nominate` / `Trial` / `Defense` / `Verdict` |
 
 - When the architecture changes (layers, dependency rules, request flow, config), update `docs/huong-dan-du-an.md` (Vietnamese project guide) in the same change.
+
+## Multi-agent workflow (`.claude/agents/`)
+- Agents: `kiem-luat` (code vs `docs/rules.md`), `kiem-bi-mat` (leaks: ws, errors, timing, logs, DB, API), `viet-test` (tests from acceptance criteria, only `*_test.go`), `bac-bo` (tries to refute each finding). The checkers are read-only.
+- Give a task with its "done" condition: the doc section it follows, the scenarios to test, the command that must pass. No acceptance criteria → write them first.
+- Review pattern after a change: fan out `kiem-luat` + `kiem-bi-mat` on the diff in parallel → merge their findings → `bac-bo` on the merged list → fix only what it keeps. 3–5 agents per task at most (plan limits).
+- Two features at once: one git worktree each, so agents do not edit the same files.
+- After each run, write down where an agent went wrong: a new line under "Lessons" below, or a fix to its file in `.claude/agents/`.
+
+## Lessons (append one line each, newest last)
+- Event types live in one registry (`engine.RegisterEvents`); the API schema test and the store both read it. A new event that is not registered fails `TestAPIDocs_EveryEventInTheSource`.
+- `cmd/demo` must send the `hostKey` from `POST /rooms` on the first join; without it host powers came only through the disconnect grace and the demo failed whenever commands got slower (seen with MySQL on).
+- A store can fail now (MySQL). A failed append changes nothing; a timeout whose events were not stored is logged and retried (`room/timers.go` `fire`), or the room would stand still. Found by `kiem-bi-mat`, which was asked about secrecy: reviewers find more than their brief, so read the whole report.
+- Agents added to `.claude/agents/` load only in a new session; in the session that wrote them, run them as `general-purpose` told to follow the file.
 
 ## Don't
 - Don't write frontend code outside `web/`. Don't touch files outside the task's scope.

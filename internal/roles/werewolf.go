@@ -29,7 +29,10 @@ type WolfVoted struct {
 	Target engine.PlayerID
 }
 
-func init() { engine.Register(werewolf{}) }
+func init() {
+	engine.Register(werewolf{})
+	engine.RegisterEvents(WolfVoted{})
+}
 
 // Audience: the live votes are shown to the whole pack (rules §3).
 func (WolfVoted) Audience(engine.State) engine.Audience { return engine.Audience{Wolves: true} }

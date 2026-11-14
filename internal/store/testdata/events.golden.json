@@ -1,0 +1,236 @@
+{
+  "AbortVoteCast": {
+    "Voter": "p2",
+    "Yes": true
+  },
+  "ChatSent": {
+    "By": "p2",
+    "Text": "p3"
+  },
+  "ChiefElected": {
+    "Chief": "p2"
+  },
+  "ChiefElectionStarted": {
+    "Duration": 2000000000
+  },
+  "ChiefLost": {
+    "Former": "p2"
+  },
+  "ChiefSucceeded": {
+    "From": "p2",
+    "To": "p3"
+  },
+  "ChiefSuccessionStarted": {
+    "Former": "p2",
+    "Duration": 3000000000
+  },
+  "ChiefVoteCast": {
+    "Voter": "p2",
+    "Candidate": "p3"
+  },
+  "DawnAnnounced": {
+    "Kind": 2,
+    "Dead": [
+      "p4"
+    ]
+  },
+  "DawnStarted": {},
+  "DayClockExpired": {},
+  "DayEnded": {},
+  "DayStarted": {
+    "Duration": 2000000000
+  },
+  "DetectiveChecked": {
+    "Detective": "p2",
+    "Target": "p3",
+    "HasWolf": true
+  },
+  "GameEnded": {
+    "Outcome": {
+      "Winner": 2,
+      "Draw": true,
+      "Winners": [
+        "p5"
+      ],
+      "Aborted": true
+    }
+  },
+  "Hanged": {
+    "Player": "p2"
+  },
+  "HunterChainNoted": {
+    "Queue": [
+      "p3"
+    ],
+    "Dead": [
+      "p4"
+    ]
+  },
+  "HunterRevealed": {
+    "Hunter": "p2"
+  },
+  "HunterShot": {
+    "Hunter": "p2",
+    "Target": "p3"
+  },
+  "HunterShotStarted": {
+    "Hunter": "p2",
+    "Duration": 3000000000
+  },
+  "HunterTimedOut": {
+    "Hunter": "p2"
+  },
+  "LoverGrieving": {
+    "Player": "p2",
+    "Night": 3
+  },
+  "LoversMeetAnnounced": {},
+  "LoversPaired": {
+    "Cupid": "p2",
+    "A": "p3",
+    "B": "p4"
+  },
+  "ModeConfigured": {
+    "Mode": 2
+  },
+  "NewGameStarted": {},
+  "NightEnded": {},
+  "NightStarted": {
+    "Night": 2
+  },
+  "NightStepCalled": {
+    "Role": "p2",
+    "Duration": 3000000000
+  },
+  "NominationCast": {
+    "Voter": "p2",
+    "Target": "p3"
+  },
+  "NominationsLocking": {
+    "Duration": 2000000000
+  },
+  "NominationsReopened": {},
+  "PhoneCheckAnnounced": {},
+  "PhoneChecked": {
+    "Player": "p2",
+    "Cursed": true,
+    "Love": {
+      "InLove": true,
+      "Partner": "p5",
+      "PartnerRole": "p6",
+      "Colour": "p7"
+    }
+  },
+  "PlayerCursed": {
+    "Wolf": "p2",
+    "Target": "p3"
+  },
+  "PlayerDied": {
+    "Player": "p2"
+  },
+  "PlayerJoined": {
+    "Player": "p2",
+    "Nickname": "p3"
+  },
+  "PlayerKicked": {
+    "Player": "p2"
+  },
+  "PlayerLeft": {
+    "Player": "p2"
+  },
+  "PlayerProtected": {
+    "Guard": "p2",
+    "Target": "p3",
+    "Night": 4
+  },
+  "PlayerVisited": {
+    "Visitor": "p2",
+    "Target": "p3",
+    "Night": 4
+  },
+  "RoleViewStarted": {
+    "Duration": 2000000000
+  },
+  "RolesConfigured": {
+    "Roles": {
+      "p3": 4
+    }
+  },
+  "RolesDealt": {
+    "Assignments": {
+      "p3": "p4"
+    }
+  },
+  "SeatsSet": {
+    "Order": [
+      "p3"
+    ]
+  },
+  "SeerChecked": {
+    "Seer": "p2",
+    "Target": "p3",
+    "IsWolf": true
+  },
+  "SkipSet": {
+    "Voter": "p2",
+    "On": true
+  },
+  "SoundConfigured": {
+    "Mode": 2
+  },
+  "Spared": {
+    "Player": "p2"
+  },
+  "TeamChanged": {
+    "Player": "p2",
+    "Team": 3
+  },
+  "TimersConfigured": {
+    "Timers": {
+      "RoleView": 2000000000,
+      "ChiefElection": 3000000000,
+      "NightStep": 4000000000,
+      "PhoneCheck": 5000000000,
+      "LoversMeet": 6000000000,
+      "Announce": 7000000000,
+      "Day": 8000000000,
+      "NominationLock": 9000000000,
+      "Defense": 10000000000,
+      "Verdict": 11000000000,
+      "HunterShot": 12000000000,
+      "ChiefSuccession": 13000000000
+    }
+  },
+  "TrialStarted": {
+    "Defendant": "p2",
+    "Duration": 3000000000
+  },
+  "VerdictCast": {
+    "Voter": "p2",
+    "Kill": true
+  },
+  "VerdictStarted": {
+    "Duration": 2000000000
+  },
+  "WitchHealed": {
+    "Witch": "p2",
+    "Target": "p3"
+  },
+  "WitchPoisoned": {
+    "Witch": "p2",
+    "Target": "p3"
+  },
+  "WolfPoisoned": {
+    "Wolf": "p2",
+    "Night": 3
+  },
+  "WolfSeerChecked": {
+    "WolfSeer": "p2",
+    "Target": "p3",
+    "IsSeer": true
+  },
+  "WolfVoted": {
+    "Wolf": "p2",
+    "Target": "p3"
+  }
+}

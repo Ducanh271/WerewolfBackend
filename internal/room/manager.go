@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"masoi/internal/engine"
+	"masoi/internal/store"
 )
 
 // Errors of the manager.
@@ -39,6 +40,11 @@ type ManagerConfig struct {
 	Random   Randomness   // handed to every room; nil means crypto/rand
 	Logger   *slog.Logger // handed to every room; nil means discard
 	MaxRooms int          // 0 means 1000
+	// Store, when set, keeps the log of every room, each under its own key;
+	// nil gives each room its own memory store.
+	Store store.EventStore
+	// Archive gets a record of every finished game; nil keeps none.
+	Archive store.GameArchive
 	// NewCode draws a room code; nil means CodeLength letters of CodeAlphabet
 	// from crypto/rand. Tests use it to force collisions.
 	NewCode func() string
@@ -90,7 +96,12 @@ func (m *Manager) Create(mode engine.Mode) (*Room, string, error) {
 		code = m.cfg.NewCode()
 	}
 	hostKey := randomHostKey()
-	r, err := New(Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random, Logger: m.cfg.Logger, HostKey: hostKey})
+	cfg := Config{Code: code, Mode: mode, Clock: m.cfg.Clock, Random: m.cfg.Random, Logger: m.cfg.Logger,
+		HostKey: hostKey, Store: m.cfg.Store, Archive: m.cfg.Archive}
+	if m.cfg.Store != nil {
+		cfg.LogKey = code + "-" + randomHostKey()[:12] // codes come back once a room is gone
+	}
+	r, err := New(cfg)
 	if err != nil {
 		return nil, "", err
 	}

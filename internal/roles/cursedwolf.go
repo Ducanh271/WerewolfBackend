@@ -34,7 +34,10 @@ type PlayerCursed struct {
 	Target engine.PlayerID
 }
 
-func init() { engine.Register(cursedWolf{}) }
+func init() {
+	engine.Register(cursedWolf{})
+	engine.RegisterEvents(PlayerCursed{})
+}
 
 // Audience: the Cursed wolf alone.
 func (e PlayerCursed) Audience(engine.State) engine.Audience {

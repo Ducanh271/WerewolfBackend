@@ -192,6 +192,15 @@ IDs in brackets refer to docs/audit.md.
     - Packages: repo root (`Dockerfile`, `.dockerignore`, `fly.toml`, Makefile), `deploy/`, `docs/huong-dan-du-an.md`. No Go code changes expected.
     - Proof: `docker build` + run locally passes `/healthz`; deployed: `wss://` connects from a phone on 4G, a bot game (`cmd/demo` pointed at the deployed URL, if it supports a remote URL) plays to the end, `/metrics` shows the room; latency from Vietnam noted in the commit message.
 
+- [ ] T33 MySQL storage (docs/database.md). Event log of every room + a record of every finished game; no player accounts (rules §10).
+  - [x] T33a Store (Opus, with the agents of `.claude/agents/`). Done: event registry `engine.RegisterEvents` (each role in its own file; the API schema test reads it too), codec `store/codec.go` with a golden file, `store.GameArchive` + `room/archive.go`, `internal/store/mysql` with embedded migrations, `MASOI_MYSQL_DSN` in `cmd/server` and `cmd/demo`, a MySQL service in CI; a timeout the store could not keep is retried after 1 s (`room/timers.go`). Reviewed by `kiem-luat` + `kiem-bi-mat` in parallel: no rule change, no leak.
+    - Proof: `TestCodec_RoundTripsEverySimulatedGame` (40 bot games encode, decode and fold to the same `State`), `TestCodec_GoldenEncodingOfEveryEvent`, `TestRoom_GameEnded_SavesARecordOfTheGame`, `TestRoom_NewGame_SecondGameGetsTheNextNumberAndItsOwnEvents`, `TestRoom_ArchiveFails_GameStillEndsAndTheErrorIsLogged`, `TestRoom_StoreFailsOnATimeout_RoomTriesAgainAndGoesOn`, the six `TestMySQL_*` against MySQL 8.4; a `cmd/demo` game stored and read in MySQL.
+  - [ ] T33b History API (Sonnet), contract first. Open, decide with me before it starts: who may read a finished game (anyone with the room code? only its players, by their rejoin token?), how long games are kept, and whether the full event log or only the summary goes out. Never a game that is still being played.
+    - Changes: `GET /rooms/{code}/games` and `GET /games/{id}` (summary from `games` + `game_players`, same names as `docs/api/`); `docs/rules.md` if keeping games is a rule players should know; `make api-docs`; `docs/api/screens/history.md`; `docs/api/secrecy.md`.
+    - Proof: tests per route (unknown game, game in progress refused, finished game shape); `kiem-bi-mat` on the diff.
+  - [ ] T33c Restore live rooms after a restart (Opus), with T29e. Needs the identity layer (tokens, PIN locks) to survive as well, stored hashed; timers re-armed from the stored deadlines.
+  - [ ] T33d App history screen (`/tinh-nang` order: contract → `docs/frontend/giao-dien-3d.md` → `web/`), after T33b.
+
 Later (Low in audit): [S9] [S10] [R6] [R8].
 
 Later (not designed yet): room visibility — public (listed, anyone can join) vs

@@ -11,6 +11,7 @@ import (
 
 	_ "masoi/internal/roles" // registers every role
 	"masoi/internal/room"
+	"masoi/internal/store/mysql"
 	"masoi/internal/transport/ws"
 )
 
@@ -21,7 +22,22 @@ func main() {
 		addr = ":8080"
 	}
 
-	rooms := room.NewManager(room.ManagerConfig{Logger: logger})
+	mcfg := room.ManagerConfig{Logger: logger}
+	// MASOI_MYSQL_DSN keeps every room's events and every finished game in
+	// MySQL (docs/database.md); without it everything lives in memory.
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	db, err := mysql.OpenEnv(ctx, os.Getenv)
+	cancel()
+	if err != nil {
+		logger.Error("server not started", "err", err)
+		os.Exit(1)
+	}
+	if db != nil {
+		defer func() { _ = db.Close() }()
+		mcfg.Store, mcfg.Archive = db, db
+		logger.Info("storing games in MySQL")
+	}
+	rooms := room.NewManager(mcfg)
 	defer rooms.Close()
 
 	cfg := ws.ConfigFromEnv(os.Getenv)

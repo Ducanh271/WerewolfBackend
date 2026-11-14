@@ -15,7 +15,8 @@ internal/engine/enginetest/  test helpers and scenario builder
 internal/roles/        one file per role, each registers into engine.Registry
 internal/i18n/         Vietnamese announcement strings
 internal/room/         room lifecycle: join/rejoin, timers, command queue per room, broadcasting views
-internal/store/        EventStore interface + in-memory implementation
+internal/store/        EventStore + GameArchive interfaces, event codec, in-memory implementation
+internal/store/mysql/  MySQL implementation, embedded migrations (docs/database.md)
 internal/transport/ws/ WebSocket handler, message encoding (see docs/protocol.md)
 internal/bot/          bots that fill empty seats (from T32b; rules §2 "Bot"), one file per role
 ```
@@ -166,7 +167,7 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 - **Chat limit** (`room/chat_limit.go`, numbers in rules §4 "Nhắn tin"): the engine decides who may write and what a message is; how fast a player writes and how much a game holds take a clock and a count, so `Submit` checks them, after the engine has accepted the message. The limit is kept by player, so a new socket does not refill it. `ChatMaxPerGame` comes from `BenchmarkBroadcastLongChat` and the 5 ms line of audit R5.
 - **Seeds** (`DealRoles`, Chief election tie-break) come from `crypto/rand` inside the room, never from a client.
 - Sets each deadline and sends `PhaseTimeout{Phase, Seq}`; never early. The day clock (`room/dayclock.go`) runs and pauses as rules §4 says; its timeout is sent with `DayClock: true`.
-- Persists every event to `store.EventStore` before broadcasting.
+- Persists every event to `store.EventStore` before broadcasting, under its log key (the code, or `code-<random>` when `room.Manager` shares one store between rooms, since codes are reused). When `GameEnded` is applied it sends a `store.GameRecord` to the `store.GameArchive`; a failure there is logged, not returned (`room/archive.go`, docs/database.md).
 - Every outgoing message for a phone is `ViewFor`/`Visible` for that player (through the room's `ViewCache`). A phone whose view is unchanged and has no new event is sent nothing (`send` keeps the last view per connection), so a secret night action reaches no other phone. `NightStepCalled` is public and identical for real and fake calls.
 - **Leaving**: `LeaveRoom` (lobby only) removes the player; only their seat is freed, the others keep their order and the role list stays (`evolve.go`). A lost connection keeps the player's place, and before the deal passes the host's powers on after the grace above. After the deal there is no leaving.
 - Dawn and dusk wait `Settings.Announce` (rules §2) so the speaker can read before the game moves on.
@@ -187,5 +188,5 @@ JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decode
 
 ## Extending later
 - Voice and video for online play (rules §10): in `transport`, the engine does not change. Typed chat is what online play has today, and it already exists for every mode (`SendChat` → public `ChatSent`, `engine/chat.go`; rules §4 "Nhắn tin"). It lives only in the log, not in `State`.
-- Database: implement `store.EventStore` for Postgres.
+- Database: done for MySQL (`internal/store/mysql`, docs/database.md), on with `MASOI_MYSQL_DSN`. Still to come: a history API (T33b) and restoring live rooms after a restart (T33c).
 - New role: new file in `internal/roles/` (ID, team, night call, `Commands()`, `CardOrder()`, its own errors) + its card in `i18n/vi.go` and guide entry in `i18n/guide.go` (user-facing text) + tests (scenarios can use `Night.Act` before the role has verbs of its own) + a row in rules.md and in protocol.md. `transport/ws/newrole_test.go` shows a throwaway role doing exactly this.

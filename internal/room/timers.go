@@ -1,10 +1,16 @@
 package room
 
 import (
+	"errors"
 	"time"
 
 	"masoi/internal/engine"
 )
+
+// storeRetry is how long a timeout waits before trying again when the store
+// could not keep its events (a database down for a moment). Every phone waits
+// the same.
+const storeRetry = time.Second
 
 type armKey struct {
 	phase engine.Phase
@@ -82,10 +88,16 @@ func (r *Room) rearm() {
 // fire turns a deadline into a PhaseTimeout command. The seed for an election
 // that votes did not settle is drawn here, never taken from a client. A
 // timeout whose phase or seq has moved on is stale and the engine ignores it.
+//
+// A timeout is the only way a phase ends, so one the store could not keep is
+// logged and tried again, or the room would stand still.
 func (r *Room) fire(t engine.PhaseTimeout) {
 	r.post(func() {
 		t.Seed = r.rnd.Seed()
-		_ = r.execute(t)
+		if err := r.execute(t); errors.Is(err, errStore) {
+			r.logf.Error("timeout not stored, retrying", "room", r.code, "phase", t.Phase.String(), "err", err)
+			r.clock.AfterFunc(storeRetry, func() { r.fire(t) })
+		}
 	})
 }
 

@@ -121,7 +121,7 @@ func newGameOf(t *testing.T, players int, checked bool) *game {
 		cl: map[engine.PlayerID]*Client{}, sink: map[engine.PlayerID]*recSink{},
 		cred: map[engine.PlayerID]Credentials{}, nick: map[engine.PlayerID]string{},
 	}
-	r, err := New(Config{Code: "K7QP", Clock: g.clk, Random: g.rnd, Store: g.store, HostKey: g.hostKey})
+	r, err := New(Config{Code: "K7QP", Clock: g.clk, Random: g.rnd, Store: g.store, Archive: g.store, HostKey: g.hostKey})
 	if err != nil {
 		t.Fatal(err)
 	}

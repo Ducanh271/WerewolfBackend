@@ -20,7 +20,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 | room | `internal/room` | Một phòng = một goroutine: nhận lệnh lần lượt, hẹn giờ, phát view, vào lại phòng (token/PIN), chọn máy làm loa (`SpeakerPolicy`: `InPersonSpeaker` một máy, nhớ máy đang đọc; `AllPhones` mọi máy, chọn bằng lệnh `configureSound`, là mặc định của chế độ online). Chế độ phòng (`engine/mode.go`, rules §1b) ghi bằng sự kiện ngay lúc `room.New`, đổi trong sảnh bằng lệnh `configureMode`; online không có bước Kiểm tra điện thoại, người bị bắn hoặc bị nguyền được báo ngay (`engine/online_notice.go`). `Manager` tạo phòng theo mã và xoá phòng bỏ không 2 giờ. |
 | transport | `internal/transport/ws` | HTTP + WebSocket: đọc JSON, kiểm tra, đổi thành lệnh; đổi view thành JSON. Không có luật chơi. `wsclient/` là "điện thoại giả" cho test và demo. |
 | bot | `internal/bot` (có từ T32b) | Bot lấp ghế trống (rules §2 "Bot"). Chỉ thấy đúng view của ghế mình, gửi lệnh như một điện thoại. `room` không import `bot`: `cmd/server` truyền vào một interface để tạo bot. |
-| store | `internal/store` | Kho sự kiện trong RAM (sau này đổi sang database mà không sửa chỗ khác). |
+| store | `internal/store`, `internal/store/mysql` | Kho sự kiện: trong RAM (mặc định) hoặc MySQL khi đặt `MASOI_MYSQL_DSN`. MySQL lưu mọi sự kiện của từng phòng và một bản tóm tắt mỗi ván đã xong (`docs/database.md`). |
 | i18n | `internal/i18n` | Câu đọc tiếng Việt (`vi.go`) và mã câu (`keys.go`). |
 | cmd | `cmd/server`, `cmd/demo` | `main`: ghép các tầng lại. |
 
@@ -37,7 +37,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 - **Go (chỉ thư viện chuẩn là chính)**: đơn giản, chạy nhiều kết nối đồng thời tốt, test có `-race` bắt lỗi chạy song song. Chỉ thêm `coder/websocket` (kết nối), `testify` (test) và `golang.org/x/text` (chuẩn hoá NFC cho nickname).
 - **WebSocket**: server phải đẩy tin xuống điện thoại ngay (đến lượt bạn, trời sáng, có người bị treo) mà không để điện thoại hỏi liên tục.
 - **JSON**: dễ đọc, dễ gỡ lỗi, app/web nào cũng nói được. Mẫu tin nhắn nằm ở `docs/protocol.md`.
-- **Lưu trong RAM**: phiên bản 1 chưa cần database; tắt server là mất phòng. Có interface `store.EventStore` để thay sau.
+- **Lưu trữ**: mặc định trong RAM, tắt server là mất phòng. Đặt `MASOI_MYSQL_DSN` thì mọi sự kiện được ghi vào MySQL trước khi gửi cho máy nào, và mỗi ván xong có một dòng trong bảng `games` + `game_players` (`docs/database.md`). Chưa dựng lại phòng đang chơi sau khi server khởi động lại (việc T33c). Không có tài khoản người chơi (rules §10).
 - **Event sourcing (nhật ký sự kiện)**: ván chơi là danh sách sự kiện; trạng thái là kết quả "gấp" các sự kiện. Nhờ vậy vào lại phòng, xem lại lịch sử khi chết, và viết test kịch bản đều dễ.
 - **Một goroutine mỗi phòng**: mọi lệnh và mọi hết giờ của một phòng chạy lần lượt, không bao giờ đua nhau.
 

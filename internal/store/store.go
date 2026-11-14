@@ -11,17 +11,18 @@ import (
 type EventStore interface {
 	// Append adds events to the room's log, all or none.
 	Append(room string, events ...engine.Event) error
-	// Load returns a copy of the room's log. Nothing calls it in v1 (rooms
-	// live in memory and die with the process); it is the read side for a
-	// persistent store and replay later (docs/architecture.md), and tests read
+	// Load returns a copy of the room's log. The server does not call it yet
+	// (restoring rooms after a restart is T33c, docs/database.md); tests read
 	// what the room wrote with it.
 	Load(room string) ([]engine.Event, error)
 }
 
-// Memory is the v1 store: everything lives in the process.
+// Memory is the store without a database: everything lives in the process.
+// It is also a GameArchive, which tests read with Games.
 type Memory struct {
-	mu   sync.Mutex
-	logs map[string][]engine.Event
+	mu    sync.Mutex
+	logs  map[string][]engine.Event
+	games []GameRecord
 }
 
 // NewMemory returns an empty in-memory store.
@@ -42,4 +43,19 @@ func (m *Memory) Load(room string) ([]engine.Event, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	return append([]engine.Event(nil), m.logs[room]...), nil
+}
+
+// SaveGame keeps the record of a finished game.
+func (m *Memory) SaveGame(rec GameRecord) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.games = append(m.games, rec)
+	return nil
+}
+
+// Games returns the records saved so far, oldest first.
+func (m *Memory) Games() []GameRecord {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return append([]GameRecord(nil), m.games...)
 }

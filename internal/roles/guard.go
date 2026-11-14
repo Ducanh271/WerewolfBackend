@@ -34,7 +34,10 @@ type PlayerProtected struct {
 	Night  int
 }
 
-func init() { engine.Register(guard{}) }
+func init() {
+	engine.Register(guard{})
+	engine.RegisterEvents(PlayerProtected{})
+}
 
 // Audience: only the Guard knows whom she protected.
 func (e PlayerProtected) Audience(engine.State) engine.Audience {

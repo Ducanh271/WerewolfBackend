@@ -37,7 +37,10 @@ type PlayerVisited struct {
 	Night   int
 }
 
-func init() { engine.Register(visitor{}) }
+func init() {
+	engine.Register(visitor{})
+	engine.RegisterEvents(PlayerVisited{})
+}
 
 // Audience: only the Visitor knows. The visited player learns that they are
 // blocked, not by whom.

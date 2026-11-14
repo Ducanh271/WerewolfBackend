@@ -22,6 +22,10 @@ var (
 	// The command changed nothing and the room goes on; the client is told
 	// "internal" and nothing more.
 	ErrInternal = errors.New("internal error")
+	// errStore wraps a store that could not keep the events: the command
+	// changed nothing. A player's command reports it like any other error; a
+	// timeout is tried again (fire).
+	errStore = errors.New("store")
 )
 
 // disconnectReason is an error passed to Sink.Evict: it matches
@@ -58,8 +62,15 @@ type Config struct {
 	Random   Randomness
 	Identity Identity
 	Store    store.EventStore
-	Speaker  SpeakerPolicy
-	Logger   *slog.Logger // where a recovered panic is reported; default: discard
+	// LogKey names the room's log in Store; empty means Code. A store shared
+	// by many rooms needs a key that a later room with the same code does not
+	// reuse (room.Manager makes one).
+	LogKey string
+	// Archive gets a record of every finished game; nil keeps none
+	// (docs/database.md "Write path").
+	Archive store.GameArchive
+	Speaker SpeakerPolicy
+	Logger  *slog.Logger // where a recovered panic is reported; default: discard
 	// HostKey is the creator's one-time secret (rules §2, audit S8): whoever's
 	// first `join` carries it becomes the host. Empty means nobody can claim
 	// the host this way (tests that do not care about who is host).
@@ -69,13 +80,15 @@ type Config struct {
 // Room is one game. A single goroutine owns all of its state; everything else
 // reaches it through do and post.
 type Room struct {
-	code  string
-	clock Clock
-	rnd   Randomness
-	ident Identity
-	store store.EventStore
-	pol   SpeakerPolicy
-	logf  *slog.Logger
+	code   string
+	clock  Clock
+	rnd    Randomness
+	ident  Identity
+	store  store.EventStore
+	logKey string
+	arch   gameArchiver
+	pol    SpeakerPolicy
+	logf   *slog.Logger
 
 	inbox chan func()
 	done  chan struct{}
@@ -120,12 +133,16 @@ func New(cfg Config) (*Room, error) {
 	if cfg.Speaker == nil {
 		cfg.Speaker = InPersonSpeaker{}
 	}
+	if cfg.LogKey == "" {
+		cfg.LogKey = cfg.Code
+	}
 	if cfg.Logger == nil {
 		cfg.Logger = slog.New(slog.DiscardHandler)
 	}
 	r := &Room{
 		code: cfg.Code, clock: cfg.Clock, rnd: cfg.Random, ident: cfg.Identity,
-		store: cfg.Store, pol: cfg.Speaker, logf: cfg.Logger, hostKey: cfg.HostKey,
+		store: cfg.Store, logKey: cfg.LogKey, pol: cfg.Speaker, logf: cfg.Logger, hostKey: cfg.HostKey,
+		arch:  gameArchiver{archive: cfg.Archive},
 		inbox: make(chan func(), 256),
 		done:  make(chan struct{}),
 		state: engine.NewState(),
@@ -239,11 +256,13 @@ func (r *Room) apply(c engine.Command) error {
 		return err
 	}
 	next := engine.Fold(r.state, evs...)
-	if err := r.store.Append(r.code, evs...); err != nil {
-		return err
+	if err := r.store.Append(r.logKey, evs...); err != nil {
+		return fmt.Errorf("%w: %w", errStore, err)
 	}
+	first := len(r.log)
 	r.log = append(r.log, evs...)
 	r.state = next
+	r.arch.note(r, first, evs)
 	for _, e := range evs {
 		if started, ok := e.(engine.DayStarted); ok {
 			r.day.reset(started.Duration, r.clock.Now())

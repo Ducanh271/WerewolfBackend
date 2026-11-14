@@ -19,6 +19,7 @@ import (
 
 	_ "masoi/internal/roles"
 	"masoi/internal/room"
+	"masoi/internal/store/mysql"
 	"masoi/internal/transport/ws"
 	"masoi/internal/transport/ws/wsclient"
 )
@@ -54,7 +55,19 @@ func main() {
 	if *speedFlag != 1 {
 		clock = newScaledClock(*speedFlag)
 	}
-	rooms := room.NewManager(room.ManagerConfig{Clock: clock})
+	mcfg := room.ManagerConfig{Clock: clock}
+	// With MASOI_MYSQL_DSN the demo game is stored like a real one (docs/database.md).
+	openCtx, openCancel := context.WithTimeout(ctx, 30*time.Second)
+	db, err := mysql.OpenEnv(openCtx, os.Getenv)
+	openCancel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if db != nil {
+		defer func() { _ = db.Close() }()
+		mcfg.Store, mcfg.Archive = db, db
+	}
+	rooms := room.NewManager(mcfg)
 	defer rooms.Close()
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -69,7 +82,7 @@ func main() {
 	defer srv.Close()
 	base := ln.Addr().String()
 
-	code, err := createRoom(base)
+	code, hostKey, err := createRoom(base)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,7 +100,11 @@ func main() {
 			log.Fatal(err)
 		}
 		defer c.Close()
-		must(c.Send(ctx, map[string]any{"type": "join", "room": code, "nickname": nick}))
+		join := map[string]any{"type": "join", "room": code, "nickname": nick}
+		if i == 0 {
+			join["hostKey"] = hostKey // the first bot is the creator, so the host (rules §2)
+		}
+		must(c.Send(ctx, join))
 		if !c.Wait(ctx, func(s wsclient.Snapshot) bool { return s.Welcome != nil }) {
 			log.Fatalf("%s không vào được phòng: %v", nick, c.Snapshot().Errors)
 		}
@@ -142,17 +159,17 @@ func startGame(ctx context.Context, bots []*bot, roleList map[string]int) {
 	}
 }
 
-func createRoom(base string) (string, error) {
+func createRoom(base string) (code, hostKey string, err error) {
 	resp, err := http.Post("http://"+base+"/rooms", "application/json", strings.NewReader(""))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer resp.Body.Close()
-	var body struct{ Room string }
+	var body struct{ Room, HostKey string }
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil || body.Room == "" {
-		return "", fmt.Errorf("tạo phòng thất bại: %v", err)
+		return "", "", fmt.Errorf("tạo phòng thất bại: %v", err)
 	}
-	return body.Room, nil
+	return body.Room, body.HostKey, nil
 }
 
 func must(err error) {

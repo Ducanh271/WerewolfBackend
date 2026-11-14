@@ -37,7 +37,10 @@ type LoversPaired struct {
 	B     engine.PlayerID
 }
 
-func init() { engine.Register(cupid{}) }
+func init() {
+	engine.Register(cupid{})
+	engine.RegisterEvents(LoversPaired{})
+}
 
 // Audience: Cupid alone.
 func (e LoversPaired) Audience(engine.State) engine.Audience {

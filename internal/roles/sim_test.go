@@ -103,6 +103,18 @@ func TestSim_ManyGames_FinishAndNeverLeakSecrets(t *testing.T) {
 
 // playSimGame plays one game to its end and returns how it ended.
 func playSimGame(seed uint64, everyEvent bool, used map[string]int) (outcome string, err error) {
+	g, err := runSimGame(seed, everyEvent)
+	if err != nil {
+		return "", err
+	}
+	for _, e := range g.log {
+		used[fmt.Sprintf("%T", e)]++
+	}
+	return g.finish()
+}
+
+// runSimGame plays one game to its end, checking it on the way.
+func runSimGame(seed uint64, everyEvent bool) (game *simGame, err error) {
 	g := newSimGame(seed)
 	g.everyEvent = everyEvent
 	defer func() {
@@ -111,23 +123,23 @@ func playSimGame(seed uint64, everyEvent bool, used map[string]int) (outcome str
 		}
 	}()
 	if err := g.setup(); err != nil {
-		return "", fmt.Errorf("%s: %w", g.desc, err)
+		return nil, fmt.Errorf("%s: %w", g.desc, err)
 	}
 	for g.s.Phase != engine.PhaseEnded {
 		if g.count > simMaxCommands || g.s.Night > simMaxNights {
-			return "", fmt.Errorf("stalled after %d commands, night %d, phase %v (%s)", g.count, g.s.Night, g.s.Phase, g.desc)
+			return nil, fmt.Errorf("stalled after %d commands, night %d, phase %v (%s)", g.count, g.s.Night, g.s.Phase, g.desc)
 		}
 		phase, seq := g.s.Phase, g.s.Seq
 		g.playStep()
 		if err := g.timeout(); err != nil {
-			return "", fmt.Errorf("%s: %w", g.desc, err)
+			return nil, fmt.Errorf("%s: %w", g.desc, err)
 		}
 		if g.s.Phase == phase && g.s.Seq == seq && g.s.Phase != engine.PhaseEnded {
-			return "", fmt.Errorf("stalled: a timeout changed nothing in phase %v (%s)", phase, g.desc)
+			return nil, fmt.Errorf("stalled: a timeout changed nothing in phase %v (%s)", phase, g.desc)
 		}
 		g.checkViews()
 		if err := g.checkLovers(); err != nil {
-			return "", err
+			return nil, err
 		}
 		if phase == engine.PhaseNight && g.s.Phase == engine.PhaseDawn {
 			// Every night under make test; one night in three under -short,
@@ -140,10 +152,7 @@ func playSimGame(seed uint64, everyEvent bool, used map[string]int) (outcome str
 			}
 		}
 	}
-	for _, e := range g.log {
-		used[fmt.Sprintf("%T", e)]++
-	}
-	return g.finish()
+	return g, nil
 }
 
 // finish checks how the game ended.

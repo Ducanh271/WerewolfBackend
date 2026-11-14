@@ -27,7 +27,10 @@ type SeerChecked struct {
 	IsWolf bool
 }
 
-func init() { engine.Register(seer{}) }
+func init() {
+	engine.Register(seer{})
+	engine.RegisterEvents(SeerChecked{})
+}
 
 // Audience: the result is the Seer's alone, even when she is cursed.
 func (e SeerChecked) Audience(engine.State) engine.Audience {

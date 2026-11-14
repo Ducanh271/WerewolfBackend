@@ -6,33 +6,17 @@ import (
 	"sort"
 
 	"masoi/internal/engine"
-	"masoi/internal/roles"
+	_ "masoi/internal/roles" // registers every role and its events
 	"masoi/internal/room"
 )
 
 const schemaDraft = "https://json-schema.org/draft/2020-12/schema"
 
 // eventTypes is every event a client may be sent (dead players and the end
-// screen see them all). TestAPIDocs_EveryEventInTheSource checks it against
-// the source, so a new event cannot miss its schema.
-var eventTypes = []engine.Event{
-	engine.AbortVoteCast{}, engine.ChatSent{}, engine.ChiefElected{}, engine.ChiefElectionStarted{}, engine.ChiefLost{},
-	engine.ChiefSucceeded{}, engine.ChiefSuccessionStarted{}, engine.ChiefVoteCast{}, engine.DawnAnnounced{},
-	engine.DawnStarted{}, engine.DayClockExpired{}, engine.DayEnded{}, engine.DayStarted{}, engine.GameEnded{},
-	engine.Hanged{}, engine.HunterChainNoted{}, engine.HunterRevealed{}, engine.HunterShot{},
-	engine.HunterShotStarted{}, engine.HunterTimedOut{}, engine.LoverGrieving{}, engine.LoversMeetAnnounced{},
-	engine.ModeConfigured{},
-	engine.NewGameStarted{}, engine.NightEnded{}, engine.NightStarted{}, engine.NightStepCalled{},
-	engine.NominationCast{}, engine.NominationsLocking{}, engine.NominationsReopened{},
-	engine.PhoneCheckAnnounced{}, engine.PhoneChecked{}, engine.PlayerDied{}, engine.PlayerJoined{},
-	engine.PlayerKicked{}, engine.PlayerLeft{}, engine.RolesConfigured{}, engine.RolesDealt{},
-	engine.RoleViewStarted{}, engine.SeatsSet{}, engine.SkipSet{}, engine.SoundConfigured{}, engine.Spared{},
-	engine.TeamChanged{}, engine.TimersConfigured{}, engine.TrialStarted{}, engine.VerdictCast{},
-	engine.VerdictStarted{}, engine.WolfPoisoned{},
-	roles.DetectiveChecked{}, roles.LoversPaired{}, roles.PlayerCursed{}, roles.PlayerProtected{},
-	roles.PlayerVisited{}, roles.SeerChecked{}, roles.WitchHealed{}, roles.WitchPoisoned{},
-	roles.WolfSeerChecked{}, roles.WolfVoted{},
-}
+// screen see them all): the engine's registry, which the stored logs use too
+// (internal/store). TestAPIDocs_EveryEventInTheSource checks it against the
+// source, so a new event can miss neither its schema nor its registration.
+var eventTypes = engine.EventTypes()
 
 // coreArgs is the args shape of each core command (commands.go). The test
 // checks it names every core command.
