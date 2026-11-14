@@ -25,6 +25,13 @@ Làm xong việc nào thì tick ngay ở đây (việc backend B1–B4 tick ở 
 - [ ] Bước 11 — Âm thanh và cài đặt
 - [ ] Bước 12 — PWA, hiệu năng, kiểm tra cuối
 
+## Chạy thử
+
+- Trên máy tính: `make run` (server Go, cổng 8080), rồi ở cửa sổ khác `cd web && npm run dev`, mở `http://localhost:5173`.
+- Trên điện thoại cùng mạng Wi-Fi: `cd web && npm run dev -- --host`, mở `http://<IP máy tính>:5173` (IP xem bằng `ip -4 addr` hoặc `hostname -I`).
+- Giống bản thật (server phục vụ luôn app): `cd web && npm run build`, rồi `WEB_DIR=web/dist make run`, mở `http://localhost:8080` (điện thoại: `http://<IP máy tính>:8080`).
+- Nhiều người trên một máy: mỗi người một trình duyệt hoặc một cửa sổ ẩn danh. Các tab cùng trình duyệt dùng chung token đã lưu, nên tab sau tự vào bằng người của tab trước.
+
 ---
 
 ## Việc backend trước khi code frontend
