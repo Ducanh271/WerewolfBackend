@@ -53,3 +53,23 @@ jobs:
           version: v1.64.8
       - name: make test
         run: make test
+
+  # The web game (web/): generated types, type check, tests, build. Its types
+  # come from docs/api/, so a wire change that was not regenerated fails here.
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - name: generated files are committed
+        run: git diff --exit-code -- src/api
