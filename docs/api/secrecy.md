@@ -43,19 +43,24 @@ The looks and sounds of each mode: `../frontend/giao-dien-3d.md` section 16.
 
 ## Role cards
 
-Rules [§9b](../rules.md#9b-thẻ-vai-mô-tả-cho-người-chơi): every card has a
-**fixed size, is covered by default, and shows only while pressed and
-held**; letting go hides it again.
+Rules [§9b](../rules.md#9b-thẻ-vai-mô-tả-cho-người-chơi), both modes:
+
+- **Role view** (`RoleView`): the player's card is shown **face up**. A tap
+  turns it face down, another tap turns it back; a double tap while it is
+  face up opens the guide page of that role.
+- **During the game**: the small card in the corner is **always face down**,
+  with one back for every role. Only a tap turns it over and opens it large in
+  the card viewer; closing turns it face down again.
 
 - The same size and layout for every role and every status card
   (`me.roleCard`, `me.statusCards`, rules §9b "Thẻ phụ"), whatever the
   length of the text, so the shape of a card says nothing.
-- No team colour, icon or label outside the held card: the covered card
+- No team colour, icon or label outside the opened card: the face-down card
   looks the same for a Wolf and a Villager.
 - The player's own seat in `view.players` carries their `role`, `team` and
   `card`; a lover sees the partner's role, a wolf the pack. Show these only
-  behind the same press-and-hold, never on the table of seats.
-- The card is reachable during the whole game, behind the same gesture.
+  inside the opened card viewer, never on the table of seats.
+- The card is reachable during the whole game, through the corner card.
 
 ## Night
 
@@ -79,8 +84,8 @@ at this step **every eye is open**, so neighbours can see each other's phones.
 
 - Every living phone shows one notice of the same size, layout, colours
   and timing, whatever it says: cursed or not, in love or not.
-- The answer is covered and shown only while pressed and held, like a role
-  card. The lovers' link colour (`love.colour`, rules §7) is shown only
+- The answer is covered and shown only while pressed and held (unlike the
+  role card, which opens with a tap). The lovers' link colour (`love.colour`, rules §7) is shown only
   inside it.
 - Show `cursedText` and `loveText` as given; a line that is absent is
   absent for everybody (it depends only on the public role list).
@@ -147,8 +152,11 @@ hash and never logs them.
 
 The rules guide (`GET /guide`) is public, but a phone showing the "how to
 play" page of one role tells whoever sees it which role the player holds.
-Open the guide on the list of every role in the game, never straight on
-the player's own role.
+Opened from the menu, the guide starts on the list of every role in the
+game. The one way straight to the player's own role is a double tap on their
+card **while it is face up** (role view, or the opened card viewer): the role
+is already on the screen then, so the page shows nothing more. Closing it
+goes back to the card, never to the table.
 
 ## Around the table only
 

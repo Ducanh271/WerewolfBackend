@@ -145,7 +145,7 @@ thì sao, và một điều dễ nhầm. Vai không có lượt đêm chỉ ghi 
 ## 3. "Lần đầu chơi?" — việc cần nhớ
 
 - Che màn hình (tay, hoặc ngồi quay màn hình vào trong) mỗi khi điện thoại hiện vai của bạn (có {seconds} giây để xem) hoặc lượt đêm — người ngồi cạnh không được thấy.
-- Thẻ vai che mặc định; nhấn giữ để xem, thả tay là ẩn lại ngay — đừng mở thẻ vai lâu để người khác liếc thấy.
+- Lúc xem vai, thẻ hiện ngửa: chạm một lần để úp lại, chạm đúp để xem cách chơi vai của bạn. Trong ván, thẻ nhỏ ở góc màn luôn úp; chạm vào mới lật ra xem — xem xong đóng lại ngay để người ngồi cạnh không liếc thấy.
 - Nếu bạn đã chết, màn hình vẫn tối/im ban đêm cho tới khi bạn tự chạm vào xem — đừng để màn hình tự sáng, vì vậy sẽ lộ ra là bạn đã chết.
 - Mỗi lượt gọi đêm chạy đủ thời gian như nhau dù vai đó còn sống hay đã chết — đừng đoán ai còn sống vì lượt nhanh hay chậm.
 - Tắt âm bàn phím và rung khi chạm máy — tiếng gõ ban đêm lộ ra ai đang thao tác.

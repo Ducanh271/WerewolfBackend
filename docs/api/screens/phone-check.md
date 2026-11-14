@@ -22,7 +22,8 @@ whether or not anybody was cursed or paired, so it tells nothing.
 Show the lines as given, never rewritten. Every notice of a game has the
 same keys whatever the answer, and the screen must be the same too: same
 size, same layout, same colours for every answer, and the answer itself
-behind press-and-hold like the role card, because at this step **every
+behind press-and-hold (the role card opens with a tap; this answer does
+not), because at this step **every
 eye at the table is open** ([secrecy](../secrecy.md#phone-check)).
 
 From this step on, a cursed player's `me.team`, `me.roleCard` side and

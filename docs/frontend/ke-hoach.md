@@ -33,7 +33,7 @@ Chạy từng việc bằng `/tinh-nang`, theo thứ tự. B1, B2, B4 xong trư�
 
 - [x] **B1 — Ví dụ còn thiếu.** Ván mẫu sinh thêm `view.day`, `view.dusk`, `error.chat_full`; `make api-docs`.
 - [x] **B2 — Hai chế độ chơi.** Luật `docs/rules.md` §1 + mục mới về chế độ, sửa §10. Server nhận `mode: online` (bỏ `mode_unsupported`); `view.mode` ở sảnh và trong ván; lệnh đổi chế độ trong sảnh cho chủ phòng; `online` mặc định `allPhones`. `secrecy.md` tách theo chế độ: luật hình/tiếng/độ sáng chỉ bắt buộc với `inPerson`; đồng hồ theo `deadline`, không lộ dữ liệu, lớp che người chết áp dụng cả hai; bước Kiểm tra điện thoại chỉ có ở `inPerson`. Đổi chế độ thì âm thanh về mặc định của chế độ mới, chủ phòng vẫn chỉnh lại được; `newGame` giữ chế độ.
-- [ ] **B3 — Thẻ vai.** `/tinh-nang docs/tasks/the-ngua.md`.
+- [x] **B3 — Thẻ vai.** `/tinh-nang docs/tasks/the-ngua.md`. Xong: luật §9b, `secrecy.md`, các màn API và câu hướng dẫn "Lần đầu chơi?" đã viết lại; đặc tả giao diện mục 10, 14 vốn đã đúng.
 - [ ] **B4 — Phục vụ app và mã QR.** Server Go phục vụ `web/dist`, link `/j/{code}` mở thẳng app; sửa `docs/api/README.md` và `docs/huong-dan-du-an.md`. Thư mục app đọc từ biến môi trường `WEB_DIR` (không nhúng vào binary, vì `web/dist` không nằm trong git). Server chấp nhận `Origin` trùng chính nó, để đổi tên miền không phải cấu hình lại `ALLOWED_ORIGINS`. Lúc phát triển dùng proxy của Vite.
   - Chưa deploy: tạm chạy `ngrok http 8080`, HTTPS do ngrok lo, tên miền có thể đổi. Qua ngrok mọi máy chung một IP (`clientIP`), nên chung giới hạn 100 kết nối và 30 kết nối mới/phút. Khi deploy thật mới tính reverse proxy và tin `X-Forwarded-For`.
 

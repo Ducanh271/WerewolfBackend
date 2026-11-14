@@ -14,9 +14,11 @@ by itself to the [Chief election](chief.md).
 | `view.roleCards` | the public role list of the game, for a "roles in this game" screen |
 | `view.players` | seats; the player's own seat also carries `role`, `team` and `card` |
 
-Show the card at a **fixed size, covered, revealed only while pressed**
-(rules §9b; [secrecy](../secrecy.md#role-cards)). The same card stays
-available for the whole game, behind the same press-and-hold.
+Show the card at a **fixed size, face up** (rules §9b;
+[secrecy](../secrecy.md#role-cards)): a tap turns it face down and back, a
+double tap while face up opens the role's [guide](guide.md) page. When the
+step ends the card turns face down and goes to the corner; for the rest of the
+game it stays face down there and opens only with a tap.
 
 <!-- example: server/view.roleView.json type deadline view.phase view.me -->
 ```json

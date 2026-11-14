@@ -16,16 +16,17 @@ Show the texts as given. The public role list of a game (`view.roleCards`)
 names the roles in play; link each to its `roles[]` entry.
 
 The guide is public, but opening the guide of one role during the game
-tells whoever sees the screen which role the player holds or suspects. Open
-it on a list of every role in the game, never straight on the player's own
-role ([secrecy](../secrecy.md#guide)).
+tells whoever sees the screen which role the player holds or suspects. From
+the menu, open it on a list of every role in the game. The only way straight
+to the player's own role is a double tap on their card while it is face up,
+when the role is already on the screen ([secrecy](../secrecy.md#guide)).
 
 <!-- example: http/guide.reply.json quickRules[:2] firstTime[:2] roles[:1] statuses[:1] tips[:1] -->
 ```json
 {
   "firstTime": [
     "Che màn hình (tay, hoặc ngồi quay màn hình vào trong) mỗi khi điện thoại hiện vai của bạn (có 30 giây để xem) hoặc lượt đêm — người ngồi cạnh không được thấy.",
-    "Thẻ vai che mặc định; nhấn giữ để xem, thả tay là ẩn lại ngay — đừng mở thẻ vai lâu để người khác liếc thấy."
+    "Lúc xem vai, thẻ hiện ngửa: chạm một lần để úp lại, chạm đúp để xem cách chơi vai của bạn. Trong ván, thẻ nhỏ ở góc màn luôn úp; chạm vào mới lật ra xem — xem xong đóng lại ngay để người ngồi cạnh không liếc thấy."
   ],
   "quickRules": [
     "Ma Sói chơi bằng điện thoại của chính mỗi người, không cần ai làm quản trò riêng.",
