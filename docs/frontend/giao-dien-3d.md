@@ -62,7 +62,7 @@ Bản chạy thử tham khảo: `web/prototype/ban-3d.html` (không nằm trong 
 | Sự kiện `Hanged` (lúc `Verdict` kết thúc) | **Cảnh treo cổ** chạy theo sự kiện, không theo pha (mục 5) | — |
 | Sự kiện `Spared` | Thẻ chữ "Dân làng tha cho …". Sau đó là `Day` nếu còn giờ, `Dusk` nếu hết giờ | — |
 | `Dusk` | Chuyển ngày → đêm (mục 13) | `abortVote` |
-| `HunterShot` | Máy Thợ săn (`me.canShoot`): tay cầm súng + chọn người; máy khác: chờ | `hunterShoot` |
+| `HunterShot` | **Cảnh Thợ săn** (mục 17): lật thẻ Thợ săn → máy Thợ săn (`me.canShoot`) vào ống ngắm; máy khác chờ | `hunterShoot` |
 | `ChiefSuccession` | Máy Trưởng làng chết (`me.id == view.succession`): tay chìa khoá/cuộn giấy + chọn | `nameSuccessor` |
 | `Ended` | **Màn kết thúc lật thẻ** (mục 6) | `newGame` (chủ phòng) |
 | Người chết (mọi pha trừ `Ended`) | Lớp che phẳng, nhấn giữ mới xem (mục 8) | 2 bộ chọn công khai ở trên là ngoại lệ |
@@ -74,8 +74,9 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 ## 4. Ban đêm
 
 - `nightCall.role` cho biết vai đang được gọi (giống nhau trên mọi máy). Thanh trên: "Đêm N · {Vai} đang được gọi" + đồng hồ theo `deadline`.
+- **Bảng "Đang gọi"** (giữa, dưới thanh trên; **giống hệt nhau trên mọi máy còn sống**, cả máy đang tới lượt, cả hai chế độ): ảnh thẻ của vai đang gọi (`nightCall.role`; `Werewolf` → thẻ Sói, chữ "Bầy sói"; `PhoneCheck`/`LoversMeet` → mặt sau thẻ + tên bước), dòng nhỏ "Đang gọi", tên vai to, đồng hồ `00:ss` theo `deadline`, câu `say` của sự kiện `NightStepCalled` (một dòng, cắt "…"), thanh thời gian vàng rút dần theo `nightCall.duration`. Khi bước đổi: bảng mở lại kiểu cuộn dọc (0,5 s, `steps(5)`); bảng không có tiếng riêng, chỉ có nhạc hiệu của bước (mục 7). Ẩn khi cuộn giấy thông báo đang mở và trong cảnh cắt. Không bao giờ ghi tên người chơi.
 - **Hình ảnh theo chế độ phòng** (`view.mode`, bảng đầy đủ ở mục 16):
-  - `inPerson`: mọi máy còn sống cùng một cảnh làng tối mờ, không màn che đen, không chớp sáng toàn màn, không đổi độ sáng theo lượt. Mọi máy thấy tay của vai mình. Máy tới lượt (`me.turn.step`) chỉ thêm nhãn trên tay và tay bấm được. Ban đêm không máy nào phát tiếng, trừ máy loa đọc `say`.
+  - `inPerson`: mọi máy còn sống cùng một cảnh làng tối mờ, không màn che đen, không chớp sáng toàn màn, không đổi độ sáng theo lượt. Mọi máy thấy tay của vai mình. Máy tới lượt (`me.turn.step`) chỉ thêm nhãn trên tay và tay bấm được. Ban đêm không máy nào phát tiếng, trừ máy loa đọc `say` và phát nhạc hiệu (mục 7).
   - `online`: như bản chạy thử. Không tới lượt (`me.turn` vắng) thì màn **tối hẳn** (che 93%), tay hạ xuống và tối đi. Tới lượt thì căn phòng sáng lên, tay vai mình trồi lên, hiệu ứng đầy đủ kèm chớp màu và âm thanh.
 - **Cách bấm, cả hai chế độ: chạm một ngôi nhà để chọn → chạm "tay làm" để gửi lệnh** (Q27). Bảng vai → tay → lệnh ở `docs/frontend/ban-giao-frontend.md` mục 5.
 - `me.turn.blocked/doomed/grief`: hiện `me.turn.notice`, tay không bấm được.
@@ -105,10 +106,25 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 - Bảng **Cài đặt** có ở cả hai chế độ, riêng từng máy: bật/tắt + âm lượng riêng Nhạc nền / Hiệu ứng, lưu `localStorage` (bọc try/catch). Âm thanh chỉ bắt đầu sau lần chạm đầu tiên. **Không có nút "Im lặng ban đêm"**: chế độ phòng quyết định.
 - **`inPerson`**: âm thanh không được phụ thuộc vai hay hành động của mình.
   - Ban ngày: máy loa (`speaker: true`) phát nhạc nền và tiếng hiệu ứng. Máy khác **mặc định im**, tự bật được trong Cài đặt; bật lên thì phát giống nhau, không phụ thuộc vai.
-  - **Ban đêm im hết**, kể cả máy đã tự bật. Chỉ máy loa đọc `say`.
+  - **Ban đêm im hết**, kể cả máy đã tự bật. Chỉ máy loa đọc `say` và phát nhạc hiệu (dưới).
   - Không rung, không thông báo hệ thống.
 - **`online`**: mọi máy đủ nhạc nền và hiệu ứng cả ngày lẫn đêm, kể cả tiếng hiệu ứng vai. Mỗi máy tự đọc `say` (`sound: allPhones`, mọi máy có `speaker: true`).
 - Máy có `speaker: true` đọc `say` bằng giọng đọc; nhạc nền giảm âm (ducking) khi đang đọc.
+- **Nhạc hiệu từng vai** (khi bước đêm bắt đầu: pha `Night` có `nightCall.role` mới / sự kiện `NightStepCalled`): mỗi bước có một đoạn 1,5–2,5 s riêng, phát **trước** câu `say`. Chỉ phụ thuộc `nightCall.role` (công khai), không phụ thuộc vai của người cầm máy nên không lộ gì. `online`: mọi máy phát. `inPerson`: **chỉ máy loa phát** (12 máy kêu lệch nhau nghe rối); đây là ngoại lệ thứ hai của "ban đêm im hết", cùng với câu `say`. Mã: `CALL` trong `Snd`.
+
+  | `nightCall.role` | Nhạc hiệu |
+  |---|---|
+  | `Cupid` | đàn hạc vuốt lên + hai nốt "tim" |
+  | `Visitor` (Nguyệt Nữ) | chuông celesta rơi xuống thang ngũ cung, nền trầm |
+  | `Guard` (Bảo vệ) | tù và ba nốt đi lên + tiếng khiên kim loại |
+  | `CursedWolf` (Sói nguyền) | hợp âm răng cưa trầm tối + gió |
+  | `WolfSeer` (Sói tiên tri) | hai nốt thuỷ tinh nghịch tai + nhịp trống trầm |
+  | `Werewolf` (Bầy sói) | tiếng sói tru (hai con, rung) + ba nhịp trống |
+  | `Witch` (Phù thuỷ) | nồi thuốc sủi bọt + giai điệu năm nốt quái |
+  | `Seer` (Tiên tri) | arpeggio pha lê đi lên + lấp lánh |
+  | `Detective` (Thám tử) | đồng hồ tích tắc + ba nốt bí ẩn đi xuống |
+  | `PhoneCheck` (chỉ `inPerson`) | chuông đôi nhẹ |
+  | `LoversMeet` | tiếng tim đập + hợp âm ấm |
 
 ## 8. Bí mật (đọc `docs/api/secrecy.md` trước khi làm)
 
@@ -128,7 +144,7 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 - **Trước sảnh** (2D, DOM): trang đầu, tạo phòng (có ô chọn **Chơi quanh bàn / Chơi online**), vào phòng, PIN. Dựng từ `screens/lobby.md` và token ở `ban-giao-frontend.md` mục 2–4.
 - **Sảnh (`Lobby`)**: 3D, quảng trường lúc chiều, lửa chưa đốt. Mỗi người vào phòng (`people`, sự kiện `PlayerJoined`) hiện ra trên gốc cây của mình kèm làn bụi và tiếng "bụp"; ghế trống không có ai. Khung trái: **mã phòng** lớn + **mã QR** (mở thẳng app, ví dụ `https://<tên-miền>/j/K7QP`; dựng từ `location.origin`, không ghi cứng tên miền) + số người + **chế độ phòng**. Khung phải: các vai trong ván (thẻ nhỏ × số lượng, từ cấu hình vai), nút Xếp chỗ (chỉ `inPerson`) / Chọn vai / Giờ & âm thanh (`online` không hiện giờ `phoneCheck`) / đổi chế độ (`configureMode`) (chủ phòng, các bảng này là 2D), nút **Chia vai** sáng nhấp nháy khi đủ điều kiện (`dealRoles`). Người không phải chủ phòng thấy "Chờ chủ phòng chia vai".
 - **Chia vai**: khi pha đổi `Lobby → RoleView`, lửa bùng lên, lá bài úp bay từ đống lửa tới từng người (lệch nhau 90 ms, tiếng sột soạt).
-- **Xem vai (`RoleView`)**, cả hai chế độ: thẻ của mình lật ngửa giữa màn, bên phải: tên vai, phe, mô tả, mục tiêu (từ `me.roleCard`). Chạm thẻ = úp/ngửa, chạm đúp = cách chơi. Hết `deadline` (hoặc bấm "Tôi đã xem"): thẻ úp lại, thu nhỏ, bay vào **góc trái trên** thành thẻ nhỏ.
+- **Xem vai (`RoleView`)**, cả hai chế độ: thẻ của mình lật ngửa giữa màn, bên phải: tên vai, phe, mô tả, mục tiêu (từ `me.roleCard`). Chạm thẻ = úp/ngửa, chạm đúp = cách chơi. Hết `deadline` (hoặc bấm "Tôi đã xem"): chữ mờ đi, **thẻ tự lật úp** (0,6 s, tiếng lật), rồi thu nhỏ bay vào **góc trái trên** thành thẻ nhỏ **mặt sau** (0,7 s, tiếng vút), thẻ nhỏ nảy nhẹ khi tới.
 
 ## 11. Trưởng làng
 
@@ -167,9 +183,10 @@ Chỉ hiện trên **máy người dùng chức năng** (và cả bầy với ph
 | Lúc nào | Máy nào | Hiện gì | Lấy từ |
 |---|---|---|---|
 | Cupid vừa bắn | máy Cupid | mũi tên như bảng trên | `LoversPaired` |
-| Cupid vừa bắn, hoặc hết giờ server tự ghép | máy hai người bị bắn | hiệu ứng trúng tên, kèm chữ của thẻ phụ. **Chờ thiết kế của chủ dự án** | sự kiện `PhoneChecked`, rồi `view.lover`, `me.statusCards` |
-| Bước `LoversMeet` | máy hai người yêu | hình hai người với trái tim, để xác nhận là một cặp. **Chờ thiết kế của chủ dự án** | `me.turn.step`, `view.lover` |
-| Sói nguyền vừa nguyền | máy người bị nguyền | hiệu ứng bị nguyền, kèm chữ của thẻ phụ. **Chờ thiết kế của chủ dự án** | sự kiện `PhoneChecked`, rồi `me.cursed`, `me.statusCards` |
+| Cupid vừa bắn, hoặc hết giờ server tự ghép | máy hai người bị bắn | cảnh trúng tên (mục 18), kèm chữ của thẻ phụ | sự kiện `PhoneChecked`, rồi `view.lover`, `me.statusCards` |
+| Bước `LoversMeet` | máy hai người yêu | cảnh "trái tim" để xác nhận là một cặp (mục 18) | `me.turn.step`, `view.lover` |
+| Sói nguyền vừa nguyền | máy người bị nguyền | cảnh bị nguyền (mục 18), kèm chữ của thẻ phụ | sự kiện `PhoneChecked`, rồi `me.cursed`, `me.statusCards` |
+| Sói nguyền vừa nguyền một người đang yêu | máy hai người yêu | người bị nguyền: cảnh bị nguyền; người kia: cảnh sợi chỉ đổi màu (mục 18) | sự kiện `PhoneChecked`, rồi `view.lover.colour`, `me.statusCards` |
 
 Hình bầy sói thấy đồng bọn mới lấy từ `view.pack`, không có sự kiện riêng. Hai người bị bắn không được biết ai là Cupid.
 
@@ -180,7 +197,7 @@ Hình bầy sói thấy đồng bọn mới lấy từ `view.pack`, không có s
 
 ## 14. Thẻ của bạn (góc trái trên)
 
-- Thẻ nhỏ 46×62 **luôn úp** (mặt sau giống nhau cho mọi vai) ở góc trái trên (trừ sảnh, cảnh lên giàn, màn kết thúc), cả hai chế độ. Chỉ khi chạm mới lật và phóng to ra khung xem thẻ: thẻ to (chạm = úp/ngửa, chạm đúp = cách chơi), tên vai, phe, mô tả, mục tiêu, **thẻ phụ** (`me.statusCards`: Trưởng làng, cặp đôi, bị nguyền), **Ghi chép của bạn** (kết quả soi, việc đã làm mỗi đêm — dựng từ sự kiện riêng của mình).
+- Thẻ nhỏ 46×62 luôn ở góc trái trên (trừ sảnh, cảnh lên giàn, màn kết thúc), cả hai chế độ, **luôn úp (mặt sau giống nhau cho mọi vai)** để người ngồi cạnh không nhìn trộm được. Chạm → thẻ úp phóng to từ góc ra giữa (0,45 s) rồi **mới lật ngửa**; đóng (nút Đóng hoặc chạm nền) → lật úp rồi tắt. Khung xem thẻ: thẻ to (chạm = úp/ngửa, chạm đúp = cách chơi), tên vai, phe, mô tả, mục tiêu, **thẻ phụ** (`me.statusCards`: Trưởng làng, cặp đôi, bị nguyền), **Ghi chép của bạn** (kết quả soi, việc đã làm mỗi đêm — dựng từ sự kiện riêng của mình).
 - Ở `inPerson`, ban đêm khung xem thẻ giữ cùng tông tối của cảnh đêm, không làm màn sáng hơn.
 
 ## 15. Trò chuyện — luật đã chốt
@@ -204,13 +221,13 @@ Chủ phòng chọn khi tạo phòng (`POST /rooms {mode}`), đổi được tro
 |---|---|---|
 | Âm thanh mặc định của phòng | `oneSpeaker` | `allPhones` |
 | Xếp chỗ | chủ phòng xếp (`setSeats`) | không có nút; server bốc lúc chia vai (`view.players` trống trong sảnh) |
-| Kiểm tra điện thoại | có, theo lịch | không có bước này; người bị bắn, bị nguyền được báo ngay trên máy mình (mục 12) |
+| Kiểm tra điện thoại | có, theo lịch | không có bước này; người bị bắn, bị nguyền được báo ngay trên máy mình (mục 12, 18) |
 | Trao đổi ban ngày | nói trực tiếp và nhắn tin | chỉ nhắn tin; gọi thoại làm sau |
 | Cảnh đêm, không tới lượt | cùng một cảnh làng tối mờ trên mọi máy còn sống | màn tối hẳn (che 93%), tay hạ xuống |
 | Cảnh đêm, tới lượt | cùng cảnh đó, chỉ thêm nhãn trên tay và tay bấm được; độ sáng không đổi | căn phòng sáng lên, tay trồi lên |
 | Tay của vai mình ban đêm | mọi máy đều thấy | chỉ rõ khi tới lượt |
 | Hiệu ứng vai (mục 12) | vẽ dịu, không chớp, không làm cả màn sáng | đầy đủ, có chớp màu |
-| Tiếng ban đêm | im hết, trừ máy loa đọc `say` | nhạc nền và hiệu ứng đầy đủ |
+| Tiếng ban đêm | im hết, trừ máy loa đọc `say` và phát nhạc hiệu | nhạc nền và hiệu ứng đầy đủ |
 | Tiếng ban ngày | máy loa phát; máy khác mặc định im, tự bật được | mọi máy phát |
 | Đọc lời dẫn `say` | một máy loa | mỗi máy tự đọc |
 | Cài đặt bật/tắt + âm lượng từng máy | có | có |
@@ -225,3 +242,64 @@ Chủ phòng chọn khi tạo phòng (`POST /rooms {mode}`), đổi được tro
 **Đổi chế độ trong sảnh:** âm thanh của phòng về mặc định của chế độ mới; chủ phòng vẫn chỉnh lại được (`configureSound`). Chỗ đã xếp bị bỏ.
 
 **Ván mới** (`newGame`): giữ chế độ, như giờ và âm thanh; chủ phòng đổi được ở sảnh. `online` thì vòng tròn được bốc lại lúc chia vai.
+
+## 17. Thợ săn chết (`HunterShot`)
+
+Bản chạy thử: nút dev "Thợ săn chết: bạn" / "người khác". Thứ tự:
+1. **Báo tử trước**: nếu Thợ săn chết trong đêm, cảnh trời sáng (mục 13) chạy xong mới tới đây; nếu chết vì treo cổ, cảnh treo (mục 5) chạy xong mới tới.
+2. **Lật thẻ** (sự kiện `HunterRevealed`): thẻ úp phóng to giữa màn, lật ngửa ra thẻ Thợ săn, chữ "X là Thợ săn!", tiếng ngân + tiếng lên cò. Chỉ lộ **vai**, không lộ phe (`hunter.md`).
+3. **Máy Thợ săn** (`view.me.canShoot`):
+   - **Ống ngắm to**: vòng tròn đường kính ~92% chiều cao màn, vạch chữ thập; ngoài vòng chỉ **tối mờ 55%** (vẫn thấy người xung quanh). Camera zoom nhẹ (FOV 64 → 48). Hai tay cầm súng (`vai/tho-san/hai-tay.webp`) ở giữa đáy, cao 40% màn. Dải trên "Bạn là Thợ săn — bắn một người" + đồng hồ theo `deadline`, tiếng tim đập. Ẩn dòng gợi ý dưới đáy và chữ ở hai tay.
+   - **Tên trong ống ngắm**: nhãn đỏ ngay dưới tâm ghi tên người đang ngắm ("Chưa ngắm ai" nếu chưa có). Nhãn tên trên đầu mọi người nổi **trên** lớp ống ngắm.
+   - **Tâm tự bám**: người còn sống gần tâm nhất (theo chiều ngang màn, trong ±0,3) tự thành người được chọn, có tiếng "tách" nhỏ khi đổi người; thả tay sau khi vuốt thì camera hút về đúng người đó. Chỉ bám khi camera đã đứng yên.
+   - **Dải tên**: hàng nút (ảnh đại diện + tên) dưới dải trên, chỉ người **còn sống theo `view.players[].alive`**, trừ chính Thợ săn; người đang ngắm tô đỏ. Chạm tên → camera quay tới người đó. Dài quá thì cuộn ngang.
+   - **Nút ‹ ›** hai bên giữa màn: nhảy sang người kế bên trái/phải (theo góc nhìn, không theo thứ tự ghế).
+   - Chạm súng hoặc nút "Bắn {tên}" → `hunterShoot {target}`. Không có lựa chọn "không bắn".
+4. **Máy khác**: dải "X (Thợ săn) đang ngắm…" + đồng hồ. Chế độ **online**: chấm laser đỏ lượn qua dân làng (chỉ trang trí, **không** phải chỗ Thợ săn ngắm thật — server không gửi). Chế độ **trực tiếp** (`inPerson`): không laser, không tiếng, chờ im lặng (rules §6, `secrecy.md`).
+5. **Phát súng** (sự kiện `HunterShot`): tiếng súng, chớp sáng toàn màn, rung màn, vệt đạn từ chỗ Thợ săn tới người bị bắn, người đó ngã khỏi gốc cây → đầu lâu + bụi; cuộn giấy "{Y} đã bị Thợ săn bắn chết" (câu `say` của server), chuông 1 tiếng.
+6. **Hết giờ** (`HunterTimedOut`): theo luật hiện tại **không ai bị bắn** → cuộn giấy "Thợ săn không bắn ai". (Bản chạy thử đang làm "súng tự cướp cò, bắn ngẫu nhiên" theo ý chủ dự án — **chỉ làm khi luật và backend đã đổi** qua `/tinh-nang`; client không bao giờ tự chọn người chết.)
+7. Thợ săn bị Thợ săn khác bắn: lặp lại từ bước 2 với người mới.
+
+## 18. Kiểm tra điện thoại, trúng tên, bị nguyền, cặp đôi (`PhoneCheck`, `PhoneChecked`, `LoversMeet`)
+
+Nguồn: `docs/api/screens/phone-check.md` (cả mục Online), `night.md` ("Lovers look at each other"), rules §1b, §3, §7. Bản chạy thử: nút dev "Chế độ: Online/Trực tiếp", "Người yêu: …", "KTĐT: trúng tên / bị nguyền / cả hai / không gì". Bản chạy thử chiếu các cảnh online trong một bước Kiểm tra điện thoại; app thật **không** làm vậy, vì phòng online không có bước đó (xem "Chế độ online").
+
+**Chế độ trực tiếp (`inPerson`) — giữ nguyên quy tắc bí mật:** bước `nightCall.role = PhoneCheck`, dữ liệu `me.phoneCheck`. Một hộp cùng cỡ, cùng màu cho mọi câu trả lời, chữ "Nhấn giữ để xem"; chỉ khi nhấn giữ mới hiện `loveText` và `cursedText`. Không hoạt ảnh, không tiếng riêng. Đồng hồ theo `deadline`.
+
+**Chế độ online:** không có bước `PhoneCheck` và không có `me.phoneCheck` (`phone-check.md` mục Online). Server báo ngay lúc việc xảy ra, chỉ cho máy có tin mới, bằng **một sự kiện `PhoneChecked`** (`cursed`, `love.inLove`, `love.partner`, `love.partnerRole`, `love.colour`) kèm `view` mới (`view.lover`, `me.cursed`, `me.statusCards`). Sự kiện quyết định **có chạy cảnh không**. `view` quyết định **vẽ gì**: một máy vào lại sẽ nhận `view` mà không có sự kiện, nên chỉ vẽ trạng thái, không chạy lại cảnh.
+
+- Lớp phủ toàn màn, tối tím; trên cùng "Đêm N"; bảng "Đang gọi" vẫn chạy bên dưới theo bước hiện tại (bước Cupid hoặc Sói nguyền).
+- Chữ: **nguyên văn `text` của thẻ phụ** trong `me.statusCards` (`lovers`, `lovers_cross`, `cursed`), không tự viết câu. Màu sợi chỉ lấy từ `love.colour`: `white` / `black` / `striped`.
+- Có `view` mới hoặc pha đổi giữa cảnh thì cắt cảnh và vẽ theo `view`. Cảnh phải xong trước `deadline` của bước đang chạy (bước Cupid hoặc Sói nguyền).
+
+Chọn cảnh theo sự kiện `PhoneChecked` của mình:
+
+| Sự kiện | Lúc nào | Cảnh |
+|---|---|---|
+| `love.inLove`, máy **chưa có** `view.lover` trước đó | Cupid vừa bắn, hoặc hết giờ server tự ghép | 1. Trúng tên |
+| `cursed` | Sói nguyền vừa nguyền mình | 2. Bị nguyền |
+| `love.inLove`, `cursed` sai, máy **đã có** `view.lover` | người yêu của mình vừa bị nguyền | 3. Sợi chỉ đổi màu |
+
+1. **Trúng tên**:
+   - 0–0,43 s: mũi tên pixel (đuôi lông trắng, thân vàng, đầu tim hồng, dài ~300px) bay vòng cung từ trên trái vào giữa màn (tiếng vút).
+   - 0,43 s: cắm phập — rung màn 4 nhịp, mũi tên rung, chớp hồng tỏa tròn, **tim lớn** bật ra (0 → 1,4 → 1), 18 tim nhỏ nổ tung ra xung quanh (tiếng phập + đàn hạc).
+   - 1,2 s: mũi tên mờ đi; **thẻ của mình** (ngửa) trượt vào từ trái, **thẻ người yêu** (úp) từ phải; giữa hai thẻ là **sợi chỉ** dài 190px theo `love.colour`: trắng (`white`) / đen viền hồng (`black`) / trắng sọc đen (`striped`); tim lớn thu nhỏ đặt giữa sợi chỉ, đổi màu theo sợi chỉ, đập nhịp tim.
+   - 1,9 s: thẻ người yêu lật ngửa ra vai `love.partnerRole`; tên người yêu dưới thẻ (tiếng tim đập).
+   - Dòng chữ: `text` của thẻ phụ cặp đôi (hồng nhạt) + chú thích màu: "Sợi chỉ trắng · cặp đôi Phe Dân" / "Sợi chỉ đen · cặp đôi Phe Sói" / "Sợi chỉ trắng sọc đen · Phe thứ ba — thắng khi chỉ còn hai bạn sống" (rules §7).
+   - Không lộ ai là Cupid (Cupid nhận `LoversPaired` riêng, hiệu ứng ở mục 12).
+2. **Bị nguyền**:
+   - Khói tím đỏ từ 8 phía bò vào (tiếng ù trầm).
+   - Thẻ vai của mình hiện giữa, to hơn; trong ~0,9 s **vết nứt pixel** chạy từ mép thẻ vào trong (lõi đen, viền đỏ cam, tiếng rạn), thẻ ngả màu đỏ úa, viền phát sáng đỏ.
+   - **Đôi mắt sói đỏ** cháy lên trên thẻ (nháy 4 nhịp), thẻ giật 3 lần (tiếng sói tru xa).
+   - Dòng chữ: `text` của thẻ phụ `cursed` (đỏ) + **"Phe Sói"** to (lấy từ `me.roleCard.team` mới). Nếu mình đang yêu: thêm dòng nhạt là `text` của thẻ phụ cặp đôi mới, không có chú thích màu.
+3. **Sợi chỉ đổi màu** (~2 s): thẻ của mình (ngửa) và thẻ người yêu (ngửa, vai `love.partnerRole`) hiện hai bên, sợi chỉ cũ chuyển dần sang màu mới `love.colour` (thường là `striped`), tim giữa sợi chỉ đổi màu theo và đập 2 nhịp (tiếng tim đập). Dòng chữ: `text` của thẻ phụ cặp đôi mới + chú thích màu như cảnh 1. **Không** nói người yêu bị nguyền và không hiện hình nguyền: thẻ phụ của server nói gì thì hiện đúng thế.
+
+Máy bầy sói thấy đồng bọn mới từ `view.pack`, không có sự kiện và không có cảnh riêng (mục 12).
+
+**Cặp đôi nhìn nhau (`LoversMeet`, 10 s) — "trái tim":** có ở cả hai chế độ.
+- Mọi máy: bảng "Đang gọi: Cặp đôi" như mọi bước (mục 4).
+- Máy hai người yêu (`me.turn.step` `LoversMeet`): đêm sáng lên một phần (che 30%); camera quay về **nhà người yêu** (`view.lover.partner`); một **dòng tim nhỏ** màu sợi chỉ bay liên tục từ chỗ mình tới nhà người ấy (vẽ đè lên lửa); **tim lớn** đập trên mái nhà, mỗi 1,2 s chớp hồng ở nhà người ấy (+ tiếng tim đập khi online). Bảng "Đang gọi" dời xuống giữa đáy màn để không che nhà, ẩn dòng gợi ý.
+- `inPerson`: giống hệt về hình, **không tiếng** (những người khác đang nhắm mắt).
+- **Sau đó, suốt ván** (chỉ máy hai người yêu): nhãn người yêu viền hồng, dòng nhỏ "♥ người bạn yêu"; khung xem thẻ có thẻ phụ cặp đôi ("bạn yêu X, vai Y" + màu sợi chỉ) và thẻ phụ bị nguyền (`me.statusCards`).
+
+**Âm thanh (online):** vút, phập, đàn hạc, tim đập, ù trầm, rạn, sói tru, chuông trăng — mã `fx.pc` trong `Snd` (chuông trăng là của cảnh "không gì" trong bản chạy thử; app thật không dùng vì online không báo người không có tin). ⚠ Chơi online qua gọi thoại (Discord/Zalo) thì mic có thể thu tiếng này từ loa người khác; nên kèm gợi ý "đeo tai nghe" ở sảnh khi chọn chế độ online.
