@@ -87,12 +87,13 @@ func serverSchema(docs goDocs) (map[string]any, []error) {
 		"pin":             map[string]any{"type": "string", "pattern": "^[0-9]{4}$", "description": "Secret: shown only on this player's screen. Sent on join."},
 	}, "type", "protocolVersion", "player")
 	g.defs["ViewMessage"] = object(map[string]any{
-		"type":     constant("view"),
-		"deadline": map[string]any{"type": "integer", "description": "Unix ms when the running phase or night step ends."},
-		"speaker":  map[string]any{"const": true, "description": "Only on the phone(s) that read the announcements aloud."},
-		"people":   map[string]any{"type": "array", "items": g.treeSchema(reflect.TypeOf(room.Person{}), true), "description": "Everybody in the room, in join order. Only in the lobby and once the game has ended."},
-		"view":     g.treeSchema(reflect.TypeOf(engine.View{}), false),
-	}, "type", "view")
+		"type":       constant("view"),
+		"deadline":   map[string]any{"type": "integer", "description": "Unix ms when the running phase or night step ends."},
+		"serverTime": map[string]any{"type": "integer", "description": "Unix ms on the server's clock as this view was sent, the clock deadline is on. Count deadline down against it, not against the phone's own clock."},
+		"speaker":    map[string]any{"const": true, "description": "Only on the phone(s) that read the announcements aloud."},
+		"people":     map[string]any{"type": "array", "items": g.treeSchema(reflect.TypeOf(room.Person{}), true), "description": "Everybody in the room, in join order. Only in the lobby and once the game has ended."},
+		"view":       g.treeSchema(reflect.TypeOf(engine.View{}), false),
+	}, "type", "serverTime", "view")
 	var events []string
 	for _, ev := range eventTypes {
 		t := reflect.TypeOf(ev)

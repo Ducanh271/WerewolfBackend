@@ -200,7 +200,7 @@ previous one. A phone whose screen did not change gets **nothing**: when one
 player acts in secret at night, no other phone receives a message (a message
 on every phone would tell that the role being called is alive, rules §3).
 ```json
-{"type": "view", "deadline": 1760500000000, "speaker": true,
+{"type": "view", "deadline": 1760500000000, "serverTime": 1760499980000, "speaker": true,
  "people": [{"id": "p1", "nickname": "An", "connected": true, "isHost": true}],
  "view": { … }}
 ```
@@ -219,6 +219,11 @@ comes back, or when the host changes (`transferHost`, rules §2 "Chủ phòng").
 `deadline` is added by the room: when the running phase or night step ends.
 Every night step lasts its full time (rules §3), so it tells nothing about who
 is alive.
+`serverTime` is added by the room, on every view: the room's clock as the view
+is sent, the clock `deadline` is on. A phone's own clock may be seconds off, so
+it counts `deadline` down against `serverTime`, and every phone ends a step
+together. It is not part of the screen: time passing alone never sends a view
+(`room.sameScreen`), or a secret action would reach every phone.
 
 The `view` object (`engine.View`); absent parts are omitted:
 

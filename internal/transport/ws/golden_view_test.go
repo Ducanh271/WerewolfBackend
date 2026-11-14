@@ -158,3 +158,11 @@ func TestGolden_ViewTimersAndSound(t *testing.T) {
 		"defense": 60000, "verdict": 20000, "hunterShot": 15000, "chiefSuccession": 20000}`)
 	assertJSON(t, "sound", view["sound"], `"allPhones"`)
 }
+
+// serverTime is the room clock in Unix ms, next to the deadline on that clock.
+func TestGolden_ViewServerTime(t *testing.T) {
+	now := time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)
+	msg := viewFrame(t, room.Message{View: &room.ViewMsg{Now: now, Deadline: now.Add(20 * time.Second), View: engine.View{Phase: engine.PhaseNight}}})
+	assertJSON(t, "serverTime", msg["serverTime"], `1792094400000`)
+	assertJSON(t, "deadline", msg["deadline"], `1792094420000`)
+}

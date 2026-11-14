@@ -24,6 +24,9 @@ func frames(m room.Message) ([][]byte, error) {
 		if !v.Deadline.IsZero() {
 			msg["deadline"] = v.Deadline.UnixMilli()
 		}
+		if !v.Now.IsZero() {
+			msg["serverTime"] = v.Now.UnixMilli()
+		}
 		if v.Speaker {
 			msg["speaker"] = true
 		}

@@ -97,6 +97,12 @@ Stop reconnecting and show the join screen when:
 - a token `rejoin` gets `bad_credentials` (the token was replaced or
   revoked) or `room_not_found` (the room expired).
 
+What to do with the saved token when stopping: drop it after
+`replaced_by_other_device` and `bad_credentials` (it no longer works, not
+even for [history](screens/history.md)); keep it after `kicked_by_host`,
+`room_not_found` and `leave`, since it still reads the games the player
+sat in.
+
 `leave` (lobby only) removes the player for good and the server closes the
 socket. A socket that fails to join or rejoin 8 times in a row is closed.
 The server pings every socket about every 12 seconds; browsers answer on
@@ -129,18 +135,26 @@ the next `view`/`events`.
 - **`welcome`**: first message after a successful `join`/`rejoin`.
 - **`view`**: the whole screen now. Each one **replaces** the previous one;
   build the screen from the latest `view` alone. Next to the `view` object:
-  `deadline` (when the running phase or night step ends), `speaker: true` on
+  `deadline` (when the running phase or night step ends), `serverTime` (the
+  server's clock as the view was sent, the clock `deadline` is on), `speaker: true` on
   the phone that reads the announcements aloud (rules §1 "Máy làm loa"), and
   `people` (everybody in the room, host, who is connected) in the lobby and
   once the game has ended. A phone whose screen did not change gets
   **nothing**: a message on every phone while one player acts at night
-  would tell the table that this role is alive (rules §3).
+  would tell the table that this role is alive (rules §3). Count `deadline`
+  down on the server's clock, not the phone's, which may be seconds off:
+  `serverTime` minus the phone's clock when the view arrived is the offset,
+  low by the time the message took on the network, so keep the largest
+  offset seen on this socket and start again after each `welcome`.
 - **`events`**: what happened, in order, as this screen may know it.
   `reset: true` means `events` is the **whole list and replaces** the one
   the phone holds (on join, when the player dies, when the game ends: hidden
   events are put back in their places, so indexes shift). Never append a
   reset. Without reset, `from` is the length of the list the phone already
-  holds and `events` continues it. An event with `say` is an announcement:
+  holds and `events` continues it; when `from` is smaller, the phone
+  already holds the first ones (keep the list up to `from`, then append);
+  when it is larger, events were missed: close the socket and `rejoin`,
+  which sends the whole list again. An event with `say` is an announcement:
   the `speaker` phone reads it aloud, every phone shows it as text.
 - **`error`**: `code` is stable snake_case, `message` is an English detail
   for logs, never for players. `retryAfter` (ms) only with `pin_locked`.
@@ -193,6 +207,8 @@ any client existed did not raise `protocolVersion`.
   `history_unavailable` error.
 - New: the server serves the web game at `/` and the QR link `/j/{code}`
   (`WEB_DIR`), and accepts its own address as `Origin` without configuration.
+- New: `serverTime` on every `view`, the server's clock to count `deadline`
+  down against.
 
 ## Keeping this folder true
 

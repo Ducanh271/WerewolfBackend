@@ -30,7 +30,9 @@ The looks and sounds of each mode: `../frontend/giao-dien-3d.md` section 16.
   team or a night result.
 - **Time comes from the server.** A step ends at `deadline` on every phone,
   never earlier on the phone of a player who already chose; a real call and
-  a fake call last the same.
+  a fake call last the same. Count down on the server's clock (`serverTime`,
+  [README](README.md#server--client)), never the phone's own: a phone that
+  runs a few seconds fast would end the step before its neighbour.
 - **Chat text is untrusted.** `ChatSent.data.text` is what a player typed.
   Show it as plain text, never as HTML or Markdown, and never make a link
   of it. Like every game message, it brings no sound, vibration or

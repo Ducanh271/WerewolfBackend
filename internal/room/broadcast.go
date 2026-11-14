@@ -18,7 +18,12 @@ type Message struct {
 // ViewMsg is the screen now, plus what only the room knows.
 type ViewMsg struct {
 	Deadline time.Time // when the running phase or night step ends, zero if untimed
-	Speaker  bool      // this phone reads announcements aloud
+	// Now is the room's clock as the view is sent, the clock Deadline is on:
+	// a phone whose own clock is off counts Deadline down against it, so
+	// every phone ends a step together. It is not part of the screen
+	// (sameScreen).
+	Now     time.Time
+	Speaker bool // this phone reads announcements aloud
 	// People is everybody in the room, in join order, only in the lobby and
 	// once the game has ended (Room.people), so a phone that comes back
 	// sees who is there without replaying PlayerJoined.
@@ -116,7 +121,7 @@ func (r *Room) send(c *connection, speaker bool, people []Person) {
 	view := r.views.ViewFor(r.state, r.log, viewer)
 	visible := r.views.Visible(r.state, r.log, viewer)
 
-	vm := &ViewMsg{Deadline: r.deadline, Speaker: speaker, People: people, View: view}
+	vm := &ViewMsg{Deadline: r.deadline, Now: r.clock.Now(), Speaker: speaker, People: people, View: view}
 	msg := Message{View: vm}
 	switch {
 	case c.fresh || view.Full != c.full || len(visible) < c.sent:
@@ -124,9 +129,17 @@ func (r *Room) send(c *connection, speaker bool, people []Person) {
 	case len(visible) > c.sent:
 		msg.Events = &EventsMsg{From: c.sent, Events: visible[c.sent:]}
 	}
-	if msg.Events == nil && c.last != nil && reflect.DeepEqual(*c.last, *vm) {
+	if msg.Events == nil && c.last != nil && sameScreen(*c.last, *vm) {
 		return // nothing new for this screen
 	}
 	c.sent, c.full, c.fresh, c.last = len(visible), view.Full, false, vm
 	c.sink.Deliver(msg)
+}
+
+// sameScreen tells whether two views show the same screen. Now is left out:
+// time passing alone must never send a view, or every phone would get one
+// whenever a player acts at night (rules §3).
+func sameScreen(a, b ViewMsg) bool {
+	a.Now, b.Now = time.Time{}, time.Time{}
+	return reflect.DeepEqual(a, b)
 }

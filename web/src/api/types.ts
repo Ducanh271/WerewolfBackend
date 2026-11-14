@@ -139,6 +139,10 @@ export namespace Server {
      */
     people?: Person[];
     /**
+     * Unix ms on the server's clock as this view was sent, the clock deadline is on. Count deadline down against it, not against the phone's own clock.
+     */
+    serverTime: number;
+    /**
      * Only on the phone(s) that read the announcements aloud.
      */
     speaker?: true;
