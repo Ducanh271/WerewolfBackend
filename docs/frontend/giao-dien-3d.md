@@ -130,7 +130,7 @@ Nguyên tắc: **màn hình dựng lại hoàn toàn từ `view` mới nhất** 
 
 - **Người chết**: màn hình là **lớp che phẳng tối** không đổi khi có tin nhắn; **nhấn giữ** mới thấy cảnh. Ngoại lệ: bộ chọn của Thợ săn chết và Trưởng làng chết hiện công khai, chỉ có tên người còn sống theo `view.players[].alive`.
 - Bước Kiểm tra điện thoại (chỉ `inPerson`): hộp thông báo cùng cỡ, cùng màu cho mọi câu trả lời, nhấn giữ mới hiện.
-- Đồng hồ luôn theo `deadline` server, không kết thúc sớm khi đã chọn.
+- Đồng hồ luôn theo `deadline` server, không kết thúc sớm khi đã chọn. Đếm theo **giờ server**, không theo giờ điện thoại: lấy độ lệch từ `serverTime` của `view` (`docs/api/README.md` "Server → client"; trong app là `remaining()` ở `web/src/state/clock.ts`), để máy chạy nhanh vài giây không hết giờ trước máy bên cạnh. Mọi chỗ "đồng hồ theo `deadline`" trong tài liệu này đều hiểu như vậy.
 - Không có gì trên màn hình máy khác cho biết ai vừa chọn (chỉ máy người chọn, và bầy sói thấy phiếu của nhau).
 - Cái gì áp dụng cho chế độ nào: bảng ở mục 16.
 

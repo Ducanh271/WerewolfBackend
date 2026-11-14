@@ -5,6 +5,8 @@
 // - `events` with `reset` replaces the whole list; without it, `from` is the
 //   length of the list already held and the events continue it.
 // Unknown event types stay in the list: the server counts them in `from`.
+// Each view's `serverTime` gives the phone's clock offset from the server's,
+// the clock `deadline` is on (README "Server → client"; state/clock.ts).
 import type { Server } from '../api/types.ts';
 
 /** An error the server sent, with the situation the app knows from what it sent (docs/api/errors.md). */
@@ -42,6 +44,12 @@ export interface State {
   pin?: string;
   view?: Server.View;
   deadline?: number;
+  /**
+   * Server clock minus this phone's clock, in ms: the largest offset seen
+   * since the last welcome. Each sample is low by the time its view took on
+   * the network, so the largest is the closest; a new socket starts again.
+   */
+  clockOffset?: number;
   speaker: boolean;
   people?: Server.Person[];
   events: readonly Server.Event[];
@@ -59,6 +67,12 @@ export class Store {
   private current: State = empty;
   private readonly listeners = new Set<Listener>();
   private errorSeq = 0;
+  private readonly now: () => number;
+
+  /** `now` is this phone's clock in Unix ms (a test passes its own). */
+  constructor(now: () => number = Date.now) {
+    this.now = now;
+  }
 
   get state(): State {
     return this.current;
@@ -74,11 +88,15 @@ export class Store {
   apply(msg: Server.ServerMessage, situation?: string): Applied {
     switch (msg.type) {
       case 'welcome':
-        this.set({ player: msg.player, ...(msg.pin !== undefined && { pin: msg.pin }) });
+        this.set({ player: msg.player, clockOffset: undefined, ...(msg.pin !== undefined && { pin: msg.pin }) });
         return 'ok';
-      case 'view':
-        this.set({ view: msg.view, deadline: msg.deadline, speaker: msg.speaker === true, people: msg.people });
+      case 'view': {
+        const sample = typeof msg.serverTime === 'number' ? msg.serverTime - this.now() : undefined;
+        const held = this.current.clockOffset;
+        const clockOffset = sample === undefined || (held !== undefined && held >= sample) ? held : sample;
+        this.set({ view: msg.view, deadline: msg.deadline, speaker: msg.speaker === true, people: msg.people, clockOffset });
         return 'ok';
+      }
       case 'events':
         return this.applyEvents(msg);
       case 'error':
