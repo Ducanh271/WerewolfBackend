@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
@@ -73,7 +74,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	handler, err := ws.New(ws.Config{Rooms: rooms, AllowAnyOrigin: true})
+	wcfg := ws.Config{Rooms: rooms, AllowAnyOrigin: true}
+	if db != nil {
+		wcfg.History = db
+	}
+	handler, err := ws.New(wcfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,6 +135,9 @@ func main() {
 	}
 	time.Sleep(500 * time.Millisecond) // let the last announcements print
 	fmt.Println("\nVán đấu kết thúc.")
+	if db != nil {
+		printHistory(base, bots[0])
+	}
 	if path := os.Getenv("DEMO_DUMP"); path != "" {
 		dump(path, bots)
 	}
@@ -231,5 +239,36 @@ func dump(path string, bots []*bot) {
 	for _, b := range bots {
 		snap := b.c.Snapshot()
 		_ = enc.Encode(map[string]any{"bot": b.nick, "role": b.role, "sent": b.sent, "errors": snap.Errors, "frames": snap.Frames})
+	}
+}
+
+// printHistory reads the first bot's saved games back through POST /history
+// (docs/api/screens/history.md), as the app will.
+func printHistory(base string, b *bot) {
+	body, _ := json.Marshal(map[string]any{"tokens": []string{b.c.Snapshot().Welcome.Str("token")}})
+	resp, err := http.Post("http://"+base+"/history", "application/json", bytes.NewReader(body))
+	if err != nil {
+		log.Printf("lịch sử: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+	var reply struct {
+		Games []struct {
+			Room, Winner string
+			GameNo       int
+			Players      []struct {
+				Nickname, Role string
+				Won, You       bool
+			}
+		}
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&reply); err != nil || len(reply.Games) == 0 {
+		log.Printf("lịch sử: %d ván, %v", len(reply.Games), err)
+		return
+	}
+	g := reply.Games[0]
+	fmt.Printf("  (demo) Lịch sử của %s: %d ván; ván mới nhất phòng %s #%d, thắng: %s\n", b.nick, len(reply.Games), g.Room, g.GameNo, g.Winner)
+	for _, p := range g.Players {
+		fmt.Printf("    %-6s %-10s thắng=%v bạn=%v\n", p.Nickname, p.Role, p.Won, p.You)
 	}
 }

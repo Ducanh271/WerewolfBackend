@@ -144,8 +144,10 @@ func httpSchema(docs goDocs) (map[string]any, []error) {
 	}, "room", "hostKey")
 	g.defs["JoinRoomReply"] = object(map[string]any{"room": roomCodeSchema()}, "room")
 	g.defs["GuideReply"] = g.tagSchema(reflect.TypeOf(guideResponse{}))
+	historySchemas(g)
 	g.defs["HTTPError"] = errorSchema()
-	doc := schemaDoc("Ma Sói: HTTP bodies", "Request and reply bodies of POST /rooms, GET /join/{code} and GET /guide.",
-		map[string]any{"anyOf": []any{ref("CreateRoomRequest"), ref("CreateRoomReply"), ref("JoinRoomReply"), ref("GuideReply"), ref("HTTPError")}}, g)
+	doc := schemaDoc("Ma Sói: HTTP bodies", "Request and reply bodies of POST /rooms, GET /join/{code}, GET /guide and POST /history.",
+		map[string]any{"anyOf": []any{ref("CreateRoomRequest"), ref("CreateRoomReply"), ref("JoinRoomReply"), ref("GuideReply"),
+			ref("HistoryRequest"), ref("HistoryReply"), ref("HTTPError")}}, g)
 	return doc, g.errs
 }

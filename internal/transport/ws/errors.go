@@ -22,6 +22,7 @@ const (
 	codeBadOrigin          = "bad_origin"
 	codeTimerOutOfRange    = "timer_out_of_range" // engine.ErrTimerOutOfRange, raised here when a timer overflows
 	codeTooManyConnections = "too_many_connections"
+	codeHistoryDown        = "history_unavailable" // POST /history: the database did not answer
 )
 
 // protoError is a refusal the transport makes before the room hears of the

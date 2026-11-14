@@ -55,6 +55,7 @@ Real error frames: `examples/server/error.<code>.json`.
 | `too_many_rooms` |  | `POST /rooms` when the server holds its maximum number of rooms (HTTP 503) | Máy chủ đang bận, bạn thử tạo phòng lại sau ít phút nhé. |
 | `too_many_connections` |  | `GET /ws` refused: the server or this network has too many open sockets (HTTP 503) | Máy chủ đang bận, bạn thử lại sau ít phút nhé. |
 | `rate_limited` |  | over 10 messages a second; the message was ignored. Staying over the limit for 3 seconds closes the socket | Bạn bấm nhanh quá, chờ một chút nhé. |
+| `history_unavailable` |  | `POST /history` while the database does not answer (HTTP 503); try again later. A server without a database answers no games instead | Chưa xem được lịch sử ván lúc này, bạn thử lại sau nhé. |
 
 ### Host setting up the game (lobby)
 

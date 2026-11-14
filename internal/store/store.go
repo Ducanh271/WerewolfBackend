@@ -1,7 +1,9 @@
 package store
 
 import (
+	"sort"
 	"sync"
+	"time"
 
 	"masoi/internal/engine"
 )
@@ -49,13 +51,74 @@ func (m *Memory) Load(room string) ([]engine.Event, error) {
 func (m *Memory) SaveGame(rec GameRecord) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.games = append(m.games, rec)
+	m.games = append(m.games, cloneRecord(rec))
 	return nil
+}
+
+// ReplaceToken updates the player's token hash in the room's saved games.
+func (m *Memory) ReplaceToken(logKey string, player engine.PlayerID, tokenHash string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for i := range m.games {
+		if m.games[i].LogKey != logKey {
+			continue
+		}
+		for j := range m.games[i].Players {
+			if m.games[i].Players[j].ID == player {
+				m.games[i].Players[j].TokenHash = tokenHash
+			}
+		}
+	}
+	return nil
+}
+
+// GamesFor is History over the saved records; ids are positions from 1.
+func (m *Memory) GamesFor(tokenHashes []string, since time.Time, limit int) ([]SavedGame, error) {
+	want := map[string]bool{}
+	for _, h := range tokenHashes {
+		if h != "" {
+			want[h] = true
+		}
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	var out []SavedGame
+	for i, g := range m.games {
+		if g.Ended.Before(since) {
+			continue
+		}
+		for _, p := range g.Players {
+			if want[p.TokenHash] {
+				out = append(out, SavedGame{ID: int64(i + 1), GameRecord: cloneRecord(g)})
+				break
+			}
+		}
+	}
+	// Newest first, as the MySQL store answers.
+	sort.SliceStable(out, func(i, j int) bool {
+		if !out[i].Ended.Equal(out[j].Ended) {
+			return out[i].Ended.After(out[j].Ended)
+		}
+		return out[i].ID > out[j].ID
+	})
+	if len(out) > limit {
+		out = out[:limit]
+	}
+	return out, nil
+}
+
+func cloneRecord(g GameRecord) GameRecord {
+	g.Players = append([]GamePlayer(nil), g.Players...)
+	return g
 }
 
 // Games returns the records saved so far, oldest first.
 func (m *Memory) Games() []GameRecord {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	return append([]GameRecord(nil), m.games...)
+	out := make([]GameRecord, len(m.games))
+	for i, g := range m.games {
+		out[i] = cloneRecord(g)
+	}
+	return out
 }

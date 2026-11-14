@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"masoi/internal/room"
+	"masoi/internal/store"
 	"masoi/internal/transport/ws/wsclient"
 )
 
@@ -36,11 +37,13 @@ func newExampleEnv(t *testing.T) *env {
 		now:  &fakeNow{t: time.Date(2026, 10, 15, 20, 0, 0, 0, time.UTC)},
 		logs: &syncBuffer{},
 	}
+	kept := store.NewMemory() // the example games are saved, for POST /history
 	e.rooms = room.NewManager(room.ManagerConfig{
 		Clock: e.clk, Random: &exampleRandom{},
 		NewCode: func() string { return exampleRoom },
+		Store:   kept, Archive: kept,
 	})
-	handler, err := New(Config{Rooms: e.rooms, AllowAnyOrigin: true, Now: e.now.Now, RatePerSecond: 1e6, Burst: 1e6})
+	handler, err := New(Config{Rooms: e.rooms, History: kept, AllowAnyOrigin: true, Now: e.now.Now, RatePerSecond: 1e6, Burst: 1e6})
 	if err != nil {
 		t.Fatal(err)
 	}

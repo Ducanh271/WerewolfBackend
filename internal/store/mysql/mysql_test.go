@@ -74,8 +74,8 @@ func count(t *testing.T, s *mysql.Store, query string, args ...any) int {
 func TestMySQL_Open_MigratesOnceAndAgainIsANoOp(t *testing.T) {
 	s := openTest(t)
 	reopen(t)
-	if n := count(t, s, "SELECT COUNT(*) FROM schema_version"); n != 1 {
-		t.Fatalf("schema_version rows = %d, want 1 (001_init.sql, applied once)", n)
+	if n := count(t, s, "SELECT COUNT(*) FROM schema_version"); n != 2 {
+		t.Fatalf("schema_version rows = %d, want 2 (001, 002, each applied once)", n)
 	}
 }
 

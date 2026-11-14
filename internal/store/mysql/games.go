@@ -40,14 +40,14 @@ func (s *Store) SaveGame(rec store.GameRecord) (err error) {
 	}
 	if len(rec.Players) > 0 {
 		var sb strings.Builder
-		sb.WriteString("INSERT INTO game_players (game_id, player_id, seat, nickname, role, team, alive, won) VALUES ")
-		args := make([]any, 0, 8*len(rec.Players))
+		sb.WriteString("INSERT INTO game_players (game_id, player_id, seat, nickname, role, team, alive, won, token_hash) VALUES ")
+		args := make([]any, 0, 9*len(rec.Players))
 		for i, p := range rec.Players {
 			if i > 0 {
 				sb.WriteString(", ")
 			}
-			sb.WriteString("(?, ?, ?, ?, ?, ?, ?, ?)")
-			args = append(args, gameID, string(p.ID), p.Seat, p.Nickname, string(p.Role), teamName(p.Team), p.Alive, p.Won)
+			sb.WriteString("(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+			args = append(args, gameID, string(p.ID), p.Seat, p.Nickname, string(p.Role), teamName(p.Team), p.Alive, p.Won, p.TokenHash)
 		}
 		if _, err = tx.ExecContext(ctx, sb.String(), args...); err != nil {
 			return fmt.Errorf("mysql: save players of %s #%d: %w", rec.LogKey, rec.GameNo, err)

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ma Sói: HTTP bodies",
-  "description": "Request and reply bodies of POST /rooms, GET /join/{code} and GET /guide.",
+  "description": "Request and reply bodies of POST /rooms, GET /join/{code}, GET /guide and POST /history.",
   "$defs": {
     "CreateRoomReply": {
       "type": "object",
@@ -142,6 +142,173 @@
         "message"
       ]
     },
+    "HistoryGame": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "aborted": {
+          "description": "Called off by an abort vote (rules §8b); always a draw too.",
+          "type": "boolean"
+        },
+        "draw": {
+          "description": "Nobody won: everybody died at once, or the game was aborted.",
+          "type": "boolean"
+        },
+        "endedAt": {
+          "description": "Unix milliseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "gameNo": {
+          "description": "1 for the room's first game, +1 for each newGame.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "id": {
+          "description": "Stable id of the saved game.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "inPerson",
+            "online"
+          ]
+        },
+        "nights": {
+          "description": "Nights played.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "players": {
+          "description": "Seating order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryPlayer"
+          }
+        },
+        "room": {
+          "description": "Room code. Not a secret.",
+          "type": "string",
+          "pattern": "^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{4}$"
+        },
+        "startedAt": {
+          "description": "Unix milliseconds: roles dealt.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "winner": {
+          "description": "Absent on a draw.",
+          "type": "string",
+          "enum": [
+            "Village",
+            "Wolves",
+            "Lovers"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "room",
+        "gameNo",
+        "mode",
+        "draw",
+        "aborted",
+        "nights",
+        "startedAt",
+        "endedAt",
+        "players"
+      ]
+    },
+    "HistoryPlayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alive": {
+          "description": "Alive when the game ended.",
+          "type": "boolean"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "player": {
+          "$ref": "#/$defs/PlayerID"
+        },
+        "role": {
+          "$ref": "#/$defs/RoleID"
+        },
+        "seat": {
+          "description": "0-based, clockwise.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "team": {
+          "description": "The player's own team at the end, after a curse. A third-team lover keeps Village or Wolves (rules §7); see won.",
+          "type": "string",
+          "enum": [
+            "Village",
+            "Wolves",
+            "Lovers"
+          ]
+        },
+        "won": {
+          "description": "In the game's winners (rules §8).",
+          "type": "boolean"
+        },
+        "you": {
+          "description": "This seat belongs to one of the request's tokens.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "seat",
+        "player",
+        "nickname",
+        "role",
+        "team",
+        "alive",
+        "won",
+        "you"
+      ]
+    },
+    "HistoryReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "games": {
+          "description": "Newest first, finished games only, kept 90 days. Empty when nothing matches or the server keeps no history.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryGame"
+          },
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "games"
+      ]
+    },
+    "HistoryRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens": {
+          "description": "The rejoin tokens this phone kept, one per room it played in. Secret: only in the body, never in the URL.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "maxItems": 20,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "tokens"
+      ]
+    },
     "JoinRoomReply": {
       "type": "object",
       "additionalProperties": false,
@@ -155,6 +322,14 @@
       "required": [
         "room"
       ]
+    },
+    "PlayerID": {
+      "description": "Public id of a player in the room, e.g. \"p3\". Not a secret, not a credential.",
+      "type": "string"
+    },
+    "RoleID": {
+      "description": "A role, e.g. \"Werewolf\"; as a night step also \"PhoneCheck\" or \"LoversMeet\".",
+      "type": "string"
     }
   },
   "anyOf": [
@@ -169,6 +344,12 @@
     },
     {
       "$ref": "#/$defs/GuideReply"
+    },
+    {
+      "$ref": "#/$defs/HistoryRequest"
+    },
+    {
+      "$ref": "#/$defs/HistoryReply"
     },
     {
       "$ref": "#/$defs/HTTPError"

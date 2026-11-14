@@ -50,6 +50,7 @@ var errorRows = []errorRow{
 	{"too_many_rooms", "", groupJoin, "`POST /rooms` when the server holds its maximum number of rooms (HTTP 503)"},
 	{"too_many_connections", "", groupJoin, "`GET /ws` refused: the server or this network has too many open sockets (HTTP 503)"},
 	{"rate_limited", "", groupJoin, "over 10 messages a second; the message was ignored. Staying over the limit for 3 seconds closes the socket"},
+	{"history_unavailable", "", groupJoin, "`POST /history` while the database does not answer (HTTP 503); try again later. A server without a database answers no games instead"},
 
 	{"not_host", "", groupLobby, "a host-only message from a player who is not, or no longer, the host (e.g. right after `transferHost`)"},
 	{"unknown_player", "", groupLobby, "`kick` or `transferHost` naming someone who just left the room"},

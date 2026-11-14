@@ -25,9 +25,12 @@ Dependency direction (arrows = "imports"):
 
 ```
 cmd/server ─► transport/ws ─► room ─► engine ◄─ roles
-     │                         ▲│        ▲
-     └───────► bot ────────────┘└► store ┘ (store only knows engine.Event)
+     │             │           ▲│        ▲
+     │             └───────────┼┴► store ┘ (store only knows engine)
+     └───────► bot ────────────┘      ▲
+     └──────────────────────► store/mysql (cmd only)
 ```
+`transport` imports `store` only for `store.History` and its types (`POST /history`); only `cmd/server` and `cmd/demo` import `store/mysql`.
 
 `engine` imports nothing from this repo except `i18n`. Nothing imports a
 specific role: `cmd/server` and `cmd/demo` blank-import `roles` so every role
@@ -184,9 +187,9 @@ The rules are summed up in `view.go`; the projection is in `view_project.go`, th
 - Bot commands are not activity, and host, speaker and room-alive checks count people only.
 
 ## Transport
-JSON over WebSocket. Message shapes in `docs/protocol.md`. Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The command table is built once by `ws.New` from the engine's core commands (`commands.go`) and every registered role's `Commands()`; `ws.New` returns an error, and the server does not start, when two commands share a name. Error codes come from the errors themselves (`engine.ErrorCode`); the transport keeps only its own codes (`bad_message`...) and the special cases (`pin_locked` with `retryAfter`, `bad_credentials` without detail). The transport never imports `roles`; `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.
+JSON over WebSocket. Message shapes in `docs/protocol.md`. `POST /history` (`ws/history.go`) reads finished games through the `store.History` interface, so `transport` also imports `store` (its types, never `store/mysql`). Transport only decodes → `Client.Submit(cmd)` and encodes views; no game logic. `room.Manager` creates rooms by code and deletes idle ones. The command table is built once by `ws.New` from the engine's core commands (`commands.go`) and every registered role's `Commands()`; `ws.New` returns an error, and the server does not start, when two commands share a name. Error codes come from the errors themselves (`engine.ErrorCode`); the transport keeps only its own codes (`bad_message`...) and the special cases (`pin_locked` with `retryAfter`, `bad_credentials` without detail). The transport never imports `roles`; `internal/transport/ws/wsclient` is the fake phone used by tests and `make demo`.
 
 ## Extending later
 - Voice and video for online play (rules §10): in `transport`, the engine does not change. Typed chat is what online play has today, and it already exists for every mode (`SendChat` → public `ChatSent`, `engine/chat.go`; rules §4 "Nhắn tin"). It lives only in the log, not in `State`.
-- Database: done for MySQL (`internal/store/mysql`, docs/database.md), on with `MASOI_MYSQL_DSN`. Still to come: a history API (T33b) and restoring live rooms after a restart (T33c).
+- Database: done for MySQL (`internal/store/mysql`, docs/database.md), on with `MASOI_MYSQL_DSN`, with the history API `POST /history` (T33b). Still to come: restoring live rooms after a restart (T33c).
 - New role: new file in `internal/roles/` (ID, team, night call, `Commands()`, `CardOrder()`, its own errors) + its card in `i18n/vi.go` and guide entry in `i18n/guide.go` (user-facing text) + tests (scenarios can use `Night.Act` before the role has verbs of its own) + a row in rules.md and in protocol.md. `transport/ws/newrole_test.go` shows a throwaway role doing exactly this.

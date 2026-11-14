@@ -33,6 +33,7 @@ type Server struct {
 //	POST /rooms        create a room, reply {"room": "K7QP", "hostKey": "…"}
 //	GET  /join/{code}  does the room exist (the link behind the QR code)
 //	GET  /guide         the in-app rules guide and per-role how-to (T25); public, no room needed
+//	POST /history      the finished games of the tokens in the body (T33b)
 //	GET  /ws           the game socket; everything, secrets included, goes in messages
 //
 // It fails when the registered roles' commands clash (two with one name):
@@ -52,6 +53,7 @@ func New(cfg Config) (http.Handler, error) {
 	s.mux.HandleFunc("POST /rooms", s.createRoom)
 	s.mux.HandleFunc("GET /join/{code}", s.checkRoom)
 	s.mux.HandleFunc("GET /guide", s.serveGuide)
+	s.mux.HandleFunc("POST /history", s.history)
 	s.mux.HandleFunc("GET /ws", s.serveWS)
 	return s.mux, nil
 }

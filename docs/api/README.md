@@ -41,8 +41,9 @@ Screens, in the order of a game: [join and lobby](screens/lobby.md),
 [role view](screens/role-view.md), [Chief](screens/chief.md),
 [night](screens/night.md), [phone check](screens/phone-check.md),
 [dawn](screens/dawn.md), [day](screens/day.md),
-[Hunter's shot](screens/hunter.md), [end](screens/end.md), and the
-[rules guide](screens/guide.md). Read [secrecy.md](secrecy.md) before
+[Hunter's shot](screens/hunter.md), [end](screens/end.md), the
+[rules guide](screens/guide.md), and the [history](screens/history.md) of
+the games a phone played. Read [secrecy.md](secrecy.md) before
 designing any of them.
 
 ## Connecting
@@ -55,6 +56,7 @@ Unix milliseconds.
 | `POST /rooms`, body optional `{"mode": "inPerson"}` or `{"mode": "online"}` (rules §1b; default `inPerson`) | `201` `{"room", "hostKey"}` (`http/create-room.reply.json`). Keep `hostKey` in memory: it makes this phone the host on its first `join`, and nobody else ever sees it. |
 | `GET /join/{code}` | `200` `{"room"}` when the room exists (case ignored); `404` `room_not_found`. This is the link a QR code carries. |
 | `GET /guide` | `200` the rules guide and the "how to play your role" texts, in Vietnamese (`http/guide.reply.json`). Public, needs no room. |
+| `POST /history`, body `{"tokens": [...]}` (the rejoin tokens the phone kept) | `200` `{"games"}`: the finished games of those tokens, newest first, kept 90 days (`http/history.reply.json`, [history](screens/history.md)). |
 | `GET /ws` | the game WebSocket. **No query string** (`400` `secret_in_url`): secrets only travel inside messages. |
 
 An HTTP error has the same body as a WebSocket `error` message
@@ -185,6 +187,8 @@ any client existed did not raise `protocolVersion`.
   player are told at once with `PhoneChecked`
   ([phone check](screens/phone-check.md#online)). `SoundConfigured` now
   reaches every phone; it used to reach only the dead and the end screen.
+- New: `POST /history` ([history](screens/history.md)) and the
+  `history_unavailable` error.
 
 ## Keeping this folder true
 

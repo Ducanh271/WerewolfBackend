@@ -20,8 +20,10 @@ player exists only inside a room, as `PlayerID` + nickname. The same nickname in
 two games is not known to be the same person, so the database keeps no
 cross-game player table.
 
-Not stored: rejoin tokens and PINs (they live in the room's memory only), and
-nothing that is not already an event.
+Not stored: PINs, and rejoin tokens themselves. Each `game_players` row keeps
+the **SHA-256 hash** of that player's token (`token_hash`), which is what lets
+the player, and only them, read the game later (`POST /history`,
+`docs/api/screens/history.md`). Nothing else that is not already an event.
 
 ## Schema
 
@@ -77,7 +79,9 @@ CREATE TABLE game_players (
                                       -- keeps Village or Wolves (rules §7), see games.winner and won
   alive     BOOLEAN         NOT NULL,
   won       BOOLEAN         NOT NULL,
+  token_hash CHAR(64)       NOT NULL DEFAULT '', -- 002: SHA-256 of the rejoin token
   PRIMARY KEY (game_id, player_id),
+  KEY game_players_token (token_hash),
   FOREIGN KEY (game_id) REFERENCES games (id) ON DELETE CASCADE
 );
 ```
@@ -124,11 +128,25 @@ different names.
   throwaway MySQL 8.4 in Docker on port 3307; `make test-mysql` runs the store
   tests against it. CI runs them against a MySQL service container.
 
+## History and retention (T33b)
+
+- `POST /history` reads `games` + `game_players` for the token hashes it is
+  given (`store.History`). Only finished games exist in these tables, so a
+  game being played is never read. The reply is the summary only, no events.
+- The room keeps the hash of each player's current token. A rejoin by PIN
+  hands out a new token, and the room rewrites that player's `token_hash` in
+  its saved games (`GameArchive.ReplaceToken`): the new phone reads them, the
+  old token no longer does. A change the database refused is kept and retried
+  with the room's next event (`room/archive.go`).
+- Leaving or being kicked does not touch the saved games: a player keeps
+  reading the games they sat in.
+- **Retention: 90 days** (`store.Retention`). `cmd/server` deletes the rooms
+  created before that, with their events and games (`ON DELETE CASCADE`), at
+  start and then once a day; `POST /history` also never returns a game that
+  ended before it.
+
 ## Later (see `docs/plan.md` T33)
 
-- T33b History API: finished games over HTTP for the app, with a contract in
-  `docs/api/` first. Who may read which game is a secrecy decision for the
-  project owner (`docs/api/secrecy.md`).
 - T33c Restore live rooms after a restart (needs the identity layer to survive
   too; goes with T29e graceful shutdown).
 - T33d App screen for the history, after T33b.

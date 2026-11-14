@@ -76,6 +76,7 @@ var vi = map[string]string{
 	"error.replaced_by_other_device": "Bạn vừa vào phòng từ một máy khác, máy này đã thoát.",
 	"error.too_many_rooms":           "Máy chủ đang bận, bạn thử tạo phòng lại sau ít phút nhé.",
 	"error.too_many_connections":     "Máy chủ đang bận, bạn thử lại sau ít phút nhé.",
+	"error.history_unavailable":      "Chưa xem được lịch sử ván lúc này, bạn thử lại sau nhé.",
 	"error.rate_limited":             "Bạn bấm nhanh quá, chờ một chút nhé.",
 	"error.not_host":                 "Chỉ chủ phòng mới làm được việc này.",
 	"error.unknown_player":           "Người này không còn ở trong phòng.",

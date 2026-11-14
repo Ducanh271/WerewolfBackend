@@ -98,6 +98,9 @@ func TestRoom_NewGame_SecondGameGetsTheNextNumberAndItsOwnEvents(t *testing.T) {
 type failingArchive struct{}
 
 func (failingArchive) SaveGame(store.GameRecord) error { return errors.New("disk full") }
+func (failingArchive) ReplaceToken(string, engine.PlayerID, string) error {
+	return errors.New("disk full")
+}
 
 // The events are what counts: a record that cannot be saved is logged and the
 // room goes on (docs/database.md "Write path").

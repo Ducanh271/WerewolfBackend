@@ -132,6 +132,17 @@ named in seat order, never with cause or role. Show and read the server's
 `say` text as given; never build an announcement from events (their order
 inside the server is not the order the table may hear).
 
+## History
+
+`POST /history` ([history](screens/history.md)) shows every role of a game,
+so the server answers it only for **finished** games (a game is saved when
+`GameEnded` is applied, never before) and only to the tokens of the players
+who sat in it. It never sends the chat or the night actions, only the summary
+the end screen already showed. On a shared phone, the history list shows the
+roles of past games: open it from the app's menu, not on any game screen.
+Tokens go in the body, never the URL; the server stores only their SHA-256
+hash and never logs them.
+
 ## Guide
 
 The rules guide (`GET /guide`) is public, but a phone showing the "how to

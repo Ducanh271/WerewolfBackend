@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"masoi/internal/room"
+	"masoi/internal/store"
 )
 
 // Defaults of Config.
@@ -48,6 +49,8 @@ const (
 // Config wires the transport. Only Rooms is required.
 type Config struct {
 	Rooms *room.Manager
+	// History answers POST /history; nil (no database) answers no games.
+	History store.History
 
 	// AllowedOrigins are the origins (scheme://host[:port]) browsers may open
 	// a socket from. A request without an Origin header is refused unless

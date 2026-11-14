@@ -11,6 +11,7 @@ durations are milliseconds, times are Unix milliseconds.
 | request | reply |
 |---|---|
 | `POST /rooms` (body optional: `{"mode": "inPerson"}` or `{"mode": "online"}`, rules §1b) | `201 {"room": "K7QP", "hostKey": "…"}`; `503` `too_many_rooms` |
+| `POST /history` (body `{"tokens": [...]}`) | `200 {"games": [...]}`, finished games only (`docs/api/screens/history.md`); `400` `bad_message`; `503` `history_unavailable` |
 | `GET /join/{code}` | `200 {"room": "K7QP"}`, or `404` `room_not_found`. This is the link the QR code will carry (the UI is built later); case is ignored |
 | `GET /guide` | `200` the in-app rules guide (below). Public, same for everyone, needs no room: usable from the lobby before anyone has joined |
 | `GET /ws` | upgrades to the game socket |

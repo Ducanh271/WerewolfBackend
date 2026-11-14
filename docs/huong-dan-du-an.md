@@ -38,6 +38,7 @@ Backend của app quản trò Ma Sói chơi trực tiếp. Mỗi người một 
 - **WebSocket**: server phải đẩy tin xuống điện thoại ngay (đến lượt bạn, trời sáng, có người bị treo) mà không để điện thoại hỏi liên tục.
 - **JSON**: dễ đọc, dễ gỡ lỗi, app/web nào cũng nói được. Mẫu tin nhắn nằm ở `docs/protocol.md`.
 - **Lưu trữ**: mặc định trong RAM, tắt server là mất phòng. Đặt `MASOI_MYSQL_DSN` thì mọi sự kiện được ghi vào MySQL trước khi gửi cho máy nào, và mỗi ván xong có một dòng trong bảng `games` + `game_players` (`docs/database.md`). Chưa dựng lại phòng đang chơi sau khi server khởi động lại (việc T33c). Không có tài khoản người chơi (rules §10).
+- **Lịch sử ván** (`POST /history`, `transport/ws/history.go`): máy gửi các mã vào lại phòng nó đã giữ, server trả các ván **đã xong** mà mã đó từng chơi (giữ 90 ngày, mỗi ngày tự xoá ván cũ). DB chỉ lưu bản băm SHA-256 của mã. Vào lại bằng PIN thì mã mới thay mã cũ trong các ván đã lưu. `transport` dùng interface `store.History`, không biết MySQL.
 - **Event sourcing (nhật ký sự kiện)**: ván chơi là danh sách sự kiện; trạng thái là kết quả "gấp" các sự kiện. Nhờ vậy vào lại phòng, xem lại lịch sử khi chết, và viết test kịch bản đều dễ.
 - **Một goroutine mỗi phòng**: mọi lệnh và mọi hết giờ của một phòng chạy lần lượt, không bao giờ đua nhau.
 

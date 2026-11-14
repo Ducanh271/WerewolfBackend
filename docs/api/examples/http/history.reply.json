@@ -1,0 +1,138 @@
+{
+  "games": [
+    {
+      "aborted": false,
+      "draw": false,
+      "endedAt": 1792095740000,
+      "gameNo": 1,
+      "id": 1,
+      "mode": "inPerson",
+      "nights": 3,
+      "players": [
+        {
+          "alive": true,
+          "nickname": "An",
+          "player": "p1",
+          "role": "RustyKnight",
+          "seat": 0,
+          "team": "Village",
+          "won": true,
+          "you": true
+        },
+        {
+          "alive": false,
+          "nickname": "Bình",
+          "player": "p2",
+          "role": "Villager",
+          "seat": 1,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": true,
+          "nickname": "Chi",
+          "player": "p3",
+          "role": "Guard",
+          "seat": 2,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": true,
+          "nickname": "Dũng",
+          "player": "p4",
+          "role": "Visitor",
+          "seat": 3,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": false,
+          "nickname": "Giang",
+          "player": "p5",
+          "role": "Villager",
+          "seat": 4,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": true,
+          "nickname": "Hà",
+          "player": "p6",
+          "role": "Witch",
+          "seat": 5,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": true,
+          "nickname": "Khoa",
+          "player": "p7",
+          "role": "Seer",
+          "seat": 6,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": false,
+          "nickname": "Lan",
+          "player": "p8",
+          "role": "Hunter",
+          "seat": 7,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": false,
+          "nickname": "Minh",
+          "player": "p9",
+          "role": "CursedWolf",
+          "seat": 8,
+          "team": "Wolves",
+          "won": false,
+          "you": false
+        },
+        {
+          "alive": true,
+          "nickname": "Nga",
+          "player": "p10",
+          "role": "Cupid",
+          "seat": 9,
+          "team": "Village",
+          "won": true,
+          "you": false
+        },
+        {
+          "alive": false,
+          "nickname": "Phúc",
+          "player": "p11",
+          "role": "WolfSeer",
+          "seat": 10,
+          "team": "Wolves",
+          "won": false,
+          "you": false
+        },
+        {
+          "alive": false,
+          "nickname": "Quân",
+          "player": "p12",
+          "role": "Detective",
+          "seat": 11,
+          "team": "Wolves",
+          "won": false,
+          "you": false
+        }
+      ],
+      "room": "K7QP",
+      "startedAt": 1792094400000,
+      "winner": "Village"
+    }
+  ]
+}

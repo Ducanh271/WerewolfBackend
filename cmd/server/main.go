@@ -11,6 +11,7 @@ import (
 
 	_ "masoi/internal/roles" // registers every role
 	"masoi/internal/room"
+	"masoi/internal/store"
 	"masoi/internal/store/mysql"
 	"masoi/internal/transport/ws"
 )
@@ -43,6 +44,9 @@ func main() {
 	cfg := ws.ConfigFromEnv(os.Getenv)
 	cfg.Rooms = rooms
 	cfg.Logger = logger
+	if db != nil { // never a nil *mysql.Store in the interface
+		cfg.History = db
+	}
 	handler, err := ws.New(cfg)
 	if err != nil {
 		logger.Error("server not started", "err", err)
@@ -52,6 +56,9 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+	if db != nil {
+		go purgeDaily(ctx, db, logger)
+	}
 	go func() {
 		<-ctx.Done()
 		shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -63,5 +70,23 @@ func main() {
 	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		logger.Error("server stopped", "err", err)
 		os.Exit(1)
+	}
+}
+
+// purgeDaily deletes the rooms older than store.Retention, with their events
+// and games (docs/database.md "Retention"): at start, then once a day.
+func purgeDaily(ctx context.Context, db *mysql.Store, logger *slog.Logger) {
+	for {
+		n, err := db.Purge(time.Now().Add(-store.Retention))
+		if err != nil {
+			logger.Error("old games not purged", "err", err)
+		} else if n > 0 {
+			logger.Info("old games purged", "rooms", n)
+		}
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(24 * time.Hour):
+		}
 	}
 }

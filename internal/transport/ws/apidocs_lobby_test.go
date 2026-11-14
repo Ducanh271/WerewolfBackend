@@ -23,6 +23,7 @@ func playExampleGames(t *testing.T) *exampleSet {
 	g := &exGame{t: t, e: newExampleEnv(t), x: x}
 	g.lobby()
 	g.firstGame()
+	g.historyExample()
 	g.secondGame()
 	chatFullExample(t, x)
 	onlineExample(t, x)

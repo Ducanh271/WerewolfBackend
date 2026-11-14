@@ -37,6 +37,7 @@ func (r *Room) Join(nickname, hostKey string, sink Sink) (*Client, Credentials, 
 		r.nextID++
 		r.joined = append(r.joined, id)
 		creds = r.ident.Issue(id, nickname)
+		r.arch.tokenIssued(r, id, creds.Token)
 		if hostKey != "" && r.hostKey != "" && hostKey == r.hostKey {
 			r.host = id
 			r.hostKey = "" // one-time: a later presentation, even the right one, grants nothing
@@ -73,6 +74,7 @@ func (r *Room) RejoinPIN(nickname, pin string, sink Sink) (*Client, Credentials,
 			return err
 		}
 		creds = Credentials{Token: token}
+		r.arch.tokenIssued(r, id, token)
 		cl = r.reattach(id, sink, ReasonPINTakenOver)
 		return nil
 	})

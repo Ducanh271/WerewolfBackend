@@ -1,6 +1,8 @@
 package store
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"time"
 
 	"masoi/internal/engine"
@@ -10,6 +12,34 @@ import (
 // summary is derived from the event log, so losing one is not losing the game.
 type GameArchive interface {
 	SaveGame(GameRecord) error
+	// ReplaceToken follows a player's new rejoin token (rejoin by PIN hands
+	// out a new one and the old one stops working) into the room's saved
+	// games, so the new phone can read them and the old one no longer can.
+	ReplaceToken(logKey string, player engine.PlayerID, tokenHash string) error
+}
+
+// History reads the finished games a player took part in, for POST /history
+// (docs/api/screens/history.md).
+type History interface {
+	// GamesFor returns the games ended at or after since in which one of the
+	// token hashes played, newest first, at most limit of them.
+	GamesFor(tokenHashes []string, since time.Time, limit int) ([]SavedGame, error)
+}
+
+// Retention is how long a finished game is kept (docs/database.md).
+const Retention = 90 * 24 * time.Hour
+
+// SavedGame is a GameRecord with the id the archive gave it.
+type SavedGame struct {
+	ID int64
+	GameRecord
+}
+
+// TokenHash is what the archive keeps of a rejoin token: never the token
+// itself. Tokens are long random secrets, so a plain SHA-256 is enough.
+func TokenHash(token string) string {
+	sum := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(sum[:])
 }
 
 // GameRecord is one finished game.
@@ -38,6 +68,9 @@ type GamePlayer struct {
 	Team     engine.Team // at the end, after a curse
 	Alive    bool
 	Won      bool
+	// TokenHash is TokenHash of the player's rejoin token when the game
+	// ended: what lets them read the game later. Empty when unknown.
+	TokenHash string
 }
 
 // NewGameRecord builds the record of the game that end has just closed; s is
