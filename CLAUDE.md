@@ -80,6 +80,7 @@ While iterating, run only the affected package (`go test ./internal/<pkg> -run <
 - `cmd/demo` must send the `hostKey` from `POST /rooms` on the first join; without it host powers came only through the disconnect grace and the demo failed whenever commands got slower (seen with MySQL on).
 - A store can fail now (MySQL). A failed append changes nothing; a timeout whose events were not stored is logged and retried (`room/timers.go` `fire`), or the room would stand still. Found by `kiem-bi-mat`, which was asked about secrecy: reviewers find more than their brief, so read the whole report.
 - Agents added to `.claude/agents/` load only in a new session; in the session that wrote them, run them as `general-purpose` told to follow the file.
+- In `wsclient` tests, count a phone's errors/messages **before** sending the command that causes them; counting after races with the reply (`TestAPIDocs` kick, red in CI under `-race`).
 
 ## Don't
 - Don't write frontend code outside `web/`. Don't touch files outside the task's scope.

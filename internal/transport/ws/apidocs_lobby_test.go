@@ -101,8 +101,9 @@ func (g *exGame) lobby() {
 	n = len(binh.c.Snapshot().Errors)
 	g.send(binh.c, "", map[string]any{"type": "kick", "target": vy.id})
 	g.expectError(binh.c, n, "not_host", "error.not_host")
+	vyErrs := len(vy.c.Snapshot().Errors) // counted before the kick: the notice may arrive at once
 	g.send(an.c, "kick", map[string]any{"type": "kick", "target": vy.id})
-	g.expectError(vy.c, len(vy.c.Snapshot().Errors), "kicked_by_host", "error.kicked_by_host")
+	g.expectError(vy.c, vyErrs, "kicked_by_host", "error.kicked_by_host")
 	g.drop(vy)
 	g.sync()
 
